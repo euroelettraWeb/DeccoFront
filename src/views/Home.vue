@@ -1,0 +1,47 @@
+<template>
+  <v-container fluid fill-height>
+    <v-row align="center" justify="center">
+      <v-col
+        cols="2"
+        style="
+          background-image: url('logo_cliente.jpg');
+          background-size: contain;
+          background-position: right;
+          height: 300px;
+        "
+      ></v-col>
+      <v-col
+        cols="2"
+        style="
+          background-image: url('logo_nunsys.jpg');
+          background-size: contain;
+          background-position: center;
+          height: 300px;
+        "
+      ></v-col>
+      <v-col
+        cols="2"
+        style="
+          background-image: url('logo_euroelettra.jpg');
+          background-size: contain;
+          background-position: left;
+          height: 300px;
+        "
+      ></v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" class="text-center">
+        <v-btn x-large color="success" elevation="4" to="/sistemas">
+          Seleccionar Sistema
+        </v-btn>
+      </v-col>
+    </v-row>
+  </v-container>
+</template>
+
+<script>
+export default {
+  name: "HomeView",
+  setup() {},
+};
+</script>
