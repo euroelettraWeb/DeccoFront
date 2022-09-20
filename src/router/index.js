@@ -7,7 +7,8 @@ import DECCODAFPrincipal from "../views/Deccodaf/Principal.vue";
 import DECCODOSPrincipal from "../views/Deccodos/Principal.vue";
 import DECCOWASHERPrincipal from "../views/Deccowasher/Principal.vue";
 import DECCOCONTROLPrincipal from "../views/Deccocontrol/Principal.vue";
-
+import DECCODAFTotales from "../views/Deccodaf/Totales.vue";
+import DECCODAFEstado from "../views/Deccodaf/Estado.vue";
 Vue.use(VueRouter);
 
 const routes = [
@@ -38,13 +39,13 @@ const routes = [
   {
     path: "/sistemas/deccodaf/marchaparo",
     name: "DECCODAF - MarchaParo",
-    component: DECCODAFPrincipal,
+    component: DECCODAFEstado,
     meta: { title: "DECCO - DECCODAF" },
   },
   {
     path: "/sistemas/deccodaf/consumo",
     name: "DECCODAF - Consumo",
-    component: DECCODAFPrincipal,
+    component: DECCODAFTotales,
     meta: { title: "DECCO - DECCODAF" },
   },
   {

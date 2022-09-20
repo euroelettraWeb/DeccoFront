@@ -101,7 +101,7 @@ const items = [
     action: "mdi-flask",
     items: [
       { title: "Principal", route: "deccodaf:Principal" },
-      { title: "Marcha-Paro", route: "deccodaf:MarchaParo" },
+      { title: "Estado", route: "deccodaf:MarchaParo" },
       { title: "Consumo", route: "deccodaf:Consumo" },
       { title: "Registros", route: "deccodaf:Registros" },
     ],
@@ -111,7 +111,7 @@ const items = [
     action: "mdi-numeric-2",
     items: [
       { title: "Principal", route: "deccodos:Principal" },
-      { title: "Marcha-Paro", route: "deccodos:MarchaParo" },
+      { title: "Estado", route: "deccodos:MarchaParo" },
       { title: "Consumo", route: "deccodos:Consumo" },
       { title: "Registros", route: "deccodos:Registros" },
     ],
@@ -121,7 +121,7 @@ const items = [
     action: "mdi-hand-water",
     items: [
       { title: "Principal", route: "deccowasher:Principal" },
-      { title: "Marcha-Paro", route: "deccowasher:MarchaParo" },
+      { title: "Estado", route: "deccowasher:MarchaParo" },
       { title: "Consumo", route: "deccowasher:Consumo" },
       { title: "Registros", route: "deccowasher:Registros" },
     ],

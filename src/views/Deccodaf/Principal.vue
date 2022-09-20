@@ -1,5 +1,5 @@
 <template>
-  <v-container> <FrutaProcesada /> </v-container>
+  <v-container> <Estado /> </v-container>
 </template>
 
 <script>
@@ -8,5 +8,5 @@ export default {
 };
 </script>
 <script setup>
-import FrutaProcesada from "../../components/cards/comun/FrutaProcesada.vue";
+import Estado from "../../components/cards/comun/Estado.vue";
 </script>

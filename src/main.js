@@ -17,6 +17,11 @@ import router from "./router";
 import vuetify from "./plugins/vuetify";
 import "@mdi/font/css/materialdesignicons.css";
 
+import VueApexCharts from "vue-apexcharts";
+Vue.use(VueApexCharts);
+
+Vue.component("ApexChart", VueApexCharts);
+
 // import Socketio from "./plugins/socketio";
 
 // Vue.use(Socketio, {

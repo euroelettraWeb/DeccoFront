@@ -89,11 +89,11 @@ let socket = ref(null);
 </script>
 
 <style>
-html {
+/* html {
   overflow: hidden !important;
   scrollbar-width: none;
   -ms-overflow-style: none;
-}
+} */
 
 html::-webkit-scrollbar {
   width: 0;
