@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { inject, onMounted, ref } from "vue";
+import { ref } from "vue";
 export default {
   name: "LineChart",
   props: {
@@ -26,10 +26,6 @@ export default {
   },
   setup(props) {
     const chart = ref(null);
-    onMounted(() => {
-      // console.log(chart);
-      // chart.value.zoomX(zoom.value[0], zoom.value[1]);
-    });
     return {
       chart,
       chartData: props.data,
