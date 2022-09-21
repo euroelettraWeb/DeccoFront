@@ -8,7 +8,11 @@
           </v-row>
           <v-row>
             <v-col v-if="cargado">
-              <StatusChart :data="series" :options="chartOptions" />
+              <StatusChart
+                ref="chartRef"
+                :data="series"
+                :options="chartOptions"
+              />
             </v-col>
             <v-col v-else class="d-flex justify-center align-center">
               <v-progress-circular
@@ -33,6 +37,7 @@ import axios from "axios";
 import { onMounted, ref } from "vue";
 import StatusChart from "../../graficas-modelo/apexChartJs/StatusChart.vue";
 import moment from "moment";
+import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 
 async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
@@ -55,6 +60,8 @@ function range(rangeName, array) {
 }
 
 const socket = io("http://localhost:3000");
+const chartRef = ref(null);
+var lastZoom = null;
 let cargado = ref(false);
 let activo = [];
 let auto = [];
@@ -67,6 +74,17 @@ let chartOptions = {
   chart: {
     height: 100,
     type: "rangeBar",
+    locales: [es],
+    defaultLocale: "es",
+    animations: { enabled: false },
+    events: {
+      beforeResetZoom: function () {
+        lastZoom = null;
+      },
+      zoomed: function (_, value) {
+        lastZoom = [value.xaxis.min, value.xaxis.max];
+      },
+    },
   },
   plotOptions: {
     bar: {
@@ -102,23 +120,62 @@ onMounted(async () => {
     { name: "Alarma", data: range("Alarma", alarma.registros) },
   ];
   socket.on("variable_1_actualizada", (data) => {
-    console.log(series.value);
-    console.log(
-      series.value[data.y].data[series.value[data.y].data.length - 1].y[1]
-    );
-    if (data.y == 0) {
-      series.value[0].data.push({
-        x: "Activo",
-        y: [
-          new Date(moment(data.x).toISOString()).getTime(),
-          new Date(moment(data.x).toISOString()).getTime() + 1,
-        ],
-      });
-    } else {
-      series.value[data.y].data[series.value[data.y].data.length - 1].y[1] =
-        new Date(moment(data.x).toISOString()).getTime();
-    }
-    // series.value.pop();
+    series.value[0].data.push({
+      x: "Activo",
+      y: [
+        new Date(moment(data.x).toISOString()).getTime(),
+        new Date(moment(data.x).toISOString()).getTime() + 1000,
+      ],
+    });
+    chartRef.value.chart.updateSeries(series.value);
+    if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+  });
+  socket.on("variable_12_actualizada", (data) => {
+    series.value[1].data.push({
+      x: "Auto",
+      y: [
+        new Date(moment(data.x).toISOString()).getTime(),
+        new Date(moment(data.x).toISOString()).getTime() + 1000,
+      ],
+    });
+
+    chartRef.value.chart.updateSeries(series.value);
+    if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+  });
+  socket.on("variable_13_actualizada", (data) => {
+    series.value[2].data.push({
+      x: "Manual",
+      y: [
+        new Date(moment(data.x).toISOString()).getTime(),
+        new Date(moment(data.x).toISOString()).getTime() + 1000,
+      ],
+    });
+
+    chartRef.value.chart.updateSeries(series.value);
+    if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+  });
+  socket.on("variable_14_actualizada", (data) => {
+    series.value[3].data.push({
+      x: "Falta de consenso",
+      y: [
+        new Date(moment(data.x).toISOString()).getTime(),
+        new Date(moment(data.x).toISOString()).getTime() + 1000,
+      ],
+    });
+
+    chartRef.value.chart.updateSeries(series.value);
+    if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+  });
+  socket.on("variable_15_actualizada", (data) => {
+    series.value[4].data.push({
+      x: "Alarma",
+      y: [
+        new Date(moment(data.x).toISOString()).getTime(),
+        new Date(moment(data.x).toISOString()).getTime() + 1000,
+      ],
+    });
+    chartRef.value.chart.updateSeries(series.value);
+    if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
   });
   cargado.value = true;
 });
