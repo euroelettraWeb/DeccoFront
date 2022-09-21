@@ -37,7 +37,6 @@ import axios from "axios";
 import { onMounted, ref } from "vue";
 import StatusChart from "../../graficas-modelo/apexChartJs/StatusChart.vue";
 import es from "apexcharts/dist/locales/es.json";
-import moment from "moment";
 import io from "socket.io-client";
 
 async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
