@@ -1,6 +1,7 @@
 <template>
   <v-container>
     <ApexChart
+      ref="chart"
       type="rangeBar"
       height="300"
       :options="chartOptions"
@@ -10,6 +11,7 @@
 </template>
 
 <script>
+import { ref } from "vue";
 export default {
   name: "StatusChart",
   props: {
@@ -23,7 +25,9 @@ export default {
     },
   },
   setup(props) {
+    const chart = ref(null);
     return {
+      chart,
       chartData: props.data,
       chartOptions: props.options,
     };
