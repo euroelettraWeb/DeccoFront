@@ -100,20 +100,15 @@ onMounted(async () => {
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
     });
+    chartRef.value.chart.updateSeries(registrosT.value);
     if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
-    registrosT.value.push({ name: "r", data: [] });
-    registrosT.value.pop();
-    console.log(chartRef.value.chart);
-    console.log(lastZoom);
-    // if (lastZoom)
   });
   socket.on("variable_26_actualizada", (data) => {
     registrosT.value[1].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
     });
-    registrosT.value.push({ name: "r", data: [] });
-    registrosT.value.pop();
+    chartRef.value.chart.updateSeries(registrosT.value);
     if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
   });
   socket.on("variable_27_actualizada", (data) => {
@@ -121,8 +116,7 @@ onMounted(async () => {
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
     });
-    registrosT.value.push({ name: "r", data: [] });
-    registrosT.value.pop();
+    chartRef.value.chart.updateSeries(registrosT.value);
     if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
   });
   socket.on("variable_28_actualizada", (data) => {
@@ -130,8 +124,7 @@ onMounted(async () => {
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
     });
-    registrosT.value.push({ name: "r", data: [] });
-    registrosT.value.pop();
+    chartRef.value.chart.updateSeries(registrosT.value);
     if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
   });
   socket.on("variable_29_actualizada", (data) => {
@@ -139,8 +132,7 @@ onMounted(async () => {
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
     });
-    registrosT.value.push({ name: "r", data: [] });
-    registrosT.value.pop();
+    chartRef.value.chart.updateSeries(registrosT.value);
     if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
   });
   socket.on("variable_30_actualizada", (data) => {
@@ -148,8 +140,7 @@ onMounted(async () => {
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
     });
-    registrosT.value.push({ name: "r", data: [] });
-    registrosT.value.pop();
+    chartRef.value.chart.updateSeries(registrosT.value);
     if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
   });
   cargado.value = true;
