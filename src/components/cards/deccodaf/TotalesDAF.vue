@@ -55,28 +55,60 @@ let tp5 = {};
 const chartRef = ref(null);
 let registrosT = ref([]);
 var lastZoom = null;
-let chartOptions = {
-  chart: {
-    locales: [es],
-    defaultLocale: "es",
-    animations: { enabled: false },
-    events: {
-      beforeResetZoom: function () {
-        lastZoom = null;
-      },
-      zoomed: function (_, value) {
-        lastZoom = [value.xaxis.min, value.xaxis.max];
+let chartOptions = computed(() => {
+  return {
+    chart: {
+      locales: [es],
+      defaultLocale: "es",
+      animations: { enabled: false },
+      events: {
+        beforeZoom: (e, { xaxis }) => {
+          if (!moment(xaxis.min).isSameOrAfter(moment().subtract(8, "hours"))) {
+            return {
+              // dont zoom out any further
+              xaxis: {
+                min: moment().subtract(8, "hours").valueOf(),
+                max: moment(xaxis.max).valueOf(),
+              },
+            };
+          } else {
+            if (moment(xaxis.max).isSameOrAfter(moment().subtract(8, "hours")))
+              return {
+                // dont zoom out any further
+                xaxis: {
+                  min: moment(xaxis.min).valueOf(),
+                  max: moment().valueOf(),
+                },
+              };
+            else {
+            }
+          }
+        },
+        beforeResetZoom: function () {
+          lastZoom = null;
+          return {
+            xaxis: {
+              min: moment().subtract(8, "hours").valueOf(),
+              max: moment().valueOf(),
+            },
+          };
+        },
+        zoomed: function (_, value) {
+          lastZoom = [value.xaxis.min, value.xaxis.max];
+        },
       },
     },
-  },
-  xaxis: {
-    type: "datetime",
-    datetimeUTC: false,
-  },
-  stroke: {
-    width: 1.9,
-  },
-};
+    xaxis: {
+      type: "datetime",
+      datetimeUTC: false,
+      min: moment().subtract(8, "hours").valueOf(),
+      max: moment().valueOf(),
+    },
+    stroke: {
+      width: 1.9,
+    },
+  };
+});
 
 onMounted(async () => {
   cargado.value = false;
@@ -100,48 +132,60 @@ onMounted(async () => {
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
     });
-    chartRef.value.chart.updateSeries(registrosT.value);
-    if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+    if (chartRef.value && chartRef.value.chart) {
+      chartRef.value.chart.updateSeries(registrosT.value);
+      if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+    }
   });
   socket.on("variable_26_actualizada", (data) => {
     registrosT.value[1].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
     });
-    chartRef.value.chart.updateSeries(registrosT.value);
-    if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+    if (chartRef.value && chartRef.value.chart) {
+      chartRef.value.chart.updateSeries(registrosT.value);
+      if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+    }
   });
   socket.on("variable_27_actualizada", (data) => {
     registrosT.value[2].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
     });
-    chartRef.value.chart.updateSeries(registrosT.value);
-    if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+    if (chartRef.value && chartRef.value.chart) {
+      chartRef.value.chart.updateSeries(registrosT.value);
+      if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+    }
   });
   socket.on("variable_28_actualizada", (data) => {
     registrosT.value[3].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
     });
-    chartRef.value.chart.updateSeries(registrosT.value);
-    if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+    if (chartRef.value && chartRef.value.chart) {
+      chartRef.value.chart.updateSeries(registrosT.value);
+      if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+    }
   });
   socket.on("variable_29_actualizada", (data) => {
     registrosT.value[4].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
     });
-    chartRef.value.chart.updateSeries(registrosT.value);
-    if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+    if (chartRef.value && chartRef.value.chart) {
+      chartRef.value.chart.updateSeries(registrosT.value);
+      if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+    }
   });
   socket.on("variable_30_actualizada", (data) => {
     registrosT.value[5].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
     });
-    chartRef.value.chart.updateSeries(registrosT.value);
-    if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+    if (chartRef.value && chartRef.value.chart) {
+      chartRef.value.chart.updateSeries(registrosT.value);
+      if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+    }
   });
   cargado.value = true;
 });
