@@ -8,7 +8,11 @@
           </v-row>
           <v-row>
             <v-col v-if="cargado">
-              <StatusChart :data="series" :options="chartOptions" />
+              <StatusChart
+                ref="chartRef"
+                :data="series"
+                :options="chartOptions"
+              />
             </v-col>
             <v-col v-else class="d-flex justify-center align-center">
               <v-progress-circular
@@ -31,6 +35,10 @@ export default {
 import axios from "axios";
 import { onMounted, ref } from "vue";
 import StatusChart from "../../graficas-modelo/apexChartJs/StatusChart.vue";
+import moment from "moment";
+import es from "apexcharts/dist/locales/es.json";
+import io from "socket.io-client";
+
 async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
   return (
     await axios.get(
@@ -49,6 +57,9 @@ function range(rangeName, array) {
   }
   return returnt;
 }
+const socket = io("http://localhost:3000");
+const chartRef = ref(null);
+var lastZoom = null;
 let cargado = ref(false);
 let agP1 = [];
 let agP2 = [];
@@ -61,6 +72,17 @@ let chartOptions = {
   chart: {
     height: "100%",
     type: "rangeBar",
+    locales: [es],
+    defaultLocale: "es",
+    animations: { enabled: false },
+    events: {
+      beforeResetZoom: function () {
+        lastZoom = null;
+      },
+      zoomed: function (_, value) {
+        lastZoom = [value.xaxis.min, value.xaxis.max];
+      },
+    },
   },
   plotOptions: {
     bar: {
@@ -103,6 +125,64 @@ onMounted(async () => {
     },
     { name: "Agitador P5", data: range("Agitador P5", agP5.registros) },
   ];
+  socket.on("variable_2_actualizada", (data) => {
+    series.value[0].data.push({
+      x: "Agitador P1",
+      y: [
+        new Date(moment(data.x).toISOString()).getTime(),
+        new Date(moment(data.x).toISOString()).getTime() + 1000,
+      ],
+    });
+    chartRef.value.chart.updateSeries(series.value);
+    if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+  });
+  socket.on("variable_3_actualizada", (data) => {
+    series.value[1].data.push({
+      x: "Agitador P2",
+      y: [
+        new Date(moment(data.x).toISOString()).getTime(),
+        new Date(moment(data.x).toISOString()).getTime() + 1000,
+      ],
+    });
+
+    chartRef.value.chart.updateSeries(series.value);
+    if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+  });
+  socket.on("variable_4_actualizada", (data) => {
+    series.value[2].data.push({
+      x: "Agitador P3",
+      y: [
+        new Date(moment(data.x).toISOString()).getTime(),
+        new Date(moment(data.x).toISOString()).getTime() + 1000,
+      ],
+    });
+
+    chartRef.value.chart.updateSeries(series.value);
+    if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+  });
+  socket.on("variable_5_actualizada", (data) => {
+    series.value[3].data.push({
+      x: "Agitador P4",
+      y: [
+        new Date(moment(data.x).toISOString()).getTime(),
+        new Date(moment(data.x).toISOString()).getTime() + 1000,
+      ],
+    });
+
+    chartRef.value.chart.updateSeries(series.value);
+    if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+  });
+  socket.on("variable_6_actualizada", (data) => {
+    series.value[4].data.push({
+      x: "Agitador P5",
+      y: [
+        new Date(moment(data.x).toISOString()).getTime(),
+        new Date(moment(data.x).toISOString()).getTime() + 1000,
+      ],
+    });
+    chartRef.value.chart.updateSeries(series.value);
+    if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+  });
   cargado.value = true;
 });
 </script>
