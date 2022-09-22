@@ -160,29 +160,29 @@ onMounted(async () => {
   manual = await obtenerDatosVariable("8h", "registros", "rangos", 15);
 
   series.value = [
-    { name: "Activo", data: range("Activo", activo.registros) },
-    { name: "Auto", data: range("Auto", auto.registros) },
-    { name: "Manual", data: range("Manual", manual.registros) },
+    { name: "Activo", data: range("Estado", activo.registros) },
+    { name: "Auto", data: range("Estado", auto.registros) },
+    { name: "Manual", data: range("Estado", manual.registros) },
     {
       name: "Falta de consenso",
-      data: range("Falta de consenso", faltaConsenso.registros),
+      data: range("Estado", faltaConsenso.registros),
     },
-    { name: "Alarma", data: range("Alarma", alarma.registros) },
+    { name: "Alarma", data: range("Estado", alarma.registros) },
   ];
   socket.on("variable_1_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 0, "Activo");
+    updateValue(series, data, chartRef, lastZoom, 0, "Estado");
   });
   socket.on("variable_12_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 1, "Auto");
+    updateValue(series, data, chartRef, lastZoom, 1, "Estado");
   });
   socket.on("variable_13_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 2, "Manual");
+    updateValue(series, data, chartRef, lastZoom, 2, "Estado");
   });
   socket.on("variable_14_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 0, "Falta de consenso");
+    updateValue(series, data, chartRef, lastZoom, 3, "Estado");
   });
   socket.on("variable_15_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 0, "Alarma");
+    updateValue(series, data, chartRef, lastZoom, 4, "Estado");
   });
   cargado.value = true;
 });
