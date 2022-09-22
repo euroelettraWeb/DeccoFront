@@ -66,7 +66,6 @@ let chartOptions = computed(() => {
         beforeZoom: (e, { xaxis }) => {
           if (moment(xaxis.min).isBefore(moment().subtract(8, "hours"))) {
             return {
-              // dont zoom out any further
               xaxis: {
                 min: new Date(moment().subtract(8, "hours")).getTime(),
                 max: xaxis.max,
@@ -75,7 +74,6 @@ let chartOptions = computed(() => {
           }
           if (moment(xaxis.max).isAfter(moment())) {
             return {
-              // dont zoom out any further
               xaxis: {
                 min: xaxis.min,
                 max: moment(),
@@ -108,8 +106,6 @@ let chartOptions = computed(() => {
     },
   };
 });
-console.log(moment().subtract(8, "hours"));
-console.log();
 onMounted(async () => {
   cargado.value = false;
   tAgua = await obtenerDatosVariable("8h", "registros", "sinfiltro", 25);
