@@ -8,10 +8,12 @@
           </v-row>
           <v-row>
             <v-col v-if="cargado">
-              <StatusChart
+              <ApexChart
                 ref="chartRef"
-                :data="series"
+                type="rangeBar"
+                height="300"
                 :options="chartOptions"
+                :series="series"
               />
             </v-col>
             <v-col v-else class="d-flex justify-center align-center">
@@ -34,11 +36,10 @@ export default {
 </script>
 <script setup>
 import axios from "axios";
-import { onMounted, ref } from "vue";
-import StatusChart from "../../graficas-modelo/apexChartJs/StatusChart.vue";
+import { onMounted, ref, computed } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
-
+import moment from "moment";
 async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
   return (
     await axios.get(
@@ -63,32 +64,22 @@ function range(array) {
   return todos;
 }
 function newValue(newArray, value) {
-  console.log(
-    new Date(newArray[0].data[newArray[0].data.length - 1].y[1]),
-    new Date(newArray[1].data[newArray[1].data.length - 1].y[1])
-  );
   let ultimoValor =
     newArray[0].data[newArray[0].data.length - 1].y[1] <
     newArray[1].data[newArray[1].data.length - 1].y[1]
       ? 0
       : 1;
-  console.log(ultimoValor);
   if (value.y == ultimoValor) {
-    console.log("Añadir");
-    // console.log(ultimoValor);
-    // console.log(newArray[ultimoValor].data[newArray[1].data.length - 1].y[1]);
     newArray[value.y].data[newArray[value.y].data.length - 1].y[1] = new Date(
       value.x
     ).getTime();
   } else {
     if (value.y == 0) {
-      console.log("Apagado");
       newArray[0].data.push({
         x: "Estado",
         y: [new Date(value.x).getTime(), new Date(value.x).getTime() + 1000],
       });
     } else {
-      console.log("Encendido");
       newArray[1].data.push({
         x: "Estado",
         y: [new Date(value.x).getTime(), new Date(value.x).getTime() + 1000],
@@ -104,54 +95,75 @@ let cargado = ref(false);
 let activo = {};
 let series = ref([]);
 
-let chartOptions = {
-  chart: {
-    height: 100,
-    type: "rangeBar",
-    locales: [es],
-    defaultLocale: "es",
-    animations: { enabled: false },
-    events: {
-      beforeResetZoom: function () {
-        lastZoom = null;
+let chartOptions = computed(() => {
+  return {
+    chart: {
+      height: 100,
+      type: "rangeBar",
+      locales: [es],
+      defaultLocale: "es",
+      animations: { enabled: false },
+      events: {
+        beforeZoom: (e, { xaxis }) => {
+          if (moment(xaxis.min).isBefore(moment().subtract(8, "hours"))) {
+            return {
+              xaxis: {
+                min: new Date(moment().subtract(8, "hours")).getTime(),
+                max: xaxis.max,
+              },
+            };
+          }
+          if (moment(xaxis.max).isAfter(moment())) {
+            return {
+              xaxis: {
+                min: xaxis.min,
+                max: moment(),
+              },
+            };
+          }
+        },
+        beforeResetZoom: function () {
+          lastZoom = null;
+          return {
+            xaxis: {
+              min: new Date(moment().subtract(8, "hours")).getTime(),
+              max: moment(),
+            },
+          };
+        },
+        zoomed: function (_, value) {
+          lastZoom = [value.xaxis.min, value.xaxis.max];
+        },
       },
-      zoomed: function (_, value) {
-        lastZoom = [value.xaxis.min, value.xaxis.max];
+    },
+    plotOptions: {
+      bar: {
+        horizontal: true,
+        rangeBarGroupRows: true,
       },
     },
-  },
-  plotOptions: {
-    bar: {
-      horizontal: true,
-      rangeBarGroupRows: true,
+    xaxis: {
+      type: "datetime",
+      datetimeUTC: false,
+      min: new Date(moment().subtract(8, "hours")).getTime(),
+      max: moment(),
     },
-  },
-  xaxis: {
-    type: "datetime",
-    datetimeUTC: false,
-  },
-  tooltip: {
-    x: {
-      format: "dd MMM yyyy hh:mm:ss",
+    tooltip: {
+      x: {
+        format: "dd MMM yyyy hh:mm:ss",
+      },
     },
-  },
-};
+  };
+});
 onMounted(async () => {
   cargado.value = false;
   activo = await obtenerDatosVariable("8h", "registros", "rangosTodos", 1);
   series.value = range(activo.registros);
   socket.on("variable_1_actualizada", (data) => {
-    // series.value[data.y].data.push({
-    //   x: "Estado",
-    //   y: [
-    //     new Date(moment(data.x).toISOString()).getTime(),
-    //     new Date(moment(data.x).toISOString()).getTime() + 1000,
-    //   ],
-    // });
-    // console.log(chartRef.value.chart);
-    // console.log(series.value);
-    chartRef.value.chart.updateSeries(newValue(series.value, data));
-    if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+    if (chartRef.value) {
+      chartRef.value.updateSeries(newValue(series.value, data));
+      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+    }
   });
   cargado.value = true;
 });
