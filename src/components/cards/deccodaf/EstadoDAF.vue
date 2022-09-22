@@ -8,10 +8,12 @@
           </v-row>
           <v-row>
             <v-col v-if="cargado">
-              <StatusChart
+              <ApexChart
                 ref="chartRef"
-                :data="series"
+                type="rangeBar"
+                height="300"
                 :options="chartOptions"
+                :series="series"
               />
             </v-col>
             <v-col v-else class="d-flex justify-center align-center">
@@ -34,11 +36,10 @@ export default {
 </script>
 <script setup>
 import axios from "axios";
-import { onMounted, ref } from "vue";
-import StatusChart from "../../graficas-modelo/apexChartJs/StatusChart.vue";
-import moment from "moment";
+import { onMounted, ref, computed } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
+import moment from "moment";
 
 async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
   return (
@@ -59,6 +60,20 @@ function range(rangeName, array) {
   return returnt;
 }
 
+function updateValue(series, data, chartRef, lastZoom, index, nameX) {
+  series.value[index].data.push({
+    x: nameX,
+    y: [
+      new Date(moment(data.x).toISOString()).getTime(),
+      new Date(moment(data.x).toISOString()).getTime() + 1000,
+    ],
+  });
+  if (chartRef.value) {
+    chartRef.value.updateSeries(series.value);
+    if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+  }
+}
+
 const socket = io("http://localhost:3000");
 const chartRef = ref(null);
 var lastZoom = null;
@@ -70,37 +85,72 @@ let faltaConsenso = [];
 let alarma = [];
 
 let series = ref([]);
-let chartOptions = {
-  chart: {
-    height: 100,
-    type: "rangeBar",
-    locales: [es],
-    defaultLocale: "es",
-    animations: { enabled: false },
-    events: {
-      beforeResetZoom: function () {
-        lastZoom = null;
+let chartOptions = computed(() => {
+  return {
+    chart: {
+      height: "100%",
+      type: "rangeBar",
+      locales: [es],
+      defaultLocale: "es",
+      animations: { enabled: false },
+      events: {
+        beforeZoom: (e, { xaxis }) => {
+          if (moment(xaxis.min).isBefore(moment().subtract(8, "hours"))) {
+            return {
+              xaxis: {
+                min: new Date(moment().subtract(8, "hours")).getTime(),
+                max: xaxis.max,
+              },
+            };
+          }
+          if (moment(xaxis.max).isAfter(moment())) {
+            return {
+              xaxis: {
+                min: xaxis.min,
+                max: moment(),
+              },
+            };
+          }
+        },
+        beforeResetZoom: function () {
+          lastZoom = null;
+          return {
+            xaxis: {
+              min: new Date(moment().subtract(8, "hours")).getTime(),
+              max: moment(),
+            },
+          };
+        },
+        zoomed: function (_, value) {
+          lastZoom = [value.xaxis.min, value.xaxis.max];
+        },
       },
-      zoomed: function (_, value) {
-        lastZoom = [value.xaxis.min, value.xaxis.max];
+    },
+    plotOptions: {
+      bar: {
+        horizontal: true,
+        barHeight: "100%",
       },
     },
-  },
-  plotOptions: {
-    bar: {
-      horizontal: true,
+    xaxis: {
+      type: "datetime",
+      datetimeUTC: false,
+      min: new Date(moment().subtract(8, "hours")).getTime(),
+      max: moment(),
     },
-  },
-  xaxis: {
-    type: "datetime",
-    datetimeUTC: true,
-  },
-  tooltip: {
-    x: {
-      format: "dd MMM yyyy hh:mm:ss",
+    yaxis: {
+      minWidth: 1,
+      axisTicks: {
+        width: 1,
+      },
     },
-  },
-};
+    tooltip: {
+      x: {
+        format: "dd MMM yyyy hh:mm:ss",
+      },
+    },
+  };
+});
 onMounted(async () => {
   cargado.value = false;
   activo = await obtenerDatosVariable("8h", "registros", "rangos", 1);
@@ -120,62 +170,19 @@ onMounted(async () => {
     { name: "Alarma", data: range("Alarma", alarma.registros) },
   ];
   socket.on("variable_1_actualizada", (data) => {
-    series.value[0].data.push({
-      x: "Activo",
-      y: [
-        new Date(moment(data.x).toISOString()).getTime(),
-        new Date(moment(data.x).toISOString()).getTime() + 1000,
-      ],
-    });
-    chartRef.value.chart.updateSeries(series.value);
-    if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+    updateValue(series, data, chartRef, lastZoom, 0, "Activo");
   });
   socket.on("variable_12_actualizada", (data) => {
-    series.value[1].data.push({
-      x: "Auto",
-      y: [
-        new Date(moment(data.x).toISOString()).getTime(),
-        new Date(moment(data.x).toISOString()).getTime() + 1000,
-      ],
-    });
-
-    chartRef.value.chart.updateSeries(series.value);
-    if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+    updateValue(series, data, chartRef, lastZoom, 1, "Auto");
   });
   socket.on("variable_13_actualizada", (data) => {
-    series.value[2].data.push({
-      x: "Manual",
-      y: [
-        new Date(moment(data.x).toISOString()).getTime(),
-        new Date(moment(data.x).toISOString()).getTime() + 1000,
-      ],
-    });
-
-    chartRef.value.chart.updateSeries(series.value);
-    if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+    updateValue(series, data, chartRef, lastZoom, 2, "Manual");
   });
   socket.on("variable_14_actualizada", (data) => {
-    series.value[3].data.push({
-      x: "Falta de consenso",
-      y: [
-        new Date(moment(data.x).toISOString()).getTime(),
-        new Date(moment(data.x).toISOString()).getTime() + 1000,
-      ],
-    });
-
-    chartRef.value.chart.updateSeries(series.value);
-    if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+    updateValue(series, data, chartRef, lastZoom, 0, "Falta de consenso");
   });
   socket.on("variable_15_actualizada", (data) => {
-    series.value[4].data.push({
-      x: "Alarma",
-      y: [
-        new Date(moment(data.x).toISOString()).getTime(),
-        new Date(moment(data.x).toISOString()).getTime() + 1000,
-      ],
-    });
-    chartRef.value.chart.updateSeries(series.value);
-    if (lastZoom) chartRef.value.chart.zoomX(lastZoom[0], lastZoom[1]);
+    updateValue(series, data, chartRef, lastZoom, 0, "Alarma");
   });
   cargado.value = true;
 });

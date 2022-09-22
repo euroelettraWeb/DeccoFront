@@ -138,7 +138,6 @@ let chartOptions = computed(() => {
       max: moment(),
     },
     yaxis: {
-      show: false,
       minWidth: 1,
       axisTicks: {
         width: 1,
