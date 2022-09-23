@@ -61,21 +61,39 @@ function range(rangeName, array) {
   return returnt;
 }
 function updateValue(series, data, chartRef, lastZoom, index, nameX) {
-  if (ultimoValor[index]) {
-    if (ultimoValor[index].y != 0) {
-      series.value[data.y].data[series.value[data.y].data.length - 1].y[1] =
-        new Date(data.x).getTime();
+  let start = ultimoValor[index].start;
+  let end = ultimoValor[index].end;
+
+  if (start == null) {
+    if (data.y !== 0) {
+      ultimoValor[index].start = { x: data.x, y: data.y };
     }
   } else {
-    if (data.y != 0) {
-      series.value[index].data.push({
-        x: nameX,
-        y: [new Date(data.x).getTime(), new Date(data.x).getTime() + 1000],
-      });
+    if (data.y == 0) {
+      if (end == null) {
+        series.value[index].data.push({
+          x: nameX,
+          y: [new Date(start.x).getTime(), new Date(data.x).getTime() + 1000],
+        });
+      } else {
+        if (end.y !== 0) {
+          series.value[index].data.push({
+            x: nameX,
+            y: [new Date(start.x).getTime(), new Date(end.x).getTime()],
+          });
+        } else {
+          series.value[index].data[series.value[index].data.length - 1].y[1] =
+            new Date(data.x).getTime();
+        }
+      }
+      ultimoValor[index].start = null;
+      ultimoValor[index].end = null;
+    } else {
+      series.value[index].data[series.value[index].data.length - 1].y[1] =
+        new Date(data.x).getTime();
+      ultimoValor[index].end = { x: data.x, y: data.y };
     }
   }
-  ultimoValor[index].x = data.x;
-  ultimoValor[index].y = data.y;
 
   if (chartRef.value) {
     chartRef.value.updateSeries(series.value);
@@ -187,24 +205,54 @@ onMounted(async () => {
   ];
   ultimoValor = [
     {
-      x: series.value[0].data[series.value[0].data.length - 1].y[1],
-      y: 1,
+      start: {
+        x: series.value[0].data[series.value[0].data.length - 1].y[1],
+        y: 1,
+      },
+      end: {
+        x: series.value[0].data[series.value[0].data.length - 1].y[1],
+        y: 1,
+      },
     },
     {
-      x: series.value[1].data[series.value[1].data.length - 1].y[1],
-      y: 1,
+      start: {
+        x: series.value[1].data[series.value[1].data.length - 1].y[1],
+        y: 1,
+      },
+      end: {
+        x: series.value[1].data[series.value[1].data.length - 1].y[1],
+        y: 1,
+      },
     },
     {
-      x: series.value[2].data[series.value[2].data.length - 1].y[1],
-      y: 1,
+      start: {
+        x: series.value[2].data[series.value[2].data.length - 1].y[1],
+        y: 1,
+      },
+      end: {
+        x: series.value[2].data[series.value[2].data.length - 1].y[1],
+        y: 1,
+      },
     },
     {
-      x: series.value[3].data[series.value[3].data.length - 1].y[1],
-      y: 1,
+      start: {
+        x: series.value[3].data[series.value[3].data.length - 1].y[1],
+        y: 1,
+      },
+      end: {
+        x: series.value[3].data[series.value[3].data.length - 1].y[1],
+        y: 1,
+      },
     },
     {
-      x: series.value[4].data[series.value[4].data.length - 1].y[1],
-      y: 1,
+      start: {
+        x: series.value[4].data[series.value[4].data.length - 1].y[1],
+        y: 1,
+      },
+      end: {
+        x: series.value[4].data[series.value[4].data.length - 1].y[1],
+        y: 1,
+      },
     },
   ];
   socket.on("variable_20_actualizada", (data) => {
