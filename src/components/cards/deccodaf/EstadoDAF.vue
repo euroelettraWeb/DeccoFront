@@ -61,13 +61,22 @@ function range(rangeName, array) {
 }
 
 function updateValue(series, data, chartRef, lastZoom, index, nameX) {
-  series.value[index].data.push({
-    x: nameX,
-    y: [
-      new Date(moment(data.x).toISOString()).getTime(),
-      new Date(moment(data.x).toISOString()).getTime() + 1000,
-    ],
-  });
+  if (ultimoValor[index]) {
+    if (ultimoValor[index].y != 0) {
+      series.value[data.y].data[series.value[data.y].data.length - 1].y[1] =
+        new Date(data.x).getTime();
+    }
+  } else {
+    if (data.y != 0) {
+      series.value[index].data.push({
+        x: nameX,
+        y: [new Date(data.x).getTime(), new Date(data.x).getTime() + 1000],
+      });
+    }
+  }
+  ultimoValor[index].x = data.x;
+  ultimoValor[index].y = data.y;
+
   if (chartRef.value) {
     chartRef.value.updateSeries(series.value);
     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
@@ -85,6 +94,14 @@ let faltaConsenso = [];
 let alarma = [];
 
 let series = ref([]);
+let ultimoValor = [
+  { x: 1, y: 1 },
+  { x: 1, y: 1 },
+  { x: 1, y: 1 },
+  { x: 1, y: 1 },
+  { x: 1, y: 1 },
+];
+
 let chartOptions = computed(() => {
   return {
     chart: {
@@ -168,6 +185,28 @@ onMounted(async () => {
       data: range("Falta de consenso", faltaConsenso.registros),
     },
     { name: "Alarma", data: range("Alarma", alarma.registros) },
+  ];
+  ultimoValor = [
+    {
+      x: series.value[0].data[series.value[0].data.length - 1].y[1],
+      y: 1,
+    },
+    {
+      x: series.value[1].data[series.value[1].data.length - 1].y[1],
+      y: 1,
+    },
+    {
+      x: series.value[2].data[series.value[2].data.length - 1].y[1],
+      y: 1,
+    },
+    {
+      x: series.value[3].data[series.value[3].data.length - 1].y[1],
+      y: 1,
+    },
+    {
+      x: series.value[4].data[series.value[4].data.length - 1].y[1],
+      y: 1,
+    },
   ];
   socket.on("variable_1_actualizada", (data) => {
     updateValue(series, data, chartRef, lastZoom, 0, "Activo");
