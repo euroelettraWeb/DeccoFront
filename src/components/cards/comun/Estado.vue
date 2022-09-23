@@ -47,19 +47,23 @@ async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
     )
   ).data;
 }
-function range(array) {
+function range(array, names) {
   let todos = [];
   let apagado = [];
   let encendido = [];
-  for (let index = 0; index < array.length; index++) {
-    const element = array[index];
-    let startR = new Date(element.x).getTime();
-    let endR = new Date(element.y).getTime();
-    let obj = { x: "Estado", y: [startR, endR] };
-    if (element.z == 0) apagado.push(obj);
-    else encendido.push(obj);
+  console.log(array, names);
+  for (let i = 0; i < names.length; i++) {
+    for (let index = 0; index < array[i].length; index++) {
+      const element = array[i][index];
+      let startR = new Date(element.x).getTime();
+      let endR = new Date(element.y).getTime();
+      let obj = { x: names[i], y: [startR, endR] };
+      if (element.z == 0) apagado.push(obj);
+      else encendido.push(obj);
+    }
   }
-  todos.push({ name: "Apagado", data: apagado });
+
+  // todos.push({ name: "Apagado", data: apagado });
   todos.push({ name: "Encedido", data: encendido });
   return todos;
 }
@@ -75,13 +79,13 @@ function newValue(newArray, value) {
     ).getTime();
   } else {
     if (value.y == 0) {
-      newArray[0].data.push({
-        x: "Estado",
-        y: [new Date(value.x).getTime(), new Date(value.x).getTime() + 1000],
-      });
+      // newArray[0].data.push({
+      //   x: names[0],
+      //   y: [new Date(value.x).getTime(), new Date(value.x).getTime() + 1000],
+      // });
     } else {
       newArray[1].data.push({
-        x: "Estado",
+        x: names[1],
         y: [new Date(value.x).getTime(), new Date(value.x).getTime() + 1000],
       });
     }
@@ -93,8 +97,12 @@ const chartRef = ref(null);
 var lastZoom = null;
 let cargado = ref(false);
 let activo = {};
+let auto = [];
+let manual = [];
+let faltaConsenso = [];
+let alarma = [];
 let series = ref([]);
-
+let names = ["Activo", "Auto", "Manual", "Falta de consenso", "Alarma"];
 let chartOptions = computed(() => {
   return {
     chart: {
@@ -139,7 +147,6 @@ let chartOptions = computed(() => {
     plotOptions: {
       bar: {
         horizontal: true,
-        rangeBarGroupRows: true,
       },
     },
     xaxis: {
@@ -157,8 +164,25 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
+  let estados = [];
   activo = await obtenerDatosVariable("8h", "registros", "rangosTodos", 1);
-  series.value = range(activo.registros);
+  alarma = await obtenerDatosVariable("8h", "registros", "rangosTodos", 12);
+  auto = await obtenerDatosVariable("8h", "registros", "rangosTodos", 13);
+  faltaConsenso = await obtenerDatosVariable(
+    "8h",
+    "registros",
+    "rangosTodos",
+    14
+  );
+  manual = await obtenerDatosVariable("8h", "registros", "rangosTodos", 15);
+  estados = [
+    activo.registros,
+    auto.registros,
+    manual.registros,
+    faltaConsenso.registros,
+    alarma.registros,
+  ];
+  series.value = range(estados, names);
   socket.on("variable_1_actualizada", (data) => {
     if (chartRef.value) {
       chartRef.value.updateSeries(newValue(series.value, data));
