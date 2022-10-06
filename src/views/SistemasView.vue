@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="fill-height">
-    <v-row justify="center">
+    <!-- <v-row justify="center">
       <v-col class="text-center fill-height">
         <v-card elevation="2">
           <v-card-title>DECCODAF</v-card-title>
@@ -33,6 +33,12 @@
           >
         </v-card>
       </v-col>
+    </v-row> -->
+    <v-row justify="center">
+      <v-col>
+        <CardCliente title="Linea 4" />
+      </v-col>
+      <v-col><CardCliente title="Linea 5" /> </v-col>
     </v-row>
   </v-container>
 </template>
@@ -45,5 +51,6 @@ export default {
 
 <script setup>
 import { routerStore } from "../stores/index";
+import CardCliente from "../components/cards/comun/CardCliente.vue";
 const router = routerStore();
 </script>
