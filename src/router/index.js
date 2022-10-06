@@ -3,6 +3,9 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import SistemasView from "../views/SistemasView.vue";
+import VariablesView from "../views/VariablesView.vue";
+import HistoricoView from "../views/HistoricoView.vue";
+import InformeView from "../views/InformeView.vue";
 import DECCODAFPrincipal from "../views/Deccodaf/Principal.vue";
 import DECCODOSPrincipal from "../views/Deccodos/Principal.vue";
 import DECCOWASHERPrincipal from "../views/Deccowasher/Principal.vue";
@@ -29,6 +32,24 @@ const routes = [
     name: "Sistemas",
     component: SistemasView,
     meta: { title: "DECCO - Sistemas" },
+  },
+  {
+    path: "/variables",
+    name: "Variables",
+    component: VariablesView,
+    meta: { title: "DECCO - Variables" },
+  },
+  {
+    path: "/historico",
+    name: "Historico",
+    component: HistoricoView,
+    meta: { title: "DECCO - Historico" },
+  },
+  {
+    path: "/informe",
+    name: "Informe",
+    component: InformeView,
+    meta: { title: "DECCO - Informe" },
   },
   {
     path: "/sistemas/deccodaf",

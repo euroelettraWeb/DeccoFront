@@ -71,6 +71,24 @@
             </v-list-item>
           </v-list-group>
         </v-list-group>
+        <v-list-item link @click="router.menu('historico')">
+          <v-list-item-icon>
+            <v-icon>mdi-account</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>Historico</v-list-item-title>
+        </v-list-item>
+        <v-list-item link @click="router.menu('informe')">
+          <v-list-item-icon>
+            <v-icon>mdi-account</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>Informe</v-list-item-title>
+        </v-list-item>
+        <v-list-item link @click="router.menu('variables')">
+          <v-list-item-icon>
+            <v-icon>mdi-account</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>Variables</v-list-item-title>
+        </v-list-item>
         <v-list-item v-if="!usuarioLogeado" link @click="router.menu('login')">
           <v-list-item-icon>
             <v-icon>mdi-account</v-icon>
@@ -88,7 +106,6 @@ export default {
 };
 </script>
 <script setup>
-import { reactive } from "vue";
 import { userStore, routerStore, navStore } from "../../stores/index";
 import { storeToRefs } from "pinia";
 const { usuario } = storeToRefs(userStore());
