@@ -12,6 +12,7 @@ import DECCOWASHERPrincipal from "../views/Deccowasher/Principal.vue";
 import DECCOCONTROLPrincipal from "../views/Deccocontrol/Principal.vue";
 import DECCODAFTotales from "../views/Deccodaf/Totales.vue";
 import DECCODAFEstado from "../views/Deccodaf/Estado.vue";
+import DeccodafRegistros from "../views/Deccodaf/Registros.vue";
 Vue.use(VueRouter);
 
 const routes = [
@@ -58,7 +59,7 @@ const routes = [
     meta: { title: "DECCO - DECCODAF" },
   },
   {
-    path: "/sistemas/deccodaf/marchaparo",
+    path: "/sistemas/deccodaf/estado",
     name: "DECCODAF - MarchaParo",
     component: DECCODAFEstado,
     meta: { title: "DECCO - DECCODAF" },
@@ -72,7 +73,7 @@ const routes = [
   {
     path: "/sistemas/deccodaf/registros",
     name: "DECCODAF - Registros",
-    component: DECCODAFPrincipal,
+    component: DeccodafRegistros,
     meta: { title: "DECCO - DECCODAF" },
   },
   {
@@ -82,7 +83,7 @@ const routes = [
     meta: { title: "DECCO - DECCODOS" },
   },
   {
-    path: "/sistemas/deccodos/marchaparo",
+    path: "/sistemas/deccodos/estado",
     name: "DECCODOS - MarchaParo",
     component: DECCODOSPrincipal,
     meta: { title: "DECCO - DECCODOS" },
@@ -106,7 +107,7 @@ const routes = [
     meta: { title: "DECCO - DECCOWASHER" },
   },
   {
-    path: "/sistemas/deccowasher/marchaparo",
+    path: "/sistemas/deccowasher/estado",
     name: "DECCOWASHER - MarchaParo",
     component: DECCOWASHERPrincipal,
     meta: { title: "DECCO - DECCOWASHER" },
