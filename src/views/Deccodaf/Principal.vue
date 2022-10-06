@@ -1,5 +1,5 @@
 <template>
-  <v-container> <Estado /> <Marcha /> <FrutaProcesada /> </v-container>
+  <v-container> <Estado /> <FrutaProcesada /> </v-container>
 </template>
 
 <script>
