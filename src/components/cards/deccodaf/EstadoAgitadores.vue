@@ -60,13 +60,40 @@ function range(rangeName, array) {
 }
 
 function updateValue(series, data, chartRef, lastZoom, index, nameX) {
-  series.value[index].data.push({
-    x: nameX,
-    y: [
-      new Date(moment(data.x).toISOString()).getTime(),
-      new Date(moment(data.x).toISOString()).getTime() + 1000,
-    ],
-  });
+  let start = ultimoValor[index].start;
+  let end = ultimoValor[index].end;
+
+  if (start == null) {
+    if (data.y !== 0) {
+      ultimoValor[index].start = { x: data.x, y: data.y };
+    }
+  } else {
+    if (data.y == 0) {
+      if (end == null) {
+        series.value[index].data.push({
+          x: nameX,
+          y: [new Date(start.x).getTime(), new Date(data.x).getTime() + 1000],
+        });
+      } else {
+        if (end.y !== 0) {
+          series.value[index].data.push({
+            x: nameX,
+            y: [new Date(start.x).getTime(), new Date(end.x).getTime()],
+          });
+        } else {
+          series.value[index].data[series.value[index].data.length - 1].y[1] =
+            new Date(data.x).getTime();
+        }
+      }
+      ultimoValor[index].start = null;
+      ultimoValor[index].end = null;
+    } else {
+      series.value[index].data[series.value[index].data.length - 1].y[1] =
+        new Date(data.x).getTime();
+      ultimoValor[index].end = { x: data.x, y: data.y };
+    }
+  }
+
   if (chartRef.value) {
     chartRef.value.updateSeries(series.value);
     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
@@ -83,6 +110,13 @@ let agP3 = [];
 let agP4 = [];
 let agP5 = [];
 let series = ref([]);
+let ultimoValor = [
+  { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
+  { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
+  { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
+  { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
+  { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
+];
 
 let chartOptions = computed(() => {
   return {
@@ -167,6 +201,58 @@ onMounted(async () => {
       data: range("Agitador P4", agP4.registros),
     },
     { name: "Agitador P5", data: range("Agitador P5", agP5.registros) },
+  ];
+  ultimoValor = [
+    {
+      start: {
+        x: series.value[0].data[series.value[0].data.length - 1].y[1],
+        y: 1,
+      },
+      end: {
+        x: series.value[0].data[series.value[0].data.length - 1].y[1],
+        y: 1,
+      },
+    },
+    {
+      start: {
+        x: series.value[1].data[series.value[1].data.length - 1].y[1],
+        y: 1,
+      },
+      end: {
+        x: series.value[1].data[series.value[1].data.length - 1].y[1],
+        y: 1,
+      },
+    },
+    {
+      start: {
+        x: series.value[2].data[series.value[2].data.length - 1].y[1],
+        y: 1,
+      },
+      end: {
+        x: series.value[2].data[series.value[2].data.length - 1].y[1],
+        y: 1,
+      },
+    },
+    {
+      start: {
+        x: series.value[3].data[series.value[3].data.length - 1].y[1],
+        y: 1,
+      },
+      end: {
+        x: series.value[3].data[series.value[3].data.length - 1].y[1],
+        y: 1,
+      },
+    },
+    {
+      start: {
+        x: series.value[4].data[series.value[4].data.length - 1].y[1],
+        y: 1,
+      },
+      end: {
+        x: series.value[4].data[series.value[4].data.length - 1].y[1],
+        y: 1,
+      },
+    },
   ];
   socket.on("variable_2_actualizada", (data) => {
     updateValue(series, data, chartRef, lastZoom, 0, "Agitador P1");

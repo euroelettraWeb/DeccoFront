@@ -1,5 +1,5 @@
 <template>
-  <v-container> <Estado /> </v-container>
+  <v-container> <Estado /> <Marcha /> </v-container>
 </template>
 
 <script>
@@ -9,4 +9,5 @@ export default {
 </script>
 <script setup>
 import Estado from "../../components/cards/comun/Estado.vue";
+import Marcha from "../../components/cards/comun/Marcha.vue";
 </script>
