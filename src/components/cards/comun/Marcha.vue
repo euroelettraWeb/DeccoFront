@@ -11,7 +11,7 @@
               <ApexChart
                 ref="chartRef"
                 type="rangeBar"
-                height="300"
+                height="200"
                 :options="chartOptions"
                 :series="series"
               />
@@ -31,7 +31,7 @@
 </template>
 <script>
 export default {
-  name: "EstadoSistema",
+  name: "EstadoMarcha",
 };
 </script>
 <script setup>
@@ -47,6 +47,22 @@ async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
     )
   ).data;
 }
+// function range(array, names) {
+//   let todos = [];
+//   let apagado = [];
+//   let encendido = [];
+//   for (let index = 0; index < array[0].length; index++) {
+//     const element = array[0][index];
+//     let startR = new Date(element.x).getTime();
+//     let endR = new Date(element.y).getTime();
+//     let obj = { x: names, y: [startR, endR] };
+//     if (element.z == 0) apagado.push(obj);
+//     else encendido.push(obj);
+//   }
+//   todos.push({ name: "Apagado", data: apagado });
+//   todos.push({ name: "Encedido", data: encendido });
+//   return todos;
+// }
 function range(array, names) {
   let todos = [];
   let apagado = [];
@@ -66,36 +82,6 @@ function range(array, names) {
   todos.push({ name: "Encedido", data: encendido });
   return todos;
 }
-// function newValue(newArray, value, nameI) {
-//   let elemento0 = newArray[0].data.findLast((node) => node.x == names[nameI]);
-//   let elemento1 = newArray[1].data.findLast((node) => node.x == names[nameI]);
-//   let last = moment(elemento0.y[1]).isAfter(elemento1.y[1]) ? 0 : 1;
-//   let index = newArray[last].data.findLastIndex(
-//     (node) => node.x == names[nameI]
-//   );
-//   // console.log("last", last);
-//   // console.log(index);
-//   // console.log(newArray[value.y].data);
-//   // console.log(newArray[value.y].data[index].y[1]);
-//   if (value.y == last) {
-//     // console.log(newArray[value.y].data[index].y[1]);
-//     newArray[value.y].data[index].y[1] = new Date(value.x).getTime();
-//     // console.log(newArray[value.y].data[index]);
-//   } else {
-//     // console.log(newArray[value.y].data[index].y[1]);
-//     let obj = {
-//       x: names[nameI],
-//       y: [
-//         new Date(newArray[value.y].data[index].y[1]).getTime(),
-//         new Date(value.x).getTime(),
-//       ],
-//     };
-//     // newArray[value.y].data.push(obj);
-//     // console.log(newArray[value.y].data.push(obj));
-//   }
-//   return newArray;
-// }
-
 function newValue(series, value, chartRef, lastZoom, nameI) {
   let elemento0 = series.value[0].data.findLast(
     (node) => node.x == names[nameI]
@@ -131,7 +117,7 @@ function newValue(series, value, chartRef, lastZoom, nameI) {
       series.value[0].data.push({
         x: names[nameI],
         y: [
-          new Date(series.value[0].data[index].y[1]).getTime(),
+          new Date(series.value[value.y].data[index].y[1]).getTime(),
           new Date(value.x).getTime(),
         ],
       });
@@ -160,19 +146,13 @@ function newValue(series, value, chartRef, lastZoom, nameI) {
     }
   }
 }
-
 const socket = io("http://localhost:3000");
 const chartRef = ref(null);
 var lastZoom = null;
 let cargado = ref(false);
 let activo = {};
-let auto = [];
-let manual = [];
-let faltaConsenso = [];
-let alarma = [];
 let series = ref([]);
-let names = ["Activo", "Auto", "Manual", "Falta de consenso", "Alarma"];
-let nameEstado = ["Apagado", "Encendido"];
+let names = ["Activo"];
 let chartOptions = computed(() => {
   return {
     chart: {
@@ -237,37 +217,10 @@ onMounted(async () => {
   cargado.value = false;
   let estados = [];
   activo = await obtenerDatosVariable("8h", "registros", "rangosTodos", 1);
-  alarma = await obtenerDatosVariable("8h", "registros", "rangosTodos", 12);
-  auto = await obtenerDatosVariable("8h", "registros", "rangosTodos", 13);
-  faltaConsenso = await obtenerDatosVariable(
-    "8h",
-    "registros",
-    "rangosTodos",
-    14
-  );
-  manual = await obtenerDatosVariable("8h", "registros", "rangosTodos", 15);
-  estados = [
-    activo.registros,
-    auto.registros,
-    manual.registros,
-    faltaConsenso.registros,
-    alarma.registros,
-  ];
-  series.value = range(estados, names); //TODO Obtener nombre de la variable
+  estados = [activo.registros, activo.registros];
+  series.value = range(estados, names);
   socket.on("variable_1_actualizada", (data) => {
     newValue(series, data, chartRef, lastZoom, 0);
-  });
-  socket.on("variable_12_actualizada", (data) => {
-    newValue(series, data, chartRef, lastZoom, 4);
-  });
-  socket.on("variable_13_actualizada", (data) => {
-    newValue(series, data, chartRef, lastZoom, 1);
-  });
-  socket.on("variable_14_actualizada", (data) => {
-    newValue(series, data, chartRef, lastZoom, 3);
-  });
-  socket.on("variable_15_actualizada", (data) => {
-    newValue(series, data, chartRef, lastZoom, 2);
   });
   cargado.value = true;
 });
