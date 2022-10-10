@@ -12,7 +12,13 @@ import DECCOWASHERPrincipal from "../views/Deccowasher/Principal.vue";
 import DECCOCONTROLPrincipal from "../views/Deccocontrol/Principal.vue";
 import DECCODAFTotales from "../views/Deccodaf/Totales.vue";
 import DECCODAFEstado from "../views/Deccodaf/Estado.vue";
-import DeccodafRegistros from "../views/Deccodaf/Registros.vue";
+import DECCODARegistros from "../views/Deccodaf/Registros.vue";
+import DECCODOSFTotales from "../views/Deccodos/Totales.vue";
+import DECCODOSEstado from "../views/Deccodos/Estado.vue";
+import DECCODOSRegistros from "../views/Deccodos/Registros.vue";
+import DECCOWSTotales from "../views/Deccowasher/Totales.vue";
+import DECCOWSEstado from "../views/Deccowasher/Estado.vue";
+import DECCOWSRegistros from "../views/Deccowasher/Registros.vue";
 Vue.use(VueRouter);
 
 const routes = [
@@ -73,7 +79,7 @@ const routes = [
   {
     path: "/sistemas/deccodaf/registros",
     name: "DECCODAF - Registros",
-    component: DeccodafRegistros,
+    component: DECCODARegistros,
     meta: { title: "DECCO - DECCODAF" },
   },
   {
@@ -85,19 +91,19 @@ const routes = [
   {
     path: "/sistemas/deccodos/estado",
     name: "DECCODOS - MarchaParo",
-    component: DECCODOSPrincipal,
+    component: DECCODOSEstado,
     meta: { title: "DECCO - DECCODOS" },
   },
   {
     path: "/sistemas/deccodos/consumo",
     name: "DECCODOS -Consumo",
-    component: DECCODOSPrincipal,
+    component: DECCODOSFTotales,
     meta: { title: "DECCO - DECCODOS" },
   },
   {
     path: "/sistemas/deccodos/registros",
     name: "DECCODOS -Registros",
-    component: DECCODOSPrincipal,
+    component: DECCODOSRegistros,
     meta: { title: "DECCO - DECCODOS" },
   },
   {
@@ -109,19 +115,19 @@ const routes = [
   {
     path: "/sistemas/deccowasher/estado",
     name: "DECCOWASHER - MarchaParo",
-    component: DECCOWASHERPrincipal,
+    component: DECCOWSEstado,
     meta: { title: "DECCO - DECCOWASHER" },
   },
   {
     path: "/sistemas/deccowasher/consumo",
     name: "DECCOWASHER - Consumo",
-    component: DECCOWASHERPrincipal,
+    component: DECCOWSTotales,
     meta: { title: "DECCO - DECCOWASHER" },
   },
   {
     path: "/sistemas/deccowasher/registros",
     name: "DECCOWASHER - Registros",
-    component: DECCOWASHERPrincipal,
+    component: DECCOWSRegistros,
     meta: { title: "DECCO - DECCOWASHER" },
   },
   {

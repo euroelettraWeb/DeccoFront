@@ -1,19 +1,13 @@
 <template>
-  <v-container>
-    <v-row justify="center">
-      <v-col>
-        <CardCliente title="L4" />
-      </v-col>
-      <v-col><CardCliente title="L5" /> </v-col>
-    </v-row>
-  </v-container>
+  <v-container> <Estado /> <FrutaProcesada /> </v-container>
 </template>
 
 <script>
 export default {
-  name: "DECCOWASHERPrincipal",
+  name: "DECCODOSPrincipal",
 };
 </script>
 <script setup>
-import CardCliente from "../../components/cards/comun/CardCliente.vue";
+import Estado from "../../components/cards/deccodos/Estado.vue";
+import FrutaProcesada from "../../components/cards/deccodos/FrutaProcesada.vue";
 </script>

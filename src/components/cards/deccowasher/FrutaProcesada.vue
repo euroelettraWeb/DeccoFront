@@ -43,11 +43,10 @@ function formatData(name, arrays) {
   return { name: name, data: data };
 }
 let cargado = ref(false);
-let tP1 = {};
-let tP2 = {};
-let tP3 = {};
-let tp4 = {};
-let tp5 = {};
+let cajaPCiclo = {};
+let kgPCaja = {};
+let tCajas = {};
+let tKg = {};
 
 const chartRef = ref(null);
 let registrosT = ref([]);
@@ -104,17 +103,17 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  tP1 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 16);
-  tP2 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 17);
-  tP3 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 18);
-  tp4 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 19);
+  cajaPCiclo = await obtenerDatosVariable("8h", "registros", "sinfiltro", 66);
+  kgPCaja = await obtenerDatosVariable("8h", "registros", "sinfiltro", 67);
+  tCajas = await obtenerDatosVariable("8h", "registros", "sinfiltro", 68);
+  tKg = await obtenerDatosVariable("8h", "registros", "sinfiltro", 69);
   registrosT.value = [
-    formatData("Producto 1", tP1.registros),
-    formatData("Producto 2", tP2.registros),
-    formatData("Producto 3", tP3.registros),
-    formatData("Producto 4", tp4.registros),
+    formatData("Caja por ciclo", cajaPCiclo.registros),
+    formatData("Peso por caja", kgPCaja.registros),
+    formatData("Total cajas", tCajas.registros),
+    formatData("Total kilos", tKg.registros),
   ];
-  socket.on("variable_16_actualizada", (data) => {
+  socket.on("variable_66_actualizada", (data) => {
     registrosT.value[0].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
@@ -124,7 +123,7 @@ onMounted(async () => {
       if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
     }
   });
-  socket.on("variable_17_actualizada", (data) => {
+  socket.on("variable_67_actualizada", (data) => {
     registrosT.value[1].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
@@ -134,7 +133,7 @@ onMounted(async () => {
       if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
     }
   });
-  socket.on("variable_18_actualizada", (data) => {
+  socket.on("variable_68_actualizada", (data) => {
     registrosT.value[2].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
@@ -144,7 +143,7 @@ onMounted(async () => {
       if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
     }
   });
-  socket.on("variable_19_actualizada", (data) => {
+  socket.on("variable_69_actualizada", (data) => {
     registrosT.value[3].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,

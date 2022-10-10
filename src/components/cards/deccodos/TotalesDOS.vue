@@ -18,7 +18,7 @@
 </template>
 <script>
 export default {
-  name: "DosisFungicida",
+  name: "TotalesDOS",
 };
 </script>
 <script setup>
@@ -46,11 +46,14 @@ function formatData(name, arrays) {
   return { name: name, data: data };
 }
 let cargado = ref(false);
-let tP1 = {};
-let tP2 = {};
-let tP3 = {};
-let tp4 = {};
-let tp5 = {};
+let tA2D = {};
+let tA3D = {};
+let tB1 = {};
+let tB2 = {};
+let tB3 = {};
+let tB4 = {};
+let tB5 = {};
+let tCera = {};
 
 const chartRef = ref(null);
 let registrosT = ref([]);
@@ -107,19 +110,26 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  tP1 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 7);
-  tP2 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 8);
-  tP3 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 9);
-  tp4 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 10);
-  tp5 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 11);
+  tA2D = await obtenerDatosVariable("8h", "registros", "sinfiltro", 49);
+  tA3D = await obtenerDatosVariable("8h", "registros", "sinfiltro", 50);
+  tB1 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 51);
+  tB2 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 52);
+  tB3 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 53);
+  tB4 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 54);
+  tB5 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 55);
+  tCera = await obtenerDatosVariable("8h", "registros", "sinfiltro", 56);
   registrosT.value = [
-    formatData("Producto 1", tP1.registros),
-    formatData("Producto 2", tP2.registros),
-    formatData("Producto 3", tP3.registros),
-    formatData("Producto 4", tp4.registros),
-    formatData("Producto 5", tp5.registros),
+    formatData("Aplicador 2", tA2D.registros),
+    formatData("Aplicador 3", tA3D.registros),
+    formatData("Bomba 1", tB1.registros),
+    formatData("Bomba 2", tB2.registros),
+    formatData("Bomba 3", tB3.registros),
+    formatData("Bomba 4", tB4.registros),
+    formatData("Bomba 5", tB5.registros),
+    formatData("Cera", tCera.registros),
   ];
-  socket.on("variable_7_actualizada", (data) => {
+
+  socket.on("variable_49_actualizada", (data) => {
     registrosT.value[0].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
@@ -129,7 +139,7 @@ onMounted(async () => {
       if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
     }
   });
-  socket.on("variable_8_actualizada", (data) => {
+  socket.on("variable_50_actualizada", (data) => {
     registrosT.value[1].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
@@ -139,7 +149,7 @@ onMounted(async () => {
       if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
     }
   });
-  socket.on("variable_9_actualizada", (data) => {
+  socket.on("variable_51_actualizada", (data) => {
     registrosT.value[2].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
@@ -149,7 +159,7 @@ onMounted(async () => {
       if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
     }
   });
-  socket.on("variable_10_actualizada", (data) => {
+  socket.on("variable_52_actualizada", (data) => {
     registrosT.value[3].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
@@ -159,8 +169,38 @@ onMounted(async () => {
       if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
     }
   });
-  socket.on("variable_11_actualizada", (data) => {
+  socket.on("variable_53_actualizada", (data) => {
     registrosT.value[4].data.push({
+      x: new Date(moment(data.x).toISOString()).getTime(),
+      y: data.y,
+    });
+    if (chartRef.value) {
+      chartRef.value.updateSeries(registrosT.value);
+      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+    }
+  });
+  socket.on("variable_54_actualizada", (data) => {
+    registrosT.value[5].data.push({
+      x: new Date(moment(data.x).toISOString()).getTime(),
+      y: data.y,
+    });
+    if (chartRef.value) {
+      chartRef.value.updateSeries(registrosT.value);
+      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+    }
+  });
+  socket.on("variable_55_actualizada", (data) => {
+    registrosT.value[6].data.push({
+      x: new Date(moment(data.x).toISOString()).getTime(),
+      y: data.y,
+    });
+    if (chartRef.value) {
+      chartRef.value.updateSeries(registrosT.value);
+      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+    }
+  });
+  socket.on("variable_56_actualizada", (data) => {
+    registrosT.value[7].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
     });

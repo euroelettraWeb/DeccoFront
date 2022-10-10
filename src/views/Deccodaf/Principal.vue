@@ -1,5 +1,7 @@
 <template>
-  <v-container> <Estado /> <FrutaProcesada /> </v-container>
+  <v-container>
+    <Estado /> <ConsumoDosisFungicida /> <FrutaProcesada />
+  </v-container>
 </template>
 
 <script>
@@ -8,7 +10,7 @@ export default {
 };
 </script>
 <script setup>
-import Estado from "../../components/cards/comun/Estado.vue";
-import Marcha from "../../components/cards/comun/Marcha.vue";
-import FrutaProcesada from "../../components/cards/comun/FrutaProcesada.vue";
+import Estado from "../../components/cards/deccodaf/Estado.vue";
+import FrutaProcesada from "../../components/cards/deccodaf/FrutaProcesada.vue";
+import ConsumoDosisFungicida from "../../components/cards/deccodaf/ConsumoDosisFungicida.vue";
 </script>

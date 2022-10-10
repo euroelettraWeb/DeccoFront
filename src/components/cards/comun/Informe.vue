@@ -1,10 +1,6 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col>
-        <Informe />
-      </v-col>
-    </v-row>
+    <TablaInforme />
   </v-container>
 </template>
 <script>
@@ -13,5 +9,5 @@ export default {
 };
 </script>
 <script setup>
-import Informe from "../components/cards/comun/Informe.vue";
+import TablaInforme from "../../tablas/comun/TablaInforme.vue";
 </script>

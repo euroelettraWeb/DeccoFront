@@ -18,7 +18,7 @@
 </template>
 <script>
 export default {
-  name: "DosisFungicida",
+  name: "TotalesWasher",
 };
 </script>
 <script setup>
@@ -46,11 +46,9 @@ function formatData(name, arrays) {
   return { name: name, data: data };
 }
 let cargado = ref(false);
-let tP1 = {};
-let tP2 = {};
-let tP3 = {};
-let tp4 = {};
-let tp5 = {};
+let tAgua = {};
+let tDes = {};
+let tJabon = {};
 
 const chartRef = ref(null);
 let registrosT = ref([]);
@@ -107,19 +105,17 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  tP1 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 7);
-  tP2 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 8);
-  tP3 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 9);
-  tp4 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 10);
-  tp5 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 11);
+  tAgua = await obtenerDatosVariable("8h", "registros", "sinfiltro", 70);
+  tDes = await obtenerDatosVariable("8h", "registros", "sinfiltro", 71);
+  tJabon = await obtenerDatosVariable("8h", "registros", "sinfiltro", 72);
+
   registrosT.value = [
-    formatData("Producto 1", tP1.registros),
-    formatData("Producto 2", tP2.registros),
-    formatData("Producto 3", tP3.registros),
-    formatData("Producto 4", tp4.registros),
-    formatData("Producto 5", tp5.registros),
+    formatData("Agua", tAgua.registros),
+    formatData("Desinfectante", tDes.registros),
+    formatData("Jabon", tJabon.registros),
   ];
-  socket.on("variable_7_actualizada", (data) => {
+
+  socket.on("variable_70_actualizada", (data) => {
     registrosT.value[0].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
@@ -129,7 +125,7 @@ onMounted(async () => {
       if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
     }
   });
-  socket.on("variable_8_actualizada", (data) => {
+  socket.on("variable_71_actualizada", (data) => {
     registrosT.value[1].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
@@ -139,7 +135,7 @@ onMounted(async () => {
       if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
     }
   });
-  socket.on("variable_9_actualizada", (data) => {
+  socket.on("variable_72_actualizada", (data) => {
     registrosT.value[2].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
@@ -149,26 +145,7 @@ onMounted(async () => {
       if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
     }
   });
-  socket.on("variable_10_actualizada", (data) => {
-    registrosT.value[3].data.push({
-      x: new Date(moment(data.x).toISOString()).getTime(),
-      y: data.y,
-    });
-    if (chartRef.value) {
-      chartRef.value.updateSeries(registrosT.value);
-      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-    }
-  });
-  socket.on("variable_11_actualizada", (data) => {
-    registrosT.value[4].data.push({
-      x: new Date(moment(data.x).toISOString()).getTime(),
-      y: data.y,
-    });
-    if (chartRef.value) {
-      chartRef.value.updateSeries(registrosT.value);
-      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-    }
-  });
+
   cargado.value = true;
 });
 </script>

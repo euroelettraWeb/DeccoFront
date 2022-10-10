@@ -151,6 +151,7 @@ export const routerStore = defineStore("router", {
             ) {
             }
           });
+          break;
         case "deccodaf:Principal":
           router.push(this.routes.deccodaf).catch((failure) => {
             if (
