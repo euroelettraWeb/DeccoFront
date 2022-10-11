@@ -11,7 +11,7 @@
               <ApexChart
                 ref="chartRef"
                 type="rangeBar"
-                height="300"
+                height="200"
                 :options="chartOptions"
                 :series="series"
               />
@@ -31,7 +31,7 @@
 </template>
 <script>
 export default {
-  name: "EstadoSistema",
+  name: "EstadoMarcha",
 };
 </script>
 <script setup>
@@ -47,46 +47,104 @@ async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
     )
   ).data;
 }
-function range(array) {
+// function range(array, names) {
+//   let todos = [];
+//   let apagado = [];
+//   let encendido = [];
+//   for (let index = 0; index < array[0].length; index++) {
+//     const element = array[0][index];
+//     let startR = new Date(element.x).getTime();
+//     let endR = new Date(element.y).getTime();
+//     let obj = { x: names, y: [startR, endR] };
+//     if (element.z == 0) apagado.push(obj);
+//     else encendido.push(obj);
+//   }
+//   todos.push({ name: "Apagado", data: apagado });
+//   todos.push({ name: "Encedido", data: encendido });
+//   return todos;
+// }
+function range(array, names) {
   let todos = [];
   let apagado = [];
   let encendido = [];
-  for (let index = 0; index < array.length; index++) {
-    const element = array[index];
-    let startR = new Date(element.x).getTime();
-    let endR = new Date(element.y).getTime();
-    let obj = { x: "Estado", y: [startR, endR] };
-    if (element.z == 0) apagado.push(obj);
-    else encendido.push(obj);
+  for (let i = 0; i < names.length; i++) {
+    for (let index = 0; index < array[i].length; index++) {
+      const element = array[i][index];
+      let startR = new Date(element.x).getTime();
+      let endR = new Date(element.y).getTime();
+      let obj = { x: names[i], y: [startR, endR] };
+      if (element.z == 0) apagado.push(obj);
+      else encendido.push(obj);
+    }
   }
+
   todos.push({ name: "Apagado", data: apagado });
   todos.push({ name: "Encedido", data: encendido });
   return todos;
 }
-function newValue(newArray, value) {
-  let ultimoValor =
-    newArray[0].data[newArray[0].data.length - 1].y[1] <
-    newArray[1].data[newArray[1].data.length - 1].y[1]
-      ? 0
-      : 1;
-  if (value.y == ultimoValor) {
-    newArray[value.y].data[newArray[value.y].data.length - 1].y[1] = new Date(
-      value.x
-    ).getTime();
-  } else {
-    if (value.y == 0) {
-      newArray[0].data.push({
-        x: "Estado",
-        y: [new Date(value.x).getTime(), new Date(value.x).getTime() + 1000],
-      });
+function newValue(series, value, chartRef, lastZoom, nameI) {
+  let elemento0 = series.value[0].data.findLast(
+    (node) => node.x == names[nameI]
+  );
+  let elemento1 = series.value[1].data.findLast(
+    (node) => node.x == names[nameI]
+  );
+  if (elemento0 && elemento1) {
+    let last = moment(elemento0.y[1]).isBefore(moment(elemento1.y[1])) ? 0 : 1;
+
+    if (value.y == last) {
+      let index = series.value[value.y].data.findLastIndex(
+        (node) => node.x == names[nameI]
+      );
+      series.value[value.y].data[index].y[1] = new Date(value.x).getTime();
     } else {
-      newArray[1].data.push({
-        x: "Estado",
-        y: [new Date(value.x).getTime(), new Date(value.x).getTime() + 1000],
+      let index = series.value[1].data.findLastIndex(
+        (node) => node.x == names[nameI]
+      );
+      series.value[value.y].data.push({
+        x: names[nameI],
+        y: [
+          new Date(series.value[value.y].data[index].y[1]).getTime(),
+          new Date(value.x).getTime(),
+        ],
       });
     }
+  } else {
+    if (elemento0) {
+      let index = series.value[0].data.findLastIndex(
+        (node) => node.x == names[nameI]
+      );
+      series.value[0].data.push({
+        x: names[nameI],
+        y: [
+          new Date(series.value[value.y].data[index].y[1]).getTime(),
+          new Date(value.x).getTime(),
+        ],
+      });
+    } else {
+      if (elemento1) {
+        let index = series.value[1].data.findLastIndex(
+          (node) => node.x == names[nameI]
+        );
+        series.value[1].data.push({
+          x: names[nameI],
+          y: [
+            new Date(series.value[1].data[index].y[1]).getTime(),
+            new Date(value.x).getTime(),
+          ],
+        });
+      } else {
+        series.value[value.y].data.push({
+          x: names[nameI],
+          y: [new Date(value.x).getTime(), new Date(value.x).getTime() + 500],
+        });
+      }
+    }
+    if (chartRef.value) {
+      chartRef.value.updateSeries(series.value);
+      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+    }
   }
-  return newArray;
 }
 const socket = io("http://localhost:3000");
 const chartRef = ref(null);
@@ -94,7 +152,7 @@ var lastZoom = null;
 let cargado = ref(false);
 let activo = {};
 let series = ref([]);
-
+let names = ["Activo"];
 let chartOptions = computed(() => {
   return {
     chart: {
@@ -157,13 +215,12 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
+  let estados = [];
   activo = await obtenerDatosVariable("8h", "registros", "rangosTodos", 1);
-  series.value = range(activo.registros);
+  estados = [activo.registros, activo.registros];
+  series.value = range(estados, names);
   socket.on("variable_1_actualizada", (data) => {
-    if (chartRef.value) {
-      chartRef.value.updateSeries(newValue(series.value, data));
-      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-    }
+    newValue(series, data, chartRef, lastZoom, 0);
   });
   cargado.value = true;
 });

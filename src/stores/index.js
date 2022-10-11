@@ -53,16 +53,19 @@ export const routerStore = defineStore("router", {
       login: "/login",
       error: "/error",
       sistemas: "/sistemas",
+      variables: "/variables",
+      historico: "/historico",
+      informe: "/informe",
       deccodaf: "/sistemas/deccodaf",
-      deccodafMarchaParo: "/sistemas/deccodaf/marchaparo",
+      deccodafMarchaParo: "/sistemas/deccodaf/estado",
       deccodafConsumo: "/sistemas/deccodaf/consumo",
       deccodafRegistros: "/sistemas/deccodaf/registros",
       deccodos: "/sistemas/deccodos/",
-      deccodosMarchaParo: "/sistemas/deccodos/marchaparo",
+      deccodosMarchaParo: "/sistemas/deccodos/estado",
       deccodosConsumo: "/sistemas/deccodos/consumo",
       deccodosRegistros: "/sistemas/deccodos/registros",
       deccowasher: "/sistemas/deccowasher",
-      deccowasherMarchaParo: "/sistemas/deccowasher/marchaparo",
+      deccowasherMarchaParo: "/sistemas/deccowasher/estado",
       deccowasherConsumo: "/sistemas/deccowasher/consumo",
       deccowasherRegistros: "/sistemas/deccowasher/registros",
       deccocontrol: "/sistemas/deccocontrol",
@@ -80,6 +83,12 @@ export const routerStore = defineStore("router", {
     },
     sistemas: async function ({}) {
       router.push(this.routes.sistemas);
+    },
+    historico: async function ({}) {
+      router.push(this.routes.historico);
+    },
+    informe: async function ({}) {
+      router.push(this.routes.informe);
     },
     deccodaf: async function ({}) {
       router.push(this.routes.deccodaf);
@@ -113,6 +122,30 @@ export const routerStore = defineStore("router", {
           break;
         case "sistemas":
           router.push(this.routes.sistemas).catch((failure) => {
+            if (
+              isNavigationFailure(failure, NavigationFailureType.duplicated)
+            ) {
+            }
+          });
+          break;
+        case "variables":
+          router.push(this.routes.variables).catch((failure) => {
+            if (
+              isNavigationFailure(failure, NavigationFailureType.duplicated)
+            ) {
+            }
+          });
+          break;
+        case "historico":
+          router.push(this.routes.historico).catch((failure) => {
+            if (
+              isNavigationFailure(failure, NavigationFailureType.duplicated)
+            ) {
+            }
+          });
+          break;
+        case "informe":
+          router.push(this.routes.informe).catch((failure) => {
             if (
               isNavigationFailure(failure, NavigationFailureType.duplicated)
             ) {

@@ -1,10 +1,13 @@
 <template>
-  <v-container> </v-container>
+  <v-container> <Estado /> <FrutaProcesada /> </v-container>
 </template>
 
 <script>
 export default {
-  name: "DECCOWASHERPrincipal",
+  name: "DECCODOSPrincipal",
 };
 </script>
-<script setup></script>
+<script setup>
+import Estado from "../../components/cards/deccodos/Estado.vue";
+import FrutaProcesada from "../../components/cards/deccodos/FrutaProcesada.vue";
+</script>

@@ -40,37 +40,55 @@
     </v-list-item>
     <v-list nav>
       <v-list-item-group active-class="red--text text--accent-4">
-        <v-list-group>
+        <v-list-group v-for="item in items" :key="item.linea">
           <template #activator>
             <v-list-item-icon>
               <v-icon>mdi-apps</v-icon>
             </v-list-item-icon>
             <v-list-item @click="router.menu('sistemas')">
-              <v-list-item-title>Sistemas</v-list-item-title>
+              <v-list-item-title>{{ item.linea }}</v-list-item-title>
             </v-list-item>
           </template>
 
           <v-list-group
-            v-for="item in items"
-            :key="item.title"
-            v-model="item.active"
-            :prepend-icon="item.action"
+            v-for="child in item.sistemas"
+            :key="child.title"
+            v-model="child.active"
+            :prepend-icon="child.action"
             no-action
             sub-group
           >
             <template #activator>
               <v-list-item-content>
-                <v-list-item-title> {{ item.title }} </v-list-item-title>
+                <v-list-item-title> {{ child.title }} </v-list-item-title>
               </v-list-item-content>
             </template>
 
-            <v-list-item v-for="child in item.items" :key="child.title">
-              <v-list-item-content @click="router.menu(child.route)">
-                <v-list-item-title> {{ child.title }} </v-list-item-title>
+            <v-list-item v-for="child2 in child.items" :key="child2.title">
+              <v-list-item-content @click="router.menu(child2.route)">
+                <v-list-item-title> {{ child2.title }} </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list-group>
         </v-list-group>
+        <v-list-item link @click="router.menu('historico')">
+          <v-list-item-icon>
+            <v-icon>mdi-account</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>Historico</v-list-item-title>
+        </v-list-item>
+        <v-list-item link @click="router.menu('informe')">
+          <v-list-item-icon>
+            <v-icon>mdi-account</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>Informe</v-list-item-title>
+        </v-list-item>
+        <v-list-item link @click="router.menu('variables')">
+          <v-list-item-icon>
+            <v-icon>mdi-account</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>Variables</v-list-item-title>
+        </v-list-item>
         <v-list-item v-if="!usuarioLogeado" link @click="router.menu('login')">
           <v-list-item-icon>
             <v-icon>mdi-account</v-icon>
@@ -88,7 +106,6 @@ export default {
 };
 </script>
 <script setup>
-import { reactive } from "vue";
 import { userStore, routerStore, navStore } from "../../stores/index";
 import { storeToRefs } from "pinia";
 const { usuario } = storeToRefs(userStore());
@@ -98,39 +115,84 @@ const router = routerStore();
 
 const items = [
   {
-    action: "mdi-flask",
-    items: [
-      { title: "Principal", route: "deccodaf:Principal" },
-      { title: "Estado", route: "deccodaf:MarchaParo" },
-      { title: "Consumo", route: "deccodaf:Consumo" },
-      { title: "Registros", route: "deccodaf:Registros" },
+    linea: "Linea 4",
+    sistemas: [
+      {
+        action: "mdi-flask",
+        items: [
+          { title: "Principal", route: "deccodaf:Principal" },
+          { title: "Estado", route: "deccodaf:MarchaParo" },
+          { title: "Consumo", route: "deccodaf:Consumo" },
+          { title: "Registros", route: "deccodaf:Registros" },
+        ],
+        title: "DECCODAF",
+      },
+      {
+        action: "mdi-numeric-2",
+        items: [
+          { title: "Principal", route: "deccodos:Principal" },
+          { title: "Estado", route: "deccodos:MarchaParo" },
+          { title: "Consumo", route: "deccodos:Consumo" },
+          { title: "Registros", route: "deccodos:Registros" },
+        ],
+        title: "DECCODOS",
+      },
+      {
+        action: "mdi-hand-water",
+        items: [
+          { title: "Principal", route: "deccowasher:Principal" },
+          { title: "Estado", route: "deccowasher:MarchaParo" },
+          { title: "Consumo", route: "deccowasher:Consumo" },
+          { title: "Registros", route: "deccowasher:Registros" },
+        ],
+        title: "DECCOWASHER",
+      },
+      {
+        action: "mdi-snowflake",
+        items: [{ title: "Principal", route: "deccocontrol:Principal" }],
+        title: "DECCOCONTROL",
+      },
     ],
-    title: "DECCODAF",
   },
   {
-    action: "mdi-numeric-2",
-    items: [
-      { title: "Principal", route: "deccodos:Principal" },
-      { title: "Estado", route: "deccodos:MarchaParo" },
-      { title: "Consumo", route: "deccodos:Consumo" },
-      { title: "Registros", route: "deccodos:Registros" },
+    linea: "Linea 5",
+    sistemas: [
+      {
+        action: "mdi-flask",
+        items: [
+          { title: "Principal", route: "deccodaf:Principal" },
+          { title: "Estado", route: "deccodaf:MarchaParo" },
+          { title: "Consumo", route: "deccodaf:Consumo" },
+          { title: "Registros", route: "deccodaf:Registros" },
+        ],
+        title: "DECCODAF",
+      },
+      {
+        action: "mdi-numeric-2",
+        items: [
+          { title: "Principal", route: "deccodos:Principal" },
+          { title: "Estado", route: "deccodos:MarchaParo" },
+          { title: "Consumo", route: "deccodos:Consumo" },
+          { title: "Registros", route: "deccodos:Registros" },
+        ],
+        title: "DECCODOS",
+      },
+      {
+        action: "mdi-hand-water",
+        items: [
+          { title: "Principal", route: "deccowasher:Principal" },
+          { title: "Estado", route: "deccowasher:MarchaParo" },
+          { title: "Consumo", route: "deccowasher:Consumo" },
+          { title: "Registros", route: "deccowasher:Registros" },
+        ],
+        title: "DECCOWASHER",
+      },
+      {
+        action: "mdi-snowflake",
+        items: [{ title: "Principal", route: "deccocontrol:Principal" }],
+        title: "DECCOCONTROL",
+      },
     ],
-    title: "DECCODOS",
-  },
-  {
-    action: "mdi-hand-water",
-    items: [
-      { title: "Principal", route: "deccowasher:Principal" },
-      { title: "Estado", route: "deccowasher:MarchaParo" },
-      { title: "Consumo", route: "deccowasher:Consumo" },
-      { title: "Registros", route: "deccowasher:Registros" },
-    ],
-    title: "DECCOWASHER",
-  },
-  {
-    action: "mdi-snowflake",
-    items: [{ title: "Principal", route: "deccocontrol:Principal" }],
-    title: "DECCOCONTROL",
   },
 ];
 const clients = ["Cliente 1"];
