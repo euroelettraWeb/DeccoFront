@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col>
-        <div></div>
+        <div><HistoricoCard /></div>
       </v-col>
     </v-row>
   </v-container>
@@ -10,6 +10,8 @@
 <script>
 export default {
   name: "HistoricoView",
-  setup() {},
 };
+</script>
+<script setup>
+import HistoricoCard from "../components/cards/comun/HistoricoCard.vue";
 </script>
