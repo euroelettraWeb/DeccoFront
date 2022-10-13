@@ -20,7 +20,9 @@
               </template>
 
               <v-list-item v-for="child in item.items" :key="child.title">
-                <v-list-item-content @click="router.menu(child.route)">
+                <v-list-item-content
+                  @click="router.menu(child.route, props.id, props.linea)"
+                >
                   <v-list-item-title> {{ child.title }} </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -34,14 +36,18 @@
 
 <script>
 export default {
-  name: "SistemasView",
+  name: "CardLineas",
 };
 </script>
 
 <script setup>
 import { routerStore } from "../../../stores/index";
 const router = routerStore();
-const props = defineProps({ title: { type: String, default: "" } });
+const props = defineProps({
+  title: { type: String, default: "" },
+  id: { type: Number, default: 1 },
+  linea: { type: Number, default: 1 },
+});
 
 let items = [
   {
@@ -50,7 +56,7 @@ let items = [
       { title: "Principal", route: "deccodaf:Principal" },
       { title: "Estado", route: "deccodaf:MarchaParo" },
       { title: "Consumo", route: "deccodaf:Consumo" },
-      { title: "Registros", route: "deccodaf:Registros" },
+      // { title: "Registros", route: "deccodaf:Registros" },
     ],
     title: "DECCODAF",
   },
@@ -60,7 +66,7 @@ let items = [
       { title: "Principal", route: "deccodos:Principal" },
       { title: "Estado", route: "deccodos:MarchaParo" },
       { title: "Consumo", route: "deccodos:Consumo" },
-      { title: "Registros", route: "deccodos:Registros" },
+      // { title: "Registros", route: "deccodos:Registros" },
     ],
     title: "DECCODOS",
   },
@@ -70,7 +76,7 @@ let items = [
       { title: "Principal", route: "deccowasher:Principal" },
       { title: "Estado", route: "deccowasher:MarchaParo" },
       { title: "Consumo", route: "deccowasher:Consumo" },
-      { title: "Registros", route: "deccowasher:Registros" },
+      // { title: "Registros", route: "deccowasher:Registros" },
     ],
     title: "DECCOWASHER",
   },

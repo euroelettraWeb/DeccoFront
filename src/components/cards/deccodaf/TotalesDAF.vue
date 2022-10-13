@@ -2,15 +2,24 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-card>
-          <ApexChart
-            v-if="cargado"
-            ref="chartRef"
-            height="350"
-            type="line"
-            :options="chartOptions"
-            :series="registrosT"
-          ></ApexChart>
+        <v-card
+          ><v-row>
+            <v-col>
+              <v-card-title> Consumo total de Productos y Agua</v-card-title>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <ApexChart
+                v-if="cargado"
+                ref="chartRef"
+                height="350"
+                type="line"
+                :options="chartOptions"
+                :series="registrosT"
+              />
+            </v-col>
+          </v-row>
         </v-card>
       </v-col>
     </v-row>

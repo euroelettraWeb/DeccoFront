@@ -31,7 +31,7 @@
     </v-row>
     <v-row>
       <v-col cols="12" class="text-center">
-        <v-btn x-large color="success" elevation="4" to="/sistemas">
+        <v-btn x-large color="success" elevation="4" to="/cliente">
           Seleccionar Sistema
         </v-btn>
       </v-col>

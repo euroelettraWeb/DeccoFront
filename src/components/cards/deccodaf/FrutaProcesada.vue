@@ -1,18 +1,30 @@
 <template>
-  <v-container
-    ><v-card>
-      <ApexChart
-        v-if="cargado"
-        ref="chartRef"
-        height="350"
-        type="line"
-        :options="chartOptions"
-        :series="registrosT"
-      ></ApexChart
-    ></v-card>
+  <v-container>
+    <v-row>
+      <v-col>
+        <v-card
+          ><v-row>
+            <v-col>
+              <v-card-title> Fruta procesada </v-card-title>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <ApexChart
+                v-if="cargado"
+                ref="chartRef"
+                height="350"
+                type="line"
+                :options="chartOptions"
+                :series="registrosT"
+              />
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
-
 <script>
 export default {
   name: "FrutaProcesada",

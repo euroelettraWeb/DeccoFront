@@ -7,7 +7,7 @@
             <v-col v-if="cargado">
               <v-row>
                 <v-col>
-                  <v-card-title>Total de productos</v-card-title>
+                  <v-card-title>Consumo en este periodo</v-card-title>
                 </v-col>
               </v-row>
               <v-row>

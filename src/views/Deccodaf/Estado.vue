@@ -1,7 +1,7 @@
 <template>
   <v-container>
-    <EstadoNivelGarrafas />
     <EstadoAgitadores />
+    <EstadoNivelGarrafas />
     <TablaNivelesGarrafa />
   </v-container>
 </template>

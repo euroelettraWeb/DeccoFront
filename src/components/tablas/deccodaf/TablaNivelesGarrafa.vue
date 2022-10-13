@@ -7,7 +7,7 @@
             <v-col v-if="cargado">
               <v-row>
                 <v-col>
-                  <v-card-title>Cantidad de activacion</v-card-title>
+                  <v-card-title>Activacion de nivel de garrafas</v-card-title>
                 </v-col>
               </v-row>
               <v-row>

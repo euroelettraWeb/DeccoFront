@@ -45,7 +45,7 @@
             <v-list-item-icon>
               <v-icon>mdi-apps</v-icon>
             </v-list-item-icon>
-            <v-list-item @click="router.menu('sistemas')">
+            <v-list-item @click="router.menu('sistemas', router.id)">
               <v-list-item-title>{{ item.linea }}</v-list-item-title>
             </v-list-item>
           </template>
@@ -65,25 +65,27 @@
             </template>
 
             <v-list-item v-for="child2 in child.items" :key="child2.title">
-              <v-list-item-content @click="router.menu(child2.route)">
+              <v-list-item-content
+                @click="router.menu(child2.route, router.id, router.lineas)"
+              >
                 <v-list-item-title> {{ child2.title }} </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list-group>
         </v-list-group>
-        <v-list-item link @click="router.menu('historico')">
+        <v-list-item link @click="router.menu('historico', router.id)">
           <v-list-item-icon>
             <v-icon>mdi-account</v-icon>
           </v-list-item-icon>
           <v-list-item-title>Historico</v-list-item-title>
         </v-list-item>
-        <v-list-item link @click="router.menu('informe')">
+        <v-list-item link @click="router.menu('informe', router.id)">
           <v-list-item-icon>
             <v-icon>mdi-account</v-icon>
           </v-list-item-icon>
           <v-list-item-title>Informe</v-list-item-title>
         </v-list-item>
-        <v-list-item link @click="router.menu('variables')">
+        <v-list-item link @click="router.menu('variables', router.id)">
           <v-list-item-icon>
             <v-icon>mdi-account</v-icon>
           </v-list-item-icon>
@@ -123,7 +125,7 @@ const items = [
           { title: "Principal", route: "deccodaf:Principal" },
           { title: "Estado", route: "deccodaf:MarchaParo" },
           { title: "Consumo", route: "deccodaf:Consumo" },
-          { title: "Registros", route: "deccodaf:Registros" },
+          // { title: "Registros", route: "deccodaf:Registros" },
         ],
         title: "DECCODAF",
       },
@@ -133,7 +135,7 @@ const items = [
           { title: "Principal", route: "deccodos:Principal" },
           { title: "Estado", route: "deccodos:MarchaParo" },
           { title: "Consumo", route: "deccodos:Consumo" },
-          { title: "Registros", route: "deccodos:Registros" },
+          // { title: "Registros", route: "deccodos:Registros" },
         ],
         title: "DECCODOS",
       },
@@ -143,7 +145,7 @@ const items = [
           { title: "Principal", route: "deccowasher:Principal" },
           { title: "Estado", route: "deccowasher:MarchaParo" },
           { title: "Consumo", route: "deccowasher:Consumo" },
-          { title: "Registros", route: "deccowasher:Registros" },
+          // { title: "Registros", route: "deccowasher:Registros" },
         ],
         title: "DECCOWASHER",
       },
@@ -163,7 +165,7 @@ const items = [
           { title: "Principal", route: "deccodaf:Principal" },
           { title: "Estado", route: "deccodaf:MarchaParo" },
           { title: "Consumo", route: "deccodaf:Consumo" },
-          { title: "Registros", route: "deccodaf:Registros" },
+          // { title: "Registros", route: "deccodaf:Registros" },
         ],
         title: "DECCODAF",
       },
@@ -173,7 +175,7 @@ const items = [
           { title: "Principal", route: "deccodos:Principal" },
           { title: "Estado", route: "deccodos:MarchaParo" },
           { title: "Consumo", route: "deccodos:Consumo" },
-          { title: "Registros", route: "deccodos:Registros" },
+          // { title: "Registros", route: "deccodos:Registros" },
         ],
         title: "DECCODOS",
       },
@@ -183,7 +185,7 @@ const items = [
           { title: "Principal", route: "deccowasher:Principal" },
           { title: "Estado", route: "deccowasher:MarchaParo" },
           { title: "Consumo", route: "deccowasher:Consumo" },
-          { title: "Registros", route: "deccowasher:Registros" },
+          // { title: "Registros", route: "deccowasher:Registros" },
         ],
         title: "DECCOWASHER",
       },
