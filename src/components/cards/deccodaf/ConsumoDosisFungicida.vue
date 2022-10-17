@@ -6,6 +6,7 @@
           ><v-row>
             <v-col>
               <v-card-title> Dosis de fungicida </v-card-title>
+              <v-card-subtitle>Medidas en: {{ medida }}</v-card-subtitle>
             </v-col>
           </v-row>
           <v-row>
@@ -60,6 +61,7 @@ let tP2 = {};
 let tP3 = {};
 let tp4 = {};
 let tp5 = {};
+let medida = ref("");
 
 const chartRef = ref(null);
 let registrosT = ref([]);
@@ -121,6 +123,16 @@ onMounted(async () => {
   tP3 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 9);
   tp4 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 10);
   tp5 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 11);
+  medida.value =
+    tP1.unidadMedida +
+    ", " +
+    tP2.unidadMedida +
+    ", " +
+    tP3.unidadMedida +
+    ", " +
+    tp4.unidadMedida +
+    ", " +
+    tp5.unidadMedida;
   registrosT.value = [
     formatData("Producto 1", tP1.registros),
     formatData("Producto 2", tP2.registros),

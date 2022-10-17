@@ -140,6 +140,7 @@ const { usuario } = storeToRefs(userStore());
 const usuarioLogeado = usuario;
 const { estadoPanelLateral } = storeToRefs(navStore());
 const router = routerStore();
+const { id } = storeToRefs(routerStore());
 
 async function obtenerVariable() {
   return (await axios.get(`${process.env.VUE_APP_RUTA_API}/clientes/all`)).data;
@@ -233,6 +234,7 @@ let select = ref("");
 
 onMounted(async () => {
   clientes = await obtenerVariable();
+  select.value = id;
   let lista = [];
   for (const iterator of clientes) {
     lista.push({ id: iterator.id, nombre: iterator.nombre });

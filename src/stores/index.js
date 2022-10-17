@@ -73,9 +73,14 @@ export const routerStore = defineStore("router", {
       // deccowasherRegistros: "/deccowasher/registros",
       deccocontrol: "DECCOCONTROL",
     },
-    id: 1,
-    lineas: 1,
+    id: ref(1),
+    lineas: ref(1),
   }),
+  getters: {
+    getId(state) {
+      return state.id;
+    },
+  },
   actions: {
     homeRoute: async function ({}) {
       router.push(this.routes.home);

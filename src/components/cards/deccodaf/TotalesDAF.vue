@@ -6,6 +6,7 @@
           ><v-row>
             <v-col>
               <v-card-title> Consumo total de Productos y Agua</v-card-title>
+              <v-card-subtitle>Medidas en: {{ medida }}</v-card-subtitle>
             </v-col>
           </v-row>
           <v-row>
@@ -59,9 +60,9 @@ let tAgua = {};
 let tP1 = {};
 let tP2 = {};
 let tP3 = {};
-let tp4 = {};
-let tp5 = {};
-
+let tP4 = {};
+let tP5 = {};
+let medida = ref("");
 const chartRef = ref(null);
 let registrosT = ref([]);
 var lastZoom = null;
@@ -121,15 +122,25 @@ onMounted(async () => {
   tP1 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 26);
   tP2 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 27);
   tP3 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 28);
-  tp4 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 29);
-  tp5 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 30);
+  tP4 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 29);
+  tP5 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 30);
+  medida.value =
+    tP1.unidadMedida +
+    ", " +
+    tP2.unidadMedida +
+    ", " +
+    tP3.unidadMedida +
+    ", " +
+    tP4.unidadMedida +
+    ", " +
+    tP5.unidadMedida;
   registrosT.value = [
     formatData("Agua", tAgua.registros),
     formatData("Producto 1", tP1.registros),
     formatData("Producto 2", tP2.registros),
     formatData("Producto 3", tP3.registros),
-    formatData("Producto 4", tp4.registros),
-    formatData("Producto 5", tp5.registros),
+    formatData("Producto 4", tP4.registros),
+    formatData("Producto 5", tP5.registros),
   ];
 
   socket.on("variable_25_actualizada", (data) => {

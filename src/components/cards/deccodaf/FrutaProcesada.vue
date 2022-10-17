@@ -6,6 +6,7 @@
           ><v-row>
             <v-col>
               <v-card-title> Fruta procesada </v-card-title>
+              <v-card-subtitle>Medidas en: {{ medida }}</v-card-subtitle>
             </v-col>
           </v-row>
           <v-row>
@@ -59,6 +60,7 @@ let cajaPCiclo = {};
 let kgPCaja = {};
 let tCajas = {};
 let tKg = {};
+let medida = ref("");
 
 const chartRef = ref(null);
 let registrosT = ref([]);
@@ -119,6 +121,16 @@ onMounted(async () => {
   kgPCaja = await obtenerDatosVariable("8h", "registros", "sinfiltro", 17);
   tCajas = await obtenerDatosVariable("8h", "registros", "sinfiltro", 18);
   tKg = await obtenerDatosVariable("8h", "registros", "sinfiltro", 19);
+  medida.value =
+    activo.unidadMedida +
+    ", " +
+    auto.unidadMedida +
+    ", " +
+    manual.unidadMedida +
+    ", " +
+    faltaConsenso.unidadMedida +
+    ", " +
+    alarma.unidadMedida;
   registrosT.value = [
     formatData("Caja por ciclo", cajaPCiclo.registros),
     formatData("Peso por caja", kgPCaja.registros),

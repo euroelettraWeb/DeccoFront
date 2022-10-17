@@ -4,7 +4,12 @@
       <v-col>
         <v-card>
           <v-row
-            ><v-col><v-card-title>Estado</v-card-title></v-col>
+            ><v-col
+              ><v-card-title>Estado</v-card-title
+              ><v-card-subtitle
+                >Medidas en: {{ medida }}</v-card-subtitle
+              ></v-col
+            >
           </v-row>
           <v-row>
             <v-col v-if="cargado">
@@ -170,6 +175,7 @@ let auto = [];
 let manual = [];
 let faltaConsenso = [];
 let alarma = [];
+let medida = ref("");
 let series = ref([]);
 let names = ["Activo", "Auto", "Manual", "Falta de consenso", "Alarma"];
 let nameEstado = ["Apagado", "Encendido"];
@@ -262,6 +268,16 @@ onMounted(async () => {
     faltaConsenso.registros,
     alarma.registros,
   ];
+  medida.value =
+    activo.unidadMedida +
+    ", " +
+    auto.unidadMedida +
+    ", " +
+    manual.unidadMedida +
+    ", " +
+    faltaConsenso.unidadMedida +
+    ", " +
+    alarma.unidadMedida;
   series.value = range(estados, names); //TODO Obtener nombre de la variable
   socket.on("variable_1_actualizada", (data) => {
     newValue(series, data, chartRef, lastZoom, 0);

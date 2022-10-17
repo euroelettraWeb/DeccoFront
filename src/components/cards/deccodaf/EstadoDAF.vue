@@ -4,7 +4,12 @@
       <v-col>
         <v-card>
           <v-row>
-            <v-col><v-card-title>Estados</v-card-title></v-col>
+            <v-col
+              ><v-card-title>Estados</v-card-title
+              ><v-card-subtitle
+                >Medidas en: {{ medida }}</v-card-subtitle
+              ></v-col
+            >
           </v-row>
           <v-row>
             <v-col v-if="cargado">
@@ -110,7 +115,7 @@ let auto = [];
 let manual = [];
 let faltaConsenso = [];
 let alarma = [];
-
+let medida = ref("");
 let series = ref([]);
 let ultimoValor = [
   { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
@@ -194,7 +199,16 @@ onMounted(async () => {
   auto = await obtenerDatosVariable("8h", "registros", "rangos", 13);
   faltaConsenso = await obtenerDatosVariable("8h", "registros", "rangos", 14);
   manual = await obtenerDatosVariable("8h", "registros", "rangos", 15);
-
+  medida.value =
+    activo.unidadMedida +
+    ", " +
+    auto.unidadMedida +
+    ", " +
+    manual.unidadMedida +
+    ", " +
+    faltaConsenso.unidadMedida +
+    ", " +
+    alarma.unidadMedida;
   series.value = [
     { name: "Activo", data: range("Estado", activo.registros) },
     { name: "Auto", data: range("Estado", auto.registros) },

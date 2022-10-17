@@ -4,7 +4,12 @@
       <v-col>
         <v-card>
           <v-row>
-            <v-col><v-card-title>Agitadores</v-card-title></v-col>
+            <v-col
+              ><v-card-title>Agitadores</v-card-title
+              ><v-card-subtitle
+                >Medidas en: {{ medida }}</v-card-subtitle
+              ></v-col
+            >
           </v-row>
           <v-row>
             <v-col v-if="cargado">
@@ -109,6 +114,7 @@ let agP2 = [];
 let agP3 = [];
 let agP4 = [];
 let agP5 = [];
+let medida = ref("");
 let series = ref([]);
 let ultimoValor = [
   { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
@@ -191,7 +197,16 @@ onMounted(async () => {
   agP3 = await obtenerDatosVariable("8h", "registros", "rangos", 4);
   agP4 = await obtenerDatosVariable("8h", "registros", "rangos", 5);
   agP5 = await obtenerDatosVariable("8h", "registros", "rangos", 6);
-
+  medida.value =
+    agP1.unidadMedida +
+    ", " +
+    agP2.unidadMedida +
+    ", " +
+    agP3.unidadMedida +
+    ", " +
+    agP4.unidadMedida +
+    ", " +
+    agP5.unidadMedida;
   series.value = [
     { name: "Agitador P1", data: range("Agitador P1", agP1.registros) },
     { name: "Agitador P2", data: range("Agitador P2", agP2.registros) },
