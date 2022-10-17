@@ -5,6 +5,7 @@
         ><v-card-title>{{ props.cliente }}</v-card-title>
         <v-card-actions>
           <v-btn color="white" text link @click="updatePinia"> Acceder </v-btn>
+          <v-btn color="white" text link @click="editar"> Editar </v-btn>
         </v-card-actions>
       </v-img>
     </v-card>
@@ -27,5 +28,9 @@ const props = defineProps({
 function updatePinia() {
   routerStore().id = props.id;
   routerStore().sistemas(props.id);
+}
+function editar() {
+  routerStore().id = props.id;
+  routerStore().clienteEditar(props.id);
 }
 </script>

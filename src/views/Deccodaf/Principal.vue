@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <h1>DECCODAF</h1>
     <Estado /> <ConsumoDosisFungicida /> <FrutaProcesada />
   </v-container>
 </template>

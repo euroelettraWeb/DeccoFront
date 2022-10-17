@@ -1,5 +1,8 @@
 <template>
-  <v-container> <Estado /> <FrutaProcesada /> </v-container>
+  <v-container>
+    <h1>DECCODOS</h1>
+    <Estado /> <FrutaProcesada />
+  </v-container>
 </template>
 
 <script>

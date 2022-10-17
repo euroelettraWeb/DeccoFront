@@ -4,6 +4,19 @@
       <v-col v-for="item in nombres" :key="item.id">
         <CardCliente :id="item.id" :cliente="item.nombre" :src="item.src" />
       </v-col>
+      <v-col>
+        <v-card class="mx-auto" max-width="200" color="accent">
+          <v-btn
+            class="ma-2"
+            color="accent"
+            x-large
+            height="200"
+            to="/cliente/nuevo"
+          >
+            Nuevo Cliente<v-icon x-large>mdi-plus</v-icon>
+          </v-btn>
+        </v-card>
+      </v-col>
     </v-row>
   </v-container>
 </template>

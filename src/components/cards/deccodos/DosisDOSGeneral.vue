@@ -2,14 +2,14 @@
   <v-container
     ><v-card>
       <v-row>
-        <v-col><v-card-title>Aplicadores</v-card-title></v-col>
+        <v-col><v-card-title>General</v-card-title></v-col>
       </v-row>
       <v-row>
         <v-col v-if="cargado">
           <ApexChart
             ref="chartRef"
             type="rangeBar"
-            height="300"
+            height="100"
             :options="chartOptions"
             :series="series"
           />
@@ -26,7 +26,7 @@
 </template>
 <script>
 export default {
-  name: "DosisDOSModo",
+  name: "DosisDOGeneral",
 };
 </script>
 <script setup>
@@ -105,10 +105,7 @@ let a3D = [];
 let gen = [];
 
 let series = ref([]);
-let ultimoValor = [
-  { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
-  { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
-];
+let ultimoValor = [{ start: { x: 1, y: 1 }, end: { x: 1, y: 1 } }];
 
 let chartOptions = computed(() => {
   return {
@@ -178,13 +175,9 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  a2D = await obtenerDatosVariable("8h", "registros", "rangos", 32);
-  a3D = await obtenerDatosVariable("8h", "registros", "rangos", 33);
+  gen = await obtenerDatosVariable("8h", "registros", "rangos", 34);
 
-  series.value = [
-    { name: "Aplicador 2 discos", data: range("Estado", a2D.registros) },
-    { name: "Aplicador 3 discos", data: range("Estado", a3D.registros) },
-  ];
+  series.value = [{ name: "General", data: range("Estado", gen.registros) }];
   ultimoValor = [
     {
       start: {
@@ -196,22 +189,9 @@ onMounted(async () => {
         y: 1,
       },
     },
-    {
-      start: {
-        x: series.value[1].data[series.value[1].data.length - 1].y[1],
-        y: 1,
-      },
-      end: {
-        x: series.value[1].data[series.value[1].data.length - 1].y[1],
-        y: 1,
-      },
-    },
   ];
-  socket.on("variable_32_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 0, "Estado");
-  });
-  socket.on("variable_33_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 1, "Estado");
+  socket.on("variable_34_actualizada", (data) => {
+    updateValue(series, data, chartRef, lastZoom, 2, "Estado");
   });
 
   cargado.value = true;

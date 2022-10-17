@@ -2,7 +2,9 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
-import clienteView from "../views/ClienteView.vue";
+import ClienteView from "../views/ClienteView.vue";
+import NuevoClienteView from "../views/Clientes/NuevoClienteView.vue";
+import EditarClienteView from "../views/Clientes/EditarClienteView.vue";
 import SistemasView from "../views/SistemasView.vue";
 import VariablesView from "../views/VariablesView.vue";
 import HistoricoView from "../views/HistoricoView.vue";
@@ -39,7 +41,19 @@ const routes = [
   {
     path: "/cliente",
     name: "Cliente",
-    component: clienteView,
+    component: ClienteView,
+    meta: { title: "DECCO - Cliente" },
+  },
+  {
+    path: "/cliente/nuevo",
+    name: "NuevoCliente",
+    component: NuevoClienteView,
+    meta: { title: "DECCO - Cliente" },
+  },
+  {
+    path: "/cliente/:id/editar",
+    name: "EditarCliente",
+    component: EditarClienteView,
     meta: { title: "DECCO - Cliente" },
   },
   // {
@@ -104,7 +118,7 @@ const routes = [
   },
   {
     path: "/cliente/:id/sistemas/:linea/deccodos/estado",
-    name: "DECCODOS - MarchaParo",
+    name: "DECCODOS - Estado",
     component: DECCODOSEstado,
     meta: { title: "DECCO - DECCODOS" },
   },

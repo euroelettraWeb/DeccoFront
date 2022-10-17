@@ -53,6 +53,9 @@ export const routerStore = defineStore("router", {
       login: "Login",
       error: "Error",
       sistemas: "Sistemas",
+      cliente: "Cliente",
+      clienteNuevo: "NuevoCliente",
+      clienteEditar: "EditarCliente",
       variables: "Variables",
       historico: "Historico",
       informe: "Informe",
@@ -70,8 +73,8 @@ export const routerStore = defineStore("router", {
       // deccowasherRegistros: "/deccowasher/registros",
       deccocontrol: "DECCOCONTROL",
     },
-    id: 0,
-    lineas: 0,
+    id: 1,
+    lineas: 1,
   }),
   actions: {
     homeRoute: async function ({}) {
@@ -82,6 +85,18 @@ export const routerStore = defineStore("router", {
     },
     error: async function ({}) {
       router.push(this.routes.error);
+    },
+    cliente: async function () {
+      router.push(this.routes.cliente);
+    },
+    clienteNuevo: async function ({}) {
+      router.push(this.routes.clienteNuevo);
+    },
+    clienteEditar: async function (id) {
+      router.push({
+        name: this.routes.clienteEditar,
+        params: { id },
+      });
     },
     sistemas: async function (id) {
       router.push({

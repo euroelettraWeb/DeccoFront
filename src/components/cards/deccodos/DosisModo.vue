@@ -108,6 +108,7 @@ let series = ref([]);
 let ultimoValor = [
   { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
   { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
+  { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
 ];
 
 let chartOptions = computed(() => {
@@ -180,6 +181,7 @@ onMounted(async () => {
   cargado.value = false;
   a2D = await obtenerDatosVariable("8h", "registros", "rangos", 32);
   a3D = await obtenerDatosVariable("8h", "registros", "rangos", 33);
+  gen = await obtenerDatosVariable("8h", "registros", "rangos", 34);
 
   series.value = [
     { name: "Aplicador 2 discos", data: range("Estado", a2D.registros) },

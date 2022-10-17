@@ -1,5 +1,8 @@
 <template>
-  <v-container> <Estado /> <Dosis /> <FrutaProcesada /></v-container>
+  <v-container>
+    <h1>DECCOWASHER</h1>
+    <Estado /> <Dosis /> <FrutaProcesada
+  /></v-container>
 </template>
 
 <script>

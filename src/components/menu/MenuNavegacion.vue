@@ -23,12 +23,16 @@
 
     <v-divider></v-divider>
     <v-select
-      v-model="clients[0]"
-      :items="clients"
+      v-model="select"
+      :items="nombres"
+      label="Cliente"
+      item-text="nombre"
+      item-value="id"
+      :hide-selected="true"
+      return-object
       dense
       solo
-      disabled
-      @change="changeClient"
+      @change="changeItem"
     ></v-select>
     <v-divider></v-divider>
 
@@ -40,48 +44,68 @@
     </v-list-item>
     <v-list nav>
       <v-list-item-group active-class="red--text text--accent-4">
-        <v-list-group v-for="item in items" :key="item.linea">
+        <v-list-group>
           <template #activator>
             <v-list-item-icon>
-              <v-icon>mdi-apps</v-icon>
+              <v-icon>mdi-factory</v-icon>
             </v-list-item-icon>
-            <v-list-item @click="router.menu('sistemas', router.id)">
-              <v-list-item-title>{{ item.linea }}</v-list-item-title>
+            <v-list-item>
+              <v-list-item-content
+                @click="router.menu('sistemas', router.id, router.lineas)"
+              >
+                <v-list-item-title> Sistemas </v-list-item-title>
+              </v-list-item-content>
             </v-list-item>
           </template>
 
           <v-list-group
-            v-for="child in item.sistemas"
-            :key="child.title"
-            v-model="child.active"
-            :prepend-icon="child.action"
+            v-for="item in items"
+            :key="item.linea"
             no-action
             sub-group
           >
             <template #activator>
-              <v-list-item-content>
-                <v-list-item-title> {{ child.title }} </v-list-item-title>
-              </v-list-item-content>
+              <v-list-item-icon>
+                <v-icon>mdi-apps</v-icon>
+              </v-list-item-icon>
+              <v-list-item>
+                <v-list-item-title>{{ item.linea }}</v-list-item-title>
+              </v-list-item>
             </template>
 
-            <v-list-item v-for="child2 in child.items" :key="child2.title">
-              <v-list-item-content
-                @click="router.menu(child2.route, router.id, router.lineas)"
-              >
-                <v-list-item-title> {{ child2.title }} </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
+            <v-list-group
+              v-for="child in item.sistemas"
+              :key="child.title"
+              v-model="child.active"
+              :prepend-icon="child.action"
+              no-action
+              sub-group
+            >
+              <template #activator>
+                <v-list-item-content>
+                  <v-list-item-title> {{ child.title }} </v-list-item-title>
+                </v-list-item-content>
+              </template>
+
+              <v-list-item v-for="child2 in child.items" :key="child2.title">
+                <v-list-item-content
+                  @click="router.menu(child2.route, router.id, router.lineas)"
+                >
+                  <v-list-item-title> {{ child2.title }} </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-group>
           </v-list-group>
         </v-list-group>
         <v-list-item link @click="router.menu('historico', router.id)">
           <v-list-item-icon>
-            <v-icon>mdi-account</v-icon>
+            <v-icon>mdi-archive</v-icon>
           </v-list-item-icon>
           <v-list-item-title>Historico</v-list-item-title>
         </v-list-item>
         <v-list-item link @click="router.menu('informe', router.id)">
           <v-list-item-icon>
-            <v-icon>mdi-account</v-icon>
+            <v-icon>mdi-table</v-icon>
           </v-list-item-icon>
           <v-list-item-title>Informe</v-list-item-title>
         </v-list-item>
@@ -110,10 +134,16 @@ export default {
 <script setup>
 import { userStore, routerStore, navStore } from "../../stores/index";
 import { storeToRefs } from "pinia";
+import axios from "axios";
+import { onMounted, ref, computed, reactive } from "vue";
 const { usuario } = storeToRefs(userStore());
 const usuarioLogeado = usuario;
 const { estadoPanelLateral } = storeToRefs(navStore());
 const router = routerStore();
+
+async function obtenerVariable() {
+  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/clientes/all`)).data;
+}
 
 const items = [
   {
@@ -197,6 +227,20 @@ const items = [
     ],
   },
 ];
-const clients = ["Cliente 1"];
-const changeClient = "";
+let clientes = ["Cliente 1"];
+let nombres = ref([]);
+let select = ref("");
+
+onMounted(async () => {
+  clientes = await obtenerVariable();
+  let lista = [];
+  for (const iterator of clientes) {
+    lista.push({ id: iterator.id, nombre: iterator.nombre });
+  }
+  nombres.value = lista;
+});
+
+function changeItem(value) {
+  router.menu("sistemas", value.id, 0);
+}
 </script>
