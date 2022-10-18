@@ -36,9 +36,11 @@
           :timeout="5000"
           color="red accent-2"
         >
-          {{ getMensajeError }}
+          {{ userStore().mensajeError }}
           <template #action="{ attrs }">
-            <v-btn text v-bind="attrs" @click="vaciarMensaje()"> Cerrar </v-btn>
+            <v-btn text v-bind="attrs" @click="userStore().vaciarMensaje()">
+              Cerrar
+            </v-btn>
           </template>
         </v-snackbar>
       </v-col>
@@ -53,16 +55,17 @@ export default {
 </script>
 <script setup>
 import moment from "moment";
+import { storeToRefs } from "pinia";
 import { userStore } from "../stores/index";
 import { ref, reactive, computed } from "vue";
 const datosLogin = reactive({
   usuario: "",
   password: "",
 });
-const user = userStore();
+let avisoLoginInvalido = computed(() =>
+  storeToRefs(userStore()).mensajeError.value != "" ? true : false
+);
 
-const avisoLoginInvalido = user.getMensajeError != "" ? true : false;
-const vaciarMensaje = user.vaciarMensaje();
 const evento = (datos) => {
   return {
     variableID: null,
@@ -72,7 +75,9 @@ const evento = (datos) => {
   };
 };
 const loginSnackbar = (datos) => {
-  user.login({ datosLogin: datos, evento: evento(datos.usuario) });
-  setTimeout(() => vaciarMensaje, 5000);
+  userStore().login({
+    datosLogin: datos /* , evento: evento(datos.usuario)  */,
+  });
+  setTimeout(() => userStore().vaciarMensaje(), 5000);
 };
 </script>
