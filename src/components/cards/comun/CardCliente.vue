@@ -26,11 +26,9 @@ const props = defineProps({
   src: { type: String, default: "" },
 });
 function updatePinia() {
-  routerStore().id = props.id;
   routerStore().sistemas(props.id);
 }
 function editar() {
-  routerStore().id = props.id;
   routerStore().clienteEditar(props.id);
 }
 </script>

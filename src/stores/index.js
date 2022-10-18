@@ -11,13 +11,13 @@ const { isNavigationFailure, NavigationFailureType } = VueRouter;
 export const userStore = defineStore("user", {
   state: () => ({
     usuario: reactive({}),
-    usuarioValido: ref(true),
+    usuarioValido: ref(false),
     mensajeError: ref(""),
   }),
   getters: {},
 
   actions: {
-    login: async function ({ datosLogin, evento }) {
+    login: async function ({ datosLogin }) {
       let credenciales = {
         usuario: datosLogin.usuario,
         password: CryptoJS.MD5(datosLogin.password).toString(),
@@ -26,10 +26,11 @@ export const userStore = defineStore("user", {
         await axios.post(`${process.env.VUE_APP_RUTA_API}/login/`, credenciales)
       ).data;
       if (!resultadoConsulta.error) {
-        axios.post(`${process.env.VUE_APP_RUTA_API}/eventos/crear/`, evento);
         this.usuario = resultadoConsulta;
-        router.push("/home");
+        this.usuarioValido = true;
+        router.push({ name: "Home" });
       } else {
+        this.usuarioValido = false;
         this.mensajeError = resultadoConsulta.mensaje;
       }
     },
@@ -37,10 +38,8 @@ export const userStore = defineStore("user", {
       this.mensajeError = "";
     },
     logout() {
-      axios.post(`${process.env.VUE_APP_RUTA_API}/eventos/crear/`, evento);
       Vue.prototype.$socket.client.emit("logoutCliente");
       this.usuario = {};
-      this.maquinaID = null;
       if (evento.ruta !== "/") router.push("/");
     },
   },
@@ -73,19 +72,22 @@ export const routerStore = defineStore("router", {
       // deccowasherRegistros: "/deccowasher/registros",
       deccocontrol: "DECCOCONTROL",
     },
-    id: ref(1),
-    lineas: ref(1),
+    clienteID: ref(0),
+    lineasID: ref(1),
   }),
   getters: {
     getId(state) {
-      return state.id;
+      return state.clienteID;
+    },
+    getLinea(state) {
+      return state.lineasID;
     },
   },
   actions: {
     homeRoute: async function ({}) {
       router.push(this.routes.home);
     },
-    login: async function ({}) {
+    login: async function () {
       router.push(this.routes.login);
     },
     error: async function ({}) {
@@ -98,12 +100,14 @@ export const routerStore = defineStore("router", {
       router.push(this.routes.clienteNuevo);
     },
     clienteEditar: async function (id) {
+      this.clienteID = id;
       router.push({
         name: this.routes.clienteEditar,
         params: { id },
       });
     },
     sistemas: async function (id) {
+      this.clienteID = id;
       router.push({
         name: this.routes.sistemas,
         params: { id },
@@ -146,8 +150,8 @@ export const routerStore = defineStore("router", {
       });
     },
     menu: async function (route, id, linea) {
-      this.id = id;
-      this.lineas = linea;
+      this.clienteID = id;
+      this.lineasID = linea;
       switch (route) {
         case "home":
           router.push({ name: this.routes.home }).catch((failure) => {

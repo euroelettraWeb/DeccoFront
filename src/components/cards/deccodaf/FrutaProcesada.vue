@@ -122,15 +122,13 @@ onMounted(async () => {
   tCajas = await obtenerDatosVariable("8h", "registros", "sinfiltro", 18);
   tKg = await obtenerDatosVariable("8h", "registros", "sinfiltro", 19);
   medida.value =
-    activo.unidadMedida +
+    cajaPCiclo.unidadMedida +
     ", " +
-    auto.unidadMedida +
+    kgPCaja.unidadMedida +
     ", " +
-    manual.unidadMedida +
+    tCajas.unidadMedida +
     ", " +
-    faltaConsenso.unidadMedida +
-    ", " +
-    alarma.unidadMedida;
+    tKg.unidadMedida;
   registrosT.value = [
     formatData("Caja por ciclo", cajaPCiclo.registros),
     formatData("Peso por caja", kgPCaja.registros),

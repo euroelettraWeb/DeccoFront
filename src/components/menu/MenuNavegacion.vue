@@ -51,7 +51,9 @@
             </v-list-item-icon>
             <v-list-item>
               <v-list-item-content
-                @click="router.menu('sistemas', router.id, router.lineas)"
+                @click="
+                  router.menu('sistemas', router.clienteID, router.lineasID)
+                "
               >
                 <v-list-item-title> Sistemas </v-list-item-title>
               </v-list-item-content>

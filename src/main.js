@@ -14,6 +14,9 @@ Vue.use(PiniaVuePlugin);
 const pinia = createPinia();
 
 import router from "./router";
+import VueRouter from "vue-router";
+Vue.use(VueRouter);
+
 import vuetify from "./plugins/vuetify";
 import "@mdi/font/css/materialdesignicons.css";
 
@@ -34,8 +37,8 @@ Vue.component("ApexChart", VueApexCharts);
 Vue.config.productionTip = false;
 
 new Vue({
+  pinia,
   router,
   vuetify,
-  pinia,
   render: (h) => h(App),
 }).$mount("#app");
