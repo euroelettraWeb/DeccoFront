@@ -34,7 +34,6 @@
                         <v-checkbox
                           v-model="editedItem.deccodaf"
                           label="DECCODAF"
-                          value="DECCODAF"
                         ></v-checkbox>
                       </v-col>
                       <v-col>
@@ -206,25 +205,28 @@ function save() {
   } else {
     lineas.value.push(editedItem.value);
   }
+  close();
 }
 
-async function validate() {
-  if (form.value.validate()) {
-    axios
-      .post(`${process.env.VUE_APP_RUTA_API}/lineas/nuevo`, {
-        nombre: nombre.value,
-        clienteID: routerStore().clienteID,
-      })
-      .then((res) => {
-        console.log(res);
-      });
-    routerStore().sistemas(routerStore().clienteID);
+async function guardarLineas() {
+  if (lineas.value) {
+    for (let index = 0; index < lineas.value.length; index++) {
+      const element = lineas.value[index];
+      axios
+        .post(`${process.env.VUE_APP_RUTA_API}/lineas/nuevo`, {
+          nombre: element.nombre,
+          clienteID: routerStore().clienteID,
+          deccodaf: element.deccodaf,
+          deccodos: element.deccodos,
+          deccows: element.deccows,
+          deccocontrol: element.deccocontrol,
+        })
+        .then((res) => {
+          console.log(res);
+        });
+    }
+    // routerStore().sistemas(routerStore().clienteID);
   }
-}
-function guardarLineas() {
-  //Guardar Linea en BD
-  validate();
-  close();
 }
 async function obtenerVariable(id) {
   return (await axios.get(`${process.env.VUE_APP_RUTA_API}/lineas/${nombre}`))

@@ -247,7 +247,6 @@ onMounted(async () => {
     if (val != 0) {
       stateLineas.value = false;
       lineas = await obtenerLinea(val);
-      console.log(lineas);
       refLineas.value = items(lineas);
       stateLineas.value = true;
     } else {

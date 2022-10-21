@@ -71,10 +71,10 @@ const routes = [
   },
   {
     path: "/cliente/nuevo/lineas",
-    name: "AsignadorNuevoClienteView",
+    name: "AsignadorNuevoCliente",
     component: AsignadorNuevoClienteView,
     meta: { title: "DECCO - Cliente", rutaProtegida: false },
-    beforeEnter: checkLogin,
+    // beforeEnter: checkLogin,
   },
   {
     path: "/cliente/:id/editar",

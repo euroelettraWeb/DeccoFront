@@ -58,7 +58,7 @@ export const routerStore = defineStore("router", {
       sistemas: "Sistemas",
       cliente: "Cliente",
       clienteNuevo: "NuevoCliente",
-      clienteNuevoLinea: "AsignadorNuevoClienteView",
+      clienteNuevoLinea: "AsignadorNuevoCliente",
       clienteEditar: "EditarCliente",
       variables: "Variables",
       historico: "Historico",
@@ -90,22 +90,22 @@ export const routerStore = defineStore("router", {
   },
   actions: {
     homeRoute: async function ({}) {
-      router.push(this.routes.home);
+      router.push({ name: this.routes.home });
     },
     login: async function () {
-      router.push(this.routes.login);
+      router.push({ name: this.routes.login });
     },
     error: async function ({}) {
-      router.push(this.routes.error);
+      router.push({ name: this.routes.error });
     },
     cliente: async function () {
-      router.push(this.routes.cliente);
+      router.push({ name: this.routes.cliente });
     },
     clienteNuevo: async function ({}) {
-      router.push(this.routes.clienteNuevo);
+      router.push({ name: this.routes.clienteNuevo });
     },
     clienteNuevoLinea: async function ({}) {
-      router.push(this.routes.clienteNuevoLinea);
+      router.push({ name: this.routes.clienteNuevoLinea });
     },
     clienteEditar: async function (id) {
       this.clienteID = id;

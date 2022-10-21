@@ -20,18 +20,22 @@
                   <v-text-field
                     v-model="src"
                     label="src"
-                    required
+                    :rules="rules"
                   ></v-text-field>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col>
-                  <v-text-field v-model="ip" label="IP"></v-text-field>
+                  <v-text-field v-model="ip" label="IP" required></v-text-field>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col>
-                  <v-text-field v-model="puerto" label="Puerto"></v-text-field>
+                  <v-text-field
+                    v-model="puerto"
+                    label="Puerto"
+                    required
+                  ></v-text-field>
                 </v-col>
               </v-row>
               <v-row>
@@ -39,6 +43,7 @@
                   <v-text-field
                     v-model="usuario"
                     label="Usuario"
+                    required
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -47,6 +52,7 @@
                   <v-text-field
                     v-model="contraseña"
                     label="Contraseña"
+                    required
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -55,6 +61,7 @@
                   <v-text-field
                     v-model="descripcion"
                     label="Descripcion PLC"
+                    :rules="rules"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -94,10 +101,10 @@ let puerto = ref("");
 let usuario = ref("");
 let contraseña = ref("");
 let descripcion = ref("");
-
+let rules = [(v) => !v || ""];
 async function validate() {
-  //TODO Validacion errores
   if (form.value.validate()) {
+    console.log("src" + src.value);
     let dataPlc = (
       await axios.post(`${process.env.VUE_APP_RUTA_API}/plcs/nuevo`, {
         ip: ip.value,
@@ -118,7 +125,7 @@ async function validate() {
       routerStore().clienteID = dataCliente[0].id;
       routerStore().clienteNuevoLinea(dataCliente[0].id);
     } else {
-      //TODO ERROR
+      form.value.reset();
     }
   }
 }

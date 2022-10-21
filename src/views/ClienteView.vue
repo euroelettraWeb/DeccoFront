@@ -2,15 +2,20 @@
   <v-container fluid fill-height
     ><v-row>
       <v-col v-for="item in nombres" :key="item.id">
-        <CardCliente :id="item.id" :cliente="item.nombre" :src="item.src" />
+        <CardCliente
+          :id="item.id"
+          class="pa-2"
+          :cliente="item.nombre"
+          :src="item.src"
+        />
       </v-col>
       <v-col>
-        <v-card class="mx-auto" max-width="200" color="accent">
+        <v-card max-width="250" color="accent">
           <v-btn
-            class="ma-2"
+            class="pa-2"
             color="accent"
+            height="250"
             x-large
-            height="200"
             to="/cliente/nuevo"
           >
             Nuevo Cliente<v-icon x-large>mdi-plus</v-icon>
