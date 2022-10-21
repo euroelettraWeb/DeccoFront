@@ -1,0 +1,128 @@
+<template>
+  <v-container fluid class="fill-height">
+    <v-row justify="center">
+      <v-col cols="5">
+        <v-card>
+          <v-card-title>Nuevo Cliente</v-card-title>
+          <v-form ref="form">
+            <v-container>
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    v-model="nombre"
+                    label="Nombre"
+                    required
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    v-model="src"
+                    label="src"
+                    required
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-text-field v-model="ip" label="IP"></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-text-field v-model="puerto" label="Puerto"></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    v-model="usuario"
+                    label="Usuario"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    v-model="contraseña"
+                    label="Contraseña"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    v-model="descripcion"
+                    label="Descripcion PLC"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row
+                ><v-col>
+                  <v-btn color="info" class="mr-4" @click="validate">
+                    Nuevo
+                  </v-btn>
+                </v-col>
+                <v-col>
+                  <v-btn color="error" class="mr-4" @click="reset">
+                    Reset
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-form>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
+</template>
+<script>
+export default {
+  name: "NuevoClienteForm",
+};
+</script>
+<script setup>
+import axios from "axios";
+import { routerStore } from "../../stores/index";
+import { ref } from "vue";
+let nombre = ref("");
+let src = ref("");
+let form = ref(null);
+let ip = ref("");
+let puerto = ref("");
+let usuario = ref("");
+let contraseña = ref("");
+let descripcion = ref("");
+
+async function validate() {
+  //TODO Validacion errores
+  if (form.value.validate()) {
+    let dataPlc = (
+      await axios.post(`${process.env.VUE_APP_RUTA_API}/plcs/nuevo`, {
+        ip: ip.value,
+        puerto: puerto.value,
+        usuario: usuario.value,
+        password: contraseña.value,
+        descripcion: descripcion.value,
+      })
+    ).data;
+    let dataCliente = (
+      await axios.post(`${process.env.VUE_APP_RUTA_API}/clientes/nuevo`, {
+        nombre: nombre.value,
+        src: src.value,
+        plcID: dataPlc[0].id,
+      })
+    ).data;
+    if (dataCliente[0].id) {
+      routerStore().clienteID = dataCliente[0].id;
+      routerStore().clienteNuevoLinea(dataCliente[0].id);
+    } else {
+      //TODO ERROR
+    }
+  }
+}
+function reset() {
+  form.value.reset();
+}
+</script>

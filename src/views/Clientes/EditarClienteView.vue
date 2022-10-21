@@ -20,6 +20,9 @@
               <v-row>
                 <v-col> <TablaLineas /> </v-col
               ></v-row>
+              <v-row>
+                <v-col> <TablaMaquinas /></v-col>
+              </v-row>
               <v-row
                 ><v-col>
                   <v-btn color="info" class="mr-4" @click="validate">
@@ -49,6 +52,7 @@ import axios from "axios";
 import { routerStore } from "../../stores/index";
 import { onMounted, ref, computed } from "vue";
 import TablaLineas from "../../components/tablas/comun/TablaLineas.vue";
+import TablaMaquinas from "../../components/tablas/comun/TablaMaquinas.vue";
 let nombre = ref("");
 let src = ref("");
 let form = ref(null);

@@ -29,6 +29,7 @@
       item-text="nombre"
       item-value="id"
       :hide-selected="true"
+      :disabled="!usuarioLogeado"
       return-object
       dense
       solo
@@ -36,7 +37,7 @@
     ></v-select>
     <v-divider></v-divider>
 
-    <v-list-item link @click="router.menu('home')">
+    <v-list-item link @click="router.menu('home', router.clienteID, 0)">
       <v-list-item-icon>
         <v-icon>mdi-home</v-icon>
       </v-list-item-icon>
@@ -44,7 +45,7 @@
     </v-list-item>
     <v-list nav>
       <v-list-item-group active-class="red--text text--accent-4">
-        <v-list-group>
+        <v-list-group v-if="usuarioLogeado && stateLineas">
           <template #activator>
             <v-list-item-icon>
               <v-icon>mdi-factory</v-icon>
@@ -55,13 +56,13 @@
                   router.menu('sistemas', router.clienteID, router.lineasID)
                 "
               >
-                <v-list-item-title> Sistemas </v-list-item-title>
+                <v-list-item-title> Lineas </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </template>
 
           <v-list-group
-            v-for="item in items"
+            v-for="item in refLineas"
             :key="item.linea"
             no-action
             sub-group
@@ -88,36 +89,55 @@
                   <v-list-item-title> {{ child.title }} </v-list-item-title>
                 </v-list-item-content>
               </template>
-
-              <v-list-item v-for="child2 in child.items" :key="child2.title">
-                <v-list-item-content
-                  @click="router.menu(child2.route, router.id, router.lineas)"
-                >
-                  <v-list-item-title> {{ child2.title }} </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
+              <div v-if="child.estado">
+                <v-list-item v-for="child2 in child.items" :key="child2.title">
+                  <v-list-item-content
+                    @click="
+                      router.menu(child2.route, router.clienteID, item.id)
+                    "
+                  >
+                    <v-list-item-title> {{ child2.title }} </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </div>
             </v-list-group>
           </v-list-group>
         </v-list-group>
-        <v-list-item link @click="router.menu('historico', router.id)">
+        <v-list-item
+          v-if="usuarioLogeado"
+          link
+          @click="router.menu('historico', router.clienteID)"
+        >
           <v-list-item-icon>
             <v-icon>mdi-archive</v-icon>
           </v-list-item-icon>
           <v-list-item-title>Historico</v-list-item-title>
         </v-list-item>
-        <v-list-item link @click="router.menu('informe', router.id)">
+        <v-list-item
+          v-if="usuarioLogeado"
+          link
+          @click="router.menu('informe', router.clienteID)"
+        >
           <v-list-item-icon>
             <v-icon>mdi-table</v-icon>
           </v-list-item-icon>
           <v-list-item-title>Informe</v-list-item-title>
         </v-list-item>
-        <v-list-item link @click="router.menu('variables', router.id)">
+        <v-list-item
+          v-if="usuarioLogeado"
+          link
+          @click="router.menu('variables', router.clienteID)"
+        >
           <v-list-item-icon>
             <v-icon>mdi-account</v-icon>
           </v-list-item-icon>
           <v-list-item-title>Variables</v-list-item-title>
         </v-list-item>
-        <v-list-item v-if="!usuarioLogeado" link @click="router.menu('login')">
+        <v-list-item
+          v-if="!usuarioLogeado"
+          link
+          @click="router.menu('login', 0, 0)"
+        >
           <v-list-item-icon>
             <v-icon>mdi-account</v-icon>
           </v-list-item-icon>
@@ -137,106 +157,106 @@ export default {
 import { userStore, routerStore, navStore } from "../../stores/index";
 import { storeToRefs } from "pinia";
 import axios from "axios";
-import { onMounted, ref, computed, reactive } from "vue";
-const { usuario } = storeToRefs(userStore());
-const usuarioLogeado = usuario;
+import { onMounted, ref, computed, reactive, watch } from "vue";
+const { usuarioValido } = storeToRefs(userStore());
+const usuarioLogeado = usuarioValido;
 const { estadoPanelLateral } = storeToRefs(navStore());
 const router = routerStore();
-const { id } = storeToRefs(routerStore());
+const { clienteID } = storeToRefs(routerStore());
 
 async function obtenerVariable() {
   return (await axios.get(`${process.env.VUE_APP_RUTA_API}/clientes/all`)).data;
 }
 
-const items = [
-  {
-    linea: "Linea 4",
-    sistemas: [
-      {
-        action: "mdi-flask",
-        items: [
-          { title: "Principal", route: "deccodaf:Principal" },
-          { title: "Estado", route: "deccodaf:MarchaParo" },
-          { title: "Consumo", route: "deccodaf:Consumo" },
-          // { title: "Registros", route: "deccodaf:Registros" },
+async function obtenerLinea(clienteID) {
+  return (
+    await axios.get(`${process.env.VUE_APP_RUTA_API}/${clienteID}/lineas/all`)
+  ).data;
+}
+const items = (array) => {
+  let list = [];
+  if (array) {
+    for (let index = 0; index < array.length; index++) {
+      const element = array[index];
+      list.push({
+        linea: element.nombre,
+        id: element.id,
+        sistemas: [
+          {
+            action: "mdi-flask",
+            estado: element.deccodafID ? true : false,
+            items: [
+              { title: "Principal", route: "deccodaf:Principal" },
+              { title: "Estado", route: "deccodaf:MarchaParo" },
+              { title: "Consumo", route: "deccodaf:Consumo" },
+              // { title: "Registros", route: "deccodaf:Registros" },
+            ],
+            title: "DECCODAF",
+          },
+          {
+            action: "mdi-numeric-2",
+            estado: element.deccodosID ? true : false,
+            items: [
+              { title: "Principal", route: "deccodos:Principal" },
+              { title: "Estado", route: "deccodos:MarchaParo" },
+              { title: "Consumo", route: "deccodos:Consumo" },
+              // { title: "Registros", route: "deccodos:Registros" },
+            ],
+            title: "DECCODOS",
+          },
+          {
+            action: "mdi-hand-water",
+            estado: element.deccowsID ? true : false,
+            items: [
+              { title: "Principal", route: "deccowasher:Principal" },
+              { title: "Estado", route: "deccowasher:MarchaParo" },
+              { title: "Consumo", route: "deccowasher:Consumo" },
+              // { title: "Registros", route: "deccowasher:Registros" },
+            ],
+            title: "DECCOWASHER",
+          },
+          {
+            action: "mdi-snowflake",
+            estado: element.deccocontrolID ? true : false,
+            items: [{ title: "Principal", route: "deccocontrol:Principal" }],
+            title: "DECCOCONTROL",
+          },
         ],
-        title: "DECCODAF",
-      },
-      {
-        action: "mdi-numeric-2",
-        items: [
-          { title: "Principal", route: "deccodos:Principal" },
-          { title: "Estado", route: "deccodos:MarchaParo" },
-          { title: "Consumo", route: "deccodos:Consumo" },
-          // { title: "Registros", route: "deccodos:Registros" },
-        ],
-        title: "DECCODOS",
-      },
-      {
-        action: "mdi-hand-water",
-        items: [
-          { title: "Principal", route: "deccowasher:Principal" },
-          { title: "Estado", route: "deccowasher:MarchaParo" },
-          { title: "Consumo", route: "deccowasher:Consumo" },
-          // { title: "Registros", route: "deccowasher:Registros" },
-        ],
-        title: "DECCOWASHER",
-      },
-      {
-        action: "mdi-snowflake",
-        items: [{ title: "Principal", route: "deccocontrol:Principal" }],
-        title: "DECCOCONTROL",
-      },
-    ],
-  },
-  {
-    linea: "Linea 5",
-    sistemas: [
-      {
-        action: "mdi-flask",
-        items: [
-          { title: "Principal", route: "deccodaf:Principal" },
-          { title: "Estado", route: "deccodaf:MarchaParo" },
-          { title: "Consumo", route: "deccodaf:Consumo" },
-          // { title: "Registros", route: "deccodaf:Registros" },
-        ],
-        title: "DECCODAF",
-      },
-      {
-        action: "mdi-numeric-2",
-        items: [
-          { title: "Principal", route: "deccodos:Principal" },
-          { title: "Estado", route: "deccodos:MarchaParo" },
-          { title: "Consumo", route: "deccodos:Consumo" },
-          // { title: "Registros", route: "deccodos:Registros" },
-        ],
-        title: "DECCODOS",
-      },
-      {
-        action: "mdi-hand-water",
-        items: [
-          { title: "Principal", route: "deccowasher:Principal" },
-          { title: "Estado", route: "deccowasher:MarchaParo" },
-          { title: "Consumo", route: "deccowasher:Consumo" },
-          // { title: "Registros", route: "deccowasher:Registros" },
-        ],
-        title: "DECCOWASHER",
-      },
-      {
-        action: "mdi-snowflake",
-        items: [{ title: "Principal", route: "deccocontrol:Principal" }],
-        title: "DECCOCONTROL",
-      },
-    ],
-  },
-];
-let clientes = ["Cliente 1"];
+      });
+    }
+  }
+  return list;
+};
+let clientes = [];
+let lineas = [];
 let nombres = ref([]);
-let select = ref("");
+let select = ref(0);
+let stateLineas = ref(false);
+let refLineas = ref([]);
 
 onMounted(async () => {
+  select.value = clienteID;
   clientes = await obtenerVariable();
-  select.value = id;
+  if (select.value != 0) {
+    lineas = await obtenerLinea(select.value);
+    stateLineas.value = true;
+  } else {
+    stateLineas.value = false;
+  }
+  watch(select, async (val) => {
+    if (val != 0) {
+      stateLineas.value = false;
+      lineas = await obtenerLinea(val);
+      console.log(lineas);
+      refLineas.value = items(lineas);
+      stateLineas.value = true;
+    } else {
+      stateLineas.value = false;
+    }
+  });
+  // computed(() => {
+  //   return ;
+  // });
   let lista = [];
   for (const iterator of clientes) {
     lista.push({ id: iterator.id, nombre: iterator.nombre });

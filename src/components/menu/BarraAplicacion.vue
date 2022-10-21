@@ -6,7 +6,7 @@
 
     <v-spacer></v-spacer>
 
-    <v-btn v-if="!existeUsuario" to="/login" outlined>
+    <v-btn v-if="!user.usuarioValido" to="/login" outlined>
       <v-icon left>mdi-account-circle</v-icon>
       Iniciar sesion
     </v-btn>
@@ -15,13 +15,14 @@
       <template #activator="{ on, attrs }">
         <v-btn v-bind="attrs" outlined v-on="on">
           <v-icon left>mdi-account-circle</v-icon>
-          <!-- {{ usuarioLogeado.nombre }} -->
+          {{ user.usuario.nombre }}
         </v-btn>
       </template>
       <v-list>
         <v-list-item>
-          <!-- @click="logout(evento())" -->
-          <v-list-item-title class="text-center">Logout</v-list-item-title>
+          <v-list-item-title class="text-center" @click="logout()"
+            >Logout</v-list-item-title
+          >
         </v-list-item>
       </v-list>
     </v-menu>
@@ -41,35 +42,9 @@ export default {
 };
 </script>
 <script setup>
-import moment from "moment";
 import { userStore, navStore } from "../../stores/index";
-import { reactive } from "vue";
-// const datosLogin = reactive({
-//   usuario: "",
-//   password: "",
-// });
 const user = userStore();
 const nav = navStore();
-const { usuario } = user;
-const existeUsuario = usuario.nombre ? true : false;
-
-//...mapState(userStore, ["usuarioLogeado", "maquina"]),
-
-// const pathOFs = () => {
-//   return `/${this.maquina.codigo}/ordenes`;
-// };
-
-// const pathMotivosParo = () => {
-//   return `/${this.maquina.codigo}/motivosparo`;
-// };
-
-// const pathHistorico = () => {
-//   return `/${this.maquina.codigo}/historico`;
-// };
-
-// const existeUsuario = () => {
-//   return this.usuarioLogeado ? "nombre" in this.usuarioLogeado : false;
-// };
 
 // const esRutaMaquina = () => {
 //   return this.$route.name !== "Login" &&
@@ -79,11 +54,7 @@ const existeUsuario = usuario.nombre ? true : false;
 //     : false;
 // };
 
-// const estadoPanel = () => {
-//   return this.estadoPanelLateral;
-// };
-
-// const logout = user.logout();
+const logout = () => user.logout();
 
 // const evento = () => {
 //   let ahora = new Date().toLocaleString();

@@ -38,9 +38,13 @@ export const userStore = defineStore("user", {
       this.mensajeError = "";
     },
     logout() {
-      Vue.prototype.$socket.client.emit("logoutCliente");
+      // Vue.prototype.$socket.client.emit("logoutCliente");
       this.usuario = {};
-      if (evento.ruta !== "/") router.push("/");
+      this.usuarioValido = false;
+      router.push({ name: "Home" }).catch((failure) => {
+        if (isNavigationFailure(failure, NavigationFailureType.duplicated)) {
+        }
+      });
     },
   },
 });
@@ -54,6 +58,7 @@ export const routerStore = defineStore("router", {
       sistemas: "Sistemas",
       cliente: "Cliente",
       clienteNuevo: "NuevoCliente",
+      clienteNuevoLinea: "AsignadorNuevoClienteView",
       clienteEditar: "EditarCliente",
       variables: "Variables",
       historico: "Historico",
@@ -98,6 +103,9 @@ export const routerStore = defineStore("router", {
     },
     clienteNuevo: async function ({}) {
       router.push(this.routes.clienteNuevo);
+    },
+    clienteNuevoLinea: async function ({}) {
+      router.push(this.routes.clienteNuevoLinea);
     },
     clienteEditar: async function (id) {
       this.clienteID = id;

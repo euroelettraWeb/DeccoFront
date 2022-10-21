@@ -5,6 +5,7 @@ import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import ClienteView from "../views/ClienteView.vue";
 import NuevoClienteView from "../views/Clientes/NuevoClienteView.vue";
+import AsignadorNuevoClienteView from "../views/Clientes/AsignadorNuevoClienteView.vue";
 import EditarClienteView from "../views/Clientes/EditarClienteView.vue";
 import SistemasView from "../views/SistemasView.vue";
 import VariablesView from "../views/VariablesView.vue";
@@ -66,6 +67,13 @@ const routes = [
     name: "NuevoCliente",
     component: NuevoClienteView,
     meta: { title: "DECCO - Cliente", rutaProtegida: true },
+    beforeEnter: checkLogin,
+  },
+  {
+    path: "/cliente/nuevo/lineas",
+    name: "AsignadorNuevoClienteView",
+    component: AsignadorNuevoClienteView,
+    meta: { title: "DECCO - Cliente", rutaProtegida: false },
     beforeEnter: checkLogin,
   },
   {
@@ -154,7 +162,7 @@ const routes = [
   },
   {
     path: "/cliente/:id/sistemas/:linea/deccodos/consumo",
-    name: "DECCODOS -Consumo",
+    name: "DECCODOS - Consumo",
     component: DECCODOSFTotales,
     meta: { title: "DECCO - DECCODOS", rutaProtegida: true },
     beforeEnter: checkLogin,
