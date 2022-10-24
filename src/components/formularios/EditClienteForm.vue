@@ -61,7 +61,6 @@
                   <v-text-field
                     v-model="descripcion"
                     label="Descripcion PLC"
-                    :rules="rules"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -86,13 +85,13 @@
 </template>
 <script>
 export default {
-  name: "NuevoClienteForm",
+  name: "EditClienteForm",
 };
 </script>
 <script setup>
 import axios from "axios";
 import { routerStore } from "../../stores/index";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 let nombre = ref("");
 let src = ref("");
 let form = ref(null);
@@ -101,12 +100,35 @@ let puerto = ref("");
 let usuario = ref("");
 let contraseña = ref("");
 let descripcion = ref("");
-let rules = [(v) => !v || ""];
+let rules = [
+  (v) => {
+    if (v) return v.length <= 50 || "maximum 50 characters";
+    else return true;
+  },
+];
+let cliente = [];
+let plc = [];
+let plcId = ref(0);
+
+onMounted(async () => {
+  cliente = await obtenerCliente(routerStore().clienteID);
+  plcId.value = cliente[0].plcID;
+  plc = await obtenerPLC(plcId.value);
+  nombre.value = cliente[0].nombre;
+  src.value = cliente[0].img;
+  ip.value = plc[0].ip;
+  puerto.value = plc[0].puerto;
+  usuario.value = plc[0].usuario;
+  contraseña.value = plc[0].password;
+  descripcion.value = plc[0].descripcion;
+});
+
 async function validate() {
   if (form.value.validate()) {
     console.log("src" + src.value);
     let dataPlc = (
-      await axios.post(`${process.env.VUE_APP_RUTA_API}/plcs/nuevo`, {
+      await axios.post(`${process.env.VUE_APP_RUTA_API}/plcs/actualizar`, {
+        id: plcId.value,
         ip: ip.value,
         puerto: puerto.value,
         usuario: usuario.value,
@@ -115,7 +137,8 @@ async function validate() {
       })
     ).data;
     let dataCliente = (
-      await axios.post(`${process.env.VUE_APP_RUTA_API}/clientes/nuevo`, {
+      await axios.post(`${process.env.VUE_APP_RUTA_API}/clientes/actualizar`, {
+        id: routerStore().clienteID,
         nombre: nombre.value,
         src: src.value,
         plcID: dataPlc[0].id,
@@ -128,6 +151,13 @@ async function validate() {
       form.value.reset();
     }
   }
+}
+async function obtenerCliente(id) {
+  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/clientes/${id}`))
+    .data;
+}
+async function obtenerPLC(id) {
+  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/plcs/${id}`)).data;
 }
 function reset() {
   form.value.reset();

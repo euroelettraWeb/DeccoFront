@@ -104,7 +104,8 @@ export const routerStore = defineStore("router", {
     clienteNuevo: async function ({}) {
       router.push({ name: this.routes.clienteNuevo });
     },
-    clienteNuevoLinea: async function ({}) {
+    clienteNuevoLinea: async function (id) {
+      this.clienteID = id;
       router.push({ name: this.routes.clienteNuevoLinea });
     },
     clienteEditar: async function (id) {

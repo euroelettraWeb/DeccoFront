@@ -123,7 +123,7 @@ export default {
 </script>
 <script setup>
 import axios from "axios";
-import { watch, computed, ref, nextTick } from "vue";
+import { watch, computed, ref, nextTick, onMounted } from "vue";
 import { routerStore } from "../../../stores/index";
 let dialog = ref(false);
 let form = ref(null);
@@ -160,6 +160,22 @@ let defaultItem = ref({
 let formTitle = computed(() => {
   return editedIndex.value === -1 ? "Nueva Linea" : "Editar linea";
 });
+let lineasV = [];
+onMounted(async () => {
+  lineasV = await obtenerVariable(routerStore().clienteID);
+  for (let index = 0; index < lineasV.length; index++) {
+    const element = lineasV[index];
+    let next = {};
+    next.nombre = element.nombre;
+    next.clienteID = element.clienteID ? true : false;
+    next.deccodaf = element.deccodafID ? true : false;
+    next.deccodos = element.deccodosID ? true : false;
+    next.deccows = element.deccowsID ? true : false;
+    next.deccocontrol = element.deccocontrolID ? true : false;
+    lineas.value.push(next);
+  }
+});
+
 watch(dialog, (val) => {
   val || close();
 });
@@ -213,7 +229,7 @@ async function guardarLineas() {
     for (let index = 0; index < lineas.value.length; index++) {
       const element = lineas.value[index];
       axios
-        .post(`${process.env.VUE_APP_RUTA_API}/lineas/nuevo`, {
+        .post(`${process.env.VUE_APP_RUTA_API}/lineas/actualizar`, {
           nombre: element.nombre,
           clienteID: routerStore().clienteID,
           deccodaf: element.deccodaf,
@@ -225,7 +241,11 @@ async function guardarLineas() {
           console.log(res);
         });
     }
-    routerStore().sistemas(routerStore().clienteID);
   }
+}
+async function obtenerVariable(clienteID) {
+  return (
+    await axios.get(`${process.env.VUE_APP_RUTA_API}/${clienteID}/lineas/all`)
+  ).data;
 }
 </script>
