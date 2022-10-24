@@ -4,22 +4,30 @@
       <v-col>
         <v-card>
           <v-row
-            ><v-col
-              ><v-card-title>Estado</v-card-title
-              ><v-card-subtitle
-                >Medidas en: {{ medida }}</v-card-subtitle
-              ></v-col
-            >
+            ><v-col><v-card-title>Estado</v-card-title></v-col>
           </v-row>
           <v-row>
             <v-col v-if="cargado">
-              <ApexChart
-                ref="chartRef"
-                type="rangeBar"
-                height="300"
-                :options="chartOptions"
-                :series="series"
-              />
+              <v-row>
+                <v-col>
+                  <ApexChart
+                    ref="chartRef"
+                    type="rangeBar"
+                    height="300"
+                    :options="chartOptions"
+                    :series="series"
+                /></v-col>
+              </v-row>
+              <v-row>
+                <v-col
+                  ><ApexChart
+                    ref="chartRef2"
+                    type="rangeBar"
+                    height="300"
+                    :options="chartOptions"
+                    :series="series2"
+                /></v-col>
+              </v-row>
             </v-col>
             <v-col v-else class="d-flex justify-center align-center">
               <v-progress-circular
@@ -72,11 +80,11 @@ function range(array, names) {
   return todos;
 }
 // function newValue(newArray, value, nameI) {
-//   let elemento0 = newArray[0].data.findLast((node) => node.x == names[nameI]);
-//   let elemento1 = newArray[1].data.findLast((node) => node.x == names[nameI]);
+//   let elemento0 = newArray[0].data.findLast((node) => node.x == nameI);
+//   let elemento1 = newArray[1].data.findLast((node) => node.x == nameI);
 //   let last = moment(elemento0.y[1]).isAfter(elemento1.y[1]) ? 0 : 1;
 //   let index = newArray[last].data.findLastIndex(
-//     (node) => node.x == names[nameI]
+//     (node) => node.x == nameI
 //   );
 //   // console.log("last", last);
 //   // console.log(index);
@@ -89,7 +97,7 @@ function range(array, names) {
 //   } else {
 //     // console.log(newArray[value.y].data[index].y[1]);
 //     let obj = {
-//       x: names[nameI],
+//       x: nameI,
 //       y: [
 //         new Date(newArray[value.y].data[index].y[1]).getTime(),
 //         new Date(value.x).getTime(),
@@ -102,26 +110,20 @@ function range(array, names) {
 // }
 
 function newValue(series, value, chartRef, lastZoom, nameI) {
-  let elemento0 = series.value[0].data.findLast(
-    (node) => node.x == names[nameI]
-  );
-  let elemento1 = series.value[1].data.findLast(
-    (node) => node.x == names[nameI]
-  );
+  let elemento0 = series.value[0].data.findLast((node) => node.x == nameI);
+  let elemento1 = series.value[1].data.findLast((node) => node.x == nameI);
   if (elemento0 && elemento1) {
     let last = moment(elemento0.y[1]).isBefore(moment(elemento1.y[1])) ? 0 : 1;
 
     if (value.y == last) {
       let index = series.value[value.y].data.findLastIndex(
-        (node) => node.x == names[nameI]
+        (node) => node.x == nameI
       );
       series.value[value.y].data[index].y[1] = new Date(value.x).getTime();
     } else {
-      let index = series.value[1].data.findLastIndex(
-        (node) => node.x == names[nameI]
-      );
+      let index = series.value[1].data.findLastIndex((node) => node.x == nameI);
       series.value[value.y].data.push({
-        x: names[nameI],
+        x: nameI,
         y: [
           new Date(series.value[value.y].data[index].y[1]).getTime(),
           new Date(value.x).getTime(),
@@ -130,11 +132,9 @@ function newValue(series, value, chartRef, lastZoom, nameI) {
     }
   } else {
     if (elemento0) {
-      let index = series.value[0].data.findLastIndex(
-        (node) => node.x == names[nameI]
-      );
+      let index = series.value[0].data.findLastIndex((node) => node.x == nameI);
       series.value[0].data.push({
-        x: names[nameI],
+        x: nameI,
         y: [
           new Date(series.value[0].data[index].y[1]).getTime(),
           new Date(value.x).getTime(),
@@ -143,10 +143,10 @@ function newValue(series, value, chartRef, lastZoom, nameI) {
     } else {
       if (elemento1) {
         let index = series.value[1].data.findLastIndex(
-          (node) => node.x == names[nameI]
+          (node) => node.x == nameI
         );
         series.value[1].data.push({
-          x: names[nameI],
+          x: nameI,
           y: [
             new Date(series.value[1].data[index].y[1]).getTime(),
             new Date(value.x).getTime(),
@@ -154,7 +154,7 @@ function newValue(series, value, chartRef, lastZoom, nameI) {
         });
       } else {
         series.value[value.y].data.push({
-          x: names[nameI],
+          x: nameI,
           y: [new Date(value.x).getTime(), new Date(value.x).getTime() + 500],
         });
       }
@@ -168,6 +168,7 @@ function newValue(series, value, chartRef, lastZoom, nameI) {
 
 const socket = io("http://localhost:3000");
 const chartRef = ref(null);
+const chartRef2 = ref(null);
 var lastZoom = null;
 let cargado = ref(false);
 let activo = {};
@@ -175,14 +176,14 @@ let auto = [];
 let manual = [];
 let faltaConsenso = [];
 let alarma = [];
-let medida = ref("");
 let series = ref([]);
-let names = ["Activo", "Auto", "Manual", "Falta de consenso", "Alarma"];
+let series2 = ref([]);
+let names = ["Activo", "Auto", "Manual"];
+let names2 = ["Falta de consenso", "Alarma"]; /* "marchaParo", */
 let nameEstado = ["Apagado", "Encendido"];
 let chartOptions = computed(() => {
   return {
     chart: {
-      height: 100,
       type: "rangeBar",
       locales: [es],
       defaultLocale: "es",
@@ -224,6 +225,7 @@ let chartOptions = computed(() => {
       bar: {
         horizontal: true,
         rangeBarGroupRows: true,
+        barHeight: "50%",
       },
     },
     colors: [
@@ -240,17 +242,29 @@ let chartOptions = computed(() => {
       datetimeUTC: false,
       min: new Date(moment().subtract(8, "hours")).getTime(),
       max: moment(),
+      tickAmount: 25,
+      labels: {
+        rotate: -45,
+        rotateAlways: true,
+        formatter: function (value, timestamp) {
+          return new Date(value).toLocaleTimeString(); // The formatter function overrides format property
+        },
+      },
     },
     tooltip: {
       x: {
         format: "dd MMM yyyy hh:mm:ss",
       },
     },
+    legend: {
+      height: 60,
+    },
   };
 });
 onMounted(async () => {
   cargado.value = false;
   let estados = [];
+  let estados2 = [];
   activo = await obtenerDatosVariable("8h", "registros", "rangosTodos", 1);
   alarma = await obtenerDatosVariable("8h", "registros", "rangosTodos", 12);
   auto = await obtenerDatosVariable("8h", "registros", "rangosTodos", 13);
@@ -261,39 +275,26 @@ onMounted(async () => {
     14
   );
   manual = await obtenerDatosVariable("8h", "registros", "rangosTodos", 15);
-  estados = [
-    activo.registros,
-    auto.registros,
-    manual.registros,
-    faltaConsenso.registros,
-    alarma.registros,
-  ];
-  medida.value =
-    activo.unidadMedida +
-    ", " +
-    auto.unidadMedida +
-    ", " +
-    manual.unidadMedida +
-    ", " +
-    faltaConsenso.unidadMedida +
-    ", " +
-    alarma.unidadMedida;
+  estados = [activo.registros, auto.registros, manual.registros];
+  estados2 = [faltaConsenso.registros, alarma.registros]; //TODO marcha-paro
   series.value = range(estados, names); //TODO Obtener nombre de la variable
-  socket.on("variable_1_actualizada", (data) => {
-    newValue(series, data, chartRef, lastZoom, 0);
-  });
-  socket.on("variable_12_actualizada", (data) => {
-    newValue(series, data, chartRef, lastZoom, 4);
-  });
-  socket.on("variable_13_actualizada", (data) => {
-    newValue(series, data, chartRef, lastZoom, 1);
-  });
-  socket.on("variable_14_actualizada", (data) => {
-    newValue(series, data, chartRef, lastZoom, 3);
-  });
-  socket.on("variable_15_actualizada", (data) => {
-    newValue(series, data, chartRef, lastZoom, 2);
-  });
+  series2.value = range(estados2, names2); //TODO Obtener nombre de la variable
+
+  // socket.on("variable_1_actualizada", (data) => {
+  //   newValue(series, data, chartRef, lastZoom, names[0]);
+  // });
+  // socket.on("variable_12_actualizada", (data) => {
+  //   newValue(series2, data, chartRef2, lastZoom, names2[0]);
+  // });
+  // socket.on("variable_13_actualizada", (data) => {
+  //   newValue(series, data, chartRef, lastZoom, names[1]);
+  // });
+  // socket.on("variable_14_actualizada", (data) => {
+  //   newValue(series2, data, chartRef2, lastZoom, names2[1]);
+  // });
+  // socket.on("variable_15_actualizada", (data) => {
+  //   newValue(series, data, chartRef, lastZoom, names[2]);
+  // });
   cargado.value = true;
 });
 </script>

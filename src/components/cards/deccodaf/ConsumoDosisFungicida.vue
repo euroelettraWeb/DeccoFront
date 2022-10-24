@@ -6,7 +6,6 @@
           ><v-row>
             <v-col>
               <v-card-title> Dosis de fungicida </v-card-title>
-              <v-card-subtitle>Medidas en: {{ medida }}</v-card-subtitle>
             </v-col>
           </v-row>
           <v-row>
@@ -59,9 +58,8 @@ let cargado = ref(false);
 let tP1 = {};
 let tP2 = {};
 let tP3 = {};
-let tp4 = {};
-let tp5 = {};
-let medida = ref("");
+let tP4 = {};
+let tP5 = {};
 
 const chartRef = ref(null);
 let registrosT = ref([]);
@@ -110,6 +108,14 @@ let chartOptions = computed(() => {
       datetimeUTC: false,
       min: new Date(moment().subtract(8, "hours")).getTime(),
       max: moment(),
+      tickAmount: 25,
+      labels: {
+        rotate: -45,
+        rotateAlways: true,
+        formatter: function (value, timestamp) {
+          return new Date(value).toLocaleTimeString(); // The formatter function overrides format property
+        },
+      },
     },
     stroke: {
       width: 1.9,
@@ -121,24 +127,14 @@ onMounted(async () => {
   tP1 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 7);
   tP2 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 8);
   tP3 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 9);
-  tp4 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 10);
-  tp5 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 11);
-  medida.value =
-    tP1.unidadMedida +
-    ", " +
-    tP2.unidadMedida +
-    ", " +
-    tP3.unidadMedida +
-    ", " +
-    tp4.unidadMedida +
-    ", " +
-    tp5.unidadMedida;
+  tP4 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 10);
+  tP5 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 11);
   registrosT.value = [
-    formatData("Producto 1", tP1.registros),
-    formatData("Producto 2", tP2.registros),
-    formatData("Producto 3", tP3.registros),
-    formatData("Producto 4", tp4.registros),
-    formatData("Producto 5", tp5.registros),
+    formatData("Producto 1 (" + tP1.unidadMedida + ")", tP1.registros),
+    formatData("Producto 2 (" + tP2.unidadMedida + ")", tP2.registros),
+    formatData("Producto 3 (" + tP3.unidadMedida + ")", tP3.registros),
+    formatData("Producto 4 (" + tP4.unidadMedida + ")", tP4.registros),
+    formatData("Producto 5 (" + tP5.unidadMedida + ")", tP5.registros),
   ];
   socket.on("variable_7_actualizada", (data) => {
     registrosT.value[0].data.push({

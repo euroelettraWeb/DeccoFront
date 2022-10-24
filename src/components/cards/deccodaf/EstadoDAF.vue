@@ -4,12 +4,7 @@
       <v-col>
         <v-card>
           <v-row>
-            <v-col
-              ><v-card-title>Estados</v-card-title
-              ><v-card-subtitle
-                >Medidas en: {{ medida }}</v-card-subtitle
-              ></v-col
-            >
+            <v-col><v-card-title>Estados</v-card-title></v-col>
           </v-row>
           <v-row>
             <v-col v-if="cargado">
@@ -115,7 +110,6 @@ let auto = [];
 let manual = [];
 let faltaConsenso = [];
 let alarma = [];
-let medida = ref("");
 let series = ref([]);
 let ultimoValor = [
   { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
@@ -177,6 +171,14 @@ let chartOptions = computed(() => {
       datetimeUTC: false,
       min: new Date(moment().subtract(8, "hours")).getTime(),
       max: moment(),
+      tickAmount: 25,
+      labels: {
+        rotate: -45,
+        rotateAlways: true,
+        formatter: function (value, timestamp) {
+          return new Date(value).toLocaleTimeString(); // The formatter function overrides format property
+        },
+      },
     },
     yaxis: {
       show: false,
@@ -199,16 +201,6 @@ onMounted(async () => {
   auto = await obtenerDatosVariable("8h", "registros", "rangos", 13);
   faltaConsenso = await obtenerDatosVariable("8h", "registros", "rangos", 14);
   manual = await obtenerDatosVariable("8h", "registros", "rangos", 15);
-  medida.value =
-    activo.unidadMedida +
-    ", " +
-    auto.unidadMedida +
-    ", " +
-    manual.unidadMedida +
-    ", " +
-    faltaConsenso.unidadMedida +
-    ", " +
-    alarma.unidadMedida;
   series.value = [
     { name: "Activo", data: range("Estado", activo.registros) },
     { name: "Auto", data: range("Estado", auto.registros) },
