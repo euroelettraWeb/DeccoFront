@@ -102,7 +102,7 @@ let contraseña = ref("");
 let descripcion = ref("");
 let rules = [
   (v) => {
-    if (v) return v.length <= 50 || "maximum 50 characters";
+    if (v) return v.length <= 500 || "maximum 500 characters";
     else return true;
   },
 ];

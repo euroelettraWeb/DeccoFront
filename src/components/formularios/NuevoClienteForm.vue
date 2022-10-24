@@ -101,7 +101,12 @@ let puerto = ref("");
 let usuario = ref("");
 let contraseña = ref("");
 let descripcion = ref("");
-let rules = [(v) => !v || ""];
+let rules = [
+  (v) => {
+    if (v) return v.length <= 500 || "maximum 500 characters";
+    else return true;
+  },
+];
 async function validate() {
   if (form.value.validate()) {
     console.log("src" + src.value);
