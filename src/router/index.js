@@ -74,7 +74,7 @@ const routes = [
     name: "AsignadorNuevoCliente",
     component: AsignadorNuevoClienteView,
     meta: { title: "DECCO - Cliente", rutaProtegida: false },
-    // beforeEnter: checkLogin,
+    beforeEnter: checkLogin,
   },
   {
     path: "/cliente/:id/editar",
