@@ -1,53 +1,49 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col>
-        <v-card>
+    <v-card>
+      <v-row>
+        <v-col v-if="cargado">
           <v-row>
-            <v-col v-if="cargado">
-              <v-row>
-                <v-col>
-                  <v-card-title>Consumo en este periodo</v-card-title>
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col class="mx-4 mb-4">
-                  <v-simple-table dense>
-                    <template #default>
-                      <thead>
-                        <tr>
-                          <th class="text-left">Consumo aguaU</th>
-                          <th class="text-left">Consumo Producto 1</th>
-                          <th class="text-left">Consumo Producto 2</th>
-                          <th class="text-left">Consumo Producto 3</th>
-                          <th class="text-left">Consumo Producto 4</th>
-                          <th class="text-left">Consumo Producto 5</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td v-for="item in consumos" :key="item.id">
-                            {{ item.name }}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </template>
-                  </v-simple-table>
-                </v-col>
-              </v-row>
-            </v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
+            <v-col>
+              <v-card-title>Consumo en este periodo</v-card-title>
             </v-col>
           </v-row>
-        </v-card>
-      </v-col>
-    </v-row>
+          <v-row>
+            <v-col class="mx-4 mb-4">
+              <v-simple-table dense>
+                <template #default>
+                  <thead>
+                    <tr>
+                      <th class="text-left">Consumo agua</th>
+                      <th class="text-left">Consumo Producto 1</th>
+                      <th class="text-left">Consumo Producto 2</th>
+                      <th class="text-left">Consumo Producto 3</th>
+                      <th class="text-left">Consumo Producto 4</th>
+                      <th class="text-left">Consumo Producto 5</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td v-for="item in consumos" :key="item.id">
+                        {{ item.name }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col v-else class="d-flex justify-center align-center">
+          <v-progress-circular
+            :size="100"
+            :width="7"
+            color="purple"
+            indeterminate
+          ></v-progress-circular>
+        </v-col>
+      </v-row>
+    </v-card>
   </v-container>
 </template>
 <script>
