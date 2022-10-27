@@ -1,6 +1,8 @@
 <template>
   <v-container>
-    <h1 class="transition-swing text-h2">DECCODAF - {{ nombre }}</h1>
+    <h1 class="transition-swing text-h2">
+      {{ nombreCliente }} -DECCODAF - {{ nombreLinea }}
+    </h1>
     <v-row>
       <v-col>
         <TablaTurnos />
@@ -30,8 +32,16 @@ import TablaTotalTurnos from "../../components/tablas/deccodaf/TablaTotalTurnos.
 async function obtenerLinea(id) {
   return (await axios.get(`${process.env.VUE_APP_RUTA_API}/lineas/${id}`)).data;
 }
-let nombre = ref("");
+async function obtenerCliente(id) {
+  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/clientes/${id}`))
+    .data;
+}
+let nombreLinea = ref("");
+let nombreCliente = ref("");
 onMounted(async () => {
-  nombre.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
+  nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
+  nombreCliente.value = (
+    await obtenerCliente(routerStore().clienteID)
+  )[0].nombre;
 });
 </script>

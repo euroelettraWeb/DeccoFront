@@ -8,8 +8,8 @@
               <v-card-title>Turnos</v-card-title>
             </v-col>
           </v-row>
-          <v-row>
-            <v-col class="mx-4 mb-4">
+          <v-row class="mx-2">
+            <v-col>
               <v-simple-table dense>
                 <template #default>
                   <thead>
@@ -214,7 +214,7 @@
           </v-row>
           <v-row>
             <v-col
-              ><v-btn color="info" class="mr-4" @click="save">
+              ><v-btn color="info" class="mx-4 mb-4" @click="save">
                 Guardar
               </v-btn></v-col
             >
