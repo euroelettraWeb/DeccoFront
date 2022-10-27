@@ -69,15 +69,6 @@ async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
     )
   ).data;
 }
-
-function formatData(name, arrays) {
-  let data = [];
-  for (let variable of arrays) {
-    let obj = { x: new Date(variable.x).getTime(), y: variable.y };
-    data.push(obj);
-  }
-  return { name: name, data: data };
-}
 let cargado = ref(false);
 let cajaPCiclo = {};
 let kgPCaja = {};
@@ -154,26 +145,18 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  cajaPCiclo = await obtenerDatosVariable("8h", "registros", "sinfiltro", 16);
-  kgPCaja = await obtenerDatosVariable("8h", "registros", "sinfiltro", 17);
-  tCajas = await obtenerDatosVariable("8h", "registros", "sinfiltro", 18);
-  tKg = await obtenerDatosVariable("8h", "registros", "sinfiltro", 19);
-  registrosT.value = [
-    formatData(
-      "Caja por ciclo (" + cajaPCiclo.unidadMedida + ")",
-      cajaPCiclo.registros
-    ),
-    formatData(
-      "Peso por caja (" + kgPCaja.unidadMedida + ")",
-      kgPCaja.registros
-    ),
-  ];
-  cajas.value = [
-    formatData("Total cajas (" + tCajas.unidadMedida + ")", tCajas.registros),
-  ];
-  kilos.value = [
-    formatData("Total kilos(" + tKg.unidadMedida + ")", tKg.registros),
-  ];
+  cajaPCiclo = await obtenerDatosVariable(
+    "8h",
+    "registros",
+    "formatoLinea",
+    16
+  );
+  kgPCaja = await obtenerDatosVariable("8h", "registros", "formatoLinea", 17);
+  tCajas = await obtenerDatosVariable("8h", "registros", "formatoLinea", 18);
+  tKg = await obtenerDatosVariable("8h", "registros", "formatoLinea", 19);
+  registrosT.value = [cajaPCiclo.registros[0], kgPCaja.registros[0]];
+  cajas.value = tCajas.registros;
+  kilos.value = tKg.registros;
   socket.on("variable_16_actualizada", (data) => {
     registrosT.value[0].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
@@ -195,7 +178,7 @@ onMounted(async () => {
     }
   });
   socket.on("variable_18_actualizada", (data) => {
-    registrosT.value[0].data.push({
+    cajas.value[0].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
     });
@@ -205,7 +188,7 @@ onMounted(async () => {
     }
   });
   socket.on("variable_19_actualizada", (data) => {
-    registrosT.value[0].data.push({
+    kilos.value[0].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
     });
