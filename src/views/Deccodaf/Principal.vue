@@ -1,8 +1,15 @@
 <template>
   <v-container>
     <h1 class="transition-swing text-h2">DECCODAF - {{ nombre }}</h1>
-    <Estado /> <ConsumoDosisFungicida /> <FrutaProcesada /> <TablaTurnos />
-    <TablaTotalTurnos />
+    <v-row>
+      <v-col>
+        <TablaTurnos />
+        <TablaTotalTurnos />
+        <Estado />
+        <ConsumoDosisFungicida />
+        <FrutaProcesada />
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
