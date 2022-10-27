@@ -19,6 +19,16 @@
                 /></v-col>
               </v-row>
               <v-row>
+                <v-col>
+                  <ApexChart
+                    ref="chartRef3"
+                    type="rangeBar"
+                    height="300"
+                    :options="chartOptions"
+                    :series="series3"
+                /></v-col>
+              </v-row>
+              <v-row>
                 <v-col
                   ><ApexChart
                     ref="chartRef2"
@@ -60,6 +70,15 @@ async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
     )
   ).data;
 }
+
+async function obtenerMarcha(id, id2, id3, id4, id5) {
+  return (
+    await axios.get(
+      `${process.env.VUE_APP_RUTA_API}/variables/${id}/${id2}/${id3}/${id4}/${id5}`
+    )
+  ).data;
+}
+
 function range(array, names) {
   let todos = [];
   let apagado = [];
@@ -169,6 +188,7 @@ function newValue(series, value, chartRef, lastZoom, nameI) {
 const socket = io("http://localhost:3000");
 const chartRef = ref(null);
 const chartRef2 = ref(null);
+const chartRef3 = ref(null);
 var lastZoom = null;
 let cargado = ref(false);
 let activo = {};
@@ -176,8 +196,10 @@ let auto = [];
 let manual = [];
 let faltaConsenso = [];
 let alarma = [];
+let marcha = [];
 let series = ref([]);
 let series2 = ref([]);
+let series3 = ref([]);
 let names = ["Activo", "Auto", "Manual"];
 let names2 = ["Falta de consenso", "Alarma"]; /* "marchaParo", */
 let nameEstado = ["Apagado", "Encendido"];
@@ -268,18 +290,20 @@ onMounted(async () => {
   activo = await obtenerDatosVariable("8h", "registros", "rangosTodos", 1);
   alarma = await obtenerDatosVariable("8h", "registros", "rangosTodos", 12);
   auto = await obtenerDatosVariable("8h", "registros", "rangosTodos", 13);
+  marcha = await obtenerMarcha(1, 12, 13, 14, 15);
   faltaConsenso = await obtenerDatosVariable(
     "8h",
     "registros",
     "rangosTodos",
     14
   );
+
   manual = await obtenerDatosVariable("8h", "registros", "rangosTodos", 15);
   estados = [activo.registros, auto.registros, manual.registros];
-  estados2 = [faltaConsenso.registros, alarma.registros]; //TODO marcha-paro
+  estados2 = [faltaConsenso.registros, alarma.registros];
   series.value = range(estados, names); //TODO Obtener nombre de la variable
   series2.value = range(estados2, names2); //TODO Obtener nombre de la variable
-
+  series3.value = marcha;
   // socket.on("variable_1_actualizada", (data) => {
   //   newValue(series, data, chartRef, lastZoom, names[0]);
   // });
