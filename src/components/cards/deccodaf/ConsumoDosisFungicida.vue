@@ -46,14 +46,6 @@ async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
   ).data;
 }
 
-function formatData(name, arrays) {
-  let data = [];
-  for (let variable of arrays) {
-    let obj = { x: new Date(variable.x).getTime(), y: variable.y };
-    data.push(obj);
-  }
-  return { name: name, data: data };
-}
 let cargado = ref(false);
 let tP1 = {};
 let tP2 = {};
@@ -124,17 +116,17 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  tP1 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 7);
-  tP2 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 8);
-  tP3 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 9);
-  tP4 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 10);
-  tP5 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 11);
+  tP1 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 7);
+  tP2 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 8);
+  tP3 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 9);
+  tP4 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 10);
+  tP5 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 11);
   registrosT.value = [
-    formatData("Producto 1 (" + tP1.unidadMedida + ")", tP1.registros),
-    formatData("Producto 2 (" + tP2.unidadMedida + ")", tP2.registros),
-    formatData("Producto 3 (" + tP3.unidadMedida + ")", tP3.registros),
-    formatData("Producto 4 (" + tP4.unidadMedida + ")", tP4.registros),
-    formatData("Producto 5 (" + tP5.unidadMedida + ")", tP5.registros),
+    tP1.registros[0],
+    tP2.registros[0],
+    tP3.registros[0],
+    tP4.registros[0],
+    tP5.registros[0],
   ];
   socket.on("variable_7_actualizada", (data) => {
     registrosT.value[0].data.push({
