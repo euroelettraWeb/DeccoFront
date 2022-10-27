@@ -2,10 +2,13 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-card
+        <v-card class="mb-2"
           ><v-row>
             <v-col>
               <v-card-title> Fruta procesada </v-card-title>
+              <v-card-subtitle>
+                Cajas por Ciclo y Peso por Caja
+              </v-card-subtitle>
             </v-col>
           </v-row>
           <v-row>
@@ -20,6 +23,13 @@
               />
             </v-col>
           </v-row>
+        </v-card>
+        <v-card class="mb-2">
+          <v-row>
+            <v-col>
+              <v-card-subtitle> Total Cajas </v-card-subtitle>
+            </v-col>
+          </v-row>
           <v-row>
             <v-col>
               <ApexChart
@@ -30,6 +40,12 @@
                 :options="chartOptions"
                 :series="cajas"
               />
+            </v-col> </v-row
+        ></v-card>
+        <v-card>
+          <v-row>
+            <v-col>
+              <v-card-subtitle> Total Kilos </v-card-subtitle>
             </v-col>
           </v-row>
           <v-row>
