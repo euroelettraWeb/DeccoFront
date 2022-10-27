@@ -6,7 +6,6 @@
           ><v-row>
             <v-col>
               <v-card-title> Fruta procesada </v-card-title>
-              <v-card-subtitle>Medidas en: {{ medida }}</v-card-subtitle>
             </v-col>
           </v-row>
           <v-row>
@@ -18,6 +17,30 @@
                 type="line"
                 :options="chartOptions"
                 :series="registrosT"
+              />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <ApexChart
+                v-if="cargado"
+                ref="chartRef2"
+                height="350"
+                type="line"
+                :options="chartOptions"
+                :series="cajas"
+              />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <ApexChart
+                v-if="cargado"
+                ref="chartRef3"
+                height="350"
+                type="line"
+                :options="chartOptions"
+                :series="kilos"
               />
             </v-col>
           </v-row>
@@ -60,10 +83,13 @@ let cajaPCiclo = {};
 let kgPCaja = {};
 let tCajas = {};
 let tKg = {};
-let medida = ref("");
 
 const chartRef = ref(null);
+const chartRef2 = ref(null);
+const chartRef3 = ref(null);
 let registrosT = ref([]);
+let cajas = ref([]);
+let kilos = ref([]);
 var lastZoom = null;
 let chartOptions = computed(() => {
   return {
@@ -121,6 +147,9 @@ let chartOptions = computed(() => {
     stroke: {
       width: 1.9,
     },
+    legend: {
+      showForSingleSeries: true,
+    },
   };
 });
 onMounted(async () => {
@@ -129,19 +158,21 @@ onMounted(async () => {
   kgPCaja = await obtenerDatosVariable("8h", "registros", "sinfiltro", 17);
   tCajas = await obtenerDatosVariable("8h", "registros", "sinfiltro", 18);
   tKg = await obtenerDatosVariable("8h", "registros", "sinfiltro", 19);
-  medida.value =
-    cajaPCiclo.unidadMedida +
-    ", " +
-    kgPCaja.unidadMedida +
-    ", " +
-    tCajas.unidadMedida +
-    ", " +
-    tKg.unidadMedida;
   registrosT.value = [
-    formatData("Caja por ciclo", cajaPCiclo.registros),
-    formatData("Peso por caja", kgPCaja.registros),
-    formatData("Total cajas", tCajas.registros),
-    formatData("Total kilos", tKg.registros),
+    formatData(
+      "Caja por ciclo (" + cajaPCiclo.unidadMedida + ")",
+      cajaPCiclo.registros
+    ),
+    formatData(
+      "Peso por caja (" + kgPCaja.unidadMedida + ")",
+      kgPCaja.registros
+    ),
+  ];
+  cajas.value = [
+    formatData("Total cajas (" + tCajas.unidadMedida + ")", tCajas.registros),
+  ];
+  kilos.value = [
+    formatData("Total kilos(" + tKg.unidadMedida + ")", tKg.registros),
   ];
   socket.on("variable_16_actualizada", (data) => {
     registrosT.value[0].data.push({
@@ -164,7 +195,7 @@ onMounted(async () => {
     }
   });
   socket.on("variable_18_actualizada", (data) => {
-    registrosT.value[2].data.push({
+    registrosT.value[0].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
     });
@@ -174,7 +205,7 @@ onMounted(async () => {
     }
   });
   socket.on("variable_19_actualizada", (data) => {
-    registrosT.value[3].data.push({
+    registrosT.value[0].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
     });
