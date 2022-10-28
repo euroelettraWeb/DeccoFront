@@ -2,15 +2,25 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-card>
-          <ApexChart
-            v-if="cargado"
-            ref="chartRef"
-            height="350"
-            type="line"
-            :options="chartOptions"
-            :series="registrosT"
-          ></ApexChart>
+        <v-card
+          ><v-row>
+            <v-col>
+              <v-card-title> Consumo total de Productos y Agua</v-card-title>
+              <v-card-subtitle>Medidas en: {{ medida }}</v-card-subtitle>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <ApexChart
+                v-if="cargado"
+                ref="chartRef"
+                height="350"
+                type="line"
+                :options="chartOptions"
+                :series="registrosT"
+              />
+            </v-col>
+          </v-row>
         </v-card>
       </v-col>
     </v-row>
@@ -50,9 +60,9 @@ let tAgua = {};
 let tP1 = {};
 let tP2 = {};
 let tP3 = {};
-let tp4 = {};
-let tp5 = {};
-
+let tP4 = {};
+let tP5 = {};
+let medida = ref("");
 const chartRef = ref(null);
 let registrosT = ref([]);
 var lastZoom = null;
@@ -100,6 +110,14 @@ let chartOptions = computed(() => {
       datetimeUTC: false,
       min: new Date(moment().subtract(8, "hours")).getTime(),
       max: moment(),
+      tickAmount: 25,
+      labels: {
+        rotate: -45,
+        rotateAlways: true,
+        formatter: function (value, timestamp) {
+          return new Date(value).toLocaleTimeString(); // The formatter function overrides format property
+        },
+      },
     },
     stroke: {
       width: 1.9,
@@ -112,15 +130,25 @@ onMounted(async () => {
   tP1 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 26);
   tP2 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 27);
   tP3 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 28);
-  tp4 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 29);
-  tp5 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 30);
+  tP4 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 29);
+  tP5 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 30);
+  medida.value =
+    tP1.unidadMedida +
+    ", " +
+    tP2.unidadMedida +
+    ", " +
+    tP3.unidadMedida +
+    ", " +
+    tP4.unidadMedida +
+    ", " +
+    tP5.unidadMedida;
   registrosT.value = [
     formatData("Agua", tAgua.registros),
     formatData("Producto 1", tP1.registros),
     formatData("Producto 2", tP2.registros),
     formatData("Producto 3", tP3.registros),
-    formatData("Producto 4", tp4.registros),
-    formatData("Producto 5", tp5.registros),
+    formatData("Producto 4", tP4.registros),
+    formatData("Producto 5", tP5.registros),
   ];
 
   socket.on("variable_25_actualizada", (data) => {

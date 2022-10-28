@@ -1,22 +1,38 @@
 <template>
   <v-container fluid class="fill-height">
     <v-row justify="center">
-      <v-col>
-        <CardCliente title="Linea 4" />
+      <v-col v-for="item in nombres" :key="item.id">
+        <CardLineas :linea="item" /><!-- :linea="item.linea" -->
       </v-col>
-      <v-col><CardCliente title="Linea 5" /> </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
 export default {
-  name: "SistemasView",
+  name: "LineasView",
 };
 </script>
 
 <script setup>
+import axios from "axios";
+import { onMounted, ref, computed } from "vue";
 import { routerStore } from "../stores/index";
-import CardCliente from "../components/cards/comun/CardCliente.vue";
-const router = routerStore();
+import CardLineas from "../components/cards/comun/CardLineas.vue";
+
+async function obtenerVariable(clienteID) {
+  return (
+    await axios.get(`${process.env.VUE_APP_RUTA_API}/${clienteID}/lineas/all`)
+  ).data;
+}
+let linea = [];
+let nombres = ref([]);
+let cargado = ref(false);
+
+onMounted(async () => {
+  cargado.value = false;
+  linea = await obtenerVariable(routerStore().clienteID); //TODO pasar cliente
+  nombres.value = linea;
+  cargado.value = true;
+});
 </script>

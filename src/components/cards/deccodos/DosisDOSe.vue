@@ -2,7 +2,7 @@
   <v-container
     ><v-card>
       <v-row>
-        <v-col><v-card-title>Agitadores</v-card-title></v-col>
+        <v-col><v-card-title>Aplicadores</v-card-title></v-col>
       </v-row>
       <v-row>
         <v-col v-if="cargado">
@@ -108,7 +108,6 @@ let series = ref([]);
 let ultimoValor = [
   { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
   { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
-  { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
 ];
 
 let chartOptions = computed(() => {
@@ -181,12 +180,10 @@ onMounted(async () => {
   cargado.value = false;
   a2D = await obtenerDatosVariable("8h", "registros", "rangos", 32);
   a3D = await obtenerDatosVariable("8h", "registros", "rangos", 33);
-  gen = await obtenerDatosVariable("8h", "registros", "rangos", 34);
 
   series.value = [
-    { name: "Aplicador 2 discos", data: range("Agitador P1", a2D.registros) },
-    { name: "Aplicador 3 discos", data: range("Agitador P2", a3D.registros) },
-    { name: "General", data: range("Agitador P3", gen.registros) },
+    { name: "Aplicador 2 discos", data: range("Estado", a2D.registros) },
+    { name: "Aplicador 3 discos", data: range("Estado", a3D.registros) },
   ];
   ultimoValor = [
     {
@@ -209,25 +206,12 @@ onMounted(async () => {
         y: 1,
       },
     },
-    {
-      start: {
-        x: series.value[2].data[series.value[2].data.length - 1].y[1],
-        y: 1,
-      },
-      end: {
-        x: series.value[2].data[series.value[2].data.length - 1].y[1],
-        y: 1,
-      },
-    },
   ];
   socket.on("variable_32_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 0, "Agitador P1");
+    updateValue(series, data, chartRef, lastZoom, 0, "Estado");
   });
   socket.on("variable_33_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 1, "Agitador P2");
-  });
-  socket.on("variable_34_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 2, "Agitador P3");
+    updateValue(series, data, chartRef, lastZoom, 1, "Estado");
   });
 
   cargado.value = true;

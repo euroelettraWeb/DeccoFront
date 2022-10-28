@@ -1,37 +1,32 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col>
-        <v-card>
-          <v-row>
-            <v-col><v-card-title>Estados</v-card-title></v-col>
-          </v-row>
-          <v-row>
-            <v-col v-if="cargado">
-              <ApexChart
-                ref="chartRef"
-                type="rangeBar"
-                height="300"
-                :options="chartOptions"
-                :series="series"
-              />
-            </v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col> </v-row
-        ></v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+  <v-container
+    ><v-card>
+      <v-row>
+        <v-col><v-card-title>General</v-card-title></v-col>
+      </v-row>
+      <v-row>
+        <v-col v-if="cargado">
+          <ApexChart
+            ref="chartRef"
+            type="rangeBar"
+            height="100"
+            :options="chartOptions"
+            :series="series"
+          />
+        </v-col>
+        <v-col v-else class="d-flex justify-center align-center">
+          <v-progress-circular
+            :size="100"
+            :width="7"
+            color="purple"
+            indeterminate
+          ></v-progress-circular>
+        </v-col> </v-row></v-card
+  ></v-container>
 </template>
 <script>
 export default {
-  name: "EstadoDAF",
+  name: "DosisDOGeneral",
 };
 </script>
 <script setup>
@@ -105,19 +100,12 @@ const socket = io("http://localhost:3000");
 const chartRef = ref(null);
 var lastZoom = null;
 let cargado = ref(false);
-let activo = [];
-let auto = [];
-let manual = [];
-let faltaConsenso = [];
-let alarma = [];
+let a2D = [];
+let a3D = [];
+let gen = [];
+
 let series = ref([]);
-let ultimoValor = [
-  { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
-  { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
-  { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
-  { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
-  { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
-];
+let ultimoValor = [{ start: { x: 1, y: 1 }, end: { x: 1, y: 1 } }];
 
 let chartOptions = computed(() => {
   return {
@@ -171,17 +159,8 @@ let chartOptions = computed(() => {
       datetimeUTC: false,
       min: new Date(moment().subtract(8, "hours")).getTime(),
       max: moment(),
-      tickAmount: 25,
-      labels: {
-        rotate: -45,
-        rotateAlways: true,
-        formatter: function (value, timestamp) {
-          return new Date(value).toLocaleTimeString(); // The formatter function overrides format property
-        },
-      },
     },
     yaxis: {
-      show: false,
       minWidth: 1,
       axisTicks: {
         width: 1,
@@ -196,21 +175,9 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  activo = await obtenerDatosVariable("8h", "registros", "rangos", 1);
-  alarma = await obtenerDatosVariable("8h", "registros", "rangos", 12);
-  auto = await obtenerDatosVariable("8h", "registros", "rangos", 13);
-  faltaConsenso = await obtenerDatosVariable("8h", "registros", "rangos", 14);
-  manual = await obtenerDatosVariable("8h", "registros", "rangos", 15);
-  series.value = [
-    { name: "Activo", data: range("Estado", activo.registros) },
-    { name: "Auto", data: range("Estado", auto.registros) },
-    { name: "Manual", data: range("Estado", manual.registros) },
-    {
-      name: "Falta de consenso",
-      data: range("Estado", faltaConsenso.registros),
-    },
-    { name: "Alarma", data: range("Estado", alarma.registros) },
-  ];
+  gen = await obtenerDatosVariable("8h", "registros", "rangos", 34);
+
+  series.value = [{ name: "General", data: range("Estado", gen.registros) }];
   ultimoValor = [
     {
       start: {
@@ -222,62 +189,11 @@ onMounted(async () => {
         y: 1,
       },
     },
-    {
-      start: {
-        x: series.value[1].data[series.value[1].data.length - 1].y[1],
-        y: 1,
-      },
-      end: {
-        x: series.value[1].data[series.value[1].data.length - 1].y[1],
-        y: 1,
-      },
-    },
-    {
-      start: {
-        x: series.value[2].data[series.value[2].data.length - 1].y[1],
-        y: 1,
-      },
-      end: {
-        x: series.value[2].data[series.value[2].data.length - 1].y[1],
-        y: 1,
-      },
-    },
-    {
-      start: {
-        x: series.value[3].data[series.value[3].data.length - 1].y[1],
-        y: 1,
-      },
-      end: {
-        x: series.value[3].data[series.value[3].data.length - 1].y[1],
-        y: 1,
-      },
-    },
-    {
-      start: {
-        x: series.value[4].data[series.value[4].data.length - 1].y[1],
-        y: 1,
-      },
-      end: {
-        x: series.value[4].data[series.value[4].data.length - 1].y[1],
-        y: 1,
-      },
-    },
   ];
-  socket.on("variable_1_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 0, "Estado");
-  });
-  socket.on("variable_12_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 1, "Estado");
-  });
-  socket.on("variable_13_actualizada", (data) => {
+  socket.on("variable_34_actualizada", (data) => {
     updateValue(series, data, chartRef, lastZoom, 2, "Estado");
   });
-  socket.on("variable_14_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 3, "Estado");
-  });
-  socket.on("variable_15_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 4, "Estado");
-  });
+
   cargado.value = true;
 });
 </script>

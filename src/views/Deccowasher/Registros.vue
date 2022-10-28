@@ -1,5 +1,8 @@
 <template>
-  <v-container> <ConsumoDosisFungicida /> <TablaDosis /></v-container>
+  <v-container>
+    <h1>DECCOWASHER</h1>
+    <ConsumoDosisFungicida /> <TablaDosis
+  /></v-container>
 </template>
 <script>
 export default {

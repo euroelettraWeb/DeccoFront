@@ -1,7 +1,8 @@
 <template>
   <v-container>
-    <EstadoNivelGarrafas />
+    <h1>DECCODAF</h1>
     <EstadoAgitadores />
+    <EstadoNivelGarrafas />
     <TablaNivelesGarrafa />
   </v-container>
 </template>

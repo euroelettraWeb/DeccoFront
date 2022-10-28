@@ -201,6 +201,15 @@ let chartOptions = computed(() => {
         rangeBarGroupRows: true,
       },
     },
+    colors: [
+      function ({ value, seriesIndex, w }) {
+        if (seriesIndex == 0) {
+          return "#d50000";
+        } else {
+          return "#00c853";
+        }
+      },
+    ],
     xaxis: {
       type: "datetime",
       datetimeUTC: false,

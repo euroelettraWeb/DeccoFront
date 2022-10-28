@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <h1>DECCOWASHER</h1>
     <TotalesDAF />
     <TablaTotalProductos />
   </v-container>

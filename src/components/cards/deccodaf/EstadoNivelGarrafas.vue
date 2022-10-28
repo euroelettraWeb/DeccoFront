@@ -171,6 +171,14 @@ let chartOptions = computed(() => {
       datetimeUTC: false,
       min: new Date(moment().subtract(8, "hours")).getTime(),
       max: moment(),
+      tickAmount: 25,
+      labels: {
+        rotate: -45,
+        rotateAlways: true,
+        formatter: function (value, timestamp) {
+          return new Date(value).toLocaleTimeString(); // The formatter function overrides format property
+        },
+      },
     },
     yaxis: {
       minWidth: 1,
@@ -192,7 +200,6 @@ onMounted(async () => {
   nP3 = await obtenerDatosVariable("8h", "registros", "rangos", 22);
   nP4 = await obtenerDatosVariable("8h", "registros", "rangos", 23);
   nP5 = await obtenerDatosVariable("8h", "registros", "rangos", 24);
-
   series.value = [
     { name: "Nivel P1", data: range("Nivel P1", nP1.registros) },
     { name: "Nivel P2", data: range("Nivel P2", nP2.registros) },

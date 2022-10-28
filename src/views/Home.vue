@@ -31,8 +31,8 @@
     </v-row>
     <v-row>
       <v-col cols="12" class="text-center">
-        <v-btn x-large color="success" elevation="4" to="/sistemas">
-          Seleccionar Sistema
+        <v-btn x-large color="success" elevation="4" @click="log">
+          Seleccionar Cliente
         </v-btn>
       </v-col>
     </v-row>
@@ -42,6 +42,17 @@
 <script>
 export default {
   name: "HomeView",
-  setup() {},
 };
+</script>
+<script setup>
+import { routerStore, userStore } from "../stores/index";
+import { storeToRefs } from "pinia";
+
+function log() {
+  if (storeToRefs(userStore()).usuarioValido.value) {
+    routerStore().cliente();
+  } else {
+    routerStore().login();
+  }
+}
 </script>
