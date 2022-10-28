@@ -1,18 +1,70 @@
 <template>
-  <v-container
-    ><v-card>
-      <ApexChart
-        v-if="cargado"
-        ref="chartRef"
-        height="350"
-        type="line"
-        :options="chartOptions"
-        :series="registrosT"
-      ></ApexChart
-    ></v-card>
+  <v-container>
+    <v-row>
+      <v-col>
+        <v-card class="mb-2"
+          ><v-row>
+            <v-col>
+              <v-card-title> Fruta procesada </v-card-title>
+              <v-card-subtitle>
+                Cajas por Ciclo y Peso por Caja
+              </v-card-subtitle>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <ApexChart
+                v-if="cargado"
+                ref="chartRef"
+                height="350"
+                type="line"
+                :options="chartOptions"
+                :series="registrosT"
+              />
+            </v-col>
+          </v-row>
+        </v-card>
+        <v-card class="mb-2">
+          <v-row>
+            <v-col>
+              <v-card-subtitle> Total Cajas </v-card-subtitle>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <ApexChart
+                v-if="cargado"
+                ref="chartRef2"
+                height="350"
+                type="line"
+                :options="chartOptions"
+                :series="cajas"
+              />
+            </v-col> </v-row
+        ></v-card>
+        <v-card>
+          <v-row>
+            <v-col>
+              <v-card-subtitle> Total Kilos </v-card-subtitle>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <ApexChart
+                v-if="cargado"
+                ref="chartRef3"
+                height="350"
+                type="line"
+                :options="chartOptions"
+                :series="kilos"
+              />
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
-
 <script>
 export default {
   name: "FrutaProcesada",
@@ -33,15 +85,6 @@ async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
     )
   ).data;
 }
-
-function formatData(name, arrays) {
-  let data = [];
-  for (let variable of arrays) {
-    let obj = { x: new Date(variable.x).getTime(), y: variable.y };
-    data.push(obj);
-  }
-  return { name: name, data: data };
-}
 let cargado = ref(false);
 let cajaPCiclo = {};
 let kgPCaja = {};
@@ -49,7 +92,11 @@ let tCajas = {};
 let tKg = {};
 
 const chartRef = ref(null);
+const chartRef2 = ref(null);
+const chartRef3 = ref(null);
 let registrosT = ref([]);
+let cajas = ref([]);
+let kilos = ref([]);
 var lastZoom = null;
 let chartOptions = computed(() => {
   return {
@@ -95,25 +142,38 @@ let chartOptions = computed(() => {
       datetimeUTC: false,
       min: new Date(moment().subtract(8, "hours")).getTime(),
       max: moment(),
+      tickAmount: 25,
+      labels: {
+        rotate: -45,
+        rotateAlways: true,
+        formatter: function (value, timestamp) {
+          return new Date(value).toLocaleTimeString(); // The formatter function overrides format property
+        },
+      },
     },
     stroke: {
       width: 1.9,
+    },
+    legend: {
+      showForSingleSeries: true,
     },
   };
 });
 onMounted(async () => {
   cargado.value = false;
-  cajaPCiclo = await obtenerDatosVariable("8h", "registros", "sinfiltro", 46);
-  kgPCaja = await obtenerDatosVariable("8h", "registros", "sinfiltro", 47);
-  tCajas = await obtenerDatosVariable("8h", "registros", "sinfiltro", 48);
-  tKg = await obtenerDatosVariable("8h", "registros", "sinfiltro", 48);
-  registrosT.value = [
-    formatData("Caja por ciclo", cajaPCiclo.registros),
-    formatData("Peso por caja", kgPCaja.registros),
-    formatData("Total cajas", tCajas.registros),
-    formatData("Total kilos", tKg.registros),
-  ];
-  socket.on("variable_46_actualizada", (data) => {
+  cajaPCiclo = await obtenerDatosVariable(
+    "8h",
+    "registros",
+    "formatoLinea",
+    44
+  );
+  kgPCaja = await obtenerDatosVariable("8h", "registros", "formatoLinea", 46);
+  tCajas = await obtenerDatosVariable("8h", "registros", "formatoLinea", 47);
+  tKg = await obtenerDatosVariable("8h", "registros", "formatoLinea", 48);
+  registrosT.value = [cajaPCiclo.registros[0], kgPCaja.registros[0]];
+  cajas.value = tCajas.registros;
+  kilos.value = tKg.registros;
+  socket.on("variable_45_actualizada", (data) => {
     registrosT.value[0].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
@@ -123,7 +183,7 @@ onMounted(async () => {
       if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
     }
   });
-  socket.on("variable_47_actualizada", (data) => {
+  socket.on("variable_46_actualizada", (data) => {
     registrosT.value[1].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
@@ -133,7 +193,7 @@ onMounted(async () => {
       if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
     }
   });
-  socket.on("variable_48_actualizada", (data) => {
+  socket.on("variable_47_actualizada", (data) => {
     registrosT.value[2].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
