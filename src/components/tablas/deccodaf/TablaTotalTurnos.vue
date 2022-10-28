@@ -112,7 +112,6 @@ onMounted(async () => {
   totalP5 = await obtenerDatosVariable(clienteID, 30);
   totalKilos = await obtenerDatosVariable(clienteID, 19);
   horasMarcha = await obtenerDatosVariable(clienteID, 26);
-  console.log(agua);
   unidades.value = [
     { id: 0, nombre: "Agua (" + agua.unidadMedida + ")" },
     { id: 1, nombre: "Producto 1 (" + totalP1.unidadMedida + ")" },

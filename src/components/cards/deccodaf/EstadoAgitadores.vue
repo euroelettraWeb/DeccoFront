@@ -195,7 +195,6 @@ let chartOptions = computed(() => {
 onMounted(async () => {
   cargado.value = false;
   let agP0 = await obtenerDatosVariable("8h", "registros", "formatoRangos", 2);
-  console.log(agP0);
   agP1 = await obtenerDatosVariable("8h", "registros", "rangos", 2);
   agP2 = await obtenerDatosVariable("8h", "registros", "rangos", 3);
   agP3 = await obtenerDatosVariable("8h", "registros", "rangos", 4);

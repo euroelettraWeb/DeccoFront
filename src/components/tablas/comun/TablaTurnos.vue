@@ -292,9 +292,7 @@ async function save() {
             horaInicio: element.horaInicio,
             horaFin: element.horaFin,
           })
-          .then((res) => {
-            console.log(res);
-          });
+          .then((res) => {});
       }
     } else {
       for (let index = 0; index < array.value.length; index++) {
@@ -305,9 +303,7 @@ async function save() {
             horaInicio: element.deccodaf,
             horaFin: element.deccodos,
           })
-          .then((res) => {
-            console.log(res);
-          });
+          .then((res) => {});
       }
     }
     times.value = await obtenerDatosVariable(routerStore().clienteID);
@@ -317,7 +313,6 @@ async function save() {
 onMounted(async () => {
   cargado.value = false;
   let t = await obtenerDatosVariable(routerStore().clienteID);
-  console.log(t);
   if (t.length > 1) {
     time.value = t[0].horaInicio;
     time2.value = t[0].horaFin;

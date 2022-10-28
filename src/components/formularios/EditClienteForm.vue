@@ -125,7 +125,6 @@ onMounted(async () => {
 
 async function validate() {
   if (form.value.validate()) {
-    console.log("src" + src.value);
     let dataPlc = (
       await axios.post(`${process.env.VUE_APP_RUTA_API}/plcs/actualizar`, {
         id: plcId.value,

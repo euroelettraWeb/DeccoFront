@@ -221,9 +221,7 @@ async function guardarLineas() {
           deccows: element.deccows,
           deccocontrol: element.deccocontrol,
         })
-        .then((res) => {
-          console.log(res);
-        });
+        .then((res) => {});
     }
     routerStore().sistemas(routerStore().clienteID);
   }

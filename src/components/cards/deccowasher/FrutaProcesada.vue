@@ -194,7 +194,7 @@ onMounted(async () => {
     }
   });
   socket.on("variable_68_actualizada", (data) => {
-    registrosT.value[2].data.push({
+    registrosT.value[0].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
     });
@@ -204,7 +204,7 @@ onMounted(async () => {
     }
   });
   socket.on("variable_69_actualizada", (data) => {
-    registrosT.value[3].data.push({
+    registrosT.value[0].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
     });
