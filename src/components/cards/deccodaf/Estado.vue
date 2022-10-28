@@ -63,11 +63,11 @@ async function obtenerDatosVariables(operacion, modo, filtrado, variables) {
     )
   ).data;
 }
-async function obtenerMarcha(id, id2, id3, id4, id5) {
+async function obtenerMarcha(variables) {
   return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variables/marcha/${id}/${id2}/${id3}/${id4}/${id5}`
-    )
+    await axios.post(`${process.env.VUE_APP_RUTA_API}/variables/marcha`, {
+      variables,
+    })
   ).data;
 }
 // function newValue(newArray, value, nameI) {
@@ -235,7 +235,7 @@ let chartOptions = computed(() => {
         rotate: -45,
         rotateAlways: true,
         formatter: function (value, timestamp) {
-          return new Date(value).toLocaleTimeString(); // The formatter function overrides format property
+          return new Date(value).toLocaleTimeString();
         },
       },
     },
@@ -258,14 +258,13 @@ onMounted(async () => {
     "formatoRangos",
     [1, 13, 15]
   );
-  marcha = await obtenerMarcha(1, 13, 15, 12, 14);
+  marcha = await obtenerMarcha([1, 13, 15, 12, 14]);
   funcMaquina = await obtenerDatosVariables(
     "8h",
     "registros",
     "formatoRangos",
     [12, 14]
   );
-  console.log(modoMaquina);
   series.value = modoMaquina;
   series2.value = funcMaquina;
   series3.value = marcha;
