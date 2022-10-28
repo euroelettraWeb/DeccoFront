@@ -47,17 +47,17 @@ async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
     )
   ).data;
 }
-function range(rangeName, array) {
-  let returnt = [];
-  for (let index = 0; index < array.length; index++) {
-    const element = array[index];
-    let startR = new Date(element.x).getTime();
-    let endR = new Date(element.y).getTime();
-    let obj = { x: rangeName, y: [startR, endR] };
-    returnt.push(obj);
-  }
-  return returnt;
-}
+// function range(rangeName, array) {
+//   let returnt = [];
+//   for (let index = 0; index < array.length; index++) {
+//     const element = array[index];
+//     let startR = new Date(element.x).getTime();
+//     let endR = new Date(element.y).getTime();
+//     let obj = { x: rangeName, y: [startR, endR] };
+//     returnt.push(obj);
+//   }
+//   return returnt;
+// }
 
 function updateValue(series, data, chartRef, lastZoom, index, nameX) {
   let start = ultimoValor[index].start;
@@ -194,89 +194,85 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  let agP0 = await obtenerDatosVariable("8h", "registros", "formatoRangos", 2);
-  agP1 = await obtenerDatosVariable("8h", "registros", "rangos", 2);
-  agP2 = await obtenerDatosVariable("8h", "registros", "rangos", 3);
-  agP3 = await obtenerDatosVariable("8h", "registros", "rangos", 4);
-  agP4 = await obtenerDatosVariable("8h", "registros", "rangos", 5);
-  agP5 = await obtenerDatosVariable("8h", "registros", "rangos", 6);
+  agP1 = await obtenerDatosVariable("8h", "registros", "formatoRangos", 2);
+  agP2 = await obtenerDatosVariable("8h", "registros", "formatoRangos", 3);
+  agP3 = await obtenerDatosVariable("8h", "registros", "formatoRangos", 4);
+  agP4 = await obtenerDatosVariable("8h", "registros", "formatoRangos", 5);
+  agP5 = await obtenerDatosVariable("8h", "registros", "formatoRangos", 6);
   series.value = [
-    { name: "Agitador P1", data: range("Agitador P1", agP1.registros) },
-    { name: "Agitador P2", data: range("Agitador P2", agP2.registros) },
-    { name: "Agitador P3", data: range("Agitador P3", agP3.registros) },
-    {
-      name: "Agitador P4",
-      data: range("Agitador P4", agP4.registros),
-    },
-    { name: "Agitador P5", data: range("Agitador P5", agP5.registros) },
+    agP1.registros[1],
+    agP2.registros[1],
+    agP3.registros[1],
+    agP4.registros[1],
+    agP5.registros[1],
   ];
-  ultimoValor = [
-    {
-      start: {
-        x: series.value[0].data[series.value[0].data.length - 1].y[1],
-        y: 1,
-      },
-      end: {
-        x: series.value[0].data[series.value[0].data.length - 1].y[1],
-        y: 1,
-      },
-    },
-    {
-      start: {
-        x: series.value[1].data[series.value[1].data.length - 1].y[1],
-        y: 1,
-      },
-      end: {
-        x: series.value[1].data[series.value[1].data.length - 1].y[1],
-        y: 1,
-      },
-    },
-    {
-      start: {
-        x: series.value[2].data[series.value[2].data.length - 1].y[1],
-        y: 1,
-      },
-      end: {
-        x: series.value[2].data[series.value[2].data.length - 1].y[1],
-        y: 1,
-      },
-    },
-    {
-      start: {
-        x: series.value[3].data[series.value[3].data.length - 1].y[1],
-        y: 1,
-      },
-      end: {
-        x: series.value[3].data[series.value[3].data.length - 1].y[1],
-        y: 1,
-      },
-    },
-    {
-      start: {
-        x: series.value[4].data[series.value[4].data.length - 1].y[1],
-        y: 1,
-      },
-      end: {
-        x: series.value[4].data[series.value[4].data.length - 1].y[1],
-        y: 1,
-      },
-    },
-  ];
-  socket.on("variable_2_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 0, "Agitador P1");
-  });
-  socket.on("variable_3_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 1, "Agitador P2");
-  });
-  socket.on("variable_4_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 2, "Agitador P3");
-  });
-  socket.on("variable_5_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 3, "Agitador P4");
-  });
-  socket.on("variable_6_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 4, "Agitador P5");
-  });
+  // ultimoValor = [
+  //   {
+  //     start: {
+  //       x: series.value[0].data[series.value[0].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //     end: {
+  //       x: series.value[0].data[series.value[0].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //   },
+  //   {
+  //     start: {
+  //       x: series.value[1].data[series.value[1].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //     end: {
+  //       x: series.value[1].data[series.value[1].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //   },
+  //   {
+  //     start: {
+  //       x: series.value[2].data[series.value[2].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //     end: {
+  //       x: series.value[2].data[series.value[2].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //   },
+  //   {
+  //     start: {
+  //       x: series.value[3].data[series.value[3].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //     end: {
+  //       x: series.value[3].data[series.value[3].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //   },
+  //   {
+  //     start: {
+  //       x: series.value[4].data[series.value[4].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //     end: {
+  //       x: series.value[4].data[series.value[4].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //   },
+  // ];
+  // socket.on("variable_2_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 0, "Agitador P1");
+  // });
+  // socket.on("variable_3_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 1, "Agitador P2");
+  // });
+  // socket.on("variable_4_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 2, "Agitador P3");
+  // });
+  // socket.on("variable_5_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 3, "Agitador P4");
+  // });
+  // socket.on("variable_6_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 4, "Agitador P5");
+  // });
   cargado.value = true;
 });
 </script>

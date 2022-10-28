@@ -3,7 +3,7 @@
     <h1>DECCODAF</h1>
     <EstadoAgitadores />
     <EstadoNivelGarrafas />
-    <TablaNivelesGarrafa />
+    <!-- <TablaNivelesGarrafa /> -->
   </v-container>
 </template>
 <script>

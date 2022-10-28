@@ -49,17 +49,6 @@ async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
     )
   ).data;
 }
-function range(rangeName, array) {
-  let returnt = [];
-  for (let index = 0; index < array.length; index++) {
-    const element = array[index];
-    let startR = new Date(element.x).getTime();
-    let endR = new Date(element.y).getTime();
-    let obj = { x: rangeName, y: [startR, endR] };
-    returnt.push(obj);
-  }
-  return returnt;
-}
 function updateValue(series, data, chartRef, lastZoom, index, nameX) {
   let start = ultimoValor[index].start;
   let end = ultimoValor[index].end;
@@ -195,88 +184,85 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  nP1 = await obtenerDatosVariable("8h", "registros", "rangos", 20);
-  nP2 = await obtenerDatosVariable("8h", "registros", "rangos", 21);
-  nP3 = await obtenerDatosVariable("8h", "registros", "rangos", 22);
-  nP4 = await obtenerDatosVariable("8h", "registros", "rangos", 23);
-  nP5 = await obtenerDatosVariable("8h", "registros", "rangos", 24);
+  nP1 = await obtenerDatosVariable("8h", "registros", "formatoRangos", 20);
+  nP2 = await obtenerDatosVariable("8h", "registros", "formatoRangos", 21);
+  nP3 = await obtenerDatosVariable("8h", "registros", "formatoRangos", 22);
+  nP4 = await obtenerDatosVariable("8h", "registros", "formatoRangos", 23);
+  nP5 = await obtenerDatosVariable("8h", "registros", "formatoRangos", 24);
   series.value = [
-    { name: "Nivel P1", data: range("Nivel P1", nP1.registros) },
-    { name: "Nivel P2", data: range("Nivel P2", nP2.registros) },
-    { name: "Nivel P3", data: range("Nivel P3", nP3.registros) },
-    {
-      name: "Nivel P4",
-      data: range("Nivel P4", nP4.registros),
-    },
-    { name: "Nivel P5", data: range("Nivel P5", nP5.registros) },
+    nP1.registros[1],
+    nP2.registros[1],
+    nP3.registros[1],
+    nP4.registros[1],
+    nP5.registros[1],
   ];
-  ultimoValor = [
-    {
-      start: {
-        x: series.value[0].data[series.value[0].data.length - 1].y[1],
-        y: 1,
-      },
-      end: {
-        x: series.value[0].data[series.value[0].data.length - 1].y[1],
-        y: 1,
-      },
-    },
-    {
-      start: {
-        x: series.value[1].data[series.value[1].data.length - 1].y[1],
-        y: 1,
-      },
-      end: {
-        x: series.value[1].data[series.value[1].data.length - 1].y[1],
-        y: 1,
-      },
-    },
-    {
-      start: {
-        x: series.value[2].data[series.value[2].data.length - 1].y[1],
-        y: 1,
-      },
-      end: {
-        x: series.value[2].data[series.value[2].data.length - 1].y[1],
-        y: 1,
-      },
-    },
-    {
-      start: {
-        x: series.value[3].data[series.value[3].data.length - 1].y[1],
-        y: 1,
-      },
-      end: {
-        x: series.value[3].data[series.value[3].data.length - 1].y[1],
-        y: 1,
-      },
-    },
-    {
-      start: {
-        x: series.value[4].data[series.value[4].data.length - 1].y[1],
-        y: 1,
-      },
-      end: {
-        x: series.value[4].data[series.value[4].data.length - 1].y[1],
-        y: 1,
-      },
-    },
-  ];
-  socket.on("variable_20_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 0, "Nivel P1");
-  });
-  socket.on("variable_21_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 1, "Nivel P2");
-  });
-  socket.on("variable_22_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 2, "Nivel P3");
-  });
-  socket.on("variable_23_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 3, "Nivel P4");
-  });
-  socket.on("variable_24_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 4, "Nivel P5");
-  });
+  // ultimoValor = [
+  //   {
+  //     start: {
+  //       x: series.value[0].data[series.value[0].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //     end: {
+  //       x: series.value[0].data[series.value[0].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //   },
+  //   {
+  //     start: {
+  //       x: series.value[1].data[series.value[1].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //     end: {
+  //       x: series.value[1].data[series.value[1].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //   },
+  //   {
+  //     start: {
+  //       x: series.value[2].data[series.value[2].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //     end: {
+  //       x: series.value[2].data[series.value[2].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //   },
+  //   {
+  //     start: {
+  //       x: series.value[3].data[series.value[3].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //     end: {
+  //       x: series.value[3].data[series.value[3].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //   },
+  //   {
+  //     start: {
+  //       x: series.value[4].data[series.value[4].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //     end: {
+  //       x: series.value[4].data[series.value[4].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //   },
+  // ];
+  // socket.on("variable_20_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 0, "Nivel P1");
+  // });
+  // socket.on("variable_21_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 1, "Nivel P2");
+  // });
+  // socket.on("variable_22_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 2, "Nivel P3");
+  // });
+  // socket.on("variable_23_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 3, "Nivel P4");
+  // });
+  // socket.on("variable_24_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 4, "Nivel P5");
+  // });
   cargado.value = true;
 });
 </script>

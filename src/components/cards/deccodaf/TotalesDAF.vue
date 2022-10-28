@@ -6,7 +6,6 @@
           ><v-row>
             <v-col>
               <v-card-title> Consumo total de Productos y Agua</v-card-title>
-              <v-card-subtitle>Medidas en: {{ medida }}</v-card-subtitle>
             </v-col>
           </v-row>
           <v-row>
@@ -46,15 +45,6 @@ async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
     )
   ).data;
 }
-
-function formatData(name, arrays) {
-  let data = [];
-  for (let variable of arrays) {
-    let obj = { x: new Date(variable.x).getTime(), y: variable.y };
-    data.push(obj);
-  }
-  return { name: name, data: data };
-}
 let cargado = ref(false);
 let tAgua = {};
 let tP1 = {};
@@ -62,7 +52,6 @@ let tP2 = {};
 let tP3 = {};
 let tP4 = {};
 let tP5 = {};
-let medida = ref("");
 const chartRef = ref(null);
 let registrosT = ref([]);
 var lastZoom = null;
@@ -126,31 +115,20 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  tAgua = await obtenerDatosVariable("8h", "registros", "sinfiltro", 25);
-  tP1 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 26);
-  tP2 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 27);
-  tP3 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 28);
-  tP4 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 29);
-  tP5 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 30);
-  medida.value =
-    tP1.unidadMedida +
-    ", " +
-    tP2.unidadMedida +
-    ", " +
-    tP3.unidadMedida +
-    ", " +
-    tP4.unidadMedida +
-    ", " +
-    tP5.unidadMedida;
+  tAgua = await obtenerDatosVariable("8h", "registros", "formatoLinea", 25);
+  tP1 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 26);
+  tP2 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 27);
+  tP3 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 28);
+  tP4 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 29);
+  tP5 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 30);
   registrosT.value = [
-    formatData("Agua", tAgua.registros),
-    formatData("Producto 1", tP1.registros),
-    formatData("Producto 2", tP2.registros),
-    formatData("Producto 3", tP3.registros),
-    formatData("Producto 4", tP4.registros),
-    formatData("Producto 5", tP5.registros),
+    tAgua.registros[0],
+    tP1.registros[0],
+    tP2.registros[0],
+    tP3.registros[0],
+    tP4.registros[0],
+    tP5.registros[0],
   ];
-
   socket.on("variable_25_actualizada", (data) => {
     registrosT.value[0].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
