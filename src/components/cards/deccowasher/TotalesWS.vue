@@ -36,15 +36,6 @@ async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
     )
   ).data;
 }
-
-function formatData(name, arrays) {
-  let data = [];
-  for (let variable of arrays) {
-    let obj = { x: new Date(variable.x).getTime(), y: variable.y };
-    data.push(obj);
-  }
-  return { name: name, data: data };
-}
 let cargado = ref(false);
 let tAgua = {};
 let tDes = {};
@@ -105,14 +96,14 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  tAgua = await obtenerDatosVariable("8h", "registros", "sinfiltro", 70);
-  tDes = await obtenerDatosVariable("8h", "registros", "sinfiltro", 71);
-  tJabon = await obtenerDatosVariable("8h", "registros", "sinfiltro", 72);
+  tAgua = await obtenerDatosVariable("8h", "registros", "formatoLinea", 70);
+  tDes = await obtenerDatosVariable("8h", "registros", "formatoLinea", 71);
+  tJabon = await obtenerDatosVariable("8h", "registros", "formatoLinea", 72);
 
   registrosT.value = [
-    formatData("Agua", tAgua.registros),
-    formatData("Desinfectante", tDes.registros),
-    formatData("Jabon", tJabon.registros),
+    tAgua.registros[0],
+    tDes.registros[0],
+    tJabon.registros[0],
   ];
 
   socket.on("variable_70_actualizada", (data) => {

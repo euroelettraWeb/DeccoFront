@@ -37,14 +37,6 @@ async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
   ).data;
 }
 
-function formatData(name, arrays) {
-  let data = [];
-  for (let variable of arrays) {
-    let obj = { x: new Date(variable.x).getTime(), y: variable.y };
-    data.push(obj);
-  }
-  return { name: name, data: data };
-}
 let cargado = ref(false);
 let tA2D = {};
 let tA3D = {};
@@ -110,23 +102,23 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  tA2D = await obtenerDatosVariable("8h", "registros", "sinfiltro", 49);
-  tA3D = await obtenerDatosVariable("8h", "registros", "sinfiltro", 50);
-  tB1 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 51);
-  tB2 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 52);
-  tB3 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 53);
-  tB4 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 54);
-  tB5 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 55);
-  tCera = await obtenerDatosVariable("8h", "registros", "sinfiltro", 56);
+  tA2D = await obtenerDatosVariable("8h", "registros", "formatoLinea", 49);
+  tA3D = await obtenerDatosVariable("8h", "registros", "formatoLinea", 50);
+  tB1 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 51);
+  tB2 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 52);
+  tB3 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 53);
+  tB4 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 54);
+  tB5 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 55);
+  tCera = await obtenerDatosVariable("8h", "registros", "formatoLinea", 56);
   registrosT.value = [
-    formatData("Aplicador 2", tA2D.registros),
-    formatData("Aplicador 3", tA3D.registros),
-    formatData("Bomba 1", tB1.registros),
-    formatData("Bomba 2", tB2.registros),
-    formatData("Bomba 3", tB3.registros),
-    formatData("Bomba 4", tB4.registros),
-    formatData("Bomba 5", tB5.registros),
-    formatData("Cera", tCera.registros),
+    tA2D.registros[0],
+    tA3D.registros[0],
+    tB1.registros[0],
+    tB2.registros[0],
+    tB3.registros[0],
+    tB4.registros[0],
+    tB5.registros[0],
+    tCera.registros[0],
   ];
 
   socket.on("variable_49_actualizada", (data) => {

@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <h1>DECCODOS</h1>
-    <TotalesDAF />
+    <TotalesDOS />
     <TablaTotalProductos />
   </v-container>
 </template>
@@ -11,6 +11,6 @@ export default {
 };
 </script>
 <script setup>
-import TotalesDAF from "../../components/cards/deccodaf/TotalesDAF.vue";
-import TablaTotalProductos from "../../components/tablas/deccodaf/TablaTotalProductos.vue";
+import TotalesDOS from "../../components/cards/deccodos/TotalesDOS.vue";
+import TablaTotalProductos from "../../components/tablas/deccodos/TablaTotalProductos.vue";
 </script>

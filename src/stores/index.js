@@ -69,7 +69,7 @@ export const routerStore = defineStore("router", {
       // deccodafRegistros: "/sistemas/deccodaf/registros",
       deccodos: "DECCODOS",
       deccodosMarchaParo: "DECCODOS - Estado",
-      deccodosConsumo: "DECCODOS -Consumo",
+      deccodosConsumo: "DECCODOS - Consumo",
       // deccodosRegistros: "/sistemas/deccodos/registros",
       deccowasher: "DECCOWASHER",
       deccowasherMarchaParo: "DECCOWASHER - Estado",
