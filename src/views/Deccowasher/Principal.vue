@@ -6,6 +6,7 @@
     <v-row>
       <v-col>
         <TablaTurnos />
+        <TablaTotalTurnos />
         <Estado /> <Dosis /> <FrutaProcesada />
       </v-col>
     </v-row>
@@ -26,6 +27,7 @@ import TablaTurnos from "../../components/tablas/comun/TablaTurnos.vue";
 import { routerStore } from "../../stores/index";
 import axios from "axios";
 import { onMounted, ref } from "vue";
+import TablaTotalTurnos from "../../components/tablas/deccowasher/TablaTotalTurnos.vue";
 
 async function obtenerLinea(id) {
   return (await axios.get(`${process.env.VUE_APP_RUTA_API}/lineas/${id}`)).data;

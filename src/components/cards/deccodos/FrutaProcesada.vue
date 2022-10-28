@@ -165,7 +165,7 @@ onMounted(async () => {
     "8h",
     "registros",
     "formatoLinea",
-    44
+    45
   );
   kgPCaja = await obtenerDatosVariable("8h", "registros", "formatoLinea", 46);
   tCajas = await obtenerDatosVariable("8h", "registros", "formatoLinea", 47);
