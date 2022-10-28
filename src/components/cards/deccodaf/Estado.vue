@@ -15,22 +15,13 @@
                     type="rangeBar"
                     height="300"
                     :options="chartOptions"
-                    :series="series"
-                /></v-col>
-              </v-row>
-              <v-row>
-                <v-col>
+                    :series="series" />
                   <ApexChart
                     ref="chartRef3"
                     type="rangeBar"
-                    height="300"
+                    height="200"
                     :options="chartOptions"
-                    :series="series3"
-                /></v-col>
-              </v-row>
-              <v-row>
-                <v-col
-                  ><ApexChart
+                    :series="series3" /><ApexChart
                     ref="chartRef2"
                     type="rangeBar"
                     height="300"
@@ -63,40 +54,21 @@ import { onMounted, ref, computed } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
-async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
+
+async function obtenerDatosVariables(operacion, modo, filtrado, variables) {
   return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variable/${operacion}/${modo}/${filtrado}/${variableID}`
+    await axios.post(
+      `${process.env.VUE_APP_RUTA_API}/variable/multiple/${operacion}/${modo}/${filtrado}/`,
+      { variables }
     )
   ).data;
 }
-
 async function obtenerMarcha(id, id2, id3, id4, id5) {
   return (
     await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variables/${id}/${id2}/${id3}/${id4}/${id5}`
+      `${process.env.VUE_APP_RUTA_API}/variables/marcha/${id}/${id2}/${id3}/${id4}/${id5}`
     )
   ).data;
-}
-
-function range(array, names) {
-  let todos = [];
-  let apagado = [];
-  let encendido = [];
-  for (let i = 0; i < names.length; i++) {
-    for (let index = 0; index < array[i].length; index++) {
-      const element = array[i][index];
-      let startR = new Date(element.x).getTime();
-      let endR = new Date(element.y).getTime();
-      let obj = { x: names[i], y: [startR, endR] };
-      if (element.z == 0) apagado.push(obj);
-      else encendido.push(obj);
-    }
-  }
-
-  todos.push({ name: "Apagado", data: apagado });
-  todos.push({ name: "Encedido", data: encendido });
-  return todos;
 }
 // function newValue(newArray, value, nameI) {
 //   let elemento0 = newArray[0].data.findLast((node) => node.x == nameI);
@@ -191,18 +163,12 @@ const chartRef2 = ref(null);
 const chartRef3 = ref(null);
 var lastZoom = null;
 let cargado = ref(false);
-let activo = {};
-let auto = [];
-let manual = [];
-let faltaConsenso = [];
-let alarma = [];
 let marcha = [];
 let series = ref([]);
 let series2 = ref([]);
 let series3 = ref([]);
-let names = ["Activo", "Auto", "Manual"];
-let names2 = ["Falta de consenso", "Alarma"]; /* "marchaParo", */
-let nameEstado = ["Apagado", "Encendido"];
+let modoMaquina = [];
+let funcMaquina = [];
 let chartOptions = computed(() => {
   return {
     chart: {
@@ -283,26 +249,25 @@ let chartOptions = computed(() => {
     },
   };
 });
+
 onMounted(async () => {
   cargado.value = false;
-  let estados = [];
-  let estados2 = [];
-  activo = await obtenerDatosVariable("8h", "registros", "rangosTodos", 1);
-  alarma = await obtenerDatosVariable("8h", "registros", "rangosTodos", 12);
-  auto = await obtenerDatosVariable("8h", "registros", "rangosTodos", 13);
-  marcha = await obtenerMarcha(1, 12, 13, 14, 15);
-  faltaConsenso = await obtenerDatosVariable(
+  modoMaquina = await obtenerDatosVariables(
     "8h",
     "registros",
-    "rangosTodos",
-    14
+    "formatoRangos",
+    [1, 13, 15]
   );
-
-  manual = await obtenerDatosVariable("8h", "registros", "rangosTodos", 15);
-  estados = [activo.registros, auto.registros, manual.registros];
-  estados2 = [faltaConsenso.registros, alarma.registros];
-  series.value = range(estados, names); //TODO Obtener nombre de la variable
-  series2.value = range(estados2, names2); //TODO Obtener nombre de la variable
+  marcha = await obtenerMarcha(1, 13, 15, 12, 14);
+  funcMaquina = await obtenerDatosVariables(
+    "8h",
+    "registros",
+    "formatoRangos",
+    [12, 14]
+  );
+  console.log(modoMaquina);
+  series.value = modoMaquina;
+  series2.value = funcMaquina;
   series3.value = marcha;
   // socket.on("variable_1_actualizada", (data) => {
   //   newValue(series, data, chartRef, lastZoom, names[0]);
