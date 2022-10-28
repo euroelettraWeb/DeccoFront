@@ -152,6 +152,8 @@ let marcha = [];
 let series = ref([]);
 let series2 = ref([]);
 let series3 = ref([]);
+let modoMaquina = [];
+let funcMaquina = [];
 let chartOptions = computed(() => {
   return {
     chart: {

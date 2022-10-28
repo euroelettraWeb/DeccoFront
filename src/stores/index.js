@@ -308,7 +308,7 @@ export const routerStore = defineStore("router", {
         //   break;
         case "deccowasher:Principal":
           router
-            .push({ name: this.routes.deccowashe, params: { id, linea } })
+            .push({ name: this.routes.deccowasher, params: { id, linea } })
             .catch((failure) => {
               if (
                 isNavigationFailure(failure, NavigationFailureType.duplicated)
