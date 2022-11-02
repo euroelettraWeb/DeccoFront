@@ -62,6 +62,13 @@ async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
     )
   ).data;
 }
+// async function obtenerDatosVariable(clienteID, modo, variableID) {
+//   return (
+//     await axios.get(
+//       `${process.env.VUE_APP_RUTA_API}/variable/total/${clienteID}/${modo}/${variableID}`
+//     )
+//   ).data;
+// }
 
 let consumos = ref([]);
 let agua = [];
@@ -82,6 +89,9 @@ let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
+  // agua = await obtenerDatosVariable(clienteID, 70);
+  // totalDesinfectante = await obtenerDatosVariable(clienteID, 71);
+  // totalJabon = await obtenerDatosVariable(clienteID, 72);
   agua = await obtenerDatosVariable("8h", "primero", "sinfiltro", 25);
   totalP1 = await obtenerDatosVariable("8h", "primero", "sinfiltro", 26);
   totalP2 = await obtenerDatosVariable("8h", "primero", "sinfiltro", 27);

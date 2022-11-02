@@ -77,10 +77,10 @@ import axios from "axios";
 import { onMounted, ref } from "vue";
 import { routerStore } from "../../../stores/index";
 
-async function obtenerDatosVariable(clienteID, variableID) {
+async function obtenerDatosVariable(clienteID, modo, variableID) {
   return (
     await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variable/total/${clienteID}/${variableID}`
+      `${process.env.VUE_APP_RUTA_API}/variable/total/${clienteID}/${modo}/${variableID}`
     )
   ).data;
 }
@@ -102,12 +102,12 @@ let cargado = ref(false);
 onMounted(async () => {
   cargado.value = false;
   let clienteID = routerStore().clienteID;
-  agua = await obtenerDatosVariable(clienteID, 70);
-  totalDesinfectante = await obtenerDatosVariable(clienteID, 71);
-  totalJabon = await obtenerDatosVariable(clienteID, 72);
+  agua = await obtenerDatosVariable(clienteID, "24H", 70);
+  totalDesinfectante = await obtenerDatosVariable(clienteID, "24H", 71);
+  totalJabon = await obtenerDatosVariable(clienteID, "24H", 72);
 
-  totalKilos = await obtenerDatosVariable(clienteID, 69);
-  horasMarcha = await obtenerDatosVariable(clienteID, 69);
+  totalKilos = await obtenerDatosVariable(clienteID, "24H", 69);
+  horasMarcha = await obtenerDatosVariable(clienteID, "24H", 69);
   unidades.value = [
     { id: 0, nombre: "Agua (" + agua.unidadMedida + ")" },
     {
