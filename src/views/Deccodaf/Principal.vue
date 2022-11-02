@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <h1 class="transition-swing text-h2">
-      {{ nombreCliente }} -DECCODAF - {{ nombreLinea }}
+      {{ nombreCliente }} - DECCODAF - {{ nombreLinea }}
     </h1>
     <v-row>
       <v-col>
