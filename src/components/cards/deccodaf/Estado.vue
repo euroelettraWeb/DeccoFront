@@ -63,11 +63,14 @@ async function obtenerDatosVariables(operacion, modo, filtrado, variables) {
     )
   ).data;
 }
-async function obtenerMarcha(variables) {
+async function obtenerMarcha(modo, variables) {
   return (
-    await axios.post(`${process.env.VUE_APP_RUTA_API}/variables/marcha`, {
-      variables,
-    })
+    await axios.post(
+      `${process.env.VUE_APP_RUTA_API}/variable/marcha/${modo}`,
+      {
+        variables,
+      }
+    )
   ).data;
 }
 // function newValue(newArray, value, nameI) {
@@ -258,7 +261,7 @@ onMounted(async () => {
     "formatoRangos",
     [1, 13, 15]
   );
-  marcha = await obtenerMarcha([1, 13, 15, 12, 14]);
+  marcha = await obtenerMarcha("8h", [1, 13, 15, 12, 14]);
   funcMaquina = await obtenerDatosVariables(
     "8h",
     "registros",

@@ -19,19 +19,33 @@
           </v-row>
           <v-row>
             <v-col v-if="cargado">
-              <ApexChart
+              <!-- <ApexChart
                 ref="chartRef"
                 type="line"
                 height="300"
                 :options="chartOptions"
+                :series="seriesL"
+              /> -->
+              <ApexChart
+                ref="chartRef2"
+                type="rangeBar"
+                height="300"
+                :options="rangeOptions"
                 :series="series"
               />
               <ApexChart
                 ref="chartRef2"
                 type="rangeBar"
                 height="300"
-                :options="chartOptions2"
+                :options="rangeOptions"
                 :series="series2"
+              />
+              <ApexChart
+                ref="chartRef2"
+                type="rangeBar"
+                height="300"
+                :options="rangeOptions"
+                :series="series3"
               />
             </v-col>
             <v-col v-else class="d-flex justify-center align-center">
@@ -64,21 +78,35 @@ const socket = io("http://localhost:3000");
 
 async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
   return (
-    await axios.get(
+    await axios.post(
       `${process.env.VUE_APP_RUTA_API}/variable/${operacion}/${modo}/${filtrado}/${variableID}`
     )
   ).data;
 }
+
 async function obtenerDatosHistoricoVariable(
-  inicio,
-  fin,
   operacion,
+  modo,
   filtrado,
-  variableID
+  variables,
+  inicio,
+  fin
 ) {
   return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variable/historico/${inicio}/${fin}/${operacion}/${filtrado}/${variableID}`
+    await axios.post(
+      `${process.env.VUE_APP_RUTA_API}/variable/multiple/${operacion}/${modo}/${filtrado}/`,
+      { variables }
+    )
+  ).data;
+}
+
+async function obtenerMarcha(modo, variables) {
+  return (
+    await axios.post(
+      `${process.env.VUE_APP_RUTA_API}/variable/marcha/${modo}`,
+      {
+        variables,
+      }
     )
   ).data;
 }
@@ -91,9 +119,9 @@ function onReset() {
   fin.value = "";
 }
 function dateApplied(date1, date2) {
-  this.events.push(
-    new Event("date-applied", `${date1.toString()} - ${date2.toString()}`)
-  );
+  // this.events.push(
+  //   new Event("date-applied", `${date1.toString()} - ${date2.toString()}`)
+  // );
 }
 
 let cargado = ref(false);
@@ -104,8 +132,10 @@ let selectItems = ref([]);
 
 const chartRef = ref(null);
 const chartRef2 = ref(null);
+const chartRef3 = ref(null);
 let series = ref([]);
 let series2 = ref([]);
+let series3 = ref([]);
 
 let sameDateFormat = {
   from: "DD MM YYYY, hh:mm",
@@ -134,10 +164,9 @@ let chartOptions = computed(() => {
   };
 });
 
-let chartOptions2 = computed(() => {
+let rangeOptions = computed(() => {
   return {
     chart: {
-      height: 100,
       type: "rangeBar",
       locales: [es],
       defaultLocale: "es",
@@ -158,28 +187,44 @@ let chartOptions2 = computed(() => {
         format: "dd MMM yyyy hh:mm:ss",
       },
     },
+    legend: {
+      height: 60,
+    },
   };
 });
+let estado = {};
+let marcha = {};
+let funcMaquina = {};
 
 onMounted(async () => {
   cargado.value = false;
-  variables = await obtenerVariable();
-  let vara = await obtenerDatosHistoricoVariable(
-    inicio,
-    fin,
-    "registros",
-    "formatoLinea",
-    25
-  );
-  series.value = vara.registros;
-  let varR = await obtenerDatosHistoricoVariable(
-    inicio,
-    fin,
+  // variables = await obtenerVariable();
+  // let vara = await obtenerDatosHistoricoVariable(
+  //   inicio.value,
+  //   fin.value,
+  //   "registros",
+  //   "formatoLinea",
+  //   25
+  // );
+  // series.value = vara.registros;
+  estado = await obtenerDatosHistoricoVariable(
+    "8h",
     "registros",
     "formatoRangos",
-    1
+    [1, 13, 15]
   );
-  series2.value = varR.registros;
+  marcha = await obtenerMarcha("8h", [1, 13, 15, 12, 14]);
+  funcMaquina = await obtenerDatosHistoricoVariable(
+    "8h",
+    "registros",
+    "formatoRangos",
+    [12, 14]
+  );
+
+  series.value = estado;
+  series2.value = marcha;
+  series3.value = funcMaquina;
+
   cargado.value = true;
 });
 </script>
