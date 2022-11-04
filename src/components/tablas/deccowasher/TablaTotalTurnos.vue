@@ -44,7 +44,7 @@
                       </td>
                     </tr>
                     <tr>
-                      <td>Total</td>
+                      <td>Total Hoy</td>
                       <td v-for="item in consumos" :key="item.id">
                         {{ item.name }}
                       </td>
@@ -84,6 +84,16 @@ async function obtenerDatosVariable(clienteID, modo, variableID) {
     )
   ).data;
 }
+async function obtenerMarcha(modo, variables, operacion) {
+  return (
+    await axios.post(
+      `${process.env.VUE_APP_RUTA_API}/variable/marcha/${modo}/${operacion}`,
+      {
+        variables,
+      }
+    )
+  ).data;
+}
 
 let consumosM = ref([]);
 let consumosT = ref([]);
@@ -107,7 +117,7 @@ onMounted(async () => {
   totalJabon = await obtenerDatosVariable(clienteID, "24H", 72);
 
   totalKilos = await obtenerDatosVariable(clienteID, "24H", 69);
-  horasMarcha = await obtenerDatosVariable(clienteID, "24H", 69);
+  horasMarcha = await obtenerMarcha("8h", [57, 61, 63, 60, 62], "total");
   unidades.value = [
     { id: 0, nombre: "Agua (" + agua.unidadMedida + ")" },
     {
@@ -116,35 +126,35 @@ onMounted(async () => {
     },
     { id: 2, nombre: "Jabon 2 (" + totalJabon.unidadMedida + ")" },
     { id: 3, nombre: "Kg Fruta (" + totalKilos.unidadMedida + ")" },
-    { id: 4, nombre: "H marcha (" + horasMarcha.unidadMedida + ")" },
+    { id: 4, nombre: "Marcha ( min )" },
   ];
   consumosM.value = [
-    { id: 0, name: agua.registros[0][0].total },
-    { id: 1, name: totalDesinfectante.registros[0][0].total },
-    { id: 2, name: totalJabon.registros[0][0].total },
-    { id: 3, name: totalKilos.registros[0][0].total },
-    { id: 4, name: horasMarcha.registros[0][0].total },
+    { id: 0, name: Math.max(0, agua.registros[0][0].total) },
+    { id: 1, name: Math.max(0, totalDesinfectante.registros[0][0].total) },
+    { id: 2, name: Math.max(0, totalJabon.registros[0][0].total) },
+    { id: 3, name: Math.max(0, totalKilos.registros[0][0].total) },
+    // { id: 4, name: Math.max(0, horasMarcha.registros[0][0].total) },
   ];
   consumosT.value = [
-    { id: 0, name: agua.registros[1][0].total },
-    { id: 1, name: totalDesinfectante.registros[1][0].total },
-    { id: 2, name: totalJabon.registros[1][0].total },
-    { id: 3, name: totalKilos.registros[1][0].total },
-    { id: 4, name: horasMarcha.registros[1][0].total },
+    { id: 0, name: Math.max(0, agua.registros[1][0].total) },
+    { id: 1, name: Math.max(0, totalDesinfectante.registros[1][0].total) },
+    { id: 2, name: Math.max(0, totalJabon.registros[1][0].total) },
+    { id: 3, name: Math.max(0, totalKilos.registros[1][0].total) },
+    // { id: 4, name: Math.max(0, horasMarcha.registros[1][0].total) },
   ];
   consumosN.value = [
-    { id: 0, name: agua.registros[2][0].total },
-    { id: 1, name: totalDesinfectante.registros[2][0].total },
-    { id: 2, name: totalJabon.registros[2][0].total },
-    { id: 3, name: totalKilos.registros[2][0].total },
-    { id: 4, name: horasMarcha.registros[2][0].total },
+    { id: 0, name: Math.max(0, agua.registros[2][0].total) },
+    { id: 1, name: Math.max(0, totalDesinfectante.registros[2][0].total) },
+    { id: 2, name: Math.max(0, totalJabon.registros[2][0].total) },
+    { id: 3, name: Math.max(0, totalKilos.registros[2][0].total) },
+    // { id: 4, name: Math.max(0, horasMarcha.registros[2][0].total) },
   ];
   consumos.value = [
-    { id: 0, name: agua.registros[3][0].total },
-    { id: 1, name: totalDesinfectante.registros[3][0].total },
-    { id: 2, name: totalJabon.registros[3][0].total },
-    { id: 3, name: totalKilos.registros[3][0].total },
-    { id: 4, name: horasMarcha.registros[3][0].total },
+    { id: 0, name: Math.max(0, agua.registros[3][0].total) },
+    { id: 1, name: Math.max(0, totalDesinfectante.registros[3][0].total) },
+    { id: 2, name: Math.max(0, totalJabon.registros[3][0].total) },
+    { id: 3, name: Math.max(0, totalKilos.registros[3][0].total) },
+    { id: 4, name: Math.max(0, Math.round(horasMarcha.total / 60)) },
   ];
   cargado.value = true;
 });

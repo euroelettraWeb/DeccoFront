@@ -5,7 +5,6 @@
         <v-card class="mb-2"
           ><v-row>
             <v-col>
-              <v-card-title> Fruta procesada </v-card-title>
               <v-card-subtitle>
                 Cajas por Ciclo y Peso por Caja
               </v-card-subtitle>
@@ -45,6 +44,7 @@
         <v-card>
           <v-row>
             <v-col>
+              <v-card-title> Fruta procesada </v-card-title>
               <v-card-subtitle> Total Kilos </v-card-subtitle>
             </v-col>
           </v-row>

@@ -7,6 +7,12 @@
           <v-toolbar-title>Lineas</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
+          <v-switch
+            v-model="deccocontrol"
+            append-icon="mdi-snowflake"
+            class="mt-4 mr-4"
+            label="DECCOCONTROL"
+          ></v-switch>
           <v-dialog v-model="dialog">
             <template #activator="{ on, attrs }">
               <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
@@ -48,12 +54,12 @@
                           label="DECCOWS"
                         ></v-checkbox>
                       </v-col>
-                      <v-col>
+                      <!-- <v-col>
                         <v-checkbox
                           v-model="editedItem.deccocontrol"
                           label="DECCOCONTROL"
                         ></v-checkbox>
-                      </v-col>
+                      </v-col> -->
                     </v-row>
                   </v-container>
                 </v-form>
@@ -106,11 +112,11 @@
           DECCOWS</v-simple-checkbox
         >
       </template>
-      <template #item.deccocontrol="{ item }">
+      <!-- <template #item.deccocontrol="{ item }">
         <v-simple-checkbox v-model="item.deccocontrol" disabled>
           DECCOCONTROL</v-simple-checkbox
         >
-      </template>
+      </template> -->
     </v-data-table>
     <v-btn @click="guardarLineas">Guardar</v-btn>
   </v-container>
@@ -130,6 +136,7 @@ let form = ref(null);
 let dialogDelete = ref(false);
 let editedIndex = ref(-1);
 let lineas = ref([]);
+let deccocontrol = ref(false);
 let headers = [
   {
     text: "Nombre",
@@ -140,7 +147,7 @@ let headers = [
   { text: "DECCODAF", value: "deccodaf" },
   { text: "DECCODOS", value: "deccodos" },
   { text: "DECCOWS", value: "deccows" },
-  { text: "DECCOCONTROL", value: "deccocontrol" },
+  // { text: "DECCOCONTROL", value: "deccocontrol" },
   { text: "Actions", value: "actions", sortable: false },
 ];
 let editedItem = ref({
@@ -148,14 +155,14 @@ let editedItem = ref({
   deccodaf: false,
   deccodos: false,
   deccows: false,
-  deccocontrol: false,
+  // deccocontrol: false,
 });
 let defaultItem = ref({
   nombre: "",
   deccodaf: false,
   deccodos: false,
   deccows: false,
-  deccocontrol: false,
+  // deccocontrol: false,
 });
 let formTitle = computed(() => {
   return editedIndex.value === -1 ? "Nueva Linea" : "Editar linea";
@@ -171,7 +178,7 @@ onMounted(async () => {
     next.deccodaf = element.deccodafID ? true : false;
     next.deccodos = element.deccodosID ? true : false;
     next.deccows = element.deccowsID ? true : false;
-    next.deccocontrol = element.deccocontrolID ? true : false;
+    // next.deccocontrol = element.deccocontrolID ? true : false;
     lineas.value.push(next);
   }
 });
@@ -235,7 +242,7 @@ async function guardarLineas() {
           deccodaf: element.deccodaf,
           deccodos: element.deccodos,
           deccows: element.deccows,
-          deccocontrol: element.deccocontrol,
+          // deccocontrol: element.deccocontrol,
         })
         .then((res) => {});
     }

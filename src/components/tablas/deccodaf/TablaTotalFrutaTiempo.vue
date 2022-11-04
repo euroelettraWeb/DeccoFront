@@ -39,7 +39,7 @@
                       </td>
                     </tr>
                     <tr>
-                      <td>Total</td>
+                      <td>Total Hoy</td>
                       <td v-for="item in consumos" :key="item.id">
                         {{ item.name }}
                       </td>

@@ -76,7 +76,7 @@ let items = computed(() => [
     items: [
       { title: "Principal", route: "deccodaf:Principal" },
       { title: "Estado", route: "deccodaf:MarchaParo" },
-      { title: "Consumo", route: "deccodaf:Consumo" },
+      // { title: "Consumo", route: "deccodaf:Consumo" },
       // { title: "Registros", route: "deccodaf:Registros" },
     ],
     title: "DECCODAF",
@@ -87,7 +87,7 @@ let items = computed(() => [
     items: [
       { title: "Principal", route: "deccodos:Principal" },
       { title: "Estado", route: "deccodos:MarchaParo" },
-      { title: "Consumo", route: "deccodos:Consumo" },
+      // { title: "Consumo", route: "deccodos:Consumo" },
       // { title: "Registros", route: "deccodos:Registros" },
     ],
     title: "DECCODOS",
@@ -98,16 +98,16 @@ let items = computed(() => [
     items: [
       { title: "Principal", route: "deccowasher:Principal" },
       { title: "Estado", route: "deccowasher:MarchaParo" },
-      { title: "Consumo", route: "deccowasher:Consumo" },
+      // { title: "Consumo", route: "deccowasher:Consumo" },
       // { title: "Registros", route: "deccowasher:Registros" },
     ],
     title: "DECCOWASHER",
   },
-  {
-    action: "mdi-snowflake",
-    estado: props.linea.deccocontrolID ? true : false,
-    items: [{ title: "Principal", route: "deccocontrol:Principal" }],
-    title: "DECCOCONTROL",
-  },
+  // {
+  //   action: "mdi-snowflake",
+  //   estado: props.linea.deccocontrolID ? true : false,
+  //   items: [{ title: "Principal", route: "deccocontrol:Principal" }],
+  //   title: "DECCOCONTROL",
+  // },
 ]);
 </script>

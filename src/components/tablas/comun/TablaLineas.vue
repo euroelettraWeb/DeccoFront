@@ -48,12 +48,12 @@
                           label="DECCOWS"
                         ></v-checkbox>
                       </v-col>
-                      <v-col>
+                      <!-- <v-col>
                         <v-checkbox
                           v-model="editedItem.deccocontrol"
                           label="DECCOCONTROL"
                         ></v-checkbox>
-                      </v-col>
+                      </v-col> -->
                     </v-row>
                   </v-container>
                 </v-form>
@@ -106,11 +106,11 @@
           DECCOWS</v-simple-checkbox
         >
       </template>
-      <template #item.deccocontrol="{ item }">
+      <!-- <template #item.deccocontrol="{ item }">
         <v-simple-checkbox v-model="item.deccocontrol" disabled>
           DECCOCONTROL</v-simple-checkbox
         >
-      </template>
+      </template> -->
     </v-data-table>
     <v-btn @click="guardarLineas">Guardar</v-btn>
   </v-container>
@@ -140,7 +140,7 @@ let headers = [
   { text: "DECCODAF", value: "deccodaf" },
   { text: "DECCODOS", value: "deccodos" },
   { text: "DECCOWS", value: "deccows" },
-  { text: "DECCOCONTROL", value: "deccocontrol" },
+  // { text: "DECCOCONTROL", value: "deccocontrol" },
   { text: "Actions", value: "actions", sortable: false },
 ];
 let editedItem = ref({
@@ -148,14 +148,14 @@ let editedItem = ref({
   deccodaf: false,
   deccodos: false,
   deccows: false,
-  deccocontrol: false,
+  // deccocontrol: false,
 });
 let defaultItem = ref({
   nombre: "",
   deccodaf: false,
   deccodos: false,
   deccows: false,
-  deccocontrol: false,
+  // deccocontrol: false,
 });
 let formTitle = computed(() => {
   return editedIndex.value === -1 ? "Nueva Linea" : "Editar linea";
@@ -219,7 +219,7 @@ async function guardarLineas() {
           deccodaf: element.deccodaf,
           deccodos: element.deccodos,
           deccows: element.deccows,
-          deccocontrol: element.deccocontrol,
+          // deccocontrol: element.deccocontrol,
         })
         .then((res) => {});
     }

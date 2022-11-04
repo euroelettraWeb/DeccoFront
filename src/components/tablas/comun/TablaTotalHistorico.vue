@@ -26,24 +26,6 @@
                   </thead>
                   <tbody>
                     <tr>
-                      <td>T. mañana</td>
-                      <td v-for="item in consumosM" :key="item.id">
-                        {{ item.name }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>T. tarde</td>
-                      <td v-for="item in consumosT" :key="item.id">
-                        {{ item.name }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>T. noche</td>
-                      <td v-for="item in consumosN" :key="item.id">
-                        {{ item.name }}
-                      </td>
-                    </tr>
-                    <tr>
                       <td>Total</td>
                       <td v-for="item in consumos" :key="item.id">
                         {{ item.name }}
@@ -124,39 +106,6 @@ onMounted(async () => {
     { id: 6, nombre: "Bomba 5 (" + totalB5.unidadMedida + ")" },
     { id: 7, nombre: "Kg Fruta (" + totalKilos.unidadMedida + ")" },
     { id: 8, nombre: "H marcha (" + horasMarcha.unidadMedida + ")" },
-  ];
-  consumosM.value = [
-    { id: 0, name: totalA2P.registros[0][0].total },
-    { id: 1, name: totalA3P.registros[0][0].total },
-    { id: 2, name: totalB1.registros[0][0].total },
-    { id: 3, name: totalB2.registros[0][0].total },
-    { id: 4, name: totalB3.registros[0][0].total },
-    { id: 5, name: totalB4.registros[0][0].total },
-    { id: 6, name: totalB5.registros[0][0].total },
-    { id: 7, name: totalKilos.registros[0][0].total },
-    { id: 8, name: horasMarcha.registros[0][0].total },
-  ];
-  consumosT.value = [
-    { id: 0, name: totalA2P.registros[1][0].total },
-    { id: 1, name: totalA3P.registros[1][0].total },
-    { id: 2, name: totalB1.registros[1][0].total },
-    { id: 3, name: totalB2.registros[1][0].total },
-    { id: 4, name: totalB3.registros[1][0].total },
-    { id: 5, name: totalB4.registros[1][0].total },
-    { id: 6, name: totalB5.registros[1][0].total },
-    { id: 7, name: totalKilos.registros[1][0].total },
-    { id: 8, name: horasMarcha.registros[1][0].total },
-  ];
-  consumosN.value = [
-    { id: 0, name: totalA2P.registros[2][0].total },
-    { id: 1, name: totalA3P.registros[2][0].total },
-    { id: 2, name: totalB1.registros[2][0].total },
-    { id: 3, name: totalB2.registros[2][0].total },
-    { id: 4, name: totalB3.registros[2][0].total },
-    { id: 5, name: totalB4.registros[2][0].total },
-    { id: 6, name: totalB5.registros[2][0].total },
-    { id: 7, name: totalKilos.registros[2][0].total },
-    { id: 8, name: horasMarcha.registros[2][0].total },
   ];
   consumos.value = [
     { id: 0, name: totalA2P.registros[3][0].total },

@@ -7,7 +7,9 @@
       <v-col>
         <TablaTurnos />
         <TablaTotalTurnos />
-        <Estado /> <FrutaProcesada />
+        <Estado />
+        <DosisDOSb />
+        <FrutaProcesada />
       </v-col>
     </v-row>
   </v-container>
@@ -26,6 +28,7 @@ import { routerStore } from "../../stores/index";
 import axios from "axios";
 import { onMounted, ref } from "vue";
 import TablaTotalTurnos from "../../components/tablas/deccodos/TablaTotalTurnos.vue";
+import DosisDOSb from "../../components/cards/deccodos/DosisDOSb.vue";
 
 async function obtenerLinea(id) {
   return (await axios.get(`${process.env.VUE_APP_RUTA_API}/lineas/${id}`)).data;

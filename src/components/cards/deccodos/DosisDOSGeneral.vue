@@ -168,14 +168,14 @@ let chartOptions = computed(() => {
     },
     tooltip: {
       x: {
-        format: "dd MMM yyyy hh:mm:ss",
+        format: "dd MMM yyyy HH:mm:ss",
       },
     },
   };
 });
 onMounted(async () => {
   cargado.value = false;
-  gen = await obtenerDatosVariable("8h", "registros", "rangos", 34);
+  gen = await obtenerDatosVariable("8h", "registros", "rangos", 39);
 
   series.value = [{ name: "General", data: range("Estado", gen.registros) }];
   ultimoValor = [
@@ -190,9 +190,9 @@ onMounted(async () => {
       },
     },
   ];
-  socket.on("variable_34_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 2, "Estado");
-  });
+  // socket.on("variable_34_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 2, "Estado");
+  // });
 
   cargado.value = true;
 });

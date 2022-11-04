@@ -69,10 +69,10 @@ async function obtenerDatosVariables(operacion, modo, filtrado, variables) {
     )
   ).data;
 }
-async function obtenerMarcha(modo, variables) {
+async function obtenerMarcha(modo, variables, operacion) {
   return (
     await axios.post(
-      `${process.env.VUE_APP_RUTA_API}/variable/marcha/${modo}`,
+      `${process.env.VUE_APP_RUTA_API}/variable/marcha/${modo}/${operacion}`,
       {
         variables,
       }
@@ -157,6 +157,7 @@ let series2 = ref([]);
 let series3 = ref([]);
 let modoMaquina = [];
 let funcMaquina = [];
+let bombas = [];
 let chartOptions = computed(() => {
   return {
     chart: {
@@ -229,7 +230,7 @@ let chartOptions = computed(() => {
     },
     tooltip: {
       x: {
-        format: "dd MMM yyyy hh:mm:ss",
+        format: "dd MMM yyyy HH:mm:ss",
       },
     },
     legend: {
@@ -243,17 +244,42 @@ onMounted(async () => {
     "8h",
     "registros",
     "formatoRangos",
-    [57, 61, 63]
+    [57]
   );
-  marcha = await obtenerMarcha("8h", [57, 61, 63, 60, 62]);
+  let autoManual = await obtenerDatosVariables(
+    "8h",
+    "registros",
+    "formatoRangos",
+    [61, 63]
+  );
+  for (let index = 0; index < autoManual[1].data.length; index++) {
+    const element = autoManual[1].data[index];
+    modoMaquina[1].data.push(element);
+  }
+  marcha = await obtenerMarcha("8h", [57, 61, 63, 60, 62], "registros");
   funcMaquina = await obtenerDatosVariables(
     "8h",
     "registros",
     "formatoRangos",
-    [60, 62, 64, 65]
+    [60, 62]
+  );
+  bombas = await obtenerDatosVariables(
+    "8h",
+    "registros",
+    "formatoRangos",
+    [64, 65]
   );
   series.value = modoMaquina;
-  series2.value = funcMaquina;
+  for (let index = 0; index < funcMaquina[1].data.length; index++) {
+    const element = funcMaquina[1].data[index];
+    if (element.x == "alarma") {
+      element.fillColor = "#fdd835";
+    } else {
+      element.fillColor = "#3949ab";
+    }
+    marcha[1].data.push(element);
+  }
+  series2.value = bombas;
   series3.value = marcha;
   // socket.on("variable_57_actualizada", (data) => {
   //   newValue(series, data, chartRef, lastZoom, 0);

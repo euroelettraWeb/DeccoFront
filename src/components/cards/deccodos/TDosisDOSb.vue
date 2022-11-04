@@ -2,13 +2,9 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-card class="mb-2"
+        <v-card
           ><v-row>
-            <v-col>
-              <v-card-subtitle>
-                Cajas por Ciclo y Peso por Caja
-              </v-card-subtitle>
-            </v-col>
+            <v-col><v-card-title>Bombas</v-card-title></v-col>
           </v-row>
           <v-row>
             <v-col>
@@ -23,51 +19,13 @@
             </v-col>
           </v-row>
         </v-card>
-        <v-card class="mb-2">
-          <v-row>
-            <v-col>
-              <v-card-subtitle> Total Cajas </v-card-subtitle>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <ApexChart
-                v-if="cargado"
-                ref="chartRef2"
-                height="350"
-                type="line"
-                :options="chartOptions"
-                :series="cajas"
-              />
-            </v-col> </v-row
-        ></v-card>
-        <v-card>
-          <v-row>
-            <v-col>
-              <v-card-title> Fruta procesada </v-card-title>
-              <v-card-subtitle> Total Kilos </v-card-subtitle>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <ApexChart
-                v-if="cargado"
-                ref="chartRef3"
-                height="350"
-                type="line"
-                :options="chartOptions"
-                :series="kilos"
-              />
-            </v-col>
-          </v-row>
-        </v-card>
       </v-col>
     </v-row>
   </v-container>
 </template>
 <script>
 export default {
-  name: "FrutaProcesada",
+  name: "DosisBomba",
 };
 </script>
 <script setup>
@@ -85,18 +43,24 @@ async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
     )
   ).data;
 }
+
+function formatData(name, arrays) {
+  let data = [];
+  for (let variable of arrays) {
+    let obj = { x: new Date(variable.x).getTime(), y: variable.y };
+    data.push(obj);
+  }
+  return { name: name, data: data };
+}
 let cargado = ref(false);
-let cajaPCiclo = {};
-let kgPCaja = {};
-let tCajas = {};
-let tKg = {};
+let tB1 = {};
+let tB2 = {};
+let tB3 = {};
+let tB4 = {};
+let tB5 = {};
 
 const chartRef = ref(null);
-const chartRef2 = ref(null);
-const chartRef3 = ref(null);
 let registrosT = ref([]);
-let cajas = ref([]);
-let kilos = ref([]);
 var lastZoom = null;
 let chartOptions = computed(() => {
   return {
@@ -142,38 +106,27 @@ let chartOptions = computed(() => {
       datetimeUTC: false,
       min: new Date(moment().subtract(8, "hours")).getTime(),
       max: moment(),
-      tickAmount: 25,
-      labels: {
-        rotate: -45,
-        rotateAlways: true,
-        formatter: function (value, timestamp) {
-          return new Date(value).toLocaleTimeString(); // The formatter function overrides format property
-        },
-      },
     },
     stroke: {
-      width: 1.9,
-    },
-    legend: {
-      showForSingleSeries: true,
+      width: 1.1,
     },
   };
 });
 onMounted(async () => {
   cargado.value = false;
-  cajaPCiclo = await obtenerDatosVariable(
-    "8h",
-    "registros",
-    "formatoLinea",
-    16
-  );
-  kgPCaja = await obtenerDatosVariable("8h", "registros", "formatoLinea", 17);
-  tCajas = await obtenerDatosVariable("8h", "registros", "formatoLinea", 18);
-  tKg = await obtenerDatosVariable("8h", "registros", "formatoLinea", 19);
-  registrosT.value = [cajaPCiclo.registros[0], kgPCaja.registros[0]];
-  cajas.value = tCajas.registros;
-  kilos.value = tKg.registros;
-  socket.on("variable_16_actualizada", (data) => {
+  tB1 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 51);
+  tB2 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 52);
+  tB3 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 53);
+  tB4 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 54);
+  tB5 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 55);
+  registrosT.value = [
+    formatData("Bomba 1", tB1.registros),
+    formatData("Bomba 2", tB2.registros),
+    formatData("Bomba 3", tB3.registros),
+    formatData("Bomba 4", tB4.registros),
+    formatData("Bomba 5", tB5.registros),
+  ];
+  socket.on("variable_51_actualizada", (data) => {
     registrosT.value[0].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
@@ -183,7 +136,7 @@ onMounted(async () => {
       if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
     }
   });
-  socket.on("variable_17_actualizada", (data) => {
+  socket.on("variable_52_actualizada", (data) => {
     registrosT.value[1].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
@@ -193,8 +146,8 @@ onMounted(async () => {
       if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
     }
   });
-  socket.on("variable_18_actualizada", (data) => {
-    cajas.value[0].data.push({
+  socket.on("variable_53_actualizada", (data) => {
+    registrosT.value[2].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
     });
@@ -203,8 +156,18 @@ onMounted(async () => {
       if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
     }
   });
-  socket.on("variable_19_actualizada", (data) => {
-    kilos.value[0].data.push({
+  socket.on("variable_54_actualizada", (data) => {
+    registrosT.value[3].data.push({
+      x: new Date(moment(data.x).toISOString()).getTime(),
+      y: data.y,
+    });
+    if (chartRef.value) {
+      chartRef.value.updateSeries(registrosT.value);
+      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+    }
+  });
+  socket.on("variable_55_actualizada", (data) => {
+    registrosT.value[4].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),
       y: data.y,
     });

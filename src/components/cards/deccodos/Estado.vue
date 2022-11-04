@@ -19,12 +19,12 @@
                   <ApexChart
                     ref="chartRef3"
                     type="rangeBar"
-                    height="200"
+                    height="300"
                     :options="chartOptions"
                     :series="series3" /><ApexChart
                     ref="chartRef2"
                     type="rangeBar"
-                    height="300"
+                    height="200"
                     :options="chartOptions"
                     :series="series2"
                 /></v-col>
@@ -69,10 +69,10 @@ async function obtenerDatosVariables(operacion, modo, filtrado, variables) {
     )
   ).data;
 }
-async function obtenerMarcha(modo, variables) {
+async function obtenerMarcha(modo, variables, operacion) {
   return (
     await axios.post(
-      `${process.env.VUE_APP_RUTA_API}/variable/marcha/${modo}`,
+      `${process.env.VUE_APP_RUTA_API}/variable/marcha/${modo}/${operacion}`,
       {
         variables,
       }
@@ -157,6 +157,7 @@ let series2 = ref([]);
 let series3 = ref([]);
 let modoMaquina = [];
 let funcMaquina = [];
+let cepillos = [];
 let chartOptions = computed(() => {
   return {
     chart: {
@@ -229,7 +230,7 @@ let chartOptions = computed(() => {
     },
     tooltip: {
       x: {
-        format: "dd MMM yyyy hh:mm:ss",
+        format: "dd MMM yyyy HH:mm:ss",
       },
     },
     legend: {
@@ -243,17 +244,39 @@ onMounted(async () => {
     "8h",
     "registros",
     "formatoRangos",
-    [31, 41, 43]
+    [31]
   );
-  marcha = await obtenerMarcha("8h", [31, 41, 43, 40, 44]);
+  let autoManual = await obtenerDatosVariables(
+    "8h",
+    "registros",
+    "formatoRangos",
+    [41, 43]
+  );
+  for (let index = 0; index < autoManual[1].data.length; index++) {
+    const element = autoManual[1].data[index];
+    modoMaquina[1].data.push(element);
+  }
+  marcha = await obtenerMarcha("8h", [31, 41, 43, 40, 42], "registros");
   funcMaquina = await obtenerDatosVariables(
     "8h",
     "registros",
     "formatoRangos",
-    [40, 42, 44]
+    [40, 42]
   );
+  cepillos = await obtenerDatosVariables("8h", "registros", "formatoRangos", [
+    44,
+  ]);
   series.value = modoMaquina;
-  series2.value = funcMaquina;
+  for (let index = 0; index < funcMaquina[1].data.length; index++) {
+    const element = funcMaquina[1].data[index];
+    marcha[1].data.push(element);
+    if (element.x == "alarma") {
+      element.fillColor = "#fdd835";
+    } else {
+      element.fillColor = "#3949ab";
+    }
+  }
+  series2.value = cepillos;
   series3.value = marcha;
 
   // socket.on("variable_31_actualizada", (data) => {

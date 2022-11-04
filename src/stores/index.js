@@ -152,10 +152,10 @@ export const routerStore = defineStore("router", {
         params: { id, linea },
       });
     },
-    deccocontrol: async function (id, linea) {
+    deccocontrol: async function (id) {
       router.push({
         name: this.routes.deccocontrol,
-        params: { id, linea },
+        params: { id },
       });
     },
     menu: async function (route, id, linea) {

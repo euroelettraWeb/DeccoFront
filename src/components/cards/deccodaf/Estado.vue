@@ -19,14 +19,9 @@
                   <ApexChart
                     ref="chartRef3"
                     type="rangeBar"
-                    height="200"
-                    :options="chartOptions"
-                    :series="series3" /><ApexChart
-                    ref="chartRef2"
-                    type="rangeBar"
                     height="300"
                     :options="chartOptions"
-                    :series="series2"
+                    :series="series3"
                 /></v-col>
               </v-row>
             </v-col>
@@ -63,10 +58,10 @@ async function obtenerDatosVariables(operacion, modo, filtrado, variables) {
     )
   ).data;
 }
-async function obtenerMarcha(modo, variables) {
+async function obtenerMarcha(modo, variables, operacion) {
   return (
     await axios.post(
-      `${process.env.VUE_APP_RUTA_API}/variable/marcha/${modo}`,
+      `${process.env.VUE_APP_RUTA_API}/variable/marcha/${modo}/${operacion}`,
       {
         variables,
       }
@@ -171,6 +166,7 @@ let series = ref([]);
 let series2 = ref([]);
 let series3 = ref([]);
 let modoMaquina = [];
+let autoManual = [];
 let funcMaquina = [];
 let chartOptions = computed(() => {
   return {
@@ -244,7 +240,7 @@ let chartOptions = computed(() => {
     },
     tooltip: {
       x: {
-        format: "dd MMM yyyy hh:mm:ss",
+        format: "dd MMM yyyy HH:mm:ss",
       },
     },
     legend: {
@@ -259,9 +255,19 @@ onMounted(async () => {
     "8h",
     "registros",
     "formatoRangos",
-    [1, 13, 15]
+    [1]
   );
-  marcha = await obtenerMarcha("8h", [1, 13, 15, 12, 14]);
+  autoManual = await obtenerDatosVariables(
+    "8h",
+    "registros",
+    "formatoRangos",
+    [13, 15]
+  );
+  for (let index = 0; index < autoManual[1].data.length; index++) {
+    const element = autoManual[1].data[index];
+    modoMaquina[1].data.push(element);
+  }
+  marcha = await obtenerMarcha("8h", [1, 13, 15, 12, 14], "registros");
   funcMaquina = await obtenerDatosVariables(
     "8h",
     "registros",
@@ -269,6 +275,15 @@ onMounted(async () => {
     [12, 14]
   );
   series.value = modoMaquina;
+  for (let index = 0; index < funcMaquina[1].data.length; index++) {
+    const element = funcMaquina[1].data[index];
+    if (element.x == "alarma") {
+      element.fillColor = "#fdd835";
+    } else {
+      element.fillColor = "#3949ab";
+    }
+    marcha[1].data.push(element);
+  }
   series2.value = funcMaquina;
   series3.value = marcha;
   // socket.on("variable_1_actualizada", (data) => {

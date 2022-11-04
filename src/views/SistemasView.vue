@@ -5,6 +5,17 @@
         <CardLineas :linea="item" /><!-- :linea="item.linea" -->
       </v-col>
     </v-row>
+    <v-row>
+      <v-spacer />
+      <v-col cols="auto">
+        <v-btn
+          disabled
+          @click="routerStore().deccocontrol(routerStore().clienteID)"
+          ><v-icon light>mdi-snowflake</v-icon> DECCOCONTROL</v-btn
+        >
+      </v-col>
+      <v-spacer />
+    </v-row>
   </v-container>
 </template>
 
