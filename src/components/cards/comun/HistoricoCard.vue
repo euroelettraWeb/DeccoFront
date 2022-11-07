@@ -42,9 +42,9 @@
           </v-row>
           <v-row>
             <v-col v-if="cargado">
-              <DECCODAFHistoricoCard />
-              <DECCODOSHistorico />
-              <DECCOWSHistorico />
+              <DECCODAFHistoricoCard v-if="select2 === 'DECCODAF'" />
+              <DECCODOSHistorico v-if="select2 === 'DECCODOS'" />
+              <DECCOWSHistorico v-if="select2 === 'DECCOWASHER'" />
             </v-col>
             <v-col v-else class="d-flex justify-center align-center">
               <v-progress-circular

@@ -11,6 +11,7 @@
           <v-row class="pa-8">
             <v-col
               ><date-picker
+                class="selectdates"
                 apply-button-label="Use"
                 :date-input="dateInput"
                 :format="'DD MM YYYY HH:mm'"
@@ -306,6 +307,7 @@ let fin = ref("");
 
 let dateInput = {
   placeholder: "Seleccionar fechas",
+  inputClass: "selectdates",
 };
 let chartOptions = computed(() => {
   return {
@@ -486,3 +488,10 @@ onMounted(async () => {
   cargado.value = true;
 });
 </script>
+<style>
+.vdpr-datepicker .selectdates {
+  border: 1px solid #000;
+  padding: 12px;
+  width: 300px;
+}
+</style>
