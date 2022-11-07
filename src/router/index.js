@@ -181,13 +181,13 @@ const routes = [
     meta: { title: "DECCO - DECCOWASHER", rutaProtegida: true },
     beforeEnter: checkLogin,
   },
-  {
-    path: "/cliente/:id/sistemas/:linea/deccowasher/estado",
-    name: "DECCOWASHER - Estado",
-    component: DECCOWSEstado,
-    meta: { title: "DECCO - DECCOWASHER", rutaProtegida: true },
-    beforeEnter: checkLogin,
-  },
+  // {
+  //   path: "/cliente/:id/sistemas/:linea/deccowasher/estado",
+  //   name: "DECCOWASHER - Estado",
+  //   component: DECCOWSEstado,
+  //   meta: { title: "DECCO - DECCOWASHER", rutaProtegida: true },
+  //   beforeEnter: checkLogin,
+  // },
   {
     path: "/cliente/:id/sistemas/:linea/deccowasher/consumo",
     name: "DECCOWASHER - Consumo",

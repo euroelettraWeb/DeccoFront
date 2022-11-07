@@ -97,7 +97,7 @@ let items = computed(() => [
     estado: props.linea.deccowsID ? true : false,
     items: [
       { title: "Principal", route: "deccowasher:Principal" },
-      { title: "Estado", route: "deccowasher:MarchaParo" },
+      // { title: "Estado", route: "deccowasher:MarchaParo" },
       // { title: "Consumo", route: "deccowasher:Consumo" },
       // { title: "Registros", route: "deccowasher:Registros" },
     ],

@@ -209,7 +209,7 @@ const items = (array) => {
             estado: element.deccowsID ? true : false,
             items: [
               { title: "Principal", route: "deccowasher:Principal" },
-              { title: "Estado", route: "deccowasher:MarchaParo" },
+              // { title: "Estado", route: "deccowasher:MarchaParo" },
               // { title: "Consumo", route: "deccowasher:Consumo" },
               // { title: "Registros", route: "deccowasher:Registros" },
             ],

@@ -1,5 +1,8 @@
 <template>
-  <v-container> <DosisDOSe /> <DosisDOSb /> <DosisDOSGeneral /></v-container>
+  <v-container>
+    <DosisDOSe /> <DosisDOSb />
+    <!-- <DosisDOSGeneral /> --></v-container
+  >
 </template>
 <script>
 export default {
