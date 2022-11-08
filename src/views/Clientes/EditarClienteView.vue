@@ -12,10 +12,14 @@
           <v-row
             ><v-col><TablaLineasEditar /></v-col
           ></v-row>
-          <v-row
+          <v-row class="mb-4"
             ><v-col
-              ><v-btn @click="routerStore().sistemas(routerStore().clienteID)"
-                >Guardar Cliente</v-btn
+              ><v-btn
+                class="ml-4"
+                color="primary"
+                @click="routerStore().sistemas(routerStore().clienteID)"
+                ><v-icon light> mdi-content-save </v-icon> Guardar
+                Cliente</v-btn
               ></v-col
             ></v-row
           >

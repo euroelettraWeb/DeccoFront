@@ -92,9 +92,16 @@ let chartOptions = computed(() => {
     },
     xaxis: {
       type: "datetime",
-      datetimeUTC: false,
-      min: new Date(moment().subtract(8, "hours")).getTime(),
-      max: moment(),
+      // datetimeUTC: false,
+      tickAmount: 25,
+      labels: {
+        rotate: -45,
+        minHeight: 75,
+        rotateAlways: true,
+        formatter: function (value, timestamp) {
+          return new Date(value).toLocaleTimeString(); // The formatter function overrides format property
+        },
+      },
     },
     stroke: {
       width: 1.1,

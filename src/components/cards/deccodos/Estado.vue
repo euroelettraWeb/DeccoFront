@@ -161,6 +161,7 @@ let cepillos = [];
 let chartOptions = computed(() => {
   return {
     chart: {
+      height: "100%",
       type: "rangeBar",
       locales: [es],
       defaultLocale: "es",
@@ -222,19 +223,23 @@ let chartOptions = computed(() => {
       tickAmount: 25,
       labels: {
         rotate: -45,
+        minHeight: 75,
         rotateAlways: true,
         formatter: function (value, timestamp) {
-          return new Date(value).toLocaleTimeString();
+          return new Date(value).toLocaleTimeString(); // The formatter function overrides format property
         },
+      },
+    },
+    yaxis: {
+      minWidth: 1,
+      axisTicks: {
+        width: 1,
       },
     },
     tooltip: {
       x: {
         format: "dd MMM yyyy HH:mm:ss",
       },
-    },
-    legend: {
-      height: 60,
     },
   };
 });

@@ -3,7 +3,7 @@
     <v-row justify="center">
       <v-col>
         <v-card>
-          <v-card-title>Nuevo Cliente</v-card-title>
+          <v-card-title>Cliente</v-card-title>
           <v-form ref="form">
             <v-container>
               <v-row>
@@ -67,14 +67,14 @@
               <v-row
                 ><v-col>
                   <v-btn color="info" class="mr-4" @click="validate">
-                    Nuevo
+                    <v-icon light> mdi-content-save </v-icon> Guardar
                   </v-btn>
                 </v-col>
-                <v-col>
+                <!-- <v-col>
                   <v-btn color="error" class="mr-4" @click="reset">
-                    Reset
+                    Limpiar
                   </v-btn>
-                </v-col>
+                </v-col> -->
               </v-row>
             </v-container>
           </v-form>

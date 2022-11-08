@@ -148,11 +148,29 @@ let chartOptions = computed(() => {
         barHeight: "100%",
       },
     },
+    colors: [
+      function ({ value, seriesIndex, w }) {
+        if (seriesIndex == 0) {
+          return "#d50000";
+        } else {
+          return "#00c853";
+        }
+      },
+    ],
     xaxis: {
       type: "datetime",
       datetimeUTC: false,
       min: new Date(moment().subtract(8, "hours")).getTime(),
       max: moment(),
+      tickAmount: 25,
+      labels: {
+        rotate: -45,
+        minHeight: 75,
+        rotateAlways: true,
+        formatter: function (value, timestamp) {
+          return new Date(value).toLocaleTimeString(); // The formatter function overrides format property
+        },
+      },
     },
     yaxis: {
       minWidth: 1,

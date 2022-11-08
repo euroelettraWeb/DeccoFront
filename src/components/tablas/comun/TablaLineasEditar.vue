@@ -68,9 +68,11 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="close">
-                  Cancel
+                  Cancelar
                 </v-btn>
-                <v-btn color="blue darken-1" text @click="save"> Save </v-btn>
+                <v-btn color="blue darken-1" text @click="save">
+                  Guardar
+                </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -118,7 +120,9 @@
         >
       </template> -->
     </v-data-table>
-    <v-btn @click="guardarLineas">Guardar</v-btn>
+    <v-btn class="mt-4" @click="guardarLineas">
+      <v-icon light> mdi-content-save </v-icon> Guardar Lineas</v-btn
+    >
   </v-container>
 </template>
 

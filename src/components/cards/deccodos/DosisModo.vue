@@ -209,12 +209,12 @@ onMounted(async () => {
       },
     },
   ];
-  socket.on("variable_32_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 0, "Estado");
-  });
-  socket.on("variable_33_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 1, "Estado");
-  });
+  // socket.on("variable_32_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 0, "Estado");
+  // });
+  // socket.on("variable_33_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 1, "Estado");
+  // });
 
   cargado.value = true;
 });

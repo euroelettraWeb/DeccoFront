@@ -163,6 +163,7 @@ let chartOptions = computed(() => {
       tickAmount: 25,
       labels: {
         rotate: -45,
+        minHeight: 75,
         rotateAlways: true,
         formatter: function (value, timestamp) {
           return new Date(value).toLocaleTimeString(); // The formatter function overrides format property

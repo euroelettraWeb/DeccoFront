@@ -215,7 +215,7 @@
           <v-row>
             <v-col
               ><v-btn color="info" class="mx-4 mb-4" @click="save">
-                Guardar
+                <v-icon light> mdi-content-save </v-icon> Guardar
               </v-btn></v-col
             >
           </v-row>
