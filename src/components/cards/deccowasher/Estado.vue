@@ -219,18 +219,19 @@ let chartOptions = computed(() => {
       datetimeUTC: false,
       min: new Date(moment().subtract(8, "hours")).getTime(),
       max: moment(),
-      tickAmount: 25,
+      tickAmount: 15,
       labels: {
-        rotate: -45,
+        minHeight: 125,
+        rotate: -70,
         rotateAlways: true,
         formatter: function (value, timestamp) {
-          return new Date(value).toLocaleTimeString();
+          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
         },
       },
     },
     tooltip: {
       x: {
-        format: "dd MMM yyyy HH:mm:ss",
+        format: "dd/MM/yyyy HH:mm:ss",
       },
     },
     legend: {
@@ -272,7 +273,7 @@ onMounted(async () => {
   series.value = modoMaquina;
   for (let index = 0; index < funcMaquina[1].data.length; index++) {
     const element = funcMaquina[1].data[index];
-    if (element.x == "alarma") {
+    if (element.x == "Alarma") {
       element.fillColor = "#fdd835";
     } else {
       element.fillColor = "#3949ab";

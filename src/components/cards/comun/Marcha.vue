@@ -208,7 +208,7 @@ let chartOptions = computed(() => {
     },
     tooltip: {
       x: {
-        format: "dd MMM yyyy HH:mm:ss",
+        format: "dd/MM/yyyy HH:mm:ss",
       },
     },
   };

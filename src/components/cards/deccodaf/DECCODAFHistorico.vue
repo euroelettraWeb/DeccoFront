@@ -8,7 +8,7 @@
               <v-card-title> DECCODAF </v-card-title>
             </v-col>
           </v-row>
-          <v-row class="pa-8">
+          <v-row class="pl-8">
             <v-col
               ><date-picker
                 class="selectdates"
@@ -257,7 +257,12 @@ async function dateApplied(date1, date2) {
   );
   series.value = estado;
   for (let index = 0; index < funcMaquina[1].data.length; index++) {
-    const element = funcMaquina[1].data[index];
+    let element = funcMaquina[1].data[index];
+    if (element.x == "Alarma") {
+      element.fillColor = "#fdd835";
+    } else {
+      element.fillColor = "#3949ab";
+    }
     marcha[1].data.push(element);
   }
   series2.value = marcha;
@@ -318,14 +323,15 @@ let chartOptions = computed(() => {
     },
     xaxis: {
       type: "datetime",
-      // datetimeUTC: false,
-      tickAmount: 25,
+      datetimeUTC: false,
+      tickAmount: 15,
       labels: {
-        rotate: -45,
+        minHeight: 125,
+        rotate: -70,
         minHeight: 125,
         rotateAlways: true,
         formatter: function (value, timestamp) {
-          return new Date(value).toLocaleString(); // The formatter function overrides format property
+          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
         },
       },
     },
@@ -336,7 +342,7 @@ let chartOptions = computed(() => {
     },
     tooltip: {
       x: {
-        format: "dd MMM yyyy HH:mm:ss",
+        format: "dd/MM/yyyy HH:mm:ss",
       },
     },
     legend: {
@@ -370,20 +376,20 @@ let rangeOptions = computed(() => {
     },
     xaxis: {
       type: "datetime",
-      // datetimeUTC: false,
-      tickAmount: 25,
+      datetimeUTC: false,
+      tickAmount: 15,
       labels: {
         minHeight: 125,
-        rotate: -45,
+        rotate: -70,
         rotateAlways: true,
         formatter: function (value, timestamp) {
-          return new Date(value).toLocaleString(); // The formatter function overrides format property
+          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
         },
       },
     },
     tooltip: {
       x: {
-        format: "dd MMM yyyy HH:mm:ss",
+        format: "dd/MM/yyyy HH:mm:ss",
       },
     },
     legend: {
@@ -462,16 +468,14 @@ onMounted(async () => {
   series.value = estado;
   for (let index = 0; index < funcMaquina[1].data.length; index++) {
     let element = funcMaquina[1].data[index];
-    if (element.x == "alarma") {
+    if (element.x == "Alarma") {
       element.fillColor = "#fdd835";
     } else {
       element.fillColor = "#3949ab";
     }
     marcha[1].data.push(element);
   }
-  console.log(marcha);
   series2.value = marcha;
-  // series3.value = funcMaquina;
   seriesL.value = dosis;
   seriesL2.value = cporu;
   seriesL3.value = cajas;

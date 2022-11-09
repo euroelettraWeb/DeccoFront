@@ -48,17 +48,17 @@ async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
     )
   ).data;
 }
-function range(rangeName, array) {
-  let returnt = [];
-  for (let index = 0; index < array.length; index++) {
-    const element = array[index];
-    let startR = new Date(element.x).getTime();
-    let endR = new Date(element.y).getTime();
-    let obj = { x: rangeName, y: [startR, endR] };
-    returnt.push(obj);
-  }
-  return returnt;
-}
+// function range(rangeName, array) {
+//   let returnt = [];
+//   for (let index = 0; index < array.length; index++) {
+//     const element = array[index];
+//     let startR = new Date(element.x).getTime();
+//     let endR = new Date(element.y).getTime();
+//     let obj = { x: rangeName, y: [startR, endR] };
+//     returnt.push(obj);
+//   }
+//   return returnt;
+// }
 
 function updateValue(series, data, chartRef, lastZoom, index, nameX) {
   let start = ultimoValor[index].start;
@@ -171,12 +171,14 @@ let chartOptions = computed(() => {
       datetimeUTC: false,
       min: new Date(moment().subtract(8, "hours")).getTime(),
       max: moment(),
-      tickAmount: 25,
+      tickAmount: 15,
       labels: {
-        rotate: -45,
+        minHeight: 125,
+        rotate: -70,
+        minHeight: 125,
         rotateAlways: true,
         formatter: function (value, timestamp) {
-          return new Date(value).toLocaleTimeString(); // The formatter function overrides format property
+          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
         },
       },
     },
@@ -189,7 +191,7 @@ let chartOptions = computed(() => {
     },
     tooltip: {
       x: {
-        format: "dd MMM yyyy HH:mm:ss",
+        format: "dd/MM/yyyy HH:mm:ss",
       },
     },
   };
@@ -263,21 +265,21 @@ onMounted(async () => {
       },
     },
   ];
-  socket.on("variable_1_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 0, "Estado");
-  });
-  socket.on("variable_12_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 1, "Estado");
-  });
-  socket.on("variable_13_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 2, "Estado");
-  });
-  socket.on("variable_14_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 3, "Estado");
-  });
-  socket.on("variable_15_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 4, "Estado");
-  });
+  // socket.on("variable_1_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 0, "Estado");
+  // });
+  // socket.on("variable_12_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 1, "Estado");
+  // });
+  // socket.on("variable_13_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 2, "Estado");
+  // });
+  // socket.on("variable_14_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 3, "Estado");
+  // });
+  // socket.on("variable_15_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 4, "Estado");
+  // });
   cargado.value = true;
 });
 </script>

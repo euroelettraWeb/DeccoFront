@@ -93,13 +93,14 @@ let chartOptions = computed(() => {
     xaxis: {
       type: "datetime",
       // datetimeUTC: false,
-      tickAmount: 25,
+      tickAmount: 15,
       labels: {
-        rotate: -45,
-        minHeight: 75,
+        minHeight: 125,
+        rotate: -70,
+        minHeight: 125,
         rotateAlways: true,
         formatter: function (value, timestamp) {
-          return new Date(value).toLocaleTimeString(); // The formatter function overrides format property
+          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
         },
       },
     },

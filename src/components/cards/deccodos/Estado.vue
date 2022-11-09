@@ -220,13 +220,14 @@ let chartOptions = computed(() => {
       datetimeUTC: false,
       min: new Date(moment().subtract(8, "hours")).getTime(),
       max: moment(),
-      tickAmount: 25,
+      tickAmount: 15,
       labels: {
-        rotate: -45,
-        minHeight: 75,
+        minHeight: 125,
+        rotate: -70,
+        minHeight: 125,
         rotateAlways: true,
         formatter: function (value, timestamp) {
-          return new Date(value).toLocaleTimeString(); // The formatter function overrides format property
+          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
         },
       },
     },
@@ -238,7 +239,7 @@ let chartOptions = computed(() => {
     },
     tooltip: {
       x: {
-        format: "dd MMM yyyy HH:mm:ss",
+        format: "dd/MM/yyyy HH:mm:ss",
       },
     },
   };
@@ -273,13 +274,13 @@ onMounted(async () => {
   ]);
   series.value = modoMaquina;
   for (let index = 0; index < funcMaquina[1].data.length; index++) {
-    const element = funcMaquina[1].data[index];
-    marcha[1].data.push(element);
-    if (element.x == "alarma") {
+    let element = funcMaquina[1].data[index];
+    if (element.x == "Alarma") {
       element.fillColor = "#fdd835";
     } else {
       element.fillColor = "#3949ab";
     }
+    marcha[1].data.push(element);
   }
   series2.value = cepillos;
   series3.value = marcha;
