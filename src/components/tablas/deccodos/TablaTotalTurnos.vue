@@ -124,7 +124,7 @@ onMounted(async () => {
   totalB4 = await obtenerDatosVariable(clienteID, "24H", 54);
   totalB5 = await obtenerDatosVariable(clienteID, "24H", 55);
   totalKilos = await obtenerDatosVariable(clienteID, "24H", 48);
-  horasMarcha = await obtenerMarcha("8h", [31, 41, 43, 40, 42], "total");
+  horasMarcha = await obtenerMarcha("24H", [31, 40, 42], "total");
   unidades.value = [
     { id: 0, nombre: "Aplicador 2 Discos (" + totalA2P.unidadMedida + ")" },
     { id: 1, nombre: "Aplicador 3 Discos (" + totalA3P.unidadMedida + ")" },

@@ -84,12 +84,13 @@ async function obtenerDatosVariable(clienteID, modo, variableID) {
     )
   ).data;
 }
-async function obtenerMarcha(modo, variables, operacion) {
+async function obtenerMarcha(modo, variables, operacion, clienteID) {
   return (
     await axios.post(
       `${process.env.VUE_APP_RUTA_API}/variable/marcha/${modo}/${operacion}`,
       {
         variables,
+        clienteID,
       }
     )
   ).data;
@@ -117,14 +118,14 @@ onMounted(async () => {
   totalJabon = await obtenerDatosVariable(clienteID, "24H", 72);
 
   totalKilos = await obtenerDatosVariable(clienteID, "24H", 69);
-  horasMarcha = await obtenerMarcha("8h", [57, 61, 63, 60, 62], "total");
+  horasMarcha = await obtenerMarcha("24H", [57, 60, 62], "total", clienteID);
   unidades.value = [
     { id: 0, nombre: "Agua (" + agua.unidadMedida + ")" },
     {
       id: 1,
-      nombre: "Desinfectante 1 (" + totalDesinfectante.unidadMedida + ")",
+      nombre: "Desinfectante (" + totalDesinfectante.unidadMedida + ")",
     },
-    { id: 2, nombre: "Jabon 2 (" + totalJabon.unidadMedida + ")" },
+    { id: 2, nombre: "Jabon (" + totalJabon.unidadMedida + ")" },
     { id: 3, nombre: "Kg Fruta (" + totalKilos.unidadMedida + ")" },
     { id: 4, nombre: "Marcha ( min )" },
   ];

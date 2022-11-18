@@ -2,45 +2,6 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-card class="mb-2"
-          ><v-row>
-            <v-col>
-              <v-card-subtitle>
-                Cajas por Ciclo y Peso por Caja
-              </v-card-subtitle>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <ApexChart
-                v-if="cargado"
-                ref="chartRef"
-                height="350"
-                type="line"
-                :options="chartOptions"
-                :series="registrosT"
-              />
-            </v-col>
-          </v-row>
-        </v-card>
-        <v-card class="mb-2">
-          <v-row>
-            <v-col>
-              <v-card-subtitle> Total Cajas </v-card-subtitle>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <ApexChart
-                v-if="cargado"
-                ref="chartRef2"
-                height="350"
-                type="line"
-                :options="chartOptions"
-                :series="cajas"
-              />
-            </v-col> </v-row
-        ></v-card>
         <v-card>
           <v-row>
             <v-col>
@@ -86,9 +47,6 @@ async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
   ).data;
 }
 let cargado = ref(false);
-let cajaPCiclo = {};
-let kgPCaja = {};
-let tCajas = {};
 let tKg = {};
 
 const chartRef = ref(null);
@@ -162,48 +120,8 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  cajaPCiclo = await obtenerDatosVariable(
-    "8h",
-    "registros",
-    "formatoLinea",
-    16
-  );
-  kgPCaja = await obtenerDatosVariable("8h", "registros", "formatoLinea", 17);
-  tCajas = await obtenerDatosVariable("8h", "registros", "formatoLinea", 18);
-  tKg = await obtenerDatosVariable("8h", "registros", "formatoLinea", 19);
-  registrosT.value = [cajaPCiclo.registros[0], kgPCaja.registros[0]];
-  cajas.value = tCajas.registros;
+  tKg = await obtenerDatosVariable("8H", "registros", "formatoLinea", 19);
   kilos.value = tKg.registros;
-  socket.on("variable_16_actualizada", (data) => {
-    registrosT.value[0].data.push({
-      x: new Date(moment(data.x).toISOString()).getTime(),
-      y: data.y,
-    });
-    if (chartRef.value) {
-      chartRef.value.updateSeries(registrosT.value);
-      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-    }
-  });
-  socket.on("variable_17_actualizada", (data) => {
-    registrosT.value[1].data.push({
-      x: new Date(moment(data.x).toISOString()).getTime(),
-      y: data.y,
-    });
-    if (chartRef.value) {
-      chartRef.value.updateSeries(registrosT.value);
-      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-    }
-  });
-  socket.on("variable_18_actualizada", (data) => {
-    cajas.value[0].data.push({
-      x: new Date(moment(data.x).toISOString()).getTime(),
-      y: data.y,
-    });
-    if (chartRef.value) {
-      chartRef.value.updateSeries(registrosT.value);
-      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-    }
-  });
   socket.on("variable_19_actualizada", (data) => {
     kilos.value[0].data.push({
       x: new Date(moment(data.x).toISOString()).getTime(),

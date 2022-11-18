@@ -19,14 +19,9 @@
                   <ApexChart
                     ref="chartRef3"
                     type="rangeBar"
-                    height="200"
-                    :options="chartOptions"
-                    :series="series3" /><ApexChart
-                    ref="chartRef2"
-                    type="rangeBar"
                     height="300"
                     :options="chartOptions"
-                    :series="series2"
+                    :series="series3"
                 /></v-col>
               </v-row>
             </v-col>
@@ -153,11 +148,9 @@ var lastZoom = null;
 let marcha = [];
 let cargado = ref(false);
 let series = ref([]);
-let series2 = ref([]);
 let series3 = ref([]);
 let modoMaquina = [];
 let funcMaquina = [];
-let bombas = [];
 let chartOptions = computed(() => {
   return {
     chart: {
@@ -242,13 +235,13 @@ let chartOptions = computed(() => {
 onMounted(async () => {
   cargado.value = false;
   modoMaquina = await obtenerDatosVariables(
-    "8h",
+    "8H",
     "registros",
     "formatoRangos",
     [57]
   );
   let autoManual = await obtenerDatosVariables(
-    "8h",
+    "8H",
     "registros",
     "formatoRangos",
     [61, 63]
@@ -257,18 +250,12 @@ onMounted(async () => {
     const element = autoManual[1].data[index];
     modoMaquina[1].data.push(element);
   }
-  marcha = await obtenerMarcha("8h", [57, 61, 63, 60, 62], "registros");
+  marcha = await obtenerMarcha("8H", [57, 60, 62], "registros");
   funcMaquina = await obtenerDatosVariables(
-    "8h",
+    "8H",
     "registros",
     "formatoRangos",
     [60, 62]
-  );
-  bombas = await obtenerDatosVariables(
-    "8h",
-    "registros",
-    "formatoRangos",
-    [64, 65]
   );
   series.value = modoMaquina;
   for (let index = 0; index < funcMaquina[1].data.length; index++) {
@@ -280,7 +267,6 @@ onMounted(async () => {
     }
     marcha[1].data.push(element);
   }
-  series2.value = bombas;
   series3.value = marcha;
   // socket.on("variable_57_actualizada", (data) => {
   //   newValue(series, data, chartRef, lastZoom, 0);

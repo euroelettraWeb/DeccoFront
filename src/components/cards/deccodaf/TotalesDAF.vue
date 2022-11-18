@@ -116,12 +116,12 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  tAgua = await obtenerDatosVariable("8h", "registros", "formatoLinea", 25);
-  tP1 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 26);
-  tP2 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 27);
-  tP3 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 28);
-  tP4 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 29);
-  tP5 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 30);
+  tAgua = await obtenerDatosVariable("8H", "registros", "formatoLinea", 25);
+  tP1 = await obtenerDatosVariable("8H", "registros", "formatoLinea", 26);
+  tP2 = await obtenerDatosVariable("8H", "registros", "formatoLinea", 27);
+  tP3 = await obtenerDatosVariable("8H", "registros", "formatoLinea", 28);
+  tP4 = await obtenerDatosVariable("8H", "registros", "formatoLinea", 29);
+  tP5 = await obtenerDatosVariable("8H", "registros", "formatoLinea", 30);
   registrosT.value = [
     tAgua.registros[0],
     tP1.registros[0],

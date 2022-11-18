@@ -18,8 +18,8 @@
                 class="ml-4"
                 color="primary"
                 @click="routerStore().sistemas(routerStore().clienteID)"
-                ><v-icon light> mdi-content-save </v-icon> Guardar
-                Cliente</v-btn
+                ><v-icon light> mdi-content-save </v-icon> Finalizar
+                edición</v-btn
               ></v-col
             ></v-row
           >

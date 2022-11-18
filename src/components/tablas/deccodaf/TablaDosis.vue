@@ -76,11 +76,11 @@ let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-  totalP1 = await obtenerDatosVariable("8h", "total", "sinfiltro", 7);
-  totalP2 = await obtenerDatosVariable("8h", "total", "sinfiltro", 8);
-  totalP3 = await obtenerDatosVariable("8h", "total", "sinfiltro", 9);
-  totalP4 = await obtenerDatosVariable("8h", "total", "sinfiltro", 10);
-  totalP5 = await obtenerDatosVariable("8h", "total", "sinfiltro", 11);
+  totalP1 = await obtenerDatosVariable("8H", "total", "sinfiltro", 7);
+  totalP2 = await obtenerDatosVariable("8H", "total", "sinfiltro", 8);
+  totalP3 = await obtenerDatosVariable("8H", "total", "sinfiltro", 9);
+  totalP4 = await obtenerDatosVariable("8H", "total", "sinfiltro", 10);
+  totalP5 = await obtenerDatosVariable("8H", "total", "sinfiltro", 11);
 
   consumos.value = [
     { id: 0, name: totalP1.registros[0].total },

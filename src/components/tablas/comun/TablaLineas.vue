@@ -103,7 +103,7 @@
       </template>
       <template #item.deccows="{ item }">
         <v-simple-checkbox v-model="item.deccows" disabled>
-          DECCOWS</v-simple-checkbox
+          DECCOWASHER</v-simple-checkbox
         >
       </template>
       <!-- <template #item.deccocontrol="{ item }">
@@ -212,14 +212,17 @@ async function guardarLineas() {
   if (lineas.value) {
     for (let index = 0; index < lineas.value.length; index++) {
       const element = lineas.value[index];
+      let maquinas = [];
+      if (element.deccodaf) maquinas.push({ nombre: "DECCODAF", tipo: 1 });
+      if (element.deccodos) maquinas.push({ nombre: "DECCODOS", tipo: 2 });
+      if (element.deccows) maquinas.push({ nombre: "DECCOWASHER", tipo: 3 });
+      // if (element.deccocontrol)
+      //   maquinas.push({ nombre: "DECCOCONTROL", tipo: 4 });
       axios
         .post(`${process.env.VUE_APP_RUTA_API}/lineas/nuevo`, {
           nombre: element.nombre,
           clienteID: routerStore().clienteID,
-          deccodaf: element.deccodaf,
-          deccodos: element.deccodos,
-          deccows: element.deccows,
-          // deccocontrol: element.deccocontrol,
+          maquinas: maquinas,
         })
         .then((res) => {});
     }

@@ -112,8 +112,7 @@ let plcId = ref(0);
 
 onMounted(async () => {
   cliente = await obtenerCliente(routerStore().clienteID);
-  plcId.value = cliente[0].plcID;
-  plc = await obtenerPLC(plcId.value);
+  plc = await obtenerPLC(routerStore().clienteID);
   nombre.value = cliente[0].nombre;
   src.value = cliente[0].img;
   ip.value = plc[0].ip;
@@ -140,7 +139,6 @@ async function validate() {
         id: routerStore().clienteID,
         nombre: nombre.value,
         src: src.value,
-        plcID: dataPlc[0].id,
       })
     ).data;
     if (dataCliente[0].id) {
@@ -156,7 +154,8 @@ async function obtenerCliente(id) {
     .data;
 }
 async function obtenerPLC(id) {
-  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/plcs/${id}`)).data;
+  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/plcs/cliente/${id}`))
+    .data;
 }
 function reset() {
   form.value.reset();

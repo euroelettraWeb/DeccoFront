@@ -102,14 +102,14 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  tA2D = await obtenerDatosVariable("8h", "registros", "formatoLinea", 49);
-  tA3D = await obtenerDatosVariable("8h", "registros", "formatoLinea", 50);
-  tB1 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 51);
-  tB2 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 52);
-  tB3 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 53);
-  tB4 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 54);
-  tB5 = await obtenerDatosVariable("8h", "registros", "formatoLinea", 55);
-  tCera = await obtenerDatosVariable("8h", "registros", "formatoLinea", 56);
+  tA2D = await obtenerDatosVariable("8H", "registros", "formatoLinea", 49);
+  tA3D = await obtenerDatosVariable("8H", "registros", "formatoLinea", 50);
+  tB1 = await obtenerDatosVariable("8H", "registros", "formatoLinea", 51);
+  tB2 = await obtenerDatosVariable("8H", "registros", "formatoLinea", 52);
+  tB3 = await obtenerDatosVariable("8H", "registros", "formatoLinea", 53);
+  tB4 = await obtenerDatosVariable("8H", "registros", "formatoLinea", 54);
+  tB5 = await obtenerDatosVariable("8H", "registros", "formatoLinea", 55);
+  tCera = await obtenerDatosVariable("8H", "registros", "formatoLinea", 56);
   registrosT.value = [
     tA2D.registros[0],
     tA3D.registros[0],

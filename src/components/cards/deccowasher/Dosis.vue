@@ -112,8 +112,8 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  dDes = await obtenerDatosVariable("8h", "registros", "formatoLinea", 58);
-  dJabon = await obtenerDatosVariable("8h", "registros", "formatoLinea", 59);
+  dDes = await obtenerDatosVariable("8H", "registros", "formatoLinea", 58);
+  dJabon = await obtenerDatosVariable("8H", "registros", "formatoLinea", 59);
 
   registrosT.value = [dDes.registros[0], dJabon.registros[0]];
   socket.on("variable_58_actualizada", (data) => {

@@ -78,11 +78,11 @@ let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-  cnP1 = await obtenerDatosVariable("8h", "count", "sinfiltro", 20);
-  cnP2 = await obtenerDatosVariable("8h", "count", "sinfiltro", 21);
-  cnP3 = await obtenerDatosVariable("8h", "count", "sinfiltro", 22);
-  cnP4 = await obtenerDatosVariable("8h", "count", "sinfiltro", 23);
-  cnP5 = await obtenerDatosVariable("8h", "count", "sinfiltro", 24);
+  cnP1 = await obtenerDatosVariable("8H", "count", "sinfiltro", 20);
+  cnP2 = await obtenerDatosVariable("8H", "count", "sinfiltro", 21);
+  cnP3 = await obtenerDatosVariable("8H", "count", "sinfiltro", 22);
+  cnP4 = await obtenerDatosVariable("8H", "count", "sinfiltro", 23);
+  cnP5 = await obtenerDatosVariable("8H", "count", "sinfiltro", 24);
 
   niveles.value = [
     { id: 0, name: cnP1.registros[0].count },

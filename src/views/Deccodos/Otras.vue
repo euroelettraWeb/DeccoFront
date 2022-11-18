@@ -4,22 +4,7 @@
       {{ nombreCliente }} - DECCOWASHER - {{ nombreLinea }}
     </h1>
     <v-row>
-      <v-col>
-        <TablaTurnos />
-        <TablaTotalTurnos />
-        <Estado /> <Dosis /> <FrutaProcesada />
-        <v-btn
-          color="info"
-          @click="
-            routerStore().menu(
-              'deccowasher:Otras',
-              routerStore().clienteID,
-              routerStore().lineasID
-            )
-          "
-          >Otras Variables</v-btn
-        >
-      </v-col>
+      <v-col> <Cajas /> </v-col>
     </v-row>
   </v-container>
 </template>
@@ -30,15 +15,10 @@ export default {
 };
 </script>
 <script setup>
-import Estado from "../../components/cards/deccowasher/Estado.vue";
-import FrutaProcesada from "../../components/cards/deccowasher/FrutaProcesada.vue";
-import Dosis from "../../components/cards/deccowasher/Dosis.vue";
-import TablaTurnos from "../../components/tablas/comun/TablaTurnos.vue";
-
 import { routerStore } from "../../stores/index";
 import axios from "axios";
 import { onMounted, ref } from "vue";
-import TablaTotalTurnos from "../../components/tablas/deccowasher/TablaTotalTurnos.vue";
+import Cajas from "../../components/cards/deccodos/Cajas.vue";
 
 async function obtenerLinea(id) {
   return (await axios.get(`${process.env.VUE_APP_RUTA_API}/lineas/${id}`)).data;

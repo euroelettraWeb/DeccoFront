@@ -10,6 +10,17 @@
         <Estado />
         <ConsumoDosisFungicida />
         <FrutaProcesada />
+        <v-btn
+          color="info"
+          @click="
+            routerStore().menu(
+              'deccodaf:Otras',
+              routerStore().clienteID,
+              routerStore().lineasID
+            )
+          "
+          >Otras Variables</v-btn
+        >
       </v-col>
     </v-row>
   </v-container>

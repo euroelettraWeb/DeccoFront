@@ -112,7 +112,7 @@ let chartOptions = computed(() => {
 onMounted(async () => {
   cargado.value = false;
   dosis = await obtenerDatosVariables(
-    "8h",
+    "8H",
     "registros",
     "formatoLinea",
     [34, 35, 36, 37, 38]

@@ -189,7 +189,7 @@ let chartOptions = computed(() => {
 onMounted(async () => {
   cargado.value = false;
   aplicadores = await obtenerDatosVariables(
-    "8h",
+    "8H",
     "registros",
     "formatoRangos",
     [32, 33]

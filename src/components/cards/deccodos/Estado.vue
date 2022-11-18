@@ -247,13 +247,13 @@ let chartOptions = computed(() => {
 onMounted(async () => {
   cargado.value = false;
   modoMaquina = await obtenerDatosVariables(
-    "8h",
+    "8H",
     "registros",
     "formatoRangos",
     [31]
   );
   let autoManual = await obtenerDatosVariables(
-    "8h",
+    "8H",
     "registros",
     "formatoRangos",
     [41, 43]
@@ -262,14 +262,15 @@ onMounted(async () => {
     const element = autoManual[1].data[index];
     modoMaquina[1].data.push(element);
   }
-  marcha = await obtenerMarcha("8h", [31, 41, 43, 40, 42], "registros");
+  marcha = await obtenerMarcha("8H", [31, 40, 42], "registros");
+  console.log(marcha);
   funcMaquina = await obtenerDatosVariables(
-    "8h",
+    "8H",
     "registros",
     "formatoRangos",
     [40, 42]
   );
-  cepillos = await obtenerDatosVariables("8h", "registros", "formatoRangos", [
+  cepillos = await obtenerDatosVariables("8H", "registros", "formatoRangos", [
     44,
   ]);
   series.value = modoMaquina;

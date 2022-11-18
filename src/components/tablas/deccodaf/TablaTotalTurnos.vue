@@ -80,17 +80,18 @@ import { routerStore } from "../../../stores/index";
 async function obtenerDatosVariable(clienteID, modo, variableID) {
   return (
     await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variable/total/${clienteID}/${modo}/${variableID}`
+      `${process.env.VUE_APP_RUTA_API}/variable/total/${clienteID}/${modo}/${variableID}/0/0`
     )
   ).data;
 }
 
-async function obtenerMarcha(modo, variables, operacion) {
+async function obtenerMarcha(modo, variables, operacion, clienteID) {
   return (
     await axios.post(
       `${process.env.VUE_APP_RUTA_API}/variable/marcha/${modo}/${operacion}`,
       {
         variables,
+        clienteID,
       }
     )
   ).data;
@@ -125,7 +126,7 @@ onMounted(async () => {
   totalP4 = await obtenerDatosVariable(clienteID, "24H", 29);
   totalP5 = await obtenerDatosVariable(clienteID, "24H", 30);
   totalKilos = await obtenerDatosVariable(clienteID, "24H", 19);
-  horasMarcha = await obtenerMarcha("8h", [1, 13, 15, 12, 14], "total");
+  horasMarcha = await obtenerMarcha("24H", [1, 12, 14], "total", clienteID);
   unidades.value = [
     { id: 0, nombre: "Agua (" + agua.unidadMedida + ")" },
     { id: 1, nombre: "Producto 1 (" + totalP1.unidadMedida + ")" },

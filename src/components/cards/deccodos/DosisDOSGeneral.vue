@@ -165,7 +165,7 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  gen = await obtenerDatosVariable("8h", "registros", "formatoRangos", 39);
+  gen = await obtenerDatosVariable("8H", "registros", "formatoRangos", 39);
 
   series.value = gen.registros;
   ultimoValor = [

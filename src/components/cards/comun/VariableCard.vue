@@ -81,7 +81,7 @@ async function changeItem(value) {
   if (value.unidadMedida == "I/0") {
     lineas.value = false;
     variable = await obtenerDatosVariable(
-      "8h",
+      "8H",
       "registros",
       "formatoRangos",
       value.id
@@ -90,7 +90,7 @@ async function changeItem(value) {
   } else {
     lineas.value = true;
     variable = await obtenerDatosVariable(
-      "8h",
+      "8H",
       "registros",
       "formatoLinea",
       value.id

@@ -198,11 +198,11 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  activo = await obtenerDatosVariable("8h", "registros", "rangos", 1);
-  alarma = await obtenerDatosVariable("8h", "registros", "rangos", 12);
-  auto = await obtenerDatosVariable("8h", "registros", "rangos", 13);
-  faltaConsenso = await obtenerDatosVariable("8h", "registros", "rangos", 14);
-  manual = await obtenerDatosVariable("8h", "registros", "rangos", 15);
+  activo = await obtenerDatosVariable("8H", "registros", "rangos", 1);
+  alarma = await obtenerDatosVariable("8H", "registros", "rangos", 12);
+  auto = await obtenerDatosVariable("8H", "registros", "rangos", 13);
+  faltaConsenso = await obtenerDatosVariable("8H", "registros", "rangos", 14);
+  manual = await obtenerDatosVariable("8H", "registros", "rangos", 15);
   series.value = [
     { name: "Activo", data: range("Estado", activo.registros) },
     { name: "Auto", data: range("Estado", auto.registros) },

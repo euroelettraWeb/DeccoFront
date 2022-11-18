@@ -179,9 +179,9 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  a2D = await obtenerDatosVariable("8h", "registros", "rangos", 32);
-  a3D = await obtenerDatosVariable("8h", "registros", "rangos", 33);
-  gen = await obtenerDatosVariable("8h", "registros", "rangos", 39);
+  a2D = await obtenerDatosVariable("8H", "registros", "rangos", 32);
+  a3D = await obtenerDatosVariable("8H", "registros", "rangos", 33);
+  gen = await obtenerDatosVariable("8H", "registros", "rangos", 39);
 
   series.value = [
     { name: "Aplicador 2 discos", data: range("Estado", a2D.registros) },

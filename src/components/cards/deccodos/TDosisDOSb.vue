@@ -114,11 +114,11 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  tB1 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 51);
-  tB2 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 52);
-  tB3 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 53);
-  tB4 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 54);
-  tB5 = await obtenerDatosVariable("8h", "registros", "sinfiltro", 55);
+  tB1 = await obtenerDatosVariable("8H", "registros", "sinfiltro", 51);
+  tB2 = await obtenerDatosVariable("8H", "registros", "sinfiltro", 52);
+  tB3 = await obtenerDatosVariable("8H", "registros", "sinfiltro", 53);
+  tB4 = await obtenerDatosVariable("8H", "registros", "sinfiltro", 54);
+  tB5 = await obtenerDatosVariable("8H", "registros", "sinfiltro", 55);
   registrosT.value = [
     formatData("Bomba 1", tB1.registros),
     formatData("Bomba 2", tB2.registros),

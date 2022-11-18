@@ -83,14 +83,14 @@ let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-  ta2D = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 49);
-  ta3D = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 50);
-  totalP1 = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 51);
-  totalP2 = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 52);
-  totalP3 = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 53);
-  totalP4 = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 54);
-  totalP5 = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 55);
-  cera = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 56);
+  ta2D = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 49);
+  ta3D = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 50);
+  totalP1 = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 51);
+  totalP2 = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 52);
+  totalP3 = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 53);
+  totalP4 = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 54);
+  totalP5 = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 55);
+  cera = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 56);
 
   consumos.value = [
     { id: 0, name: ta2D.registros[0].y },

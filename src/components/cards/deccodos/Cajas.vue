@@ -2,26 +2,45 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-card>
-          <v-row>
+        <v-card class="mb-2"
+          ><v-row>
             <v-col>
-              <v-card-title> Fruta procesada </v-card-title>
-              <v-card-subtitle> Total Kilos </v-card-subtitle>
+              <v-card-subtitle>
+                Cajas por Ciclo y Peso por Caja
+              </v-card-subtitle>
             </v-col>
           </v-row>
           <v-row>
             <v-col>
               <ApexChart
                 v-if="cargado"
-                ref="chartRef3"
+                ref="chartRef"
                 height="350"
                 type="line"
                 :options="chartOptions"
-                :series="kilos"
+                :series="registrosT"
               />
             </v-col>
           </v-row>
         </v-card>
+        <v-card class="mb-2">
+          <v-row>
+            <v-col>
+              <v-card-subtitle> Total Cajas </v-card-subtitle>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <ApexChart
+                v-if="cargado"
+                ref="chartRef2"
+                height="350"
+                type="line"
+                :options="chartOptions"
+                :series="cajas"
+              />
+            </v-col> </v-row
+        ></v-card>
       </v-col>
     </v-row>
   </v-container>
@@ -47,7 +66,9 @@ async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
   ).data;
 }
 let cargado = ref(false);
-let tKg = {};
+let cajaPCiclo = {};
+let kgPCaja = {};
+let tCajas = {};
 
 const chartRef = ref(null);
 const chartRef2 = ref(null);
@@ -120,40 +141,38 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  tKg = await obtenerDatosVariable("8H", "registros", "formatoLinea", 48);
-  kilos.value = tKg.registros;
-  // socket.on("variable_45_actualizada", (data) => {
+  cajaPCiclo = await obtenerDatosVariable(
+    "8H",
+    "registros",
+    "formatoLinea",
+    45
+  );
+  kgPCaja = await obtenerDatosVariable("8H", "registros", "formatoLinea", 46);
+  tCajas = await obtenerDatosVariable("8H", "registros", "formatoLinea", 47);
+  registrosT.value = [cajaPCiclo.registros[0], kgPCaja.registros[0]];
+  cajas.value = tCajas.registros;
+  //   socket.on("variable_66_actualizada", (data) => {
+  //     registrosT.value[0].data.push({
+  //       x: new Date(moment(data.x).toISOString()).getTime(),
+  //       y: data.y,
+  //     });
+  //     if (chartRef.value) {
+  //       chartRef.value.updateSeries(registrosT.value);
+  //       if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+  //     }
+  //   });
+  //   socket.on("variable_67_actualizada", (data) => {
+  //     registrosT.value[1].data.push({
+  //       x: new Date(moment(data.x).toISOString()).getTime(),
+  //       y: data.y,
+  //     });
+  //     if (chartRef.value) {
+  //       chartRef.value.updateSeries(registrosT.value);
+  //       if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+  //     }
+  //   });
+  // socket.on("variable_68_actualizada", (data) => {
   //   registrosT.value[0].data.push({
-  //     x: new Date(moment(data.x).toISOString()).getTime(),
-  //     y: data.y,
-  //   });
-  //   if (chartRef.value) {
-  //     chartRef.value.updateSeries(registrosT.value);
-  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-  //   }
-  // });
-  // socket.on("variable_46_actualizada", (data) => {
-  //   registrosT.value[1].data.push({
-  //     x: new Date(moment(data.x).toISOString()).getTime(),
-  //     y: data.y,
-  //   });
-  //   if (chartRef.value) {
-  //     chartRef.value.updateSeries(registrosT.value);
-  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-  //   }
-  // });
-  // socket.on("variable_47_actualizada", (data) => {
-  //   registrosT.value[0].data.push({
-  //     x: new Date(moment(data.x).toISOString()).getTime(),
-  //     y: data.y,
-  //   });
-  //   if (chartRef.value) {
-  //     chartRef.value.updateSeries(registrosT.value);
-  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-  //   }
-  // });
-  // socket.on("variable_48_actualizada", (data) => {
-  //   registrosT.value[1].data.push({
   //     x: new Date(moment(data.x).toISOString()).getTime(),
   //     y: data.y,
   //   });

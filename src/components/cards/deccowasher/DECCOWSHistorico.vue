@@ -201,7 +201,7 @@ async function dateApplied(date1, date2) {
   }
   marcha = await obtenerMarcha(
     "historico",
-    [57, 61, 63, 60, 62],
+    [57, 60, 62],
     inicio.value,
     fin.value,
     "registros"
@@ -417,13 +417,13 @@ let kilos = {};
 onMounted(async () => {
   cargado.value = false;
   estado = await obtenerDatosHistoricoVariable(
-    "8h",
+    "8H",
     "registros",
     "formatoRangos",
     [57]
   );
   let autoManual = await obtenerDatosHistoricoVariable(
-    "8h",
+    "8H",
     "registros",
     "formatoRangos",
     [61, 63]
@@ -432,52 +432,46 @@ onMounted(async () => {
     const element = autoManual[1].data[index];
     estado[1].data.push(element);
   }
-  marcha = await obtenerMarcha(
-    "8h",
-    [57, 61, 63, 60, 62],
-    null,
-    null,
-    "registros"
-  );
+  marcha = await obtenerMarcha("8H", [57, 60, 62], null, null, "registros");
   funcMaquina = await obtenerDatosHistoricoVariable(
-    "8h",
+    "8H",
     "registros",
     "formatoRangos",
     [60, 62]
   );
   let bombas = await obtenerDatosHistoricoVariable(
-    "8h",
+    "8H",
     "registros",
     "formatoRangos",
     [64, 65]
   );
   series3.value = bombas;
   dosis = await obtenerDatosHistoricoVariable(
-    "8h",
+    "8H",
     "registros",
     "formatoLinea",
     [58, 59]
   );
   kilos = await obtenerDatosHistoricoVariable(
-    "8h",
+    "8H",
     "registros",
     "formatoLinea",
     [69]
   );
   cajas = await obtenerDatosHistoricoVariable(
-    "8h",
+    "8H",
     "registros",
     "formatoLinea",
     [68]
   );
   cporu = await obtenerDatosHistoricoVariable(
-    "8h",
+    "8H",
     "registros",
     "formatoLinea",
     [67, 66]
   );
   totales = await obtenerDatosHistoricoVariable(
-    "8h",
+    "8H",
     "totales",
     "sinfiltro",
     [70, 71, 72]

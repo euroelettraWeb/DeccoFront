@@ -10,6 +10,17 @@
         <Estado />
         <DosisDOSb />
         <FrutaProcesada />
+        <v-btn
+          color="info"
+          @click="
+            routerStore().menu(
+              'deccodos:Otras',
+              routerStore().clienteID,
+              routerStore().lineasID
+            )
+          "
+          >Otras Variables</v-btn
+        >
       </v-col>
     </v-row>
   </v-container>

@@ -196,11 +196,11 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  agP1 = await obtenerDatosVariable("8h", "registros", "formatoRangos", 2);
-  agP2 = await obtenerDatosVariable("8h", "registros", "formatoRangos", 3);
-  agP3 = await obtenerDatosVariable("8h", "registros", "formatoRangos", 4);
-  agP4 = await obtenerDatosVariable("8h", "registros", "formatoRangos", 5);
-  agP5 = await obtenerDatosVariable("8h", "registros", "formatoRangos", 6);
+  agP1 = await obtenerDatosVariable("8H", "registros", "formatoRangos", 2);
+  agP2 = await obtenerDatosVariable("8H", "registros", "formatoRangos", 3);
+  agP3 = await obtenerDatosVariable("8H", "registros", "formatoRangos", 4);
+  agP4 = await obtenerDatosVariable("8H", "registros", "formatoRangos", 5);
+  agP5 = await obtenerDatosVariable("8H", "registros", "formatoRangos", 6);
   series.value = [
     agP1.registros[1],
     agP2.registros[1],

@@ -71,6 +71,17 @@ const props = defineProps({
 
 let items = computed(() => [
   {
+    action: "mdi-hand-water",
+    estado: props.linea.deccowsID ? true : false,
+    items: [
+      { title: "Principal", route: "deccowasher:Principal" },
+      // { title: "Estado", route: "deccowasher:MarchaParo" },
+      // { title: "Consumo", route: "deccowasher:Consumo" },
+      // { title: "Registros", route: "deccowasher:Registros" },
+    ],
+    title: "DECCOWASHER",
+  },
+  {
     action: "mdi-flask",
     estado: props.linea.deccodafID ? true : false,
     items: [
@@ -91,17 +102,6 @@ let items = computed(() => [
       // { title: "Registros", route: "deccodos:Registros" },
     ],
     title: "DECCODOS",
-  },
-  {
-    action: "mdi-hand-water",
-    estado: props.linea.deccowsID ? true : false,
-    items: [
-      { title: "Principal", route: "deccowasher:Principal" },
-      // { title: "Estado", route: "deccowasher:MarchaParo" },
-      // { title: "Consumo", route: "deccowasher:Consumo" },
-      // { title: "Registros", route: "deccowasher:Registros" },
-    ],
-    title: "DECCOWASHER",
   },
   // {
   //   action: "mdi-snowflake",
