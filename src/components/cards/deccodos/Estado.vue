@@ -269,7 +269,12 @@ onMounted(async () => {
     const element = autoManual[1].data[index];
     modoMaquina[1].data.push(element);
   }
-  marcha = await obtenerMarcha("8H", [31, 40, 42], "registros");
+  marcha = await obtenerMarcha(
+    "8H",
+    [31, 40, 42],
+    "registros",
+    routerStore().lineasID
+  );
   funcMaquina = await obtenerDatosVariables(
     "8H",
     "registros",
