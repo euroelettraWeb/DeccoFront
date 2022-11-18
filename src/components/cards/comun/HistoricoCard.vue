@@ -39,10 +39,20 @@
           <v-row>
             <v-col v-if="cargado">
               <DECCODAFHistoricoCard
-                v-if="select2.nombre === 'DECCODAF'"
+                v-if="select2.grupoID === 1"
+                :linea="select.id"
+                :sistema="select2.id"
               /><!-- :linea="select.id" :sistema="select2.id" -->
-              <DECCODOSHistorico v-if="select2.nombre === 'DECCODOS'" />
-              <DECCOWSHistorico v-if="select2.nombre === 'DECCOWASHER'" />
+              <DECCODOSHistorico
+                v-if="select2.grupoID === 2"
+                :linea="select.id"
+                :sistema="select2.id"
+              />
+              <DECCOWSHistorico
+                v-if="select2.grupoID === 3"
+                :linea="select.id"
+                :sistema="select2.id"
+              />
             </v-col>
             <v-col v-else class="d-flex justify-center align-center">
               <v-progress-circular
@@ -81,16 +91,7 @@ onMounted(async () => {
   let lista = [];
   lineaList.value = await obtenerLinea(routerStore().clienteID);
   for (const iterator of lineaList.value) {
-    let sistemas = [];
-    if (iterator.deccodafID) {
-      sistemas[0] = { id: iterator.deccodafID, nombre: "DECCODAF" };
-    }
-    if (iterator.deccodosID) {
-      sistemas[1] = { id: iterator.deccodosID, nombre: "DECCODOS" };
-    }
-    if (iterator.deccowsID) {
-      sistemas[2] = { id: iterator.deccowsID, nombre: "DECCOWASHER" };
-    }
+    let sistemas = await obtenerMaquina("cliente", iterator.id, 0);
     lista.push({
       id: iterator.id,
       nombre: iterator.nombre,
@@ -104,6 +105,13 @@ onMounted(async () => {
 async function obtenerLinea(clienteID) {
   return (
     await axios.get(`${process.env.VUE_APP_RUTA_API}/${clienteID}/lineas/all`)
+  ).data;
+}
+async function obtenerMaquina(modo, clienteID, grupoID) {
+  return (
+    await axios.get(
+      `${process.env.VUE_APP_RUTA_API}/maquinas/${modo}/${clienteID}/${grupoID}`
+    )
   ).data;
 }
 function changeItem() {

@@ -122,15 +122,12 @@ import io from "socket.io-client";
 import moment from "moment";
 import DatePicker from "vue-time-date-range-picker/dist/vdprDatePicker";
 
-const socket = io("http://localhost:3000");
+const props = defineProps({
+  linea: { type: Number, default: 1 },
+  maquinaID: { type: Number, default: 1 },
+});
 
-async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
-  return (
-    await axios.post(
-      `${process.env.VUE_APP_RUTA_API}/variable/${operacion}/${modo}/${filtrado}/${variableID}`
-    )
-  ).data;
-}
+const socket = io("http://localhost:3000");
 
 async function obtenerDatosHistoricoVariable(
   operacion,
@@ -138,28 +135,38 @@ async function obtenerDatosHistoricoVariable(
   filtrado,
   variables,
   inicio,
-  fin
+  fin,
+  maquinaID
 ) {
   return (
     await axios.post(
       `${process.env.VUE_APP_RUTA_API}/variable/multiple/${operacion}/${modo}/${filtrado}/`,
-      { variables, inicio, fin }
+      { variables, inicio, fin, maquinaID }
     )
   ).data;
 }
 
-async function obtenerMarcha(modo, variables, inicio, fin, operacion) {
+async function obtenerMarcha(
+  modo,
+  variables,
+  inicio,
+  fin,
+  operacion,
+  maquinaID
+) {
   return (
     await axios.post(
-      `${process.env.VUE_APP_RUTA_API}/variable/marcha/${modo}/${operacion}/`,
+      `${process.env.VUE_APP_RUTA_API}/variable/marcha/${modo}/${operacion}`,
       {
         variables,
         inicio,
         fin,
+        maquinaID,
       }
     )
   ).data;
 }
+
 function onReset() {
   inicio.value = "";
   fin.value = "";
@@ -183,7 +190,8 @@ async function dateApplied(date1, date2) {
     "formatoRangos",
     [31],
     inicio.value,
-    fin.value
+    fin.value,
+    props.maquinaID
   );
   let autoManual = await obtenerDatosHistoricoVariable(
     "historico",
@@ -191,7 +199,8 @@ async function dateApplied(date1, date2) {
     "formatoRangos",
     [41, 43],
     inicio.value,
-    fin.value
+    fin.value,
+    props.maquinaID
   );
   for (let index = 0; index < autoManual[1].data.length; index++) {
     const element = autoManual[1].data[index];
@@ -202,7 +211,8 @@ async function dateApplied(date1, date2) {
     [31, 40, 42],
     inicio.value,
     fin.value,
-    "registros"
+    "registros",
+    props.maquinaID
   );
   funcMaquina = await obtenerDatosHistoricoVariable(
     "historico",
@@ -210,7 +220,8 @@ async function dateApplied(date1, date2) {
     "formatoRangos",
     [40, 42],
     inicio.value,
-    fin.value
+    fin.value,
+    props.maquinaID
   );
   let cepillos = await obtenerDatosHistoricoVariable(
     "historico",
@@ -218,7 +229,8 @@ async function dateApplied(date1, date2) {
     "formatoRangos",
     [44],
     inicio.value,
-    fin.value
+    fin.value,
+    props.maquinaID
   );
   series3.value = cepillos;
   dosis = await obtenerDatosHistoricoVariable(
@@ -227,7 +239,8 @@ async function dateApplied(date1, date2) {
     "formatoLinea",
     [34, 35, 36, 37, 38],
     inicio.value,
-    fin.value
+    fin.value,
+    props.maquinaID
   );
   kilos = await obtenerDatosHistoricoVariable(
     "historico",
@@ -235,7 +248,8 @@ async function dateApplied(date1, date2) {
     "formatoLinea",
     [48],
     inicio.value,
-    fin.value
+    fin.value,
+    props.maquinaID
   );
   cajas = await obtenerDatosHistoricoVariable(
     "historico",
@@ -243,7 +257,8 @@ async function dateApplied(date1, date2) {
     "formatoLinea",
     [47],
     inicio.value,
-    fin.value
+    fin.value,
+    props.maquinaID
   );
   cporu = await obtenerDatosHistoricoVariable(
     "historico",
@@ -251,7 +266,8 @@ async function dateApplied(date1, date2) {
     "formatoLinea",
     [45, 46],
     inicio.value,
-    fin.value
+    fin.value,
+    props.maquinaID
   );
   totales = await obtenerDatosHistoricoVariable(
     "historico",
@@ -259,7 +275,8 @@ async function dateApplied(date1, date2) {
     "sinfiltro",
     [51, 52, 53, 54, 54, 56],
     inicio.value,
-    fin.value
+    fin.value,
+    props.maquinaID
   );
   series.value = estado;
   for (let index = 0; index < funcMaquina[1].data.length; index++) {
@@ -417,61 +434,95 @@ onMounted(async () => {
     "8H",
     "registros",
     "formatoRangos",
-    [31]
+    [31],
+    null,
+    null,
+    props.maquinaID
   );
   let autoManual = await obtenerDatosHistoricoVariable(
     "8H",
     "registros",
     "formatoRangos",
-    [41, 43]
+    [41, 43],
+    null,
+    null,
+    props.maquinaID
   );
   for (let index = 0; index < autoManual[1].data.length; index++) {
     const element = autoManual[1].data[index];
     estado[1].data.push(element);
   }
-  marcha = await obtenerMarcha("8H", [31, 40, 42], null, null, "registros");
+  marcha = await obtenerMarcha(
+    "8H",
+    [31, 40, 42],
+    null,
+    null,
+    "registros",
+    props.maquinaID
+  );
   funcMaquina = await obtenerDatosHistoricoVariable(
     "8H",
     "registros",
     "formatoRangos",
-    [40, 42]
+    [40, 42],
+    null,
+    null,
+    props.maquinaID
   );
   let cepillos = await obtenerDatosHistoricoVariable(
     "8H",
     "registros",
     "formatoRangos",
-    [44]
+    [44],
+    null,
+    null,
+    props.maquinaID
   );
   series3.value = cepillos;
   dosis = await obtenerDatosHistoricoVariable(
     "8H",
     "registros",
     "formatoLinea",
-    [34, 35, 36, 37, 38]
+    [34, 35, 36, 37, 38],
+    null,
+    null,
+    props.maquinaID
   );
   kilos = await obtenerDatosHistoricoVariable(
     "8H",
     "registros",
     "formatoLinea",
-    [48]
+    [48],
+    null,
+    null,
+    props.maquinaID
   );
   cajas = await obtenerDatosHistoricoVariable(
     "8H",
     "registros",
     "formatoLinea",
-    [47]
+    [47],
+    null,
+    null,
+    props.maquinaID
   );
   cporu = await obtenerDatosHistoricoVariable(
     "8H",
     "registros",
     "formatoLinea",
-    [45, 46]
+    [45, 46],
+    null,
+    null,
+    props.maquinaID
   );
   totales = await obtenerDatosHistoricoVariable(
     "8H",
     "totales",
     "sinfiltro",
-    [51, 52, 53, 54, 54, 56]
+    [51, 52, 53, 54, 54, 56],
+    null,
+    null,
+    props.maquinaID
   );
   series.value = estado;
   for (let index = 0; index < funcMaquina[1].data.length; index++) {
