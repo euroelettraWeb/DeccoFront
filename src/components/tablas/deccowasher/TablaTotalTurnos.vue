@@ -98,13 +98,6 @@ async function obtenerMarcha(modo, variables, operacion, clienteID, maquinaID) {
   ).data;
 }
 
-async function idMaquinaActual(linea, grupoID) {
-  let lineas = (
-    await axios.get(`${process.env.VUE_APP_RUTA_API}/maquinas/linea/${linea}/0`)
-  ).data;
-  return lineas.find((maquina) => maquina.grupoID == grupoID).id;
-}
-
 let consumosM = ref([]);
 let consumosT = ref([]);
 let consumosN = ref([]);
@@ -122,23 +115,38 @@ let cargado = ref(false);
 onMounted(async () => {
   cargado.value = false;
   let clienteID = routerStore().clienteID;
-  let maquinaID = await idMaquinaActual(routerStore().lineasID, 1);
-  agua = await obtenerDatosVariables(clienteID, "24H", 70, maquinaID);
+
+  agua = await obtenerDatosVariables(
+    clienteID,
+    "24H",
+    70,
+    routerStore().lineasID
+  );
   totalDesinfectante = await obtenerDatosVariables(
     clienteID,
     "24H",
     71,
-    maquinaID
+    routerStore().lineasID
   );
-  totalJabon = await obtenerDatosVariables(clienteID, "24H", 72, maquinaID);
+  totalJabon = await obtenerDatosVariables(
+    clienteID,
+    "24H",
+    72,
+    routerStore().lineasID
+  );
 
-  totalKilos = await obtenerDatosVariables(clienteID, "24H", 69, maquinaID);
+  totalKilos = await obtenerDatosVariables(
+    clienteID,
+    "24H",
+    69,
+    routerStore().lineasID
+  );
   horasMarcha = await obtenerMarcha(
     "24H",
     [57, 60, 62],
     "total",
     clienteID,
-    maquinaID
+    routerStore().lineasID
   );
   unidades.value = [
     { id: 0, nombre: "Agua (" + agua.unidadMedida + ")" },

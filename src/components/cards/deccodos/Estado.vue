@@ -82,21 +82,14 @@ async function obtenerMarcha(modo, variables, operacion, maquinaID) {
   ).data;
 }
 
-async function idMaquinaActual(linea, grupoID) {
-  let lineas = (
-    await axios.get(`${process.env.VUE_APP_RUTA_API}/maquinas/linea/${linea}/0`)
-  ).data;
-  return lineas.find((maquina) => maquina.grupoID == grupoID).id;
-}
-
 function newValue(series, value, chartRef, lastZoom, nameI) {
   let elemento0 = series.value[0].data.findLast(
     (node) => node.x == names[nameI],
-    maquinaID
+    routerStore().lineasID
   );
   let elemento1 = series.value[1].data.findLast(
     (node) => node.x == names[nameI],
-    maquinaID
+    routerStore().lineasID
   );
   if (elemento0 && elemento1) {
     let last = moment(elemento0.y[1]).isBefore(moment(elemento1.y[1])) ? 0 : 1;
@@ -257,20 +250,20 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  let maquinaID = await idMaquinaActual(routerStore().lineasID, 1);
+
   modoMaquina = await obtenerDatosVariables(
     "8H",
     "registros",
     "formatoRangos",
     [31],
-    maquinaID
+    routerStore().lineasID
   );
   let autoManual = await obtenerDatosVariables(
     "8H",
     "registros",
     "formatoRangos",
     [41, 43],
-    maquinaID
+    routerStore().lineasID
   );
   for (let index = 0; index < autoManual[1].data.length; index++) {
     const element = autoManual[1].data[index];
@@ -282,14 +275,14 @@ onMounted(async () => {
     "registros",
     "formatoRangos",
     [40, 42],
-    maquinaID
+    routerStore().lineasID
   );
   cepillos = await obtenerDatosVariables(
     "8H",
     "registros",
     "formatoRangos",
     [44],
-    maquinaID
+    routerStore().lineasID
   );
   series.value = modoMaquina;
   for (let index = 0; index < funcMaquina[1].data.length; index++) {

@@ -60,21 +60,14 @@ async function obtenerDatosVariables(
   ).data;
 }
 
-async function idMaquinaActual(linea, grupoID) {
-  let lineas = (
-    await axios.get(`${process.env.VUE_APP_RUTA_API}/maquinas/linea/${linea}/0`)
-  ).data;
-  return lineas.find((maquina) => maquina.grupoID == grupoID).id;
-}
-
 function newValue(series, value, chartRef, lastZoom, nameI) {
   let elemento0 = series.value[0].data.findLast(
     (node) => node.x == names[nameI],
-    maquinaID
+    routerStore().lineasID
   );
   let elemento1 = series.value[1].data.findLast(
     (node) => node.x == names[nameI],
-    maquinaID
+    routerStore().lineasID
   );
   if (elemento0 && elemento1) {
     let last = moment(elemento0.y[1]).isBefore(moment(elemento1.y[1])) ? 0 : 1;
@@ -223,13 +216,12 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  let maquinaID = await idMaquinaActual(routerStore().lineasID, 1);
   bombas = await obtenerDatosVariables(
     "8H",
     "registros",
     "formatoRangos",
     [64, 65],
-    maquinaID
+    routerStore().lineasID
   );
   series.value = bombas;
   // socket.on("variable_64_actualizada", (data) => {

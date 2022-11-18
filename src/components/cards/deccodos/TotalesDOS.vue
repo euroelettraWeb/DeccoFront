@@ -46,13 +46,6 @@ async function obtenerDatosVariables(
   ).data;
 }
 
-async function idMaquinaActual(linea, grupoID) {
-  let lineas = (
-    await axios.get(`${process.env.VUE_APP_RUTA_API}/maquinas/linea/${linea}/0`)
-  ).data;
-  return lineas.find((maquina) => maquina.grupoID == grupoID).id;
-}
-
 let cargado = ref(false);
 let totales = {};
 
@@ -111,13 +104,13 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  let maquinaID = await idMaquinaActual(routerStore().lineasID, 1);
+
   totales = await obtenerDatosVariables(
     "8H",
     "registros",
     "formatoLinea",
     [49, 50, 51, 52, 53, 54, 55, 56],
-    maquinaID
+    routerStore().lineasID
   );
 
   registrosT.value = totales;

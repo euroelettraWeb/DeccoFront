@@ -98,13 +98,6 @@ async function obtenerMarcha(modo, variables, operacion, clienteID, maquinaID) {
   ).data;
 }
 
-async function idMaquinaActual(linea, grupoID) {
-  let lineas = (
-    await axios.get(`${process.env.VUE_APP_RUTA_API}/maquinas/linea/${linea}/0`)
-  ).data;
-  return lineas.find((maquina) => maquina.grupoID == grupoID).id;
-}
-
 let consumosM = ref([]);
 let consumosT = ref([]);
 let consumosN = ref([]);
@@ -123,21 +116,56 @@ let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-  let maquinaID = await idMaquinaActual(routerStore().lineasID, 1);
+
   let clienteID = routerStore().clienteID;
-  agua = await obtenerDatosVariable(clienteID, "24H", 25, maquinaID);
-  totalP1 = await obtenerDatosVariable(clienteID, "24H", 26, maquinaID);
-  totalP2 = await obtenerDatosVariable(clienteID, "24H", 27, maquinaID);
-  totalP3 = await obtenerDatosVariable(clienteID, "24H", 28, maquinaID);
-  totalP4 = await obtenerDatosVariable(clienteID, "24H", 29, maquinaID);
-  totalP5 = await obtenerDatosVariable(clienteID, "24H", 30, maquinaID);
-  totalKilos = await obtenerDatosVariable(clienteID, "24H", 19, maquinaID);
+  agua = await obtenerDatosVariable(
+    clienteID,
+    "24H",
+    25,
+    routerStore().lineasID
+  );
+  totalP1 = await obtenerDatosVariable(
+    clienteID,
+    "24H",
+    26,
+    routerStore().lineasID
+  );
+  totalP2 = await obtenerDatosVariable(
+    clienteID,
+    "24H",
+    27,
+    routerStore().lineasID
+  );
+  totalP3 = await obtenerDatosVariable(
+    clienteID,
+    "24H",
+    28,
+    routerStore().lineasID
+  );
+  totalP4 = await obtenerDatosVariable(
+    clienteID,
+    "24H",
+    29,
+    routerStore().lineasID
+  );
+  totalP5 = await obtenerDatosVariable(
+    clienteID,
+    "24H",
+    30,
+    routerStore().lineasID
+  );
+  totalKilos = await obtenerDatosVariable(
+    clienteID,
+    "24H",
+    19,
+    routerStore().lineasID
+  );
   horasMarcha = await obtenerMarcha(
     "24H",
     [1, 12, 14],
     "total",
     clienteID,
-    maquinaID
+    routerStore().lineasID
   );
   unidades.value = [
     { id: 0, nombre: "Agua (" + agua.unidadMedida + ")" },

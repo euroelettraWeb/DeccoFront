@@ -98,13 +98,6 @@ async function obtenerMarcha(modo, variables, operacion, clienteID, maquinaID) {
   ).data;
 }
 
-async function idMaquinaActual(linea, grupoID) {
-  let lineas = (
-    await axios.get(`${process.env.VUE_APP_RUTA_API}/maquinas/linea/${linea}/0`)
-  ).data;
-  return lineas.find((maquina) => maquina.grupoID == grupoID).id;
-}
-
 let consumosM = ref([]);
 let consumosT = ref([]);
 let consumosN = ref([]);
@@ -125,21 +118,60 @@ let cargado = ref(false);
 onMounted(async () => {
   cargado.value = false;
   let clienteID = routerStore().clienteID;
-  let maquinaID = await idMaquinaActual(routerStore().lineasID, 2);
-  totalA2P = await obtenerDatosVariable(clienteID, "24H", 49, maquinaID);
-  totalA3P = await obtenerDatosVariable(clienteID, "24H", 50, maquinaID);
-  totalB1 = await obtenerDatosVariable(clienteID, "24H", 51, maquinaID);
-  totalB2 = await obtenerDatosVariable(clienteID, "24H", 52, maquinaID);
-  totalB3 = await obtenerDatosVariable(clienteID, "24H", 53, maquinaID);
-  totalB4 = await obtenerDatosVariable(clienteID, "24H", 54, maquinaID);
-  totalB5 = await obtenerDatosVariable(clienteID, "24H", 55, maquinaID);
-  totalKilos = await obtenerDatosVariable(clienteID, "24H", 48, maquinaID);
+  totalA2P = await obtenerDatosVariable(
+    clienteID,
+    "24H",
+    49,
+    routerStore().lineasID
+  );
+  totalA3P = await obtenerDatosVariable(
+    clienteID,
+    "24H",
+    50,
+    routerStore().lineasID
+  );
+  totalB1 = await obtenerDatosVariable(
+    clienteID,
+    "24H",
+    51,
+    routerStore().lineasID
+  );
+  totalB2 = await obtenerDatosVariable(
+    clienteID,
+    "24H",
+    52,
+    routerStore().lineasID
+  );
+  totalB3 = await obtenerDatosVariable(
+    clienteID,
+    "24H",
+    53,
+    routerStore().lineasID
+  );
+  totalB4 = await obtenerDatosVariable(
+    clienteID,
+    "24H",
+    54,
+    routerStore().lineasID
+  );
+  totalB5 = await obtenerDatosVariable(
+    clienteID,
+    "24H",
+    55,
+    routerStore().lineasID
+  );
+  totalKilos = await obtenerDatosVariable(
+    clienteID,
+    "24H",
+    48,
+    routerStore().lineasID
+  );
   horasMarcha = await obtenerMarcha(
     "24H",
     [31, 40, 42],
     "total",
     clienteID,
-    maquinaID
+    routerStore().lineasID
   );
   unidades.value = [
     { id: 0, nombre: "Aplicador 2 Discos (" + totalA2P.unidadMedida + ")" },

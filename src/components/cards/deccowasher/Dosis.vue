@@ -54,14 +54,6 @@ async function obtenerDatosVariables(
     )
   ).data;
 }
-
-async function idMaquinaActual(linea, grupoID) {
-  let lineas = (
-    await axios.get(`${process.env.VUE_APP_RUTA_API}/maquinas/linea/${linea}/0`)
-  ).data;
-  return lineas.find((maquina) => maquina.grupoID == grupoID).id;
-}
-
 let cargado = ref(false);
 let dosis = {};
 let dJabon = {};
@@ -129,14 +121,13 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  let maquinaID = await idMaquinaActual(routerStore().lineasID, 1);
 
   dosis = await obtenerDatosVariables(
     "8H",
     "registros",
     "formatoLinea",
     [58, 59],
-    maquinaID
+    routerStore().lineasID
   );
 
   registrosT.value = dosis;
