@@ -34,15 +34,30 @@ import { onMounted, ref, computed, reactive } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
+import { routerStore } from "../../../stores/index";
+
 const socket = io("http://localhost:3000");
 
-async function obtenerDatosVariables(operacion, modo, filtrado, variables) {
+async function obtenerDatosVariables(
+  operacion,
+  modo,
+  filtrado,
+  variables,
+  maquinaID
+) {
   return (
     await axios.post(
       `${process.env.VUE_APP_RUTA_API}/variable/multiple/${operacion}/${modo}/${filtrado}/`,
-      { variables }
+      { variables, maquinaID }
     )
   ).data;
+}
+
+async function idMaquinaActual(linea, grupoID) {
+  let lineas = (
+    await axios.get(`${process.env.VUE_APP_RUTA_API}/maquinas/linea/${linea}/0`)
+  ).data;
+  return lineas.find((maquina) => maquina.grupoID == grupoID).id;
 }
 
 let cargado = ref(false);
@@ -111,11 +126,13 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
+  let maquinaID = await idMaquinaActual(routerStore().lineasID, 1);
   dosis = await obtenerDatosVariables(
     "8H",
     "registros",
     "formatoLinea",
-    [34, 35, 36, 37, 38]
+    [34, 35, 36, 37, 38],
+    maquinaID
   );
   registrosT.value = dosis;
   // socket.on("variable_51_actualizada", (data) => {

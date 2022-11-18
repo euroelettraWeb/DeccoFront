@@ -54,38 +54,49 @@ import { onMounted, ref, computed } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
-async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
-  return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variable/${operacion}/${modo}/${filtrado}/${variableID}`
-    )
-  ).data;
-}
-async function obtenerDatosVariables(operacion, modo, filtrado, variables) {
+import { routerStore } from "../../../stores/index";
+
+async function obtenerDatosVariables(
+  operacion,
+  modo,
+  filtrado,
+  variables,
+  maquinaID
+) {
   return (
     await axios.post(
       `${process.env.VUE_APP_RUTA_API}/variable/multiple/${operacion}/${modo}/${filtrado}/`,
-      { variables }
+      { variables, maquinaID }
     )
   ).data;
 }
-async function obtenerMarcha(modo, variables, operacion) {
+async function obtenerMarcha(modo, variables, operacion, maquinaID) {
   return (
     await axios.post(
       `${process.env.VUE_APP_RUTA_API}/variable/marcha/${modo}/${operacion}`,
       {
         variables,
+        maquinaID,
       }
     )
   ).data;
 }
 
+async function idMaquinaActual(linea, grupoID) {
+  let lineas = (
+    await axios.get(`${process.env.VUE_APP_RUTA_API}/maquinas/linea/${linea}/0`)
+  ).data;
+  return lineas.find((maquina) => maquina.grupoID == grupoID).id;
+}
+
 function newValue(series, value, chartRef, lastZoom, nameI) {
   let elemento0 = series.value[0].data.findLast(
-    (node) => node.x == names[nameI]
+    (node) => node.x == names[nameI],
+    maquinaID
   );
   let elemento1 = series.value[1].data.findLast(
-    (node) => node.x == names[nameI]
+    (node) => node.x == names[nameI],
+    maquinaID
   );
   if (elemento0 && elemento1) {
     let last = moment(elemento0.y[1]).isBefore(moment(elemento1.y[1])) ? 0 : 1;
@@ -246,33 +257,40 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
+  let maquinaID = await idMaquinaActual(routerStore().lineasID, 1);
   modoMaquina = await obtenerDatosVariables(
     "8H",
     "registros",
     "formatoRangos",
-    [31]
+    [31],
+    maquinaID
   );
   let autoManual = await obtenerDatosVariables(
     "8H",
     "registros",
     "formatoRangos",
-    [41, 43]
+    [41, 43],
+    maquinaID
   );
   for (let index = 0; index < autoManual[1].data.length; index++) {
     const element = autoManual[1].data[index];
     modoMaquina[1].data.push(element);
   }
   marcha = await obtenerMarcha("8H", [31, 40, 42], "registros");
-  console.log(marcha);
   funcMaquina = await obtenerDatosVariables(
     "8H",
     "registros",
     "formatoRangos",
-    [40, 42]
+    [40, 42],
+    maquinaID
   );
-  cepillos = await obtenerDatosVariables("8H", "registros", "formatoRangos", [
-    44,
-  ]);
+  cepillos = await obtenerDatosVariables(
+    "8H",
+    "registros",
+    "formatoRangos",
+    [44],
+    maquinaID
+  );
   series.value = modoMaquina;
   for (let index = 0; index < funcMaquina[1].data.length; index++) {
     let element = funcMaquina[1].data[index];

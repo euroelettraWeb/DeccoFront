@@ -27,25 +27,34 @@ import { onMounted, ref, computed, reactive } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
+import { routerStore } from "../../../stores/index";
+
 const socket = io("http://localhost:3000");
 
-async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
+async function obtenerDatosVariables(
+  operacion,
+  modo,
+  filtrado,
+  variables,
+  maquinaID
+) {
   return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variable/${operacion}/${modo}/${filtrado}/${variableID}`
+    await axios.post(
+      `${process.env.VUE_APP_RUTA_API}/variable/multiple/${operacion}/${modo}/${filtrado}/`,
+      { variables, maquinaID }
     )
   ).data;
 }
 
+async function idMaquinaActual(linea, grupoID) {
+  let lineas = (
+    await axios.get(`${process.env.VUE_APP_RUTA_API}/maquinas/linea/${linea}/0`)
+  ).data;
+  return lineas.find((maquina) => maquina.grupoID == grupoID).id;
+}
+
 let cargado = ref(false);
-let tA2D = {};
-let tA3D = {};
-let tB1 = {};
-let tB2 = {};
-let tB3 = {};
-let tB4 = {};
-let tB5 = {};
-let tCera = {};
+let totales = {};
 
 const chartRef = ref(null);
 let registrosT = ref([]);
@@ -102,24 +111,16 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  tA2D = await obtenerDatosVariable("8H", "registros", "formatoLinea", 49);
-  tA3D = await obtenerDatosVariable("8H", "registros", "formatoLinea", 50);
-  tB1 = await obtenerDatosVariable("8H", "registros", "formatoLinea", 51);
-  tB2 = await obtenerDatosVariable("8H", "registros", "formatoLinea", 52);
-  tB3 = await obtenerDatosVariable("8H", "registros", "formatoLinea", 53);
-  tB4 = await obtenerDatosVariable("8H", "registros", "formatoLinea", 54);
-  tB5 = await obtenerDatosVariable("8H", "registros", "formatoLinea", 55);
-  tCera = await obtenerDatosVariable("8H", "registros", "formatoLinea", 56);
-  registrosT.value = [
-    tA2D.registros[0],
-    tA3D.registros[0],
-    tB1.registros[0],
-    tB2.registros[0],
-    tB3.registros[0],
-    tB4.registros[0],
-    tB5.registros[0],
-    tCera.registros[0],
-  ];
+  let maquinaID = await idMaquinaActual(routerStore().lineasID, 1);
+  totales = await obtenerDatosVariables(
+    "8H",
+    "registros",
+    "formatoLinea",
+    [49, 50, 51, 52, 53, 54, 55, 56],
+    maquinaID
+  );
+
+  registrosT.value = totales;
 
   socket.on("variable_49_actualizada", (data) => {
     registrosT.value[0].data.push({
