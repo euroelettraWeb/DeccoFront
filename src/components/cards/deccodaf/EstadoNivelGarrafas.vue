@@ -41,14 +41,30 @@ import { onMounted, ref, computed } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
+import { routerStore } from "../../../stores/index";
 
-async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
+async function obtenerDatosVariables(
+  operacion,
+  modo,
+  filtrado,
+  variables,
+  maquinaID
+) {
   return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variable/${operacion}/${modo}/${filtrado}/${variableID}`
+    await axios.post(
+      `${process.env.VUE_APP_RUTA_API}/variable/multiple/${operacion}/${modo}/${filtrado}/`,
+      { variables, maquinaID }
     )
   ).data;
 }
+
+async function idMaquinaActual(linea, grupoID) {
+  let lineas = (
+    await axios.get(`${process.env.VUE_APP_RUTA_API}/maquinas/linea/${linea}/0`)
+  ).data;
+  return lineas.find((maquina) => maquina.grupoID == grupoID).id;
+}
+
 function updateValue(series, data, chartRef, lastZoom, index, nameX) {
   let start = ultimoValor[index].start;
   let end = ultimoValor[index].end;
@@ -152,6 +168,7 @@ let chartOptions = computed(() => {
     plotOptions: {
       bar: {
         horizontal: true,
+        rangeBarGroupRows: true,
         barHeight: "100%",
       },
     },
@@ -186,18 +203,16 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  nP1 = await obtenerDatosVariable("8H", "registros", "formatoRangos", 20);
-  nP2 = await obtenerDatosVariable("8H", "registros", "formatoRangos", 21);
-  nP3 = await obtenerDatosVariable("8H", "registros", "formatoRangos", 22);
-  nP4 = await obtenerDatosVariable("8H", "registros", "formatoRangos", 23);
-  nP5 = await obtenerDatosVariable("8H", "registros", "formatoRangos", 24);
-  series.value = [
-    nP1.registros[1],
-    nP2.registros[1],
-    nP3.registros[1],
-    nP4.registros[1],
-    nP5.registros[1],
-  ];
+  let maquinaID = await idMaquinaActual(routerStore().lineasID, 1);
+  nP1 = await obtenerDatosVariables(
+    "8H",
+    "registros",
+    "formatoRangos",
+    [20, 21, 22, 23, 24],
+    maquinaID
+  );
+
+  series.value = nP1;
   // ultimoValor = [
   //   {
   //     start: {

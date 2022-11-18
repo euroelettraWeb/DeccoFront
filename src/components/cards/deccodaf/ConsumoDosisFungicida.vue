@@ -36,22 +36,34 @@ import { onMounted, ref, computed, reactive } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
+import { routerStore } from "../../../stores/index";
+
 const socket = io("http://localhost:3000");
 
-async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
+async function obtenerDatosVariables(
+  operacion,
+  modo,
+  filtrado,
+  variables,
+  maquinaID
+) {
   return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variable/${operacion}/${modo}/${filtrado}/${variableID}`
+    await axios.post(
+      `${process.env.VUE_APP_RUTA_API}/variable/multiple/${operacion}/${modo}/${filtrado}/`,
+      { variables, maquinaID }
     )
   ).data;
 }
 
+async function idMaquinaActual(linea, grupoID) {
+  let lineas = (
+    await axios.get(`${process.env.VUE_APP_RUTA_API}/maquinas/linea/${linea}/0`)
+  ).data;
+  return lineas.find((maquina) => maquina.grupoID == grupoID).id;
+}
+
 let cargado = ref(false);
 let tP1 = {};
-let tP2 = {};
-let tP3 = {};
-let tP4 = {};
-let tP5 = {};
 
 const chartRef = ref(null);
 let registrosT = ref([]);
@@ -117,68 +129,65 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  tP1 = await obtenerDatosVariable("8H", "registros", "formatoLinea", 7);
-  tP2 = await obtenerDatosVariable("8H", "registros", "formatoLinea", 8);
-  tP3 = await obtenerDatosVariable("8H", "registros", "formatoLinea", 9);
-  tP4 = await obtenerDatosVariable("8H", "registros", "formatoLinea", 10);
-  tP5 = await obtenerDatosVariable("8H", "registros", "formatoLinea", 11);
-  registrosT.value = [
-    tP1.registros[0],
-    tP2.registros[0],
-    tP3.registros[0],
-    tP4.registros[0],
-    tP5.registros[0],
-  ];
-  socket.on("variable_7_actualizada", (data) => {
-    registrosT.value[0].data.push({
-      x: new Date(moment(data.x).toISOString()).getTime(),
-      y: data.y,
-    });
-    if (chartRef.value) {
-      chartRef.value.updateSeries(registrosT.value);
-      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-    }
-  });
-  socket.on("variable_8_actualizada", (data) => {
-    registrosT.value[1].data.push({
-      x: new Date(moment(data.x).toISOString()).getTime(),
-      y: data.y,
-    });
-    if (chartRef.value) {
-      chartRef.value.updateSeries(registrosT.value);
-      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-    }
-  });
-  socket.on("variable_9_actualizada", (data) => {
-    registrosT.value[2].data.push({
-      x: new Date(moment(data.x).toISOString()).getTime(),
-      y: data.y,
-    });
-    if (chartRef.value) {
-      chartRef.value.updateSeries(registrosT.value);
-      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-    }
-  });
-  socket.on("variable_10_actualizada", (data) => {
-    registrosT.value[3].data.push({
-      x: new Date(moment(data.x).toISOString()).getTime(),
-      y: data.y,
-    });
-    if (chartRef.value) {
-      chartRef.value.updateSeries(registrosT.value);
-      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-    }
-  });
-  socket.on("variable_11_actualizada", (data) => {
-    registrosT.value[4].data.push({
-      x: new Date(moment(data.x).toISOString()).getTime(),
-      y: data.y,
-    });
-    if (chartRef.value) {
-      chartRef.value.updateSeries(registrosT.value);
-      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-    }
-  });
+  let maquinaID = await idMaquinaActual(routerStore().lineasID, 1);
+  tP1 = await obtenerDatosVariables(
+    "8H",
+    "registros",
+    "formatoLinea",
+    [7, 8, 9, 10, 11],
+    maquinaID
+  );
+  registrosT.value = tP1;
+  // socket.on("variable_7_actualizada", (data) => {
+  //   registrosT.value[0].data.push({
+  //     x: new Date(moment(data.x).toISOString()).getTime(),
+  //     y: data.y,
+  //   });
+  //   if (chartRef.value) {
+  //     chartRef.value.updateSeries(registrosT.value);
+  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+  //   }
+  // });
+  // socket.on("variable_8_actualizada", (data) => {
+  //   registrosT.value[1].data.push({
+  //     x: new Date(moment(data.x).toISOString()).getTime(),
+  //     y: data.y,
+  //   });
+  //   if (chartRef.value) {
+  //     chartRef.value.updateSeries(registrosT.value);
+  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+  //   }
+  // });
+  // socket.on("variable_9_actualizada", (data) => {
+  //   registrosT.value[2].data.push({
+  //     x: new Date(moment(data.x).toISOString()).getTime(),
+  //     y: data.y,
+  //   });
+  //   if (chartRef.value) {
+  //     chartRef.value.updateSeries(registrosT.value);
+  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+  //   }
+  // });
+  // socket.on("variable_10_actualizada", (data) => {
+  //   registrosT.value[3].data.push({
+  //     x: new Date(moment(data.x).toISOString()).getTime(),
+  //     y: data.y,
+  //   });
+  //   if (chartRef.value) {
+  //     chartRef.value.updateSeries(registrosT.value);
+  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+  //   }
+  // });
+  // socket.on("variable_11_actualizada", (data) => {
+  //   registrosT.value[4].data.push({
+  //     x: new Date(moment(data.x).toISOString()).getTime(),
+  //     y: data.y,
+  //   });
+  //   if (chartRef.value) {
+  //     chartRef.value.updateSeries(registrosT.value);
+  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+  //   }
+  // });
   cargado.value = true;
 });
 </script>

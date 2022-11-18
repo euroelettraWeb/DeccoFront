@@ -80,7 +80,7 @@ import { routerStore } from "../../../stores/index";
 async function obtenerDatosVariable(clienteID, modo, variableID) {
   return (
     await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variable/total/${clienteID}/${modo}/${variableID}`
+      `${process.env.VUE_APP_RUTA_API}/variable/total/${clienteID}/${modo}/${maquinaID}/${variableID}/0/0`
     )
   ).data;
 }
@@ -91,6 +91,7 @@ async function obtenerMarcha(modo, variables, operacion, clienteID) {
       {
         variables,
         clienteID,
+        maquinaID,
       }
     )
   ).data;

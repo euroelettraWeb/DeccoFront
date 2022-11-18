@@ -77,29 +77,34 @@ import axios from "axios";
 import { onMounted, ref } from "vue";
 import { routerStore } from "../../../stores/index";
 
-async function obtenerDatosVariable(clienteID, modo, variableID) {
+async function obtenerDatosVariable(clienteID, modo, variableID, maquinaID) {
   return (
     await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variable/total/${clienteID}/${modo}/${variableID}/0/0`
+      `${process.env.VUE_APP_RUTA_API}/variable/total/${clienteID}/${modo}/${maquinaID}/${variableID}/0/0`
     )
   ).data;
 }
 
-async function obtenerMarcha(modo, variables, operacion, clienteID) {
+async function obtenerMarcha(modo, variables, operacion, clienteID, maquinaID) {
   return (
     await axios.post(
       `${process.env.VUE_APP_RUTA_API}/variable/marcha/${modo}/${operacion}`,
       {
         variables,
         clienteID,
+        maquinaID,
       }
     )
   ).data;
 }
 
-function negative(val) {
-  return;
+async function idMaquinaActual(linea, grupoID) {
+  let lineas = (
+    await axios.get(`${process.env.VUE_APP_RUTA_API}/maquinas/linea/${linea}/0`)
+  ).data;
+  return lineas.find((maquina) => maquina.grupoID == grupoID).id;
 }
+
 let consumosM = ref([]);
 let consumosT = ref([]);
 let consumosN = ref([]);
@@ -118,15 +123,22 @@ let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
+  let maquinaID = await idMaquinaActual(routerStore().lineasID, 1);
   let clienteID = routerStore().clienteID;
-  agua = await obtenerDatosVariable(clienteID, "24H", 25);
-  totalP1 = await obtenerDatosVariable(clienteID, "24H", 26);
-  totalP2 = await obtenerDatosVariable(clienteID, "24H", 27);
-  totalP3 = await obtenerDatosVariable(clienteID, "24H", 28);
-  totalP4 = await obtenerDatosVariable(clienteID, "24H", 29);
-  totalP5 = await obtenerDatosVariable(clienteID, "24H", 30);
-  totalKilos = await obtenerDatosVariable(clienteID, "24H", 19);
-  horasMarcha = await obtenerMarcha("24H", [1, 12, 14], "total", clienteID);
+  agua = await obtenerDatosVariable(clienteID, "24H", 25, maquinaID);
+  totalP1 = await obtenerDatosVariable(clienteID, "24H", 26, maquinaID);
+  totalP2 = await obtenerDatosVariable(clienteID, "24H", 27, maquinaID);
+  totalP3 = await obtenerDatosVariable(clienteID, "24H", 28, maquinaID);
+  totalP4 = await obtenerDatosVariable(clienteID, "24H", 29, maquinaID);
+  totalP5 = await obtenerDatosVariable(clienteID, "24H", 30, maquinaID);
+  totalKilos = await obtenerDatosVariable(clienteID, "24H", 19, maquinaID);
+  horasMarcha = await obtenerMarcha(
+    "24H",
+    [1, 12, 14],
+    "total",
+    clienteID,
+    maquinaID
+  );
   unidades.value = [
     { id: 0, nombre: "Agua (" + agua.unidadMedida + ")" },
     { id: 1, nombre: "Producto 1 (" + totalP1.unidadMedida + ")" },

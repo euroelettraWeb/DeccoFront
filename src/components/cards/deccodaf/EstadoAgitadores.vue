@@ -39,13 +39,28 @@ import { onMounted, ref, computed } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
+import { routerStore } from "../../../stores/index";
 
-async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
+async function obtenerDatosVariables(
+  operacion,
+  modo,
+  filtrado,
+  variables,
+  maquinaID
+) {
   return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variable/${operacion}/${modo}/${filtrado}/${variableID}`
+    await axios.post(
+      `${process.env.VUE_APP_RUTA_API}/variable/multiple/${operacion}/${modo}/${filtrado}/`,
+      { variables, maquinaID }
     )
   ).data;
+}
+
+async function idMaquinaActual(linea, grupoID) {
+  let lineas = (
+    await axios.get(`${process.env.VUE_APP_RUTA_API}/maquinas/linea/${linea}/0`)
+  ).data;
+  return lineas.find((maquina) => maquina.grupoID == grupoID).id;
 }
 // function range(rangeName, array) {
 //   let returnt = [];
@@ -104,11 +119,7 @@ const socket = io("http://localhost:3000");
 const chartRef = ref(null);
 var lastZoom = null;
 let cargado = ref(false);
-let agP1 = [];
-let agP2 = [];
-let agP3 = [];
-let agP4 = [];
-let agP5 = [];
+let agitadores = [];
 let series = ref([]);
 let ultimoValor = [
   { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
@@ -162,6 +173,7 @@ let chartOptions = computed(() => {
     plotOptions: {
       bar: {
         horizontal: true,
+        rangeBarGroupRows: true,
         barHeight: "100%",
       },
     },
@@ -196,18 +208,16 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  agP1 = await obtenerDatosVariable("8H", "registros", "formatoRangos", 2);
-  agP2 = await obtenerDatosVariable("8H", "registros", "formatoRangos", 3);
-  agP3 = await obtenerDatosVariable("8H", "registros", "formatoRangos", 4);
-  agP4 = await obtenerDatosVariable("8H", "registros", "formatoRangos", 5);
-  agP5 = await obtenerDatosVariable("8H", "registros", "formatoRangos", 6);
-  series.value = [
-    agP1.registros[1],
-    agP2.registros[1],
-    agP3.registros[1],
-    agP4.registros[1],
-    agP5.registros[1],
-  ];
+  let maquinaID = await idMaquinaActual(routerStore().lineasID, 1);
+  agitadores = await obtenerDatosVariables(
+    "8H",
+    "registros",
+    "formatoRangos",
+    [2, 3, 4, 5, 6],
+    maquinaID
+  );
+
+  series.value = agitadores;
   // ultimoValor = [
   //   {
   //     start: {

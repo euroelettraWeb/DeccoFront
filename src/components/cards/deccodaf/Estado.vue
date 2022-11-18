@@ -49,25 +49,41 @@ import { onMounted, ref, computed } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
+import { routerStore } from "../../../stores/index";
 
-async function obtenerDatosVariables(operacion, modo, filtrado, variables) {
+async function obtenerDatosVariables(
+  operacion,
+  modo,
+  filtrado,
+  variables,
+  maquinaID
+) {
   return (
     await axios.post(
       `${process.env.VUE_APP_RUTA_API}/variable/multiple/${operacion}/${modo}/${filtrado}/`,
-      { variables }
+      { variables, maquinaID }
     )
   ).data;
 }
-async function obtenerMarcha(modo, variables, operacion) {
+async function obtenerMarcha(modo, variables, operacion, maquinaID) {
   return (
     await axios.post(
       `${process.env.VUE_APP_RUTA_API}/variable/marcha/${modo}/${operacion}`,
       {
         variables,
+        maquinaID,
       }
     )
   ).data;
 }
+
+async function idMaquinaActual(linea, grupoID) {
+  let lineas = (
+    await axios.get(`${process.env.VUE_APP_RUTA_API}/maquinas/linea/${linea}/0`)
+  ).data;
+  return lineas.find((maquina) => maquina.grupoID == grupoID).id;
+}
+
 // function newValue(newArray, value, nameI) {
 //   let elemento0 = newArray[0].data.findLast((node) => node.x == nameI);
 //   let elemento1 = newArray[1].data.findLast((node) => node.x == nameI);
@@ -252,28 +268,32 @@ let chartOptions = computed(() => {
 
 onMounted(async () => {
   cargado.value = false;
+  let maquinaID = await idMaquinaActual(routerStore().lineasID, 1);
   modoMaquina = await obtenerDatosVariables(
     "8H",
     "registros",
     "formatoRangos",
-    [1]
+    [1],
+    maquinaID
   );
   autoManual = await obtenerDatosVariables(
     "8H",
     "registros",
     "formatoRangos",
-    [13, 15]
+    [13, 15],
+    maquinaID
   );
   for (let index = 0; index < autoManual[1].data.length; index++) {
     const element = autoManual[1].data[index];
     modoMaquina[1].data.push(element);
   }
-  marcha = await obtenerMarcha("8H", [1, 12, 14], "registros");
+  marcha = await obtenerMarcha("8H", [1, 12, 14], "registros", maquinaID);
   funcMaquina = await obtenerDatosVariables(
     "8H",
     "registros",
     "formatoRangos",
-    [12, 14]
+    [12, 14],
+    maquinaID
   );
   series.value = modoMaquina;
   for (let index = 0; index < funcMaquina[1].data.length; index++) {

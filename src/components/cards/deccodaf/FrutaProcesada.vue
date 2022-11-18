@@ -37,14 +37,28 @@ import { onMounted, ref, computed, reactive } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
+import { routerStore } from "../../../stores/index";
 const socket = io("http://localhost:3000");
 
-async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
+async function obtenerDatosVariables(
+  operacion,
+  modo,
+  filtrado,
+  variables,
+  maquinaID
+) {
   return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variable/${operacion}/${modo}/${filtrado}/${variableID}`
+    await axios.post(
+      `${process.env.VUE_APP_RUTA_API}/variable/multiple/${operacion}/${modo}/${filtrado}/`,
+      { variables, maquinaID }
     )
   ).data;
+}
+async function idMaquinaActual(linea, grupoID) {
+  let lineas = (
+    await axios.get(`${process.env.VUE_APP_RUTA_API}/maquinas/linea/${linea}/0`)
+  ).data;
+  return lineas.find((maquina) => maquina.grupoID == grupoID).id;
 }
 let cargado = ref(false);
 let tKg = {};
@@ -120,18 +134,25 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  tKg = await obtenerDatosVariable("8H", "registros", "formatoLinea", 19);
-  kilos.value = tKg.registros;
-  socket.on("variable_19_actualizada", (data) => {
-    kilos.value[0].data.push({
-      x: new Date(moment(data.x).toISOString()).getTime(),
-      y: data.y,
-    });
-    if (chartRef.value) {
-      chartRef.value.updateSeries(registrosT.value);
-      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-    }
-  });
+  let maquinaID = await idMaquinaActual(routerStore().lineasID, 1);
+  tKg = await obtenerDatosVariables(
+    "8H",
+    "registros",
+    "formatoLinea",
+    [19],
+    maquinaID
+  );
+  kilos.value = tKg;
+  // socket.on("variable_19_actualizada", (data) => {
+  //   kilos.value[0].data.push({
+  //     x: new Date(moment(data.x).toISOString()).getTime(),
+  //     y: data.y,
+  //   });
+  //   if (chartRef.value) {
+  //     chartRef.value.updateSeries(registrosT.value);
+  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+  //   }
+  // });
   cargado.value = true;
 });
 </script>
