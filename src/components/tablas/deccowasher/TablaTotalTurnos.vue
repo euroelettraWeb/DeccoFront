@@ -77,14 +77,15 @@ import axios from "axios";
 import { onMounted, ref } from "vue";
 import { routerStore } from "../../../stores/index";
 
-async function obtenerDatosVariable(clienteID, modo, variableID) {
+async function obtenerDatosVariables(clienteID, modo, variableID, maquinaID) {
   return (
     await axios.get(
       `${process.env.VUE_APP_RUTA_API}/variable/total/${clienteID}/${modo}/${maquinaID}/${variableID}/0/0`
     )
   ).data;
 }
-async function obtenerMarcha(modo, variables, operacion, clienteID) {
+
+async function obtenerMarcha(modo, variables, operacion, clienteID, maquinaID) {
   return (
     await axios.post(
       `${process.env.VUE_APP_RUTA_API}/variable/marcha/${modo}/${operacion}`,
@@ -95,6 +96,13 @@ async function obtenerMarcha(modo, variables, operacion, clienteID) {
       }
     )
   ).data;
+}
+
+async function idMaquinaActual(linea, grupoID) {
+  let lineas = (
+    await axios.get(`${process.env.VUE_APP_RUTA_API}/maquinas/linea/${linea}/0`)
+  ).data;
+  return lineas.find((maquina) => maquina.grupoID == grupoID).id;
 }
 
 let consumosM = ref([]);
@@ -114,12 +122,24 @@ let cargado = ref(false);
 onMounted(async () => {
   cargado.value = false;
   let clienteID = routerStore().clienteID;
-  agua = await obtenerDatosVariable(clienteID, "24H", 70);
-  totalDesinfectante = await obtenerDatosVariable(clienteID, "24H", 71);
-  totalJabon = await obtenerDatosVariable(clienteID, "24H", 72);
+  let maquinaID = await idMaquinaActual(routerStore().lineasID, 1);
+  agua = await obtenerDatosVariables(clienteID, "24H", 70, maquinaID);
+  totalDesinfectante = await obtenerDatosVariables(
+    clienteID,
+    "24H",
+    71,
+    maquinaID
+  );
+  totalJabon = await obtenerDatosVariables(clienteID, "24H", 72, maquinaID);
 
-  totalKilos = await obtenerDatosVariable(clienteID, "24H", 69);
-  horasMarcha = await obtenerMarcha("24H", [57, 60, 62], "total", clienteID);
+  totalKilos = await obtenerDatosVariables(clienteID, "24H", 69, maquinaID);
+  horasMarcha = await obtenerMarcha(
+    "24H",
+    [57, 60, 62],
+    "total",
+    clienteID,
+    maquinaID
+  );
   unidades.value = [
     { id: 0, nombre: "Agua (" + agua.unidadMedida + ")" },
     {

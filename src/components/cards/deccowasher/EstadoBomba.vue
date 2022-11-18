@@ -43,22 +43,38 @@ import { onMounted, ref, computed } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
+import { routerStore } from "../../../stores/index";
 
-async function obtenerDatosVariables(operacion, modo, filtrado, variables) {
+async function obtenerDatosVariables(
+  operacion,
+  modo,
+  filtrado,
+  variables,
+  maquinaID
+) {
   return (
     await axios.post(
       `${process.env.VUE_APP_RUTA_API}/variable/multiple/${operacion}/${modo}/${filtrado}/`,
-      { variables }
+      { variables, maquinaID }
     )
   ).data;
 }
 
+async function idMaquinaActual(linea, grupoID) {
+  let lineas = (
+    await axios.get(`${process.env.VUE_APP_RUTA_API}/maquinas/linea/${linea}/0`)
+  ).data;
+  return lineas.find((maquina) => maquina.grupoID == grupoID).id;
+}
+
 function newValue(series, value, chartRef, lastZoom, nameI) {
   let elemento0 = series.value[0].data.findLast(
-    (node) => node.x == names[nameI]
+    (node) => node.x == names[nameI],
+    maquinaID
   );
   let elemento1 = series.value[1].data.findLast(
-    (node) => node.x == names[nameI]
+    (node) => node.x == names[nameI],
+    maquinaID
   );
   if (elemento0 && elemento1) {
     let last = moment(elemento0.y[1]).isBefore(moment(elemento1.y[1])) ? 0 : 1;
@@ -207,11 +223,13 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
+  let maquinaID = await idMaquinaActual(routerStore().lineasID, 1);
   bombas = await obtenerDatosVariables(
     "8H",
     "registros",
     "formatoRangos",
-    [64, 65]
+    [64, 65],
+    maquinaID
   );
   series.value = bombas;
   // socket.on("variable_64_actualizada", (data) => {
