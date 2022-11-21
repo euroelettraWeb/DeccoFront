@@ -76,9 +76,9 @@ let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-  agua = await obtenerDatosVariable("8h", "total", "sinfiltro", 70);
-  desinfectante = await obtenerDatosVariable("8h", "total", "sinfiltro", 71);
-  jabon = await obtenerDatosVariable("8h", "total", "sinfiltro", 72);
+  agua = await obtenerDatosVariable("8H", "total", "sinfiltro", 70);
+  desinfectante = await obtenerDatosVariable("8H", "total", "sinfiltro", 71);
+  jabon = await obtenerDatosVariable("8H", "total", "sinfiltro", 72);
 
   consumos.value = [
     { id: 0, name: agua.registros[0].total },

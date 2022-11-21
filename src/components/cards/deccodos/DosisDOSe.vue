@@ -9,7 +9,7 @@
           <ApexChart
             ref="chartRef"
             type="rangeBar"
-            height="300"
+            height="200"
             :options="chartOptions"
             :series="series"
           />
@@ -36,23 +36,19 @@ import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
 
-async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
+async function obtenerDatosVariables(
+  operacion,
+  modo,
+  filtrado,
+  variables,
+  maquinaID
+) {
   return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variable/${operacion}/${modo}/${filtrado}/${variableID}`
+    await axios.post(
+      `${process.env.VUE_APP_RUTA_API}/variable/multiple/${operacion}/${modo}/${filtrado}/`,
+      { variables, maquinaID }
     )
   ).data;
-}
-function range(rangeName, array) {
-  let returnt = [];
-  for (let index = 0; index < array.length; index++) {
-    const element = array[index];
-    let startR = new Date(element.x).getTime();
-    let endR = new Date(element.y).getTime();
-    let obj = { x: rangeName, y: [startR, endR] };
-    returnt.push(obj);
-  }
-  return returnt;
 }
 
 function updateValue(series, data, chartRef, lastZoom, index, nameX) {
@@ -101,7 +97,7 @@ const chartRef = ref(null);
 var lastZoom = null;
 let cargado = ref(false);
 let a2D = [];
-let a3D = [];
+let aplicadores = [];
 let gen = [];
 
 let series = ref([]);
@@ -113,7 +109,7 @@ let ultimoValor = [
 let chartOptions = computed(() => {
   return {
     chart: {
-      height: "100%",
+      // height: "100%",
       type: "rangeBar",
       locales: [es],
       defaultLocale: "es",
@@ -154,14 +150,34 @@ let chartOptions = computed(() => {
     plotOptions: {
       bar: {
         horizontal: true,
+        rangeBarGroupRows: true,
         barHeight: "100%",
       },
     },
+    colors: [
+      function ({ value, seriesIndex, w }) {
+        if (seriesIndex == 0) {
+          return "#d50000";
+        } else {
+          return "#00c853";
+        }
+      },
+    ],
     xaxis: {
       type: "datetime",
       datetimeUTC: false,
       min: new Date(moment().subtract(8, "hours")).getTime(),
       max: moment(),
+      tickAmount: 15,
+      labels: {
+        minHeight: 125,
+        rotate: -70,
+        minHeight: 125,
+        rotateAlways: true,
+        formatter: function (value, timestamp) {
+          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
+        },
+      },
     },
     yaxis: {
       minWidth: 1,
@@ -171,20 +187,23 @@ let chartOptions = computed(() => {
     },
     tooltip: {
       x: {
-        format: "dd MMM yyyy hh:mm:ss",
+        format: "dd/MM/yyyy HH:mm:ss",
       },
     },
   };
 });
 onMounted(async () => {
   cargado.value = false;
-  a2D = await obtenerDatosVariable("8h", "registros", "rangos", 32);
-  a3D = await obtenerDatosVariable("8h", "registros", "rangos", 33);
 
-  series.value = [
-    { name: "Aplicador 2 discos", data: range("Estado", a2D.registros) },
-    { name: "Aplicador 3 discos", data: range("Estado", a3D.registros) },
-  ];
+  aplicadores = await obtenerDatosVariables(
+    "8H",
+    "registros",
+    "formatoRangos",
+    [32, 33],
+    routerStore().lineasID
+  );
+
+  series.value = aplicadores;
   ultimoValor = [
     {
       start: {
@@ -207,12 +226,12 @@ onMounted(async () => {
       },
     },
   ];
-  socket.on("variable_32_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 0, "Estado");
-  });
-  socket.on("variable_33_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 1, "Estado");
-  });
+  // socket.on("variable_32_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 0, "dosisA2D");
+  // });
+  // socket.on("variable_33_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 1, "dosisA3D");
+  // });
 
   cargado.value = true;
 });

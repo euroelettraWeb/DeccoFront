@@ -48,12 +48,12 @@
                           label="DECCOWS"
                         ></v-checkbox>
                       </v-col>
-                      <v-col>
+                      <!-- <v-col>
                         <v-checkbox
                           v-model="editedItem.deccocontrol"
                           label="DECCOCONTROL"
                         ></v-checkbox>
-                      </v-col>
+                      </v-col> -->
                     </v-row>
                   </v-container>
                 </v-form>
@@ -103,14 +103,14 @@
       </template>
       <template #item.deccows="{ item }">
         <v-simple-checkbox v-model="item.deccows" disabled>
-          DECCOWS</v-simple-checkbox
+          DECCOWASHER</v-simple-checkbox
         >
       </template>
-      <template #item.deccocontrol="{ item }">
+      <!-- <template #item.deccocontrol="{ item }">
         <v-simple-checkbox v-model="item.deccocontrol" disabled>
           DECCOCONTROL</v-simple-checkbox
         >
-      </template>
+      </template> -->
     </v-data-table>
     <v-btn @click="guardarLineas">Guardar</v-btn>
   </v-container>
@@ -140,7 +140,7 @@ let headers = [
   { text: "DECCODAF", value: "deccodaf" },
   { text: "DECCODOS", value: "deccodos" },
   { text: "DECCOWS", value: "deccows" },
-  { text: "DECCOCONTROL", value: "deccocontrol" },
+  // { text: "DECCOCONTROL", value: "deccocontrol" },
   { text: "Actions", value: "actions", sortable: false },
 ];
 let editedItem = ref({
@@ -148,14 +148,14 @@ let editedItem = ref({
   deccodaf: false,
   deccodos: false,
   deccows: false,
-  deccocontrol: false,
+  // deccocontrol: false,
 });
 let defaultItem = ref({
   nombre: "",
   deccodaf: false,
   deccodos: false,
   deccows: false,
-  deccocontrol: false,
+  // deccocontrol: false,
 });
 let formTitle = computed(() => {
   return editedIndex.value === -1 ? "Nueva Linea" : "Editar linea";
@@ -212,18 +212,19 @@ async function guardarLineas() {
   if (lineas.value) {
     for (let index = 0; index < lineas.value.length; index++) {
       const element = lineas.value[index];
+      let maquinas = [];
+      if (element.deccodaf) maquinas.push({ nombre: "DECCODAF", tipo: 1 });
+      if (element.deccodos) maquinas.push({ nombre: "DECCODOS", tipo: 2 });
+      if (element.deccows) maquinas.push({ nombre: "DECCOWASHER", tipo: 3 });
+      // if (element.deccocontrol)
+      //   maquinas.push({ nombre: "DECCOCONTROL", tipo: 4 });
       axios
         .post(`${process.env.VUE_APP_RUTA_API}/lineas/nuevo`, {
           nombre: element.nombre,
           clienteID: routerStore().clienteID,
-          deccodaf: element.deccodaf,
-          deccodos: element.deccodos,
-          deccows: element.deccows,
-          deccocontrol: element.deccocontrol,
+          maquinas: maquinas,
         })
-        .then((res) => {
-          console.log(res);
-        });
+        .then((res) => {});
     }
     routerStore().sistemas(routerStore().clienteID);
   }

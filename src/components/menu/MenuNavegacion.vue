@@ -104,7 +104,7 @@
           </v-list-group>
         </v-list-group>
         <v-list-item
-          v-if="usuarioLogeado"
+          v-if="usuarioLogeado && clienteActivo"
           link
           @click="router.menu('historico', router.clienteID)"
         >
@@ -114,7 +114,7 @@
           <v-list-item-title>Historico</v-list-item-title>
         </v-list-item>
         <v-list-item
-          v-if="usuarioLogeado"
+          v-if="usuarioLogeado && clienteActivo"
           link
           @click="router.menu('informe', router.clienteID)"
         >
@@ -124,7 +124,7 @@
           <v-list-item-title>Informe</v-list-item-title>
         </v-list-item>
         <v-list-item
-          v-if="usuarioLogeado"
+          v-if="usuarioLogeado && clienteActivo"
           link
           @click="router.menu('variables', router.clienteID)"
         >
@@ -173,6 +173,13 @@ async function obtenerLinea(clienteID) {
     await axios.get(`${process.env.VUE_APP_RUTA_API}/${clienteID}/lineas/all`)
   ).data;
 }
+async function obtenerMaquina(modo, clienteID, grupoID) {
+  return (
+    await axios.get(
+      `${process.env.VUE_APP_RUTA_API}/maquinas/${modo}/${clienteID}/${grupoID}`
+    )
+  ).data;
+}
 const items = (array) => {
   let list = [];
   if (array) {
@@ -183,12 +190,23 @@ const items = (array) => {
         id: element.id,
         sistemas: [
           {
+            action: "mdi-hand-water",
+            estado: element.deccowsID ? true : false,
+            items: [
+              { title: "Principal", route: "deccowasher:Principal" },
+              // { title: "Estado", route: "deccowasher:MarchaParo" },
+              // { title: "Consumo", route: "deccowasher:Consumo" },
+              // { title: "Registros", route: "deccowasher:Registros" },
+            ],
+            title: "DECCOWASHER",
+          },
+          {
             action: "mdi-flask",
             estado: element.deccodafID ? true : false,
             items: [
               { title: "Principal", route: "deccodaf:Principal" },
               { title: "Estado", route: "deccodaf:MarchaParo" },
-              { title: "Consumo", route: "deccodaf:Consumo" },
+              // { title: "Consumo", route: "deccodaf:Consumo" },
               // { title: "Registros", route: "deccodaf:Registros" },
             ],
             title: "DECCODAF",
@@ -199,28 +217,17 @@ const items = (array) => {
             items: [
               { title: "Principal", route: "deccodos:Principal" },
               { title: "Estado", route: "deccodos:MarchaParo" },
-              { title: "Consumo", route: "deccodos:Consumo" },
+              // { title: "Consumo", route: "deccodos:Consumo" },
               // { title: "Registros", route: "deccodos:Registros" },
             ],
             title: "DECCODOS",
           },
-          {
-            action: "mdi-hand-water",
-            estado: element.deccowsID ? true : false,
-            items: [
-              { title: "Principal", route: "deccowasher:Principal" },
-              { title: "Estado", route: "deccowasher:MarchaParo" },
-              { title: "Consumo", route: "deccowasher:Consumo" },
-              // { title: "Registros", route: "deccowasher:Registros" },
-            ],
-            title: "DECCOWASHER",
-          },
-          {
-            action: "mdi-snowflake",
-            estado: element.deccocontrolID ? true : false,
-            items: [{ title: "Principal", route: "deccocontrol:Principal" }],
-            title: "DECCOCONTROL",
-          },
+          // {
+          //   action: "mdi-snowflake",
+          //   estado: element.deccocontrolID ? true : false,
+          //   items: [{ title: "Principal", route: "deccocontrol:Principal" }],
+          //   title: "DECCOCONTROL",
+          // },
         ],
       });
     }
@@ -233,20 +240,38 @@ let nombres = ref([]);
 let select = ref(0);
 let stateLineas = ref(false);
 let refLineas = ref([]);
+// let clienteActivo = ref(false);
+
+let clienteActivo = computed(() => {
+  if (clienteID.value) {
+    return true;
+  } else return false;
+});
 
 onMounted(async () => {
-  select.value = clienteID;
+  if (clienteID.value != 0) select.value = clienteID;
   clientes = await obtenerVariable();
-  if (select.value != 0) {
+  if (select.value) {
     lineas = await obtenerLinea(select.value);
     stateLineas.value = true;
   } else {
     stateLineas.value = false;
   }
   watch(select, async (val) => {
-    if (val != 0) {
+    if (val) {
       stateLineas.value = false;
       lineas = await obtenerLinea(val);
+      for (let index = 0; index < lineas.length; index++) {
+        let element = lineas[index];
+        let maq = await obtenerMaquina("linea", element.id);
+        let deccowsID = maq.find((maquina) => maquina.grupoID == 3);
+        let deccodosID = maq.find((maquina) => maquina.grupoID == 2);
+        let deccodafID = maq.find((maquina) => maquina.grupoID == 1);
+
+        if (deccowsID) lineas[index].deccowsID = deccowsID.activa;
+        if (deccodosID) lineas[index].deccodosID = deccodosID.activa;
+        if (deccodafID) lineas[index].deccodafID = deccodafID.activa;
+      }
       refLineas.value = items(lineas);
       stateLineas.value = true;
     } else {
@@ -264,6 +289,6 @@ onMounted(async () => {
 });
 
 function changeItem(value) {
-  router.menu("sistemas", value.id, 0);
+  router.sistemas(value.id, 0);
 }
 </script>

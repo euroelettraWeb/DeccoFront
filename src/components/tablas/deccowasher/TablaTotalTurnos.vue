@@ -77,7 +77,7 @@ import axios from "axios";
 import { onMounted, ref } from "vue";
 import { routerStore } from "../../../stores/index";
 
-async function obtenerDatosVariable(clienteID, modo, variableID, maquinaID) {
+async function obtenerDatosVariables(clienteID, modo, variableID, maquinaID) {
   return (
     await axios.get(
       `${process.env.VUE_APP_RUTA_API}/variable/total/${clienteID}/${modo}/${maquinaID}/${variableID}/0/0`
@@ -105,117 +105,86 @@ let consumos = ref([]);
 let unidades = ref([]);
 
 let agua = [];
-let totalP1 = [];
-let totalP2 = [];
-let totalP3 = [];
-let totalP4 = [];
-let totalP5 = [];
+let totalDesinfectante = [];
+let totalJabon = [];
+
 let totalKilos = [];
 let horasMarcha = [];
 let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-
   let clienteID = routerStore().clienteID;
-  agua = await obtenerDatosVariable(
+
+  agua = await obtenerDatosVariables(
     clienteID,
     "24H",
-    25,
+    70,
     routerStore().lineasID
   );
-  totalP1 = await obtenerDatosVariable(
+  totalDesinfectante = await obtenerDatosVariables(
     clienteID,
     "24H",
-    26,
+    71,
     routerStore().lineasID
   );
-  totalP2 = await obtenerDatosVariable(
+  totalJabon = await obtenerDatosVariables(
     clienteID,
     "24H",
-    27,
+    72,
     routerStore().lineasID
   );
-  totalP3 = await obtenerDatosVariable(
+
+  totalKilos = await obtenerDatosVariables(
     clienteID,
     "24H",
-    28,
-    routerStore().lineasID
-  );
-  totalP4 = await obtenerDatosVariable(
-    clienteID,
-    "24H",
-    29,
-    routerStore().lineasID
-  );
-  totalP5 = await obtenerDatosVariable(
-    clienteID,
-    "24H",
-    30,
-    routerStore().lineasID
-  );
-  totalKilos = await obtenerDatosVariable(
-    clienteID,
-    "24H",
-    19,
+    69,
     routerStore().lineasID
   );
   horasMarcha = await obtenerMarcha(
     "24H",
-    [1, 12, 14],
+    [57, 60, 62],
     "total",
     clienteID,
     routerStore().lineasID
   );
   unidades.value = [
     { id: 0, nombre: "Agua (" + agua.unidadMedida + ")" },
-    { id: 1, nombre: "Producto 1 (" + totalP1.unidadMedida + ")" },
-    { id: 2, nombre: "Producto 2 (" + totalP2.unidadMedida + ")" },
-    { id: 3, nombre: "Producto 3 (" + totalP3.unidadMedida + ")" },
-    { id: 4, nombre: "Producto 4 (" + totalP4.unidadMedida + ")" },
-    { id: 5, nombre: "Producto 5 (" + totalP5.unidadMedida + ")" },
-    { id: 6, nombre: "Kg Fruta (" + totalKilos.unidadMedida + ")" },
-    { id: 7, nombre: "Marcha ( min )" },
+    {
+      id: 1,
+      nombre: "Desinfectante (" + totalDesinfectante.unidadMedida + ")",
+    },
+    { id: 2, nombre: "Jabon (" + totalJabon.unidadMedida + ")" },
+    { id: 3, nombre: "Kg Fruta (" + totalKilos.unidadMedida + ")" },
+    { id: 4, nombre: "Marcha ( min )" },
   ];
   consumosM.value = [
     { id: 0, name: Math.max(0, agua.registros[0][0].total) },
-    { id: 1, name: Math.max(0, totalP1.registros[0][0].total) },
-    { id: 2, name: Math.max(0, totalP2.registros[0][0].total) },
-    { id: 3, name: Math.max(0, totalP3.registros[0][0].total) },
-    { id: 4, name: Math.max(0, totalP4.registros[0][0].total) },
-    { id: 5, name: Math.max(0, totalP5.registros[0][0].total) },
-    { id: 6, name: Math.max(0, totalKilos.registros[0][0].total) },
-    // { id: 7, name: Math.max(0, horasMarcha.total) },
+    { id: 1, name: Math.max(0, totalDesinfectante.registros[0][0].total) },
+    { id: 2, name: Math.max(0, totalJabon.registros[0][0].total) },
+    { id: 3, name: Math.max(0, totalKilos.registros[0][0].total) },
+    // { id: 4, name: Math.max(0, horasMarcha.registros[0][0].total) },
   ];
   consumosT.value = [
     { id: 0, name: Math.max(0, agua.registros[1][0].total) },
-    { id: 1, name: Math.max(0, totalP1.registros[1][0].total) },
-    { id: 2, name: Math.max(0, totalP2.registros[1][0].total) },
-    { id: 3, name: Math.max(0, totalP3.registros[1][0].total) },
-    { id: 4, name: Math.max(0, totalP4.registros[1][0].total) },
-    { id: 5, name: Math.max(0, totalP5.registros[1][0].total) },
-    { id: 6, name: Math.max(0, totalKilos.registros[1][0].total) },
-    // { id: 7, name: Math.max(0, horasMarcha.total) },
+    { id: 1, name: Math.max(0, totalDesinfectante.registros[1][0].total) },
+    { id: 2, name: Math.max(0, totalJabon.registros[1][0].total) },
+    { id: 3, name: Math.max(0, totalKilos.registros[1][0].total) },
+    // { id: 4, name: Math.max(0, horasMarcha.registros[1][0].total) },
   ];
   consumosN.value = [
     { id: 0, name: Math.max(0, agua.registros[2][0].total) },
-    { id: 1, name: Math.max(0, totalP1.registros[2][0].total) },
-    { id: 2, name: Math.max(0, totalP2.registros[2][0].total) },
-    { id: 3, name: Math.max(0, totalP3.registros[2][0].total) },
-    { id: 4, name: Math.max(0, totalP4.registros[2][0].total) },
-    { id: 5, name: Math.max(0, totalP5.registros[2][0].total) },
-    { id: 6, name: Math.max(0, totalKilos.registros[2][0].total) },
-    // { id: 7, name: Math.max(0, horasMarcha.total) },
+    { id: 1, name: Math.max(0, totalDesinfectante.registros[2][0].total) },
+    { id: 2, name: Math.max(0, totalJabon.registros[2][0].total) },
+    { id: 3, name: Math.max(0, totalKilos.registros[2][0].total) },
+    // { id: 4, name: Math.max(0, horasMarcha.registros[2][0].total) },
   ];
   consumos.value = [
     { id: 0, name: Math.max(0, agua.registros[3][0].total) },
-    { id: 1, name: Math.max(0, totalP1.registros[3][0].total) },
-    { id: 2, name: Math.max(0, totalP2.registros[3][0].total) },
-    { id: 3, name: Math.max(0, totalP3.registros[3][0].total) },
-    { id: 4, name: Math.max(0, totalP4.registros[3][0].total) },
-    { id: 5, name: Math.max(0, totalP5.registros[3][0].total) },
-    { id: 6, name: Math.max(0, totalKilos.registros[3][0].total) },
-    { id: 7, name: Math.max(0, Math.round(horasMarcha.total / 60)) },
+    { id: 1, name: Math.max(0, totalDesinfectante.registros[3][0].total) },
+    { id: 2, name: Math.max(0, totalJabon.registros[3][0].total) },
+    { id: 3, name: Math.max(0, totalKilos.registros[3][0].total) },
+    { id: 4, name: Math.max(0, Math.round(horasMarcha.total / 60)) },
   ];
   cargado.value = true;
 });

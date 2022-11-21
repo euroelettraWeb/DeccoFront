@@ -8,13 +8,27 @@
           </v-row>
           <v-row>
             <v-col v-if="cargado">
-              <ApexChart
-                ref="chartRef"
-                type="rangeBar"
-                height="300"
-                :options="chartOptions"
-                :series="series"
-              />
+              <v-row>
+                <v-col>
+                  <ApexChart
+                    ref="chartRef"
+                    type="rangeBar"
+                    height="300"
+                    :options="chartOptions"
+                    :series="series" />
+                  <ApexChart
+                    ref="chartRef3"
+                    type="rangeBar"
+                    height="300"
+                    :options="chartOptions"
+                    :series="series3" /><ApexChart
+                    ref="chartRef2"
+                    type="rangeBar"
+                    height="200"
+                    :options="chartOptions"
+                    :series="series2"
+                /></v-col>
+              </v-row>
             </v-col>
             <v-col v-else class="d-flex justify-center align-center">
               <v-progress-circular
@@ -40,39 +54,42 @@ import { onMounted, ref, computed } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
-async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
+import { routerStore } from "../../../stores/index";
+
+async function obtenerDatosVariables(
+  operacion,
+  modo,
+  filtrado,
+  variables,
+  maquinaID
+) {
   return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variable/${operacion}/${modo}/${filtrado}/${variableID}`
+    await axios.post(
+      `${process.env.VUE_APP_RUTA_API}/variable/multiple/${operacion}/${modo}/${filtrado}/`,
+      { variables, maquinaID }
     )
   ).data;
 }
-function range(array, names) {
-  let todos = [];
-  let apagado = [];
-  let encendido = [];
-  for (let i = 0; i < names.length; i++) {
-    for (let index = 0; index < array[i].length; index++) {
-      const element = array[i][index];
-      let startR = new Date(element.x).getTime();
-      let endR = new Date(element.y).getTime();
-      let obj = { x: names[i], y: [startR, endR] };
-      if (element.z == 0) apagado.push(obj);
-      else encendido.push(obj);
-    }
-  }
-
-  todos.push({ name: "Apagado", data: apagado });
-  todos.push({ name: "Encedido", data: encendido });
-  return todos;
+async function obtenerMarcha(modo, variables, operacion, maquinaID) {
+  return (
+    await axios.post(
+      `${process.env.VUE_APP_RUTA_API}/variable/marcha/${modo}/${operacion}`,
+      {
+        variables,
+        maquinaID,
+      }
+    )
+  ).data;
 }
 
 function newValue(series, value, chartRef, lastZoom, nameI) {
   let elemento0 = series.value[0].data.findLast(
-    (node) => node.x == names[nameI]
+    (node) => node.x == names[nameI],
+    routerStore().lineasID
   );
   let elemento1 = series.value[1].data.findLast(
-    (node) => node.x == names[nameI]
+    (node) => node.x == names[nameI],
+    routerStore().lineasID
   );
   if (elemento0 && elemento1) {
     let last = moment(elemento0.y[1]).isBefore(moment(elemento1.y[1])) ? 0 : 1;
@@ -134,28 +151,21 @@ function newValue(series, value, chartRef, lastZoom, nameI) {
 
 const socket = io("http://localhost:3000");
 const chartRef = ref(null);
+const chartRef2 = ref(null);
+const chartRef3 = ref(null);
 var lastZoom = null;
 let cargado = ref(false);
-let activo = {};
-let auto = [];
-let manual = [];
-let faltaConsenso = [];
-let alarma = [];
-let cepillos = [];
+let marcha = [];
 let series = ref([]);
-let names = [
-  "Activo",
-  "Auto",
-  "Manual",
-  "Falta de consenso",
-  "Alarma",
-  "Cepillos",
-];
-let nameEstado = ["Apagado", "Encendido"];
+let series2 = ref([]);
+let series3 = ref([]);
+let modoMaquina = [];
+let funcMaquina = [];
+let cepillos = [];
 let chartOptions = computed(() => {
   return {
     chart: {
-      height: 100,
+      height: "100%",
       type: "rangeBar",
       locales: [es],
       defaultLocale: "es",
@@ -197,6 +207,7 @@ let chartOptions = computed(() => {
       bar: {
         horizontal: true,
         rangeBarGroupRows: true,
+        barHeight: "50%",
       },
     },
     colors: [
@@ -213,55 +224,102 @@ let chartOptions = computed(() => {
       datetimeUTC: false,
       min: new Date(moment().subtract(8, "hours")).getTime(),
       max: moment(),
+      tickAmount: 15,
+      labels: {
+        minHeight: 125,
+        rotate: -70,
+        minHeight: 125,
+        rotateAlways: true,
+        formatter: function (value, timestamp) {
+          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
+        },
+      },
+    },
+    yaxis: {
+      minWidth: 1,
+      axisTicks: {
+        width: 1,
+      },
     },
     tooltip: {
       x: {
-        format: "dd MMM yyyy hh:mm:ss",
+        format: "dd/MM/yyyy HH:mm:ss",
       },
     },
   };
 });
 onMounted(async () => {
   cargado.value = false;
-  let estados = [];
-  activo = await obtenerDatosVariable("8h", "registros", "rangosTodos", 31);
-  alarma = await obtenerDatosVariable("8h", "registros", "rangosTodos", 40);
-  auto = await obtenerDatosVariable("8h", "registros", "rangosTodos", 41);
-  faltaConsenso = await obtenerDatosVariable(
-    "8h",
+
+  modoMaquina = await obtenerDatosVariables(
+    "8H",
     "registros",
-    "rangosTodos",
-    42
+    "formatoRangos",
+    [31],
+    routerStore().lineasID
   );
-  manual = await obtenerDatosVariable("8h", "registros", "rangosTodos", 43);
-  cepillos = await obtenerDatosVariable("8h", "registros", "rangosTodos", 44);
-  estados = [
-    activo.registros,
-    auto.registros,
-    manual.registros,
-    faltaConsenso.registros,
-    alarma.registros,
-    cepillos.registros,
-  ];
-  series.value = range(estados, names); //TODO Obtener nombre de la variable
-  socket.on("variable_31_actualizada", (data) => {
-    newValue(series, data, chartRef, lastZoom, 0);
-  });
-  socket.on("variable_40_actualizada", (data) => {
-    newValue(series, data, chartRef, lastZoom, 4);
-  });
-  socket.on("variable_41_actualizada", (data) => {
-    newValue(series, data, chartRef, lastZoom, 1);
-  });
-  socket.on("variable_42_actualizada", (data) => {
-    newValue(series, data, chartRef, lastZoom, 3);
-  });
-  socket.on("variable_43_actualizada", (data) => {
-    newValue(series, data, chartRef, lastZoom, 2);
-  });
-  socket.on("variable_44_actualizada", (data) => {
-    newValue(series, data, chartRef, lastZoom, 5);
-  });
+  let autoManual = await obtenerDatosVariables(
+    "8H",
+    "registros",
+    "formatoRangos",
+    [41, 43],
+    routerStore().lineasID
+  );
+  for (let index = 0; index < autoManual[1].data.length; index++) {
+    const element = autoManual[1].data[index];
+    modoMaquina[1].data.push(element);
+  }
+  marcha = await obtenerMarcha(
+    "8H",
+    [31, 40, 42],
+    "registros",
+    routerStore().lineasID
+  );
+  funcMaquina = await obtenerDatosVariables(
+    "8H",
+    "registros",
+    "formatoRangos",
+    [40, 42],
+    routerStore().lineasID
+  );
+  cepillos = await obtenerDatosVariables(
+    "8H",
+    "registros",
+    "formatoRangos",
+    [44],
+    routerStore().lineasID
+  );
+  series.value = modoMaquina;
+  for (let index = 0; index < funcMaquina[1].data.length; index++) {
+    let element = funcMaquina[1].data[index];
+    if (element.x == "Alarma") {
+      element.fillColor = "#fdd835";
+    } else {
+      element.fillColor = "#3949ab";
+    }
+    marcha[1].data.push(element);
+  }
+  series2.value = cepillos;
+  series3.value = marcha;
+
+  // socket.on("variable_31_actualizada", (data) => {
+  //   newValue(series, data, chartRef, lastZoom, 0);
+  // });
+  // socket.on("variable_40_actualizada", (data) => {
+  //   newValue(series, data, chartRef, lastZoom, 4);
+  // });
+  // socket.on("variable_41_actualizada", (data) => {
+  //   newValue(series, data, chartRef, lastZoom, 1);
+  // });
+  // socket.on("variable_42_actualizada", (data) => {
+  //   newValue(series, data, chartRef, lastZoom, 3);
+  // });
+  // socket.on("variable_43_actualizada", (data) => {
+  //   newValue(series, data, chartRef, lastZoom, 2);
+  // });
+  // socket.on("variable_44_actualizada", (data) => {
+  //   newValue(series, data, chartRef, lastZoom, 5);
+  // });
   cargado.value = true;
 });
 </script>

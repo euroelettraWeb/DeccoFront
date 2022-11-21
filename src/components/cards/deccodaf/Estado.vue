@@ -19,14 +19,9 @@
                   <ApexChart
                     ref="chartRef3"
                     type="rangeBar"
-                    height="200"
-                    :options="chartOptions"
-                    :series="series3" /><ApexChart
-                    ref="chartRef2"
-                    type="rangeBar"
                     height="300"
                     :options="chartOptions"
-                    :series="series2"
+                    :series="series3"
                 /></v-col>
               </v-row>
             </v-col>
@@ -54,22 +49,34 @@ import { onMounted, ref, computed } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
+import { routerStore } from "../../../stores/index";
 
-async function obtenerDatosVariables(operacion, modo, filtrado, variables) {
+async function obtenerDatosVariables(
+  operacion,
+  modo,
+  filtrado,
+  variables,
+  maquinaID
+) {
   return (
     await axios.post(
       `${process.env.VUE_APP_RUTA_API}/variable/multiple/${operacion}/${modo}/${filtrado}/`,
-      { variables }
+      { variables, maquinaID }
     )
   ).data;
 }
-async function obtenerMarcha(id, id2, id3, id4, id5) {
+async function obtenerMarcha(modo, variables, operacion, maquinaID) {
   return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variables/marcha/${id}/${id2}/${id3}/${id4}/${id5}`
+    await axios.post(
+      `${process.env.VUE_APP_RUTA_API}/variable/marcha/${modo}/${operacion}`,
+      {
+        variables,
+        maquinaID,
+      }
     )
   ).data;
 }
+
 // function newValue(newArray, value, nameI) {
 //   let elemento0 = newArray[0].data.findLast((node) => node.x == nameI);
 //   let elemento1 = newArray[1].data.findLast((node) => node.x == nameI);
@@ -168,6 +175,7 @@ let series = ref([]);
 let series2 = ref([]);
 let series3 = ref([]);
 let modoMaquina = [];
+let autoManual = [];
 let funcMaquina = [];
 let chartOptions = computed(() => {
   return {
@@ -230,18 +238,19 @@ let chartOptions = computed(() => {
       datetimeUTC: false,
       min: new Date(moment().subtract(8, "hours")).getTime(),
       max: moment(),
-      tickAmount: 25,
+      tickAmount: 15,
       labels: {
-        rotate: -45,
+        minHeight: 125,
+        rotate: -70,
         rotateAlways: true,
         formatter: function (value, timestamp) {
-          return new Date(value).toLocaleTimeString(); // The formatter function overrides format property
+          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
         },
       },
     },
     tooltip: {
       x: {
-        format: "dd MMM yyyy hh:mm:ss",
+        format: "dd/MM/yyyy HH:mm:ss",
       },
     },
     legend: {
@@ -252,21 +261,48 @@ let chartOptions = computed(() => {
 
 onMounted(async () => {
   cargado.value = false;
+
   modoMaquina = await obtenerDatosVariables(
-    "8h",
+    "8H",
     "registros",
     "formatoRangos",
-    [1, 13, 15]
+    [1],
+    routerStore().lineasID
   );
-  marcha = await obtenerMarcha(1, 13, 15, 12, 14);
+  autoManual = await obtenerDatosVariables(
+    "8H",
+    "registros",
+    "formatoRangos",
+    [13, 15],
+    routerStore().lineasID
+  );
+  for (let index = 0; index < autoManual[1].data.length; index++) {
+    const element = autoManual[1].data[index];
+    modoMaquina[1].data.push(element);
+  }
+  marcha = await obtenerMarcha(
+    "8H",
+    [1, 12, 14],
+    "registros",
+    routerStore().lineasID
+  );
   funcMaquina = await obtenerDatosVariables(
-    "8h",
+    "8H",
     "registros",
     "formatoRangos",
-    [12, 14]
+    [12, 14],
+    routerStore().lineasID
   );
-  console.log(modoMaquina);
   series.value = modoMaquina;
+  for (let index = 0; index < funcMaquina[1].data.length; index++) {
+    let element = funcMaquina[1].data[index];
+    if (element.x == "Alarma") {
+      element.fillColor = "#fdd835";
+    } else {
+      element.fillColor = "#3949ab";
+    }
+    marcha[1].data.push(element);
+  }
   series2.value = funcMaquina;
   series3.value = marcha;
   // socket.on("variable_1_actualizada", (data) => {

@@ -215,7 +215,7 @@
           <v-row>
             <v-col
               ><v-btn color="info" class="mx-4 mb-4" @click="save">
-                Guardar
+                <v-icon light> mdi-content-save </v-icon> Guardar
               </v-btn></v-col
             >
           </v-row>
@@ -292,22 +292,19 @@ async function save() {
             horaInicio: element.horaInicio,
             horaFin: element.horaFin,
           })
-          .then((res) => {
-            console.log(res);
-          });
+          .then((res) => {});
       }
     } else {
-      for (let index = 0; index < array.value.length; index++) {
-        const element = array.value[index];
+      for (let index = 0; index < array.length; index++) {
+        const element = array[index];
         axios
           .post(`${process.env.VUE_APP_RUTA_API}/turnos/actualizar`, {
-            turno: element.nombre,
-            horaInicio: element.deccodaf,
-            horaFin: element.deccodos,
+            nombre: element.nombre,
+            horaInicio: element.horaInicio,
+            horaFin: element.horaFin,
+            clienteID: routerStore().clienteID,
           })
-          .then((res) => {
-            console.log(res);
-          });
+          .then((res) => {});
       }
     }
     times.value = await obtenerDatosVariable(routerStore().clienteID);
@@ -317,7 +314,6 @@ async function save() {
 onMounted(async () => {
   cargado.value = false;
   let t = await obtenerDatosVariable(routerStore().clienteID);
-  console.log(t);
   if (t.length > 1) {
     time.value = t[0].horaInicio;
     time2.value = t[0].horaFin;

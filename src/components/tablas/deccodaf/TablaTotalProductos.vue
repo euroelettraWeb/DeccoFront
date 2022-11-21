@@ -62,6 +62,13 @@ async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
     )
   ).data;
 }
+// async function obtenerDatosVariable(clienteID, modo, variableID) {
+//   return (
+//     await axios.get(
+//       `${process.env.VUE_APP_RUTA_API}/variable/total/${clienteID}/${modo}/${variableID}`
+//     )
+//   ).data;
+// }
 
 let consumos = ref([]);
 let agua = [];
@@ -82,18 +89,21 @@ let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-  agua = await obtenerDatosVariable("8h", "primero", "sinfiltro", 25);
-  totalP1 = await obtenerDatosVariable("8h", "primero", "sinfiltro", 26);
-  totalP2 = await obtenerDatosVariable("8h", "primero", "sinfiltro", 27);
-  totalP3 = await obtenerDatosVariable("8h", "primero", "sinfiltro", 28);
-  totalP4 = await obtenerDatosVariable("8h", "primero", "sinfiltro", 29);
-  totalP5 = await obtenerDatosVariable("8h", "primero", "sinfiltro", 30);
-  aguaU = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 25);
-  totalP1U = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 26);
-  totalP2U = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 27);
-  totalP3U = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 28);
-  totalP4U = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 29);
-  totalP5U = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 30);
+  // agua = await obtenerDatosVariable(clienteID, 70);
+  // totalDesinfectante = await obtenerDatosVariable(clienteID, 71);
+  // totalJabon = await obtenerDatosVariable(clienteID, 72);
+  agua = await obtenerDatosVariable("8H", "primero", "sinfiltro", 25);
+  totalP1 = await obtenerDatosVariable("8H", "primero", "sinfiltro", 26);
+  totalP2 = await obtenerDatosVariable("8H", "primero", "sinfiltro", 27);
+  totalP3 = await obtenerDatosVariable("8H", "primero", "sinfiltro", 28);
+  totalP4 = await obtenerDatosVariable("8H", "primero", "sinfiltro", 29);
+  totalP5 = await obtenerDatosVariable("8H", "primero", "sinfiltro", 30);
+  aguaU = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 25);
+  totalP1U = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 26);
+  totalP2U = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 27);
+  totalP3U = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 28);
+  totalP4U = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 29);
+  totalP5U = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 30);
 
   consumos.value = [
     { id: 0, name: aguaU.registros[0].y - agua.registros[0].y },

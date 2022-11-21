@@ -1,26 +1,24 @@
 <template>
   <v-container>
     <h1 class="transition-swing text-h2">
-      {{ nombreCliente }} - DECCODAF - {{ nombreLinea }}
+      {{ nombreCliente }} - DECCOWASHER - {{ nombreLinea }}
     </h1>
-    <EstadoAgitadores />
-    <EstadoNivelGarrafas />
-    <!-- <TablaNivelesGarrafa /> -->
+    <v-row>
+      <v-col> <Cajas /> </v-col>
+    </v-row>
   </v-container>
 </template>
+
 <script>
 export default {
-  name: "EstadoView",
+  name: "DECCOWASHERPrincipal",
 };
 </script>
 <script setup>
-import EstadoNivelGarrafas from "../../components/cards/deccodaf/EstadoNivelGarrafas.vue";
-import TablaNivelesGarrafa from "../../components/tablas/deccodaf/TablaNivelesGarrafa.vue";
-import EstadoAgitadores from "../../components/cards/deccodaf/EstadoAgitadores.vue";
-
 import { routerStore } from "../../stores/index";
 import axios from "axios";
 import { onMounted, ref } from "vue";
+import Cajas from "../../components/cards/deccodaf/Cajas.vue";
 
 async function obtenerLinea(id) {
   return (await axios.get(`${process.env.VUE_APP_RUTA_API}/lineas/${id}`)).data;

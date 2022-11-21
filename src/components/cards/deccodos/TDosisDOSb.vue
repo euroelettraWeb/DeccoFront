@@ -4,9 +4,7 @@
       <v-col>
         <v-card
           ><v-row>
-            <v-col>
-              <v-card-title> Dosis de Desinfectante y Jabon </v-card-title>
-            </v-col>
+            <v-col><v-card-title>Bombas</v-card-title></v-col>
           </v-row>
           <v-row>
             <v-col>
@@ -27,7 +25,7 @@
 </template>
 <script>
 export default {
-  name: "DosisWS",
+  name: "DosisBomba",
 };
 </script>
 <script setup>
@@ -54,9 +52,13 @@ async function obtenerDatosVariables(
     )
   ).data;
 }
+
 let cargado = ref(false);
-let dosis = {};
-let dJabon = {};
+let totales = {};
+let tB2 = {};
+let tB3 = {};
+let tB4 = {};
+let tB5 = {};
 
 const chartRef = ref(null);
 let registrosT = ref([]);
@@ -102,36 +104,27 @@ let chartOptions = computed(() => {
     },
     xaxis: {
       type: "datetime",
-      // datetimeUTC: false,
-      tickAmount: 15,
-      labels: {
-        minHeight: 125,
-        rotate: -70,
-        minHeight: 125,
-        rotateAlways: true,
-        formatter: function (value, timestamp) {
-          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
-        },
-      },
+      datetimeUTC: false,
+      min: new Date(moment().subtract(8, "hours")).getTime(),
+      max: moment(),
     },
     stroke: {
-      width: 1.9,
+      width: 1.1,
     },
   };
 });
 onMounted(async () => {
   cargado.value = false;
 
-  dosis = await obtenerDatosVariables(
+  totales = await obtenerDatosVariables(
     "8H",
     "registros",
-    "formatoLinea",
-    [58, 59],
+    "sinfiltro",
+    [51, 52, 53, 54, 55],
     routerStore().lineasID
   );
-
-  registrosT.value = dosis;
-  // socket.on("variable_58_actualizada", (data) => {
+  registrosT.value = totales;
+  // socket.on("variable_51_actualizada", (data) => {
   //   registrosT.value[0].data.push({
   //     x: new Date(moment(data.x).toISOString()).getTime(),
   //     y: data.y,
@@ -141,7 +134,7 @@ onMounted(async () => {
   //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
   //   }
   // });
-  // socket.on("variable_59_actualizada", (data) => {
+  // socket.on("variable_52_actualizada", (data) => {
   //   registrosT.value[1].data.push({
   //     x: new Date(moment(data.x).toISOString()).getTime(),
   //     y: data.y,
@@ -151,7 +144,36 @@ onMounted(async () => {
   //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
   //   }
   // });
-
+  // socket.on("variable_53_actualizada", (data) => {
+  //   registrosT.value[2].data.push({
+  //     x: new Date(moment(data.x).toISOString()).getTime(),
+  //     y: data.y,
+  //   });
+  //   if (chartRef.value) {
+  //     chartRef.value.updateSeries(registrosT.value);
+  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+  //   }
+  // });
+  // socket.on("variable_54_actualizada", (data) => {
+  //   registrosT.value[3].data.push({
+  //     x: new Date(moment(data.x).toISOString()).getTime(),
+  //     y: data.y,
+  //   });
+  //   if (chartRef.value) {
+  //     chartRef.value.updateSeries(registrosT.value);
+  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+  //   }
+  // });
+  // socket.on("variable_55_actualizada", (data) => {
+  //   registrosT.value[4].data.push({
+  //     x: new Date(moment(data.x).toISOString()).getTime(),
+  //     y: data.y,
+  //   });
+  //   if (chartRef.value) {
+  //     chartRef.value.updateSeries(registrosT.value);
+  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+  //   }
+  // });
   cargado.value = true;
 });
 </script>

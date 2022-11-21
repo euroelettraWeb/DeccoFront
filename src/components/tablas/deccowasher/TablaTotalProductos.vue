@@ -73,9 +73,9 @@ let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-  agua = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 70);
-  tDes = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 71);
-  tJabon = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 72);
+  agua = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 70);
+  tDes = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 71);
+  tJabon = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 72);
 
   consumos.value = [
     { id: 0, name: agua.registros[0].y },

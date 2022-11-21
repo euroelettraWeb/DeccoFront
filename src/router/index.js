@@ -17,11 +17,14 @@ import DECCOWASHERPrincipal from "../views/Deccowasher/Principal.vue";
 import DECCOCONTROLPrincipal from "../views/Deccocontrol/Principal.vue";
 import DECCODAFTotales from "../views/Deccodaf/Totales.vue";
 import DECCODAFEstado from "../views/Deccodaf/Estado.vue";
-import DECCODARegistros from "../views/Deccodaf/Registros.vue";
+import DECCODAFegistros from "../views/Deccodaf/Registros.vue";
+import DECCODAFOtras from "../views/Deccodaf/Otras.vue";
 import DECCODOSFTotales from "../views/Deccodos/Totales.vue";
 import DECCODOSEstado from "../views/Deccodos/Estado.vue";
 import DECCODOSRegistros from "../views/Deccodos/Registros.vue";
+import DECCODOSOtras from "../views/Deccodos/Otras.vue";
 import DECCOWSTotales from "../views/Deccowasher/Totales.vue";
+import DECCOWSOtras from "../views/Deccowasher/Otras.vue";
 import DECCOWSEstado from "../views/Deccowasher/Estado.vue";
 import DECCOWSRegistros from "../views/Deccowasher/Registros.vue";
 import { routerStore, userStore } from "../stores/index";
@@ -147,6 +150,13 @@ const routes = [
   // beforeEnter: checkLogin,
   // },
   {
+    path: "/cliente/:id/sistemas/:linea/deccodaf/otras",
+    name: "DECCODAF - Otras",
+    component: DECCODAFOtras,
+    meta: { title: "DECCO - DECCODAF", rutaProtegida: true },
+    beforeEnter: checkLogin,
+  },
+  {
     path: "/cliente/:id/sistemas/:linea/sistemas/deccodos",
     name: "DECCODOS",
     component: DECCODOSPrincipal,
@@ -175,6 +185,13 @@ const routes = [
   // beforeEnter: checkLogin,
   // },
   {
+    path: "/cliente/:id/sistemas/:linea/deccowasher/otras",
+    name: "DECCODOS - Otras",
+    component: DECCODOSOtras,
+    meta: { title: "DECCO - DECCODOS", rutaProtegida: true },
+    beforeEnter: checkLogin,
+  },
+  {
     path: "/cliente/:id/sistemas/:linea/deccowasher",
     name: "DECCOWASHER",
     component: DECCOWASHERPrincipal,
@@ -182,19 +199,26 @@ const routes = [
     beforeEnter: checkLogin,
   },
   {
-    path: "/cliente/:id/sistemas/:linea/deccowasher/estado",
-    name: "DECCOWASHER - Estado",
-    component: DECCOWSEstado,
+    path: "/cliente/:id/sistemas/:linea/deccowasher/otras",
+    name: "DECCOWASHER - Otras",
+    component: DECCOWSOtras,
     meta: { title: "DECCO - DECCOWASHER", rutaProtegida: true },
     beforeEnter: checkLogin,
   },
-  {
-    path: "/cliente/:id/sistemas/:linea/deccowasher/consumo",
-    name: "DECCOWASHER - Consumo",
-    component: DECCOWSTotales,
-    meta: { title: "DECCO - DECCOWASHER", rutaProtegida: true },
-    beforeEnter: checkLogin,
-  },
+  // {
+  //   path: "/cliente/:id/sistemas/:linea/deccowasher/estado",
+  //   name: "DECCOWASHER - Estado",
+  //   component: DECCOWSEstado,
+  //   meta: { title: "DECCO - DECCOWASHER", rutaProtegida: true },
+  //   beforeEnter: checkLogin,
+  // },
+  // {
+  //   path: "/cliente/:id/sistemas/:linea/deccowasher/consumo",
+  //   name: "DECCOWASHER - Consumo",
+  //   component: DECCOWSTotales,
+  //   meta: { title: "DECCO - DECCOWASHER", rutaProtegida: true },
+  //   beforeEnter: checkLogin,
+  // },
   // {
   //   path: "/sistemas/deccowasher/registros",
   //   name: "DECCOWASHER - Registros",
@@ -203,7 +227,7 @@ const routes = [
   // beforeEnter: checkLogin,
   // },
   {
-    path: "/cliente/:id/sistemas/:linea/deccocontrol",
+    path: "/cliente/:id/sistemas/deccocontrol",
     name: "DECCOCONTROL",
     component: DECCOCONTROLPrincipal,
     meta: { title: "DECCO - DECCOCONTROL", rutaProtegida: true },

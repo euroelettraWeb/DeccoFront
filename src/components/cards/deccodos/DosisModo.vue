@@ -172,16 +172,16 @@ let chartOptions = computed(() => {
     },
     tooltip: {
       x: {
-        format: "dd MMM yyyy hh:mm:ss",
+        format: "dd/MM/yyyy HH:mm:ss",
       },
     },
   };
 });
 onMounted(async () => {
   cargado.value = false;
-  a2D = await obtenerDatosVariable("8h", "registros", "rangos", 32);
-  a3D = await obtenerDatosVariable("8h", "registros", "rangos", 33);
-  gen = await obtenerDatosVariable("8h", "registros", "rangos", 34);
+  a2D = await obtenerDatosVariable("8H", "registros", "rangos", 32);
+  a3D = await obtenerDatosVariable("8H", "registros", "rangos", 33);
+  gen = await obtenerDatosVariable("8H", "registros", "rangos", 39);
 
   series.value = [
     { name: "Aplicador 2 discos", data: range("Estado", a2D.registros) },
@@ -209,12 +209,12 @@ onMounted(async () => {
       },
     },
   ];
-  socket.on("variable_32_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 0, "Estado");
-  });
-  socket.on("variable_33_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 1, "Estado");
-  });
+  // socket.on("variable_32_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 0, "Estado");
+  // });
+  // socket.on("variable_33_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 1, "Estado");
+  // });
 
   cargado.value = true;
 });

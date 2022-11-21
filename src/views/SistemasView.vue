@@ -5,6 +5,17 @@
         <CardLineas :linea="item" /><!-- :linea="item.linea" -->
       </v-col>
     </v-row>
+    <v-row>
+      <v-spacer />
+      <v-col cols="auto">
+        <v-btn
+          :disabled="!deccodocontrol"
+          @click="routerStore().deccocontrol(routerStore().clienteID)"
+          ><v-icon light>mdi-snowflake</v-icon> DECCOCONTROL</v-btn
+        >
+      </v-col>
+      <v-spacer />
+    </v-row>
   </v-container>
 </template>
 
@@ -16,23 +27,67 @@ export default {
 
 <script setup>
 import axios from "axios";
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, watch } from "vue";
+import { storeToRefs } from "pinia";
 import { routerStore } from "../stores/index";
 import CardLineas from "../components/cards/comun/CardLineas.vue";
+const { clienteID } = storeToRefs(routerStore());
 
 async function obtenerVariable(clienteID) {
   return (
     await axios.get(`${process.env.VUE_APP_RUTA_API}/${clienteID}/lineas/all`)
   ).data;
 }
-let linea = [];
+async function obtenerMaquina(modo, clienteID, grupoID) {
+  return (
+    await axios.get(
+      `${process.env.VUE_APP_RUTA_API}/maquinas/${modo}/${clienteID}/${grupoID}`
+    )
+  ).data;
+}
+let lineas = [];
 let nombres = ref([]);
 let cargado = ref(false);
-
+let deccodocontrol = ref(false);
 onMounted(async () => {
   cargado.value = false;
-  linea = await obtenerVariable(routerStore().clienteID); //TODO pasar cliente
-  nombres.value = linea;
+  lineas = await obtenerVariable(clienteID.value);
+
+  for (let index = 0; index < lineas.length; index++) {
+    let element = lineas[index];
+    let maq = await obtenerMaquina("linea", element.id, 0);
+    let deccowsID = maq.find((maquina) => maquina.grupoID == 3);
+    let deccodosID = maq.find((maquina) => maquina.grupoID == 2);
+    let deccodafID = maq.find((maquina) => maquina.grupoID == 1);
+    if (deccowsID) lineas[index].deccowsID = deccowsID.activa;
+    if (deccodosID) lineas[index].deccodosID = deccodosID.activa;
+    if (deccodafID) lineas[index].deccodafID = deccodafID.activa;
+  }
+  let deccoc = await obtenerMaquina("clienteTipo", routerStore().clienteID, 4);
+  if (deccoc) deccodocontrol.value = deccoc.activa;
+  nombres.value = lineas;
+  watch(clienteID, async (val) => {
+    lineas = await obtenerVariable(clienteID.value);
+
+    for (let index = 0; index < lineas.length; index++) {
+      let element = lineas[index];
+      let maq = await obtenerMaquina("linea", element.id, 0);
+      let deccowsID = maq.find((maquina) => maquina.grupoID == 3);
+      let deccodosID = maq.find((maquina) => maquina.grupoID == 2);
+      let deccodafID = maq.find((maquina) => maquina.grupoID == 1);
+      if (deccowsID) lineas[index].deccowsID = deccowsID.activa;
+      if (deccodosID) lineas[index].deccodosID = deccodosID.activa;
+      if (deccodafID) lineas[index].deccodafID = deccodafID.activa;
+    }
+    nombres.value = lineas;
+    let deccoc = await obtenerMaquina(
+      "clienteTipo",
+      routerStore().clienteID,
+      4
+    );
+    if (deccoc) deccodocontrol.value = deccoc.activa;
+    nombres.value = lineas;
+  });
   cargado.value = true;
 });
 </script>

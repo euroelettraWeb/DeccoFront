@@ -68,12 +68,12 @@
               <v-row
                 ><v-col>
                   <v-btn color="info" class="mr-4" @click="validate">
-                    Nuevo
+                    <v-icon light> mdi-content-save </v-icon> Guardar
                   </v-btn>
                 </v-col>
                 <v-col>
                   <v-btn color="error" class="mr-4" @click="reset">
-                    Reset
+                    Limpiar
                   </v-btn>
                 </v-col>
               </v-row>
@@ -109,7 +109,12 @@ let rules = [
 ];
 async function validate() {
   if (form.value.validate()) {
-    console.log("src" + src.value);
+    let dataCliente = (
+      await axios.post(`${process.env.VUE_APP_RUTA_API}/clientes/nuevo`, {
+        nombre: nombre.value,
+        src: src.value,
+      })
+    ).data;
     let dataPlc = (
       await axios.post(`${process.env.VUE_APP_RUTA_API}/plcs/nuevo`, {
         ip: ip.value,
@@ -117,13 +122,7 @@ async function validate() {
         usuario: usuario.value,
         password: contraseña.value,
         descripcion: descripcion.value,
-      })
-    ).data;
-    let dataCliente = (
-      await axios.post(`${process.env.VUE_APP_RUTA_API}/clientes/nuevo`, {
-        nombre: nombre.value,
-        src: src.value,
-        plcID: dataPlc[0].id,
+        clienteID: dataCliente[0].id,
       })
     ).data;
     if (dataCliente[0].id) {

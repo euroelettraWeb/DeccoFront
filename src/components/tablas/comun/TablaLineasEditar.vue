@@ -7,6 +7,12 @@
           <v-toolbar-title>Lineas</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
+          <v-switch
+            v-model="deccocontrol"
+            append-icon="mdi-snowflake"
+            class="mt-4 mr-4"
+            label="DECCOCONTROL"
+          ></v-switch>
           <v-dialog v-model="dialog">
             <template #activator="{ on, attrs }">
               <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
@@ -45,15 +51,15 @@
                       <v-col>
                         <v-checkbox
                           v-model="editedItem.deccows"
-                          label="DECCOWS"
+                          label="DECCOWASHER"
                         ></v-checkbox>
                       </v-col>
-                      <v-col>
+                      <!-- <v-col>
                         <v-checkbox
                           v-model="editedItem.deccocontrol"
                           label="DECCOCONTROL"
                         ></v-checkbox>
-                      </v-col>
+                      </v-col> -->
                     </v-row>
                   </v-container>
                 </v-form>
@@ -62,9 +68,11 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="close">
-                  Cancel
+                  Cancelar
                 </v-btn>
-                <v-btn color="blue darken-1" text @click="save"> Save </v-btn>
+                <v-btn color="blue darken-1" text @click="save">
+                  Guardar
+                </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -103,16 +111,18 @@
       </template>
       <template #item.deccows="{ item }">
         <v-simple-checkbox v-model="item.deccows" disabled>
-          DECCOWS</v-simple-checkbox
+          DECCOWASHER</v-simple-checkbox
         >
       </template>
-      <template #item.deccocontrol="{ item }">
+      <!-- <template #item.deccocontrol="{ item }">
         <v-simple-checkbox v-model="item.deccocontrol" disabled>
           DECCOCONTROL</v-simple-checkbox
         >
-      </template>
+      </template> -->
     </v-data-table>
-    <v-btn @click="guardarLineas">Guardar</v-btn>
+    <v-btn class="mt-4" @click="guardarLineas">
+      <v-icon light> mdi-content-save </v-icon> Guardar Lineas</v-btn
+    >
   </v-container>
 </template>
 
@@ -130,6 +140,7 @@ let form = ref(null);
 let dialogDelete = ref(false);
 let editedIndex = ref(-1);
 let lineas = ref([]);
+let deccocontrol = ref(false);
 let headers = [
   {
     text: "Nombre",
@@ -140,38 +151,59 @@ let headers = [
   { text: "DECCODAF", value: "deccodaf" },
   { text: "DECCODOS", value: "deccodos" },
   { text: "DECCOWS", value: "deccows" },
-  { text: "DECCOCONTROL", value: "deccocontrol" },
   { text: "Actions", value: "actions", sortable: false },
 ];
 let editedItem = ref({
+  id: 0,
   nombre: "",
   deccodaf: false,
   deccodos: false,
   deccows: false,
-  deccocontrol: false,
 });
 let defaultItem = ref({
+  id: 0,
   nombre: "",
   deccodaf: false,
   deccodos: false,
   deccows: false,
-  deccocontrol: false,
 });
 let formTitle = computed(() => {
   return editedIndex.value === -1 ? "Nueva Linea" : "Editar linea";
 });
 let lineasV = [];
+let maquinas = [];
 onMounted(async () => {
   lineasV = await obtenerVariable(routerStore().clienteID);
   for (let index = 0; index < lineasV.length; index++) {
     const element = lineasV[index];
+    maquinas = await obtenerMaquina("linea", element.id, 0);
     let next = {};
+    next.id = element.id;
     next.nombre = element.nombre;
-    next.clienteID = element.clienteID ? true : false;
-    next.deccodaf = element.deccodafID ? true : false;
-    next.deccodos = element.deccodosID ? true : false;
-    next.deccows = element.deccowsID ? true : false;
-    next.deccocontrol = element.deccocontrolID ? true : false;
+    next.clienteID = element.clienteID;
+    for (let i = 0; i < maquinas.length; i++) {
+      let maquina = maquinas[i];
+      let estado = maquina.activa;
+      switch (maquina.grupoID) {
+        case 1:
+          next.deccodaf = estado;
+          break;
+        case 2:
+          next.deccodos = estado;
+          break;
+        case 3:
+          next.deccows = estado;
+          break;
+        default:
+          break;
+      }
+    }
+    let deccoc = await obtenerMaquina(
+      "clienteTipo",
+      routerStore().clienteID,
+      4
+    );
+    deccocontrol.value = deccoc.activa;
     lineas.value.push(next);
   }
 });
@@ -221,27 +253,123 @@ function save() {
   } else {
     lineas.value.push(editedItem.value);
   }
+  console.log(lineas);
   close();
 }
 
 async function guardarLineas() {
   if (lineas.value) {
     for (let index = 0; index < lineas.value.length; index++) {
-      const element = lineas.value[index];
-      axios
-        .post(`${process.env.VUE_APP_RUTA_API}/lineas/actualizar`, {
-          nombre: element.nombre,
-          clienteID: routerStore().clienteID,
-          deccodaf: element.deccodaf,
-          deccodos: element.deccodos,
-          deccows: element.deccows,
-          deccocontrol: element.deccocontrol,
-        })
-        .then((res) => {
-          console.log(res);
-        });
+      let element = lineas.value[index];
+      let linea = await obtenerLinea(element.id);
+      if (linea) {
+        let maquinas = await obtenerMaquina("linea", element.id, 0);
+        let deccowsID = maquinas.find((maquina) => maquina.grupoID == 3);
+        let deccodosID = maquinas.find((maquina) => maquina.grupoID == 2);
+        let deccodafID = maquinas.find((maquina) => maquina.grupoID == 1);
+        if (deccodafID) {
+          maquinas.push({
+            tipo: 1,
+            activo: element.deccodaf,
+          });
+        } else {
+          if (element.deccodaf)
+            axios
+              .post(`${process.env.VUE_APP_RUTA_API}/maquinas/nuevo`, {
+                nombre: "DECCODAF",
+                nombreLinea: element.nombre,
+                clienteID: routerStore().clienteID,
+                grupoID: 1,
+                lineaID: element.id,
+              })
+              .then((res) => {});
+        }
+        if (deccodosID) {
+          maquinas.push({
+            tipo: 2,
+            activo: element.deccodos,
+          });
+        } else {
+          if (element.deccodos)
+            axios
+              .post(`${process.env.VUE_APP_RUTA_API}/maquinas/nuevo`, {
+                nombre: "DECCODOS",
+                nombreLinea: element.nombre,
+                clienteID: routerStore().clienteID,
+                grupoID: 2,
+                lineaID: element.id,
+              })
+              .then((res) => {});
+        }
+        if (deccowsID) {
+          maquinas.push({
+            tipo: 3,
+            activo: element.deccows,
+          });
+        } else {
+          if (element.deccows)
+            axios
+              .post(`${process.env.VUE_APP_RUTA_API}/maquinas/nuevo`, {
+                nombre: "DECCODWASHER",
+                nombreLinea: element.nombre,
+                clienteID: routerStore().clienteID,
+                grupoID: 3,
+                lineaID: element.id,
+              })
+              .then((res) => {});
+        }
+        axios
+          .post(`${process.env.VUE_APP_RUTA_API}/lineas/actualizar`, {
+            id: element.id,
+            nombre: element.nombre,
+            clienteID: routerStore().clienteID,
+            maquinas: maquinas,
+            // deccocontrol: element.deccocontrol,
+          })
+          .then((res) => {});
+      } else {
+        let maquinas = [];
+        if (element.deccodaf) maquinas.push({ nombre: "DECCODAF", tipo: 1 });
+        if (element.deccodos) maquinas.push({ nombre: "DECCODOS", tipo: 2 });
+        if (element.deccows) maquinas.push({ nombre: "DECCOWASHER", tipo: 3 });
+        // maquinas.push({ nombre: "DECCOCONTROL", tipo: 4 });
+        axios
+          .post(`${process.env.VUE_APP_RUTA_API}/lineas/nuevo`, {
+            nombre: element.nombre,
+            clienteID: routerStore().clienteID,
+            maquinas: maquinas,
+          })
+          .then((res) => {});
+      }
     }
   }
+  // let deccoc = await obtenerMaquina("clienteTipo", routerStore().clienteID, 4)
+  //   .id;
+  // if (deccoc)
+  //   axios
+  //     .post(`${process.env.VUE_APP_RUTA_API}/maquinas/actualizar`, {
+  //       id: deccoc,
+  //       activo: deccocontrol.value,
+  //     })
+  //     .then((res) => {});
+  // else
+  //   axios.post(`${process.env.VUE_APP_RUTA_API}/maquinas/nuevo`, {
+  //     nombre: "DECCOCONTROL",
+  //     nombreLinea: "",
+  //     clienteID: routerStore().clienteID,
+  //     grupoID: 4,
+  //     lineaID: null,
+  //   });
+}
+async function obtenerLinea(id) {
+  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/lineas/${id}`)).data;
+}
+async function obtenerMaquina(modo, clienteID, grupoID) {
+  return (
+    await axios.get(
+      `${process.env.VUE_APP_RUTA_API}/maquinas/${modo}/${clienteID}/${grupoID}`
+    )
+  ).data;
 }
 async function obtenerVariable(clienteID) {
   return (

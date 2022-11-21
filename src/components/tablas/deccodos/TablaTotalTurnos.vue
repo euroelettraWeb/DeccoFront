@@ -104,118 +104,129 @@ let consumosN = ref([]);
 let consumos = ref([]);
 let unidades = ref([]);
 
-let agua = [];
-let totalP1 = [];
-let totalP2 = [];
-let totalP3 = [];
-let totalP4 = [];
-let totalP5 = [];
+let totalA2P = [];
+let totalA3P = [];
+let totalB1 = [];
+let totalB2 = [];
+let totalB3 = [];
+let totalB4 = [];
+let totalB5 = [];
 let totalKilos = [];
 let horasMarcha = [];
 let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-
   let clienteID = routerStore().clienteID;
-  agua = await obtenerDatosVariable(
+  totalA2P = await obtenerDatosVariable(
     clienteID,
     "24H",
-    25,
+    49,
     routerStore().lineasID
   );
-  totalP1 = await obtenerDatosVariable(
+  totalA3P = await obtenerDatosVariable(
     clienteID,
     "24H",
-    26,
+    50,
     routerStore().lineasID
   );
-  totalP2 = await obtenerDatosVariable(
+  totalB1 = await obtenerDatosVariable(
     clienteID,
     "24H",
-    27,
+    51,
     routerStore().lineasID
   );
-  totalP3 = await obtenerDatosVariable(
+  totalB2 = await obtenerDatosVariable(
     clienteID,
     "24H",
-    28,
+    52,
     routerStore().lineasID
   );
-  totalP4 = await obtenerDatosVariable(
+  totalB3 = await obtenerDatosVariable(
     clienteID,
     "24H",
-    29,
+    53,
     routerStore().lineasID
   );
-  totalP5 = await obtenerDatosVariable(
+  totalB4 = await obtenerDatosVariable(
     clienteID,
     "24H",
-    30,
+    54,
+    routerStore().lineasID
+  );
+  totalB5 = await obtenerDatosVariable(
+    clienteID,
+    "24H",
+    55,
     routerStore().lineasID
   );
   totalKilos = await obtenerDatosVariable(
     clienteID,
     "24H",
-    19,
+    48,
     routerStore().lineasID
   );
   horasMarcha = await obtenerMarcha(
     "24H",
-    [1, 12, 14],
+    [31, 40, 42],
     "total",
     clienteID,
     routerStore().lineasID
   );
   unidades.value = [
-    { id: 0, nombre: "Agua (" + agua.unidadMedida + ")" },
-    { id: 1, nombre: "Producto 1 (" + totalP1.unidadMedida + ")" },
-    { id: 2, nombre: "Producto 2 (" + totalP2.unidadMedida + ")" },
-    { id: 3, nombre: "Producto 3 (" + totalP3.unidadMedida + ")" },
-    { id: 4, nombre: "Producto 4 (" + totalP4.unidadMedida + ")" },
-    { id: 5, nombre: "Producto 5 (" + totalP5.unidadMedida + ")" },
-    { id: 6, nombre: "Kg Fruta (" + totalKilos.unidadMedida + ")" },
-    { id: 7, nombre: "Marcha ( min )" },
+    { id: 0, nombre: "Aplicador 2 Discos (" + totalA2P.unidadMedida + ")" },
+    { id: 1, nombre: "Aplicador 3 Discos (" + totalA3P.unidadMedida + ")" },
+    { id: 2, nombre: "Bomba 1 (" + totalB1.unidadMedida + ")" },
+    { id: 3, nombre: "Bomba 2 (" + totalB2.unidadMedida + ")" },
+    { id: 4, nombre: "Bomba 3 (" + totalB3.unidadMedida + ")" },
+    { id: 5, nombre: "Bomba 4 (" + totalB4.unidadMedida + ")" },
+    { id: 6, nombre: "Bomba 5 (" + totalB5.unidadMedida + ")" },
+    { id: 7, nombre: "Kg Fruta (" + totalKilos.unidadMedida + ")" },
+    { id: 8, nombre: "Marcha ( min )" },
   ];
   consumosM.value = [
-    { id: 0, name: Math.max(0, agua.registros[0][0].total) },
-    { id: 1, name: Math.max(0, totalP1.registros[0][0].total) },
-    { id: 2, name: Math.max(0, totalP2.registros[0][0].total) },
-    { id: 3, name: Math.max(0, totalP3.registros[0][0].total) },
-    { id: 4, name: Math.max(0, totalP4.registros[0][0].total) },
-    { id: 5, name: Math.max(0, totalP5.registros[0][0].total) },
-    { id: 6, name: Math.max(0, totalKilos.registros[0][0].total) },
-    // { id: 7, name: Math.max(0, horasMarcha.total) },
+    { id: 0, name: Math.max(0, totalA2P.registros[0][0].total) },
+    { id: 1, name: Math.max(0, totalA3P.registros[0][0].total) },
+    { id: 2, name: Math.max(0, totalB1.registros[0][0].total) },
+    { id: 3, name: Math.max(0, totalB2.registros[0][0].total) },
+    { id: 4, name: Math.max(0, totalB3.registros[0][0].total) },
+    { id: 5, name: Math.max(0, totalB4.registros[0][0].total) },
+    { id: 6, name: Math.max(0, totalB5.registros[0][0].total) },
+    { id: 7, name: Math.max(0, totalKilos.registros[0][0].total) },
+    // { id: 8, name: Math.max(0, horasMarcha.registros[0][0].total) },
   ];
   consumosT.value = [
-    { id: 0, name: Math.max(0, agua.registros[1][0].total) },
-    { id: 1, name: Math.max(0, totalP1.registros[1][0].total) },
-    { id: 2, name: Math.max(0, totalP2.registros[1][0].total) },
-    { id: 3, name: Math.max(0, totalP3.registros[1][0].total) },
-    { id: 4, name: Math.max(0, totalP4.registros[1][0].total) },
-    { id: 5, name: Math.max(0, totalP5.registros[1][0].total) },
-    { id: 6, name: Math.max(0, totalKilos.registros[1][0].total) },
-    // { id: 7, name: Math.max(0, horasMarcha.total) },
+    { id: 0, name: Math.max(0, totalA2P.registros[1][0].total) },
+    { id: 1, name: Math.max(0, totalA3P.registros[1][0].total) },
+    { id: 2, name: Math.max(0, totalB1.registros[1][0].total) },
+    { id: 3, name: Math.max(0, totalB2.registros[1][0].total) },
+    { id: 4, name: Math.max(0, totalB3.registros[1][0].total) },
+    { id: 5, name: Math.max(0, totalB4.registros[1][0].total) },
+    { id: 6, name: Math.max(0, totalB5.registros[1][0].total) },
+    { id: 7, name: Math.max(0, totalKilos.registros[1][0].total) },
+    // { id: 8, name: Math.max(0, horasMarcha.registros[1][0].total) },
   ];
   consumosN.value = [
-    { id: 0, name: Math.max(0, agua.registros[2][0].total) },
-    { id: 1, name: Math.max(0, totalP1.registros[2][0].total) },
-    { id: 2, name: Math.max(0, totalP2.registros[2][0].total) },
-    { id: 3, name: Math.max(0, totalP3.registros[2][0].total) },
-    { id: 4, name: Math.max(0, totalP4.registros[2][0].total) },
-    { id: 5, name: Math.max(0, totalP5.registros[2][0].total) },
-    { id: 6, name: Math.max(0, totalKilos.registros[2][0].total) },
-    // { id: 7, name: Math.max(0, horasMarcha.total) },
+    { id: 0, name: Math.max(0, totalA2P.registros[2][0].total) },
+    { id: 1, name: Math.max(0, totalA3P.registros[2][0].total) },
+    { id: 2, name: Math.max(0, totalB1.registros[2][0].total) },
+    { id: 3, name: Math.max(0, totalB2.registros[2][0].total) },
+    { id: 4, name: Math.max(0, totalB3.registros[2][0].total) },
+    { id: 5, name: Math.max(0, totalB4.registros[2][0].total) },
+    { id: 6, name: Math.max(0, totalB5.registros[2][0].total) },
+    { id: 7, name: Math.max(0, totalKilos.registros[2][0].total) },
+    // { id: 8, name: Math.max(0, horasMarcha.registros[2][0].total) },
   ];
   consumos.value = [
-    { id: 0, name: Math.max(0, agua.registros[3][0].total) },
-    { id: 1, name: Math.max(0, totalP1.registros[3][0].total) },
-    { id: 2, name: Math.max(0, totalP2.registros[3][0].total) },
-    { id: 3, name: Math.max(0, totalP3.registros[3][0].total) },
-    { id: 4, name: Math.max(0, totalP4.registros[3][0].total) },
-    { id: 5, name: Math.max(0, totalP5.registros[3][0].total) },
-    { id: 6, name: Math.max(0, totalKilos.registros[3][0].total) },
-    { id: 7, name: Math.max(0, Math.round(horasMarcha.total / 60)) },
+    { id: 0, name: Math.max(0, totalA2P.registros[3][0].total) },
+    { id: 1, name: Math.max(0, totalA3P.registros[3][0].total) },
+    { id: 2, name: Math.max(0, totalB1.registros[3][0].total) },
+    { id: 3, name: Math.max(0, totalB2.registros[3][0].total) },
+    { id: 4, name: Math.max(0, totalB3.registros[3][0].total) },
+    { id: 5, name: Math.max(0, totalB4.registros[3][0].total) },
+    { id: 6, name: Math.max(0, totalB5.registros[3][0].total) },
+    { id: 7, name: Math.max(0, totalKilos.registros[3][0].total) },
+    { id: 8, name: Math.max(0, Math.round(horasMarcha.total / 60)) },
   ];
   cargado.value = true;
 });

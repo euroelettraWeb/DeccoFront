@@ -67,18 +67,21 @@ export const routerStore = defineStore("router", {
       deccodafMarchaParo: "DECCODAF - Estado",
       deccodafConsumo: "DECCODAF - Consumo",
       // deccodafRegistros: "/sistemas/deccodaf/registros",
+      deccodafOtras: "DECCODAF - Otras",
       deccodos: "DECCODOS",
       deccodosMarchaParo: "DECCODOS - Estado",
-      deccodosConsumo: "DECCODOS -Consumo",
+      deccodosConsumo: "DECCODOS - Consumo",
+      deccodosOtras: "DECCODOS - Otras",
       // deccodosRegistros: "/sistemas/deccodos/registros",
       deccowasher: "DECCOWASHER",
-      deccowasherMarchaParo: "DECCOWASHER - Estado",
-      deccowasherConsumo: "DECCOWASHER - Consumo",
+      deccowasherOtras: "DECCOWASHER - Otras",
+      // deccowasherMarchaParo: "DECCOWASHER - Estado",
+      // deccowasherConsumo: "DECCOWASHER - Consumo",
       // deccowasherRegistros: "/deccowasher/registros",
       deccocontrol: "DECCOCONTROL",
     },
-    clienteID: ref(0),
-    lineasID: ref(1),
+    clienteID: ref(null),
+    lineasID: ref(null),
   }),
   getters: {
     getId(state) {
@@ -115,11 +118,11 @@ export const routerStore = defineStore("router", {
         params: { id },
       });
     },
-    sistemas: async function (id) {
+    sistemas: async function (id, linea) {
       this.clienteID = id;
       router.push({
         name: this.routes.sistemas,
-        params: { id },
+        params: { id, linea },
       });
     },
     historico: async function (id) {
@@ -152,10 +155,10 @@ export const routerStore = defineStore("router", {
         params: { id, linea },
       });
     },
-    deccocontrol: async function (id, linea) {
+    deccocontrol: async function (id) {
       router.push({
         name: this.routes.deccocontrol,
-        params: { id, linea },
+        params: { id },
       });
     },
     menu: async function (route, id, linea) {
@@ -265,6 +268,19 @@ export const routerStore = defineStore("router", {
           //     }
           //   });
           break;
+        case "deccodaf:Otras":
+          router
+            .push({
+              name: this.routes.deccodafOtras,
+              params: { id, linea },
+            })
+            .catch((failure) => {
+              if (
+                isNavigationFailure(failure, NavigationFailureType.duplicated)
+              ) {
+              }
+            });
+          break;
         case "deccodos:Principal":
           router
             .push({ name: this.routes.deccodos, params: { id, linea } })
@@ -306,9 +322,22 @@ export const routerStore = defineStore("router", {
         //     }
         //   });
         //   break;
+        case "deccodos:Otras":
+          router
+            .push({
+              name: this.routes.deccodosOtras,
+              params: { id, linea },
+            })
+            .catch((failure) => {
+              if (
+                isNavigationFailure(failure, NavigationFailureType.duplicated)
+              ) {
+              }
+            });
+          break;
         case "deccowasher:Principal":
           router
-            .push({ name: this.routes.deccowashe, params: { id, linea } })
+            .push({ name: this.routes.deccowasher, params: { id, linea } })
             .catch((failure) => {
               if (
                 isNavigationFailure(failure, NavigationFailureType.duplicated)
@@ -316,10 +345,10 @@ export const routerStore = defineStore("router", {
               }
             });
           break;
-        case "deccowasher:MarchaParo":
+        case "deccowasher:Otras":
           router
             .push({
-              name: this.routes.deccowasherMarchaParo,
+              name: this.routes.deccowasherOtras,
               params: { id, linea },
             })
             .catch((failure) => {
@@ -329,19 +358,32 @@ export const routerStore = defineStore("router", {
               }
             });
           break;
-        case "deccowasher:Consumo":
-          router
-            .push({
-              name: this.routes.deccowasherConsumo,
-              params: { id, linea },
-            })
-            .catch((failure) => {
-              if (
-                isNavigationFailure(failure, NavigationFailureType.duplicated)
-              ) {
-              }
-            });
-          break;
+        // case "deccowasher:MarchaParo":
+        //   router
+        //     .push({
+        //       name: this.routes.deccowasherMarchaParo,
+        //       params: { id, linea },
+        //     })
+        //     .catch((failure) => {
+        //       if (
+        //         isNavigationFailure(failure, NavigationFailureType.duplicated)
+        //       ) {
+        //       }
+        //     });
+        //   break;
+        // case "deccowasher:Consumo":
+        //   router
+        //     .push({
+        //       name: this.routes.deccowasherConsumo,
+        //       params: { id, linea },
+        //     })
+        //     .catch((failure) => {
+        //       if (
+        //         isNavigationFailure(failure, NavigationFailureType.duplicated)
+        //       ) {
+        //       }
+        //     });
+        //   break;
         // case "deccowasher:Registros":
         //   router.push(this.routes.deccowasherRegistros).catch((failure) => {
         //     if (

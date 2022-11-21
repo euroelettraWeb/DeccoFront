@@ -9,7 +9,7 @@
           <ApexChart
             ref="chartRef"
             type="rangeBar"
-            height="100"
+            height="150"
             :options="chartOptions"
             :series="series"
           />
@@ -42,17 +42,6 @@ async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
       `${process.env.VUE_APP_RUTA_API}/variable/${operacion}/${modo}/${filtrado}/${variableID}`
     )
   ).data;
-}
-function range(rangeName, array) {
-  let returnt = [];
-  for (let index = 0; index < array.length; index++) {
-    const element = array[index];
-    let startR = new Date(element.x).getTime();
-    let endR = new Date(element.y).getTime();
-    let obj = { x: rangeName, y: [startR, endR] };
-    returnt.push(obj);
-  }
-  return returnt;
 }
 
 function updateValue(series, data, chartRef, lastZoom, index, nameX) {
@@ -151,6 +140,7 @@ let chartOptions = computed(() => {
     plotOptions: {
       bar: {
         horizontal: true,
+        rangeBarGroupRows: true,
         barHeight: "100%",
       },
     },
@@ -168,16 +158,16 @@ let chartOptions = computed(() => {
     },
     tooltip: {
       x: {
-        format: "dd MMM yyyy hh:mm:ss",
+        format: "dd/MM/yyyy HH:mm:ss",
       },
     },
   };
 });
 onMounted(async () => {
   cargado.value = false;
-  gen = await obtenerDatosVariable("8h", "registros", "rangos", 34);
+  gen = await obtenerDatosVariable("8H", "registros", "formatoRangos", 39);
 
-  series.value = [{ name: "General", data: range("Estado", gen.registros) }];
+  series.value = gen.registros;
   ultimoValor = [
     {
       start: {
@@ -190,9 +180,9 @@ onMounted(async () => {
       },
     },
   ];
-  socket.on("variable_34_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 2, "Estado");
-  });
+  // socket.on("variable_34_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 2, "Estado");
+  // });
 
   cargado.value = true;
 });

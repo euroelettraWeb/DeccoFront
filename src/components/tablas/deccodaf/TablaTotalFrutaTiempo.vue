@@ -39,7 +39,7 @@
                       </td>
                     </tr>
                     <tr>
-                      <td>Total</td>
+                      <td>Total Hoy</td>
                       <td v-for="item in consumos" :key="item.id">
                         {{ item.name }}
                       </td>
@@ -94,10 +94,10 @@ let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-  totalKilos = await obtenerDatosVariable("8h", "primero", "sinfiltro", 19);
-  horasMarcha = await obtenerDatosVariable("8h", "primero", "sinfiltro", 26);
-  totalKilosU = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 19);
-  horasMarchaU = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 26);
+  totalKilos = await obtenerDatosVariable("8H", "primero", "sinfiltro", 19);
+  horasMarcha = await obtenerDatosVariable("8H", "primero", "sinfiltro", 26);
+  totalKilosU = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 19);
+  horasMarchaU = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 26);
 
   consumosM.value = [
     { id: 0, name: totalKilosU.registros[0].y - totalKilos.registros[0].y },

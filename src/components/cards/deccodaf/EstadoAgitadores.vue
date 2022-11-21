@@ -39,25 +39,34 @@ import { onMounted, ref, computed } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
+import { routerStore } from "../../../stores/index";
 
-async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
+async function obtenerDatosVariables(
+  operacion,
+  modo,
+  filtrado,
+  variables,
+  maquinaID
+) {
   return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variable/${operacion}/${modo}/${filtrado}/${variableID}`
+    await axios.post(
+      `${process.env.VUE_APP_RUTA_API}/variable/multiple/${operacion}/${modo}/${filtrado}/`,
+      { variables, maquinaID }
     )
   ).data;
 }
-function range(rangeName, array) {
-  let returnt = [];
-  for (let index = 0; index < array.length; index++) {
-    const element = array[index];
-    let startR = new Date(element.x).getTime();
-    let endR = new Date(element.y).getTime();
-    let obj = { x: rangeName, y: [startR, endR] };
-    returnt.push(obj);
-  }
-  return returnt;
-}
+
+// function range(rangeName, array) {
+//   let returnt = [];
+//   for (let index = 0; index < array.length; index++) {
+//     const element = array[index];
+//     let startR = new Date(element.x).getTime();
+//     let endR = new Date(element.y).getTime();
+//     let obj = { x: rangeName, y: [startR, endR] };
+//     returnt.push(obj);
+//   }
+//   return returnt;
+// }
 
 function updateValue(series, data, chartRef, lastZoom, index, nameX) {
   let start = ultimoValor[index].start;
@@ -104,11 +113,7 @@ const socket = io("http://localhost:3000");
 const chartRef = ref(null);
 var lastZoom = null;
 let cargado = ref(false);
-let agP1 = [];
-let agP2 = [];
-let agP3 = [];
-let agP4 = [];
-let agP5 = [];
+let agitadores = [];
 let series = ref([]);
 let ultimoValor = [
   { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
@@ -162,6 +167,7 @@ let chartOptions = computed(() => {
     plotOptions: {
       bar: {
         horizontal: true,
+        rangeBarGroupRows: true,
         barHeight: "100%",
       },
     },
@@ -170,12 +176,14 @@ let chartOptions = computed(() => {
       datetimeUTC: false,
       min: new Date(moment().subtract(8, "hours")).getTime(),
       max: moment(),
-      tickAmount: 25,
+      tickAmount: 15,
       labels: {
-        rotate: -45,
+        minHeight: 125,
+        rotate: -70,
+        minHeight: 125,
         rotateAlways: true,
         formatter: function (value, timestamp) {
-          return new Date(value).toLocaleTimeString(); // The formatter function overrides format property
+          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
         },
       },
     },
@@ -187,97 +195,90 @@ let chartOptions = computed(() => {
     },
     tooltip: {
       x: {
-        format: "dd MMM yyyy hh:mm:ss",
+        format: "dd/MM/yyyy HH:mm:ss",
       },
     },
   };
 });
 onMounted(async () => {
   cargado.value = false;
-  let agP0 = await obtenerDatosVariable("8h", "registros", "formatoRangos", 2);
-  console.log(agP0);
-  agP1 = await obtenerDatosVariable("8h", "registros", "rangos", 2);
-  agP2 = await obtenerDatosVariable("8h", "registros", "rangos", 3);
-  agP3 = await obtenerDatosVariable("8h", "registros", "rangos", 4);
-  agP4 = await obtenerDatosVariable("8h", "registros", "rangos", 5);
-  agP5 = await obtenerDatosVariable("8h", "registros", "rangos", 6);
-  series.value = [
-    { name: "Agitador P1", data: range("Agitador P1", agP1.registros) },
-    { name: "Agitador P2", data: range("Agitador P2", agP2.registros) },
-    { name: "Agitador P3", data: range("Agitador P3", agP3.registros) },
-    {
-      name: "Agitador P4",
-      data: range("Agitador P4", agP4.registros),
-    },
-    { name: "Agitador P5", data: range("Agitador P5", agP5.registros) },
-  ];
-  ultimoValor = [
-    {
-      start: {
-        x: series.value[0].data[series.value[0].data.length - 1].y[1],
-        y: 1,
-      },
-      end: {
-        x: series.value[0].data[series.value[0].data.length - 1].y[1],
-        y: 1,
-      },
-    },
-    {
-      start: {
-        x: series.value[1].data[series.value[1].data.length - 1].y[1],
-        y: 1,
-      },
-      end: {
-        x: series.value[1].data[series.value[1].data.length - 1].y[1],
-        y: 1,
-      },
-    },
-    {
-      start: {
-        x: series.value[2].data[series.value[2].data.length - 1].y[1],
-        y: 1,
-      },
-      end: {
-        x: series.value[2].data[series.value[2].data.length - 1].y[1],
-        y: 1,
-      },
-    },
-    {
-      start: {
-        x: series.value[3].data[series.value[3].data.length - 1].y[1],
-        y: 1,
-      },
-      end: {
-        x: series.value[3].data[series.value[3].data.length - 1].y[1],
-        y: 1,
-      },
-    },
-    {
-      start: {
-        x: series.value[4].data[series.value[4].data.length - 1].y[1],
-        y: 1,
-      },
-      end: {
-        x: series.value[4].data[series.value[4].data.length - 1].y[1],
-        y: 1,
-      },
-    },
-  ];
-  socket.on("variable_2_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 0, "Agitador P1");
-  });
-  socket.on("variable_3_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 1, "Agitador P2");
-  });
-  socket.on("variable_4_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 2, "Agitador P3");
-  });
-  socket.on("variable_5_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 3, "Agitador P4");
-  });
-  socket.on("variable_6_actualizada", (data) => {
-    updateValue(series, data, chartRef, lastZoom, 4, "Agitador P5");
-  });
+
+  agitadores = await obtenerDatosVariables(
+    "8H",
+    "registros",
+    "formatoRangos",
+    [2, 3, 4, 5, 6],
+    routerStore().lineasID
+  );
+
+  series.value = agitadores;
+  // ultimoValor = [
+  //   {
+  //     start: {
+  //       x: series.value[0].data[series.value[0].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //     end: {
+  //       x: series.value[0].data[series.value[0].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //   },
+  //   {
+  //     start: {
+  //       x: series.value[1].data[series.value[1].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //     end: {
+  //       x: series.value[1].data[series.value[1].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //   },
+  //   {
+  //     start: {
+  //       x: series.value[2].data[series.value[2].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //     end: {
+  //       x: series.value[2].data[series.value[2].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //   },
+  //   {
+  //     start: {
+  //       x: series.value[3].data[series.value[3].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //     end: {
+  //       x: series.value[3].data[series.value[3].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //   },
+  //   {
+  //     start: {
+  //       x: series.value[4].data[series.value[4].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //     end: {
+  //       x: series.value[4].data[series.value[4].data.length - 1].y[1],
+  //       y: 1,
+  //     },
+  //   },
+  // ];
+  // socket.on("variable_2_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 0, "Agitador P1");
+  // });
+  // socket.on("variable_3_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 1, "Agitador P2");
+  // });
+  // socket.on("variable_4_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 2, "Agitador P3");
+  // });
+  // socket.on("variable_5_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 3, "Agitador P4");
+  // });
+  // socket.on("variable_6_actualizada", (data) => {
+  //   updateValue(series, data, chartRef, lastZoom, 4, "Agitador P5");
+  // });
   cargado.value = true;
 });
 </script>

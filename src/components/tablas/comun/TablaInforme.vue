@@ -81,14 +81,14 @@ let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-  agua = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 25);
-  totalP1 = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 26);
-  totalP2 = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 27);
-  totalP3 = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 28);
-  totalP4 = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 29);
-  totalP5 = await obtenerDatosVariable("8h", "ultimo", "sinfiltro", 30);
-  tCajas = await obtenerDatosVariable("8h", "registros", "sinfiltro", 18);
-  tKg = await obtenerDatosVariable("8h", "registros", "sinfiltro", 19);
+  agua = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 25);
+  totalP1 = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 26);
+  totalP2 = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 27);
+  totalP3 = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 28);
+  totalP4 = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 29);
+  totalP5 = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 30);
+  tCajas = await obtenerDatosVariable("8H", "registros", "sinfiltro", 18);
+  tKg = await obtenerDatosVariable("8H", "registros", "sinfiltro", 19);
 
   consumos.value = [
     {

@@ -3,7 +3,7 @@
     <v-row justify="center">
       <v-col>
         <v-card>
-          <v-card-title>Nuevo Cliente</v-card-title>
+          <v-card-title>Cliente</v-card-title>
           <v-form ref="form">
             <v-container>
               <v-row>
@@ -67,14 +67,14 @@
               <v-row
                 ><v-col>
                   <v-btn color="info" class="mr-4" @click="validate">
-                    Nuevo
+                    <v-icon light> mdi-content-save </v-icon> Guardar
                   </v-btn>
                 </v-col>
-                <v-col>
+                <!-- <v-col>
                   <v-btn color="error" class="mr-4" @click="reset">
-                    Reset
+                    Limpiar
                   </v-btn>
-                </v-col>
+                </v-col> -->
               </v-row>
             </v-container>
           </v-form>
@@ -112,8 +112,7 @@ let plcId = ref(0);
 
 onMounted(async () => {
   cliente = await obtenerCliente(routerStore().clienteID);
-  plcId.value = cliente[0].plcID;
-  plc = await obtenerPLC(plcId.value);
+  plc = await obtenerPLC(routerStore().clienteID);
   nombre.value = cliente[0].nombre;
   src.value = cliente[0].img;
   ip.value = plc[0].ip;
@@ -125,7 +124,6 @@ onMounted(async () => {
 
 async function validate() {
   if (form.value.validate()) {
-    console.log("src" + src.value);
     let dataPlc = (
       await axios.post(`${process.env.VUE_APP_RUTA_API}/plcs/actualizar`, {
         id: plcId.value,
@@ -141,7 +139,6 @@ async function validate() {
         id: routerStore().clienteID,
         nombre: nombre.value,
         src: src.value,
-        plcID: dataPlc[0].id,
       })
     ).data;
     if (dataCliente[0].id) {
@@ -157,7 +154,8 @@ async function obtenerCliente(id) {
     .data;
 }
 async function obtenerPLC(id) {
-  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/plcs/${id}`)).data;
+  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/plcs/cliente/${id}`))
+    .data;
 }
 function reset() {
   form.value.reset();
