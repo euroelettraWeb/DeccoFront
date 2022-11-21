@@ -295,13 +295,14 @@ async function save() {
           .then((res) => {});
       }
     } else {
-      for (let index = 0; index < array.value.length; index++) {
-        const element = array.value[index];
+      for (let index = 0; index < array.length; index++) {
+        const element = array[index];
         axios
           .post(`${process.env.VUE_APP_RUTA_API}/turnos/actualizar`, {
-            turno: element.nombre,
-            horaInicio: element.deccodaf,
-            horaFin: element.deccodos,
+            nombre: element.nombre,
+            horaInicio: element.horaInicio,
+            horaFin: element.horaFin,
+            clienteID: routerStore().clienteID,
           })
           .then((res) => {});
       }

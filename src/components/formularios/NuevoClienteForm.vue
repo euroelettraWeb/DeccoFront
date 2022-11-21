@@ -113,7 +113,6 @@ async function validate() {
       await axios.post(`${process.env.VUE_APP_RUTA_API}/clientes/nuevo`, {
         nombre: nombre.value,
         src: src.value,
-        plcID: dataPlc[0].id,
       })
     ).data;
     let dataPlc = (
