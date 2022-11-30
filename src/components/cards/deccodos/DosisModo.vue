@@ -30,19 +30,12 @@ export default {
 };
 </script>
 <script setup>
-import axios from "axios";
+import bd from "../../../helpers/bd";
 import { onMounted, ref, computed } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
 
-async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
-  return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variable/${operacion}/${modo}/${filtrado}/${variableID}`
-    )
-  ).data;
-}
 function range(rangeName, array) {
   let returnt = [];
   for (let index = 0; index < array.length; index++) {
@@ -179,9 +172,9 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  a2D = await obtenerDatosVariable("8H", "registros", "rangos", 32);
-  a3D = await obtenerDatosVariable("8H", "registros", "rangos", 33);
-  gen = await obtenerDatosVariable("8H", "registros", "rangos", 39);
+  a2D = await bd.obtenerDatosVariable("8H", "registros", "rangos", 32);
+  a3D = await bd.obtenerDatosVariable("8H", "registros", "rangos", 33);
+  gen = await bd.obtenerDatosVariable("8H", "registros", "rangos", 39);
 
   series.value = [
     { name: "Aplicador 2 discos", data: range("Estado", a2D.registros) },

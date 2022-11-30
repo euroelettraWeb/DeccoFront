@@ -52,20 +52,12 @@
 </template>
 <script>
 export default {
-  name: "TablaTotalProductos",
+  name: "TablaInforme",
 };
 </script>
 <script setup>
-import axios from "axios";
+import bd from "../../../helpers/bd";
 import { onMounted, ref } from "vue";
-
-async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
-  return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variable/${operacion}/${modo}/${filtrado}/${variableID}`
-    )
-  ).data;
-}
 
 let consumos = ref([]);
 let agua = [];
@@ -81,14 +73,14 @@ let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-  agua = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 25);
-  totalP1 = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 26);
-  totalP2 = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 27);
-  totalP3 = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 28);
-  totalP4 = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 29);
-  totalP5 = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 30);
-  tCajas = await obtenerDatosVariable("8H", "registros", "sinfiltro", 18);
-  tKg = await obtenerDatosVariable("8H", "registros", "sinfiltro", 19);
+  agua = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 25);
+  totalP1 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 26);
+  totalP2 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 27);
+  totalP3 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 28);
+  totalP4 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 29);
+  totalP5 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 30);
+  tCajas = await bd.obtenerDatosVariable("8H", "registros", "sinfiltro", 18);
+  tKg = await bd.obtenerDatosVariable("8H", "registros", "sinfiltro", 19);
 
   consumos.value = [
     {

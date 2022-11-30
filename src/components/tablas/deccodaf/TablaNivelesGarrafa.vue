@@ -7,7 +7,7 @@
             <v-col v-if="cargado">
               <v-row>
                 <v-col>
-                  <v-card-title>Activacion de nivel de garrafas</v-card-title>
+                  <v-card-title>Actividad en niveles de garrafas</v-card-title>
                 </v-col>
               </v-row>
               <v-row>
@@ -16,16 +16,24 @@
                     <template #default>
                       <thead>
                         <tr>
-                          <th class="text-left">Nivel Producto 1</th>
-                          <th class="text-left">Nivel Producto 2</th>
-                          <th class="text-left">Nivel Producto 3</th>
-                          <th class="text-left">Nivel Producto 4</th>
-                          <th class="text-left">Nivel Producto 5</th>
+                          <th></th>
+                          <th class="text-left">Nivel Producto 1 (min)</th>
+                          <th class="text-left">Nivel Producto 2 (min)</th>
+                          <th class="text-left">Nivel Producto 3 (min)</th>
+                          <th class="text-left">Nivel Producto 4 (min)</th>
+                          <th class="text-left">Nivel Producto 5 (min)</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr>
-                          <td v-for="item in niveles" :key="item.id">
+                          <td>Lleno</td>
+                          <td v-for="item in niveles0" :key="item.id">
+                            {{ item.name }}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Vacio</td>
+                          <td v-for="item in niveles1" :key="item.id">
                             {{ item.name }}
                           </td>
                         </tr>
@@ -55,42 +63,37 @@ export default {
 };
 </script>
 <script setup>
-import axios from "axios";
+import bd from "../../../helpers/bd";
 import { onMounted, ref } from "vue";
+import { routerStore } from "../../../stores/index";
 
-async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
-  return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variable/${operacion}/${modo}/${filtrado}/${variableID}`
-    )
-  ).data;
-}
-
-let niveles = ref([]);
-
-let cnP1 = [];
-let cnP2 = [];
-let cnP3 = [];
-let cnP4 = [];
-let cnP5 = [];
+let niveles0 = ref([]);
+let niveles1 = ref([]);
+let nivel = [];
 
 let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-  cnP1 = await obtenerDatosVariable("8H", "count", "sinfiltro", 20);
-  cnP2 = await obtenerDatosVariable("8H", "count", "sinfiltro", 21);
-  cnP3 = await obtenerDatosVariable("8H", "count", "sinfiltro", 22);
-  cnP4 = await obtenerDatosVariable("8H", "count", "sinfiltro", 23);
-  cnP5 = await obtenerDatosVariable("8H", "count", "sinfiltro", 24);
+  nivel = await bd.obtenerDatosVariables(
+    "8H",
+    "registros",
+    "total",
+    [20, 21, 22, 23, 24],
+    routerStore().lineasID
+  );
 
-  niveles.value = [
-    { id: 0, name: cnP1.registros[0].count },
-    { id: 1, name: cnP2.registros[0].count },
-    { id: 2, name: cnP3.registros[0].count },
-    { id: 3, name: cnP4.registros[0].count },
-    { id: 4, name: cnP5.registros[0].count },
-  ];
+  for (let index = 0; index < nivel.length; index++) {
+    let e = nivel[index].registros;
+    niveles0.value.push({
+      id: index,
+      name: Math.max(0, Math.round(e.total0 / 60)),
+    });
+    niveles1.value.push({
+      id: index,
+      name: Math.max(0, Math.round(e.total1 / 60)),
+    });
+  }
   cargado.value = true;
 });
 </script>

@@ -5,7 +5,7 @@
         <v-card
           ><v-row>
             <v-col>
-              <v-card-title> Dosis de Desinfectante y Jabon </v-card-title>
+              <v-card-title> {{ props.title }} </v-card-title>
             </v-col>
           </v-row>
           <v-row>
@@ -31,7 +31,7 @@ export default {
 };
 </script>
 <script setup>
-import axios from "axios";
+import bd from "../../../helpers/bd";
 import { onMounted, ref, computed, reactive } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
@@ -40,23 +40,8 @@ import { routerStore } from "../../../stores/index";
 
 const socket = io("http://localhost:3000");
 
-async function obtenerDatosVariables(
-  operacion,
-  modo,
-  filtrado,
-  variables,
-  maquinaID
-) {
-  return (
-    await axios.post(
-      `${process.env.VUE_APP_RUTA_API}/variable/multiple/${operacion}/${modo}/${filtrado}/`,
-      { variables, maquinaID }
-    )
-  ).data;
-}
 let cargado = ref(false);
 let dosis = {};
-let dJabon = {};
 
 const chartRef = ref(null);
 let registrosT = ref([]);
@@ -119,39 +104,40 @@ let chartOptions = computed(() => {
     },
   };
 });
+
+const props = defineProps({
+  title: { type: String, default: "Dosis" },
+  variables: { type: Array, default: new Array() },
+});
+
 onMounted(async () => {
   cargado.value = false;
 
-  dosis = await obtenerDatosVariables(
+  dosis = await bd.obtenerDatosVariables(
     "8H",
     "registros",
     "formatoLinea",
-    [58, 59],
+    props.variables,
     routerStore().lineasID
   );
 
   registrosT.value = dosis;
-  // socket.on("variable_58_actualizada", (data) => {
-  //   registrosT.value[0].data.push({
-  //     x: new Date(moment(data.x).toISOString()).getTime(),
-  //     y: data.y,
-  //   });
-  //   if (chartRef.value) {
-  //     chartRef.value.updateSeries(registrosT.value);
-  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-  //   }
-  // });
-  // socket.on("variable_59_actualizada", (data) => {
-  //   registrosT.value[1].data.push({
-  //     x: new Date(moment(data.x).toISOString()).getTime(),
-  //     y: data.y,
-  //   });
-  //   if (chartRef.value) {
-  //     chartRef.value.updateSeries(registrosT.value);
-  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-  //   }
-  // });
-
+  for (let index = 0; index < props.variables.length; index++) {
+    const element = props.variables[index];
+    socket.on(
+      `variable_${routerStore().lineasID}_${element}_actualizada`,
+      (data) => {
+        registrosT.value[index].data.push({
+          x: new Date(moment(data.x).toISOString()).getTime(),
+          y: data.y,
+        });
+        if (chartRef.value) {
+          chartRef.value.updateSeries(registrosT.value);
+          if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+        }
+      }
+    );
+  }
   cargado.value = true;
 });
 </script>

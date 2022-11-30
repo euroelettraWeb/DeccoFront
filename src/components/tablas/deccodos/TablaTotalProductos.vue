@@ -16,14 +16,10 @@
                     <template #default>
                       <thead>
                         <tr>
-                          <th class="text-left">Consumo Aplicador 2</th>
-                          <th class="text-left">Consumo Aplicador 3</th>
-                          <th class="text-left">Consumo Bomba 1</th>
-                          <th class="text-left">Consumo Bomba 2</th>
-                          <th class="text-left">Consumo Bomba 3</th>
-                          <th class="text-left">Consumo Bomba 4</th>
-                          <th class="text-left">Consumo Bomba 5</th>
-                          <th class="text-left">Consumo Cera</th>
+                          <th class="text-left">Consumo Producto 1</th>
+                          <th class="text-left">Consumo Producto 2</th>
+                          <th class="text-left">Consumo Producto 3</th>
+                          <th class="text-left">Consumo Producto 4</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -58,49 +54,35 @@ export default {
 };
 </script>
 <script setup>
-import axios from "axios";
-import { onMounted, ref } from "vue";
-
-async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
-  return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variable/${operacion}/${modo}/${filtrado}/${variableID}`
-    )
-  ).data;
-}
+import bd from "../../../helpers/bd";
+import { computed, onMounted, ref } from "vue";
+import { routerStore } from "../../../stores";
 
 let consumos = ref([]);
-let ta2D = [];
-let ta3D = [];
-let totalP1 = [];
-let totalP2 = [];
-let totalP3 = [];
-let totalP4 = [];
-let totalP5 = [];
-let cera = [];
+let totaltB1 = [];
+let totaltB2 = [];
+let totaltB3 = [];
+let totaltB4 = [];
+let totaltB5 = [];
 
 let cargado = ref(false);
 
 onMounted(async () => {
+  let maquina = await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, 1);
+  let t = await bd.obtenerProductos("maquina", maquina[0].id);
   cargado.value = false;
-  ta2D = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 49);
-  ta3D = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 50);
-  totalP1 = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 51);
-  totalP2 = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 52);
-  totalP3 = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 53);
-  totalP4 = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 54);
-  totalP5 = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 55);
-  cera = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 56);
+  totaltB1 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 51);
+  totaltB2 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 52);
+  totaltB3 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 53);
+  totaltB4 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 54);
+  totaltB5 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 55);
 
   consumos.value = [
-    { id: 0, name: ta2D.registros[0].y },
-    { id: 1, name: ta3D.registros[0].y },
-    { id: 2, name: totalP1.registros[0].y },
-    { id: 3, name: totalP2.registros[0].y },
-    { id: 4, name: totalP3.registros[0].y },
-    { id: 5, name: totalP4.registros[0].y },
-    { id: 6, name: totalP5.registros[0].y },
-    { id: 7, name: cera.registros[0].y },
+    { id: 0, name: totaltB1.registros[0].y },
+    { id: 1, name: totaltB2.registros[0].y },
+    { id: 2, name: totaltB3.registros[0].y },
+    { id: 3, name: totaltB4.registros[0].y },
+    { id: 4, name: totaltB5.registros[0].y },
   ];
   cargado.value = true;
 });

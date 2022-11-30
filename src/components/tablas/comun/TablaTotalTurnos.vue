@@ -15,8 +15,13 @@
                   <thead>
                     <tr>
                       <th class="text-left"></th>
-                      <th class="text-left">Kg Fruta</th>
-                      <th class="text-left">H marcha</th>
+                      <th
+                        v-for="item in unidades"
+                        :key="item.id"
+                        class="text-left"
+                      >
+                        {{ item.nombre }}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -64,57 +69,85 @@
 </template>
 <script>
 export default {
-  name: "TablaTotalProductos",
+  name: "TablaTotalTurnos",
 };
 </script>
 <script setup>
-import axios from "axios";
+import bd from "../../../helpers/bd";
 import { onMounted, ref } from "vue";
-
-async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
-  return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variable/${operacion}/${modo}/${filtrado}/${variableID}`
-    )
-  ).data;
-}
+import { routerStore } from "../../../stores/index";
 
 let consumosM = ref([]);
 let consumosT = ref([]);
 let consumosN = ref([]);
 let consumos = ref([]);
-
-let totalKilos = [];
-let horasMarcha = [];
-
-let totalKilosU = [];
-let horasMarchaU = [];
+let unidades = ref([]);
 
 let cargado = ref(false);
 
+const props = defineProps({
+  variables: { type: Array, default: new Array() },
+  marcha: { type: Array, default: new Array(3) },
+});
+
 onMounted(async () => {
   cargado.value = false;
-  totalKilos = await obtenerDatosVariable("8H", "primero", "sinfiltro", 19);
-  horasMarcha = await obtenerDatosVariable("8H", "primero", "sinfiltro", 26);
-  totalKilosU = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 19);
-  horasMarchaU = await obtenerDatosVariable("8H", "ultimo", "sinfiltro", 26);
 
-  consumosM.value = [
-    { id: 0, name: totalKilosU.registros[0].y - totalKilos.registros[0].y },
-    { id: 1, name: horasMarchaU.registros[0].y - horasMarcha.registros[0].y },
-  ];
-  consumosT.value = [
-    { id: 0, name: totalKilosU.registros[0].y - totalKilos.registros[0].y },
-    { id: 1, name: horasMarchaU.registros[0].y - horasMarcha.registros[0].y },
-  ];
-  consumosN.value = [
-    { id: 0, name: totalKilosU.registros[0].y - totalKilos.registros[0].y },
-    { id: 1, name: horasMarchaU.registros[0].y - horasMarcha.registros[0].y },
-  ];
-  consumos.value = [
-    { id: 0, name: totalKilosU.registros[0].y - totalKilos.registros[0].y },
-    { id: 1, name: horasMarchaU.registros[0].y - horasMarcha.registros[0].y },
-  ];
+  let clienteID = routerStore().clienteID;
+  for (let index = 0; index < props.variables.length; index++) {
+    const element = props.variables[index];
+    let i = await bd.obtenerDatosVariableTotal(
+      clienteID,
+      "24H",
+      element,
+      routerStore().lineasID
+    );
+    unidades.value.push({
+      id: index,
+      nombre: i.nombreCorto + " (" + i.unidadMedida + ")",
+    });
+    consumosM.value.push({
+      id: index,
+      name: Math.max(0, i.registros[0][0].total),
+    });
+    consumosT.value.push({
+      id: index,
+      name: Math.max(0, i.registros[1][0].total),
+    });
+    consumosN.value.push({
+      id: index,
+      name: Math.max(0, i.registros[2][0].total),
+    });
+    consumos.value.push({
+      id: index,
+      name: Math.max(0, i.registros[3][0].total),
+    });
+  }
+  unidades.value.push({ id: unidades.value.length, nombre: "Marcha ( min )" });
+  let horasMarcha = await bd.obtenerVariablesMarcha(
+    clienteID,
+    "24H",
+    props.marcha,
+    "turnos",
+    routerStore().lineasID
+  );
+  console.log(horasMarcha);
+  consumosM.value.push({
+    id: unidades.value.length,
+    name: Math.max(0, Math.round(horasMarcha.total[0] / 60)),
+  });
+  consumosT.value.push({
+    id: unidades.value.length,
+    name: Math.max(0, Math.round(horasMarcha.total[1] / 60)),
+  });
+  consumosN.value.push({
+    id: unidades.value.length,
+    name: Math.max(0, Math.round(horasMarcha.total[2] / 60)),
+  });
+  consumos.value.push({
+    id: unidades.value.length,
+    name: Math.max(0, Math.round(horasMarcha.total[3] / 60)),
+  });
   cargado.value = true;
 });
 </script>

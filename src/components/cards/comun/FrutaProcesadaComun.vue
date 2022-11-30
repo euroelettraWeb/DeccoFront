@@ -32,37 +32,23 @@ export default {
 };
 </script>
 <script setup>
-import axios from "axios";
+import bd from "../../../helpers/bd";
 import { onMounted, ref, computed, reactive } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
 import { routerStore } from "../../../stores/index";
-const socket = io("http://localhost:3000");
 
-async function obtenerDatosVariables(
-  operacion,
-  modo,
-  filtrado,
-  variables,
-  maquinaID
-) {
-  return (
-    await axios.post(
-      `${process.env.VUE_APP_RUTA_API}/variable/multiple/${operacion}/${modo}/${filtrado}/`,
-      { variables, maquinaID }
-    )
-  ).data;
-}
+const socket = io("http://localhost:3000");
 
 let cargado = ref(false);
 let tKg = {};
 
-const chartRef = ref(null);
-const chartRef2 = ref(null);
+const props = defineProps({
+  fruta: { type: Number, default: 1 },
+});
+
 const chartRef3 = ref(null);
-let registrosT = ref([]);
-let cajas = ref([]);
 let kilos = ref([]);
 var lastZoom = null;
 let chartOptions = computed(() => {
@@ -129,24 +115,28 @@ let chartOptions = computed(() => {
 });
 onMounted(async () => {
   cargado.value = false;
-  tKg = await obtenerDatosVariables(
+
+  tKg = await bd.obtenerDatosVariables(
     "8H",
     "registros",
     "formatoLinea",
-    [19],
+    [props.fruta],
     routerStore().lineasID
   );
   kilos.value = tKg;
-  // socket.on("variable_19_actualizada", (data) => {
-  //   kilos.value[0].data.push({
-  //     x: new Date(moment(data.x).toISOString()).getTime(),
-  //     y: data.y,
-  //   });
-  //   if (chartRef.value) {
-  //     chartRef.value.updateSeries(registrosT.value);
-  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-  //   }
-  // });
+  socket.on(
+    `variable_${routerStore().lineasID}_${props.fruta}_actualizada`,
+    (data) => {
+      kilos.value[0].data.push({
+        x: new Date(moment(data.x).toISOString()).getTime(),
+        y: data.y,
+      });
+      if (chartRef3.value) {
+        chartRef3.value.updateSeries(kilos.value);
+        if (lastZoom) chartRef3.value.zoomX(lastZoom[0], lastZoom[1]);
+      }
+    }
+  );
   cargado.value = true;
 });
 </script>

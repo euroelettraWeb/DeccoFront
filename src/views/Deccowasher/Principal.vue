@@ -5,9 +5,27 @@
     </h1>
     <v-row>
       <v-col>
-        <TablaTurnos />
-        <TablaTotalTurnos />
-        <Estado /> <Dosis /> <FrutaProcesada />
+        <v-switch
+          v-model="turnos"
+          color="info"
+          prepend-icon="mdi-clock"
+          label="Turnos"
+          >Turnos</v-switch
+        >
+        <TablaTurnos v-if="turnos" />
+        <TablaTotalTurnos
+          v-if="turnos"
+          :variables="[70, 71, 72, 69]"
+          :marcha="[57, 60, 62]"
+        />
+        <TablaTotal
+          v-else
+          :variables="[70, 71, 72, 69]"
+          :marcha="[57, 60, 62]"
+        />
+        <Estado :activo="57" :auto="61" :manual="63" :alarma="60" :fc="62" />
+        <Dosis title="Dosis de Desinfectante y Jabon" :variables="[58, 59]" />
+        <FrutaProcesadaComun :fruta="69" />
         <v-btn
           color="info"
           @click="
@@ -30,29 +48,23 @@ export default {
 };
 </script>
 <script setup>
-import Estado from "../../components/cards/deccowasher/Estado.vue";
-import FrutaProcesada from "../../components/cards/deccowasher/FrutaProcesada.vue";
-import Dosis from "../../components/cards/deccowasher/Dosis.vue";
+import Estado from "../../components/cards/comun/Estado.vue";
+import Dosis from "../../components/cards/comun/Dosis.vue";
 import TablaTurnos from "../../components/tablas/comun/TablaTurnos.vue";
-
+import TablaTotal from "../../components/tablas/comun/TablaTotal.vue";
+import FrutaProcesadaComun from "../../components/cards/comun/FrutaProcesadaComun.vue";
 import { routerStore } from "../../stores/index";
-import axios from "axios";
+import bd from "../../helpers/bd";
 import { onMounted, ref } from "vue";
-import TablaTotalTurnos from "../../components/tablas/deccowasher/TablaTotalTurnos.vue";
+import TablaTotalTurnos from "../../components/tablas/comun/TablaTotalTurnos.vue";
 
-async function obtenerLinea(id) {
-  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/lineas/${id}`)).data;
-}
-async function obtenerCliente(id) {
-  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/clientes/${id}`))
-    .data;
-}
 let nombreLinea = ref("");
 let nombreCliente = ref("");
+let turnos = ref(true);
 onMounted(async () => {
-  nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
+  nombreLinea.value = (await bd.obtenerLinea(routerStore().lineasID))[0].nombre;
   nombreCliente.value = (
-    await obtenerCliente(routerStore().clienteID)
+    await bd.obtenerCliente(routerStore().clienteID)
   )[0].nombre;
 });
 </script>

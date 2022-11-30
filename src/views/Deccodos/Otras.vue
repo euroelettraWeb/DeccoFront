@@ -1,10 +1,13 @@
 <template>
   <v-container>
     <h1 class="transition-swing text-h2">
-      {{ nombreCliente }} - DECCOWASHER - {{ nombreLinea }}
+      {{ nombreCliente }} - DECCODOS - {{ nombreLinea }}
     </h1>
     <v-row>
-      <v-col> <Cajas /> </v-col>
+      <v-col>
+        <EstadoCepillo />
+        <CajasComun :caja1="45" :caja2="46" :total="47" />
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -16,23 +19,17 @@ export default {
 </script>
 <script setup>
 import { routerStore } from "../../stores/index";
-import axios from "axios";
+import bd from "../../helpers/bd";
 import { onMounted, ref } from "vue";
-import Cajas from "../../components/cards/deccodos/Cajas.vue";
+import CajasComun from "../../components/cards/comun/CajasComun.vue";
+import EstadoCepillo from "../../components/cards/deccodos/EstadoCepillo.vue";
 
-async function obtenerLinea(id) {
-  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/lineas/${id}`)).data;
-}
-async function obtenerCliente(id) {
-  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/clientes/${id}`))
-    .data;
-}
 let nombreLinea = ref("");
 let nombreCliente = ref("");
 onMounted(async () => {
-  nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
+  nombreLinea.value = (await bd.obtenerLinea(routerStore().lineasID))[0].nombre;
   nombreCliente.value = (
-    await obtenerCliente(routerStore().clienteID)
+    await bd.obtenerCliente(routerStore().clienteID)
   )[0].nombre;
 });
 </script>

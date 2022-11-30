@@ -238,6 +238,7 @@ export default {
 </script>
 <script setup>
 import axios from "axios";
+import bd from "../../../helpers/bd";
 import { computed, onMounted, ref } from "vue";
 import { routerStore } from "../../../stores";
 
@@ -307,13 +308,13 @@ async function save() {
           .then((res) => {});
       }
     }
-    times.value = await obtenerDatosVariable(routerStore().clienteID);
+    times.value = await bd.obtenerTurnos(routerStore().clienteID);
   }
 }
 
 onMounted(async () => {
   cargado.value = false;
-  let t = await obtenerDatosVariable(routerStore().clienteID);
+  let t = await bd.obtenerTurnos(routerStore().clienteID);
   if (t.length > 1) {
     time.value = t[0].horaInicio;
     time2.value = t[0].horaFin;
@@ -325,12 +326,4 @@ onMounted(async () => {
   }
   cargado.value = true;
 });
-
-async function obtenerDatosVariable(clienteID) {
-  return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/turnos/cliente/${clienteID}`
-    )
-  ).data;
-}
 </script>

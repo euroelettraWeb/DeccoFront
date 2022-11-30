@@ -86,7 +86,7 @@ let items = computed(() => [
     estado: props.linea.deccodafID ? true : false,
     items: [
       { title: "Principal", route: "deccodaf:Principal" },
-      { title: "Estado", route: "deccodaf:MarchaParo" },
+      // { title: "Estado", route: "deccodaf:MarchaParo" },
       // { title: "Consumo", route: "deccodaf:Consumo" },
       // { title: "Registros", route: "deccodaf:Registros" },
     ],
@@ -97,7 +97,7 @@ let items = computed(() => [
     estado: props.linea.deccodosID ? true : false,
     items: [
       { title: "Principal", route: "deccodos:Principal" },
-      { title: "Estado", route: "deccodos:MarchaParo" },
+      // { title: "Estado", route: "deccodos:MarchaParo" },
       // { title: "Consumo", route: "deccodos:Consumo" },
       // { title: "Registros", route: "deccodos:Registros" },
     ],

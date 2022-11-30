@@ -205,8 +205,4 @@ function save() {
   }
   close();
 }
-async function obtenerVariable(id) {
-  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/clientes/${id}`))
-    .data;
-}
 </script>

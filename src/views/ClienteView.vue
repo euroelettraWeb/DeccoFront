@@ -33,23 +33,18 @@ export default {
 </script>
 
 <script setup>
-import axios from "axios";
+import bd from "../helpers/bd";
 import { routerStore } from "../stores/index";
 import CardCliente from "../components/cards/comun/CardCliente.vue";
 import { onMounted, ref, computed } from "vue";
 
-const router = routerStore();
-
-async function obtenerVariable() {
-  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/clientes/all`)).data;
-}
 let clientes = [];
 let nombres = ref([]);
 let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-  clientes = await obtenerVariable(); //TODO pasar cliente
+  clientes = await bd.obtenerClientes();
   let lista = [];
   for (const iterator of clientes) {
     lista.push({ id: iterator.id, nombre: iterator.nombre, src: iterator.img });
