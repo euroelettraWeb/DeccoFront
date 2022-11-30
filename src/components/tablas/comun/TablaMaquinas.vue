@@ -119,6 +119,7 @@ export default {
 };
 </script>
 <script setup>
+import bd from "../../../helpers/bd";
 import { watch, computed, ref, nextTick, onMounted } from "vue";
 import { routerStore } from "../../../stores/index";
 
@@ -206,11 +207,8 @@ function save() {
   }
   close();
 }
-async function obtenerVariable(id) {
-  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/clientes/${id}`))
-    .data;
-}
+
 onMounted(async () => {
-  cliente = await obtenerVariable(routerStore().id);
+  cliente = await bd.obtenerCliente(routerStore().id);
 });
 </script>

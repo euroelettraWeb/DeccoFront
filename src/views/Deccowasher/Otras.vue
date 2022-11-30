@@ -4,7 +4,9 @@
       {{ nombreCliente }} - DECCOWASHER - {{ nombreLinea }}
     </h1>
     <v-row>
-      <v-col> <EstadoBomba /> <Cajas /> </v-col>
+      <v-col>
+        <EstadoBomba /> <CajasComun :caja1="66" :caja2="67" :total="68" />
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -16,24 +18,17 @@ export default {
 </script>
 <script setup>
 import { routerStore } from "../../stores/index";
-import axios from "axios";
+import bd from "../../helpers/bd";
 import { onMounted, ref } from "vue";
 import EstadoBomba from "../../components/cards/deccowasher/EstadoBomba.vue";
-import Cajas from "../../components/cards/deccowasher/Cajas.vue";
+import CajasComun from "../../components/cards/comun/CajasComun.vue";
 
-async function obtenerLinea(id) {
-  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/lineas/${id}`)).data;
-}
-async function obtenerCliente(id) {
-  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/clientes/${id}`))
-    .data;
-}
 let nombreLinea = ref("");
 let nombreCliente = ref("");
 onMounted(async () => {
-  nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
+  nombreLinea.value = (await bd.obtenerLinea(routerStore().lineasID))[0].nombre;
   nombreCliente.value = (
-    await obtenerCliente(routerStore().clienteID)
+    await bd.obtenerCliente(routerStore().clienteID)
   )[0].nombre;
 });
 </script>

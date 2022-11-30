@@ -133,6 +133,8 @@ export default {
 </script>
 <script setup>
 import axios from "axios";
+import bd from "../../../helpers/bd";
+
 import { watch, computed, ref, nextTick, onMounted } from "vue";
 import { routerStore } from "../../../stores/index";
 let dialog = ref(false);
@@ -173,10 +175,10 @@ let formTitle = computed(() => {
 let lineasV = [];
 let maquinas = [];
 onMounted(async () => {
-  lineasV = await obtenerVariable(routerStore().clienteID);
+  lineasV = await bd.obtenerLineas(routerStore().clienteID);
   for (let index = 0; index < lineasV.length; index++) {
     const element = lineasV[index];
-    maquinas = await obtenerMaquina("linea", element.id, 0);
+    maquinas = await bd.obtenerMaquina("linea", element.id, 0);
     let next = {};
     next.id = element.id;
     next.nombre = element.nombre;
@@ -198,7 +200,7 @@ onMounted(async () => {
           break;
       }
     }
-    let deccoc = await obtenerMaquina(
+    let deccoc = await bd.obtenerMaquina(
       "clienteTipo",
       routerStore().clienteID,
       4
@@ -261,9 +263,9 @@ async function guardarLineas() {
   if (lineas.value) {
     for (let index = 0; index < lineas.value.length; index++) {
       let element = lineas.value[index];
-      let linea = await obtenerLinea(element.id);
+      let linea = await bd.obtenerLinea(element.id);
       if (linea) {
-        let maquinas = await obtenerMaquina("linea", element.id, 0);
+        let maquinas = await bd.obtenerMaquina("linea", element.id, 0);
         let deccowsID = maquinas.find((maquina) => maquina.grupoID == 3);
         let deccodosID = maquinas.find((maquina) => maquina.grupoID == 2);
         let deccodafID = maquinas.find((maquina) => maquina.grupoID == 1);
@@ -343,7 +345,7 @@ async function guardarLineas() {
       }
     }
   }
-  // let deccoc = await obtenerMaquina("clienteTipo", routerStore().clienteID, 4)
+  // let deccoc = await bd.obtenerMaquina("clienteTipo", routerStore().clienteID, 4)
   //   .id;
   // if (deccoc)
   //   axios
@@ -361,19 +363,19 @@ async function guardarLineas() {
   //     lineaID: null,
   //   });
 }
-async function obtenerLinea(id) {
-  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/lineas/${id}`)).data;
-}
-async function obtenerMaquina(modo, clienteID, grupoID) {
-  return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/maquinas/${modo}/${clienteID}/${grupoID}`
-    )
-  ).data;
-}
-async function obtenerVariable(clienteID) {
-  return (
-    await axios.get(`${process.env.VUE_APP_RUTA_API}/${clienteID}/lineas/all`)
-  ).data;
-}
+// async function bd.obtenerLinea(id) {
+//   return (await axios.get(`${process.env.VUE_APP_RUTA_API}/lineas/${id}`)).data;
+// }
+// async function bd.obtenerMaquina(modo, clienteID, grupoID) {
+//   return (
+//     await axios.get(
+//       `${process.env.VUE_APP_RUTA_API}/maquinas/${modo}/${clienteID}/${grupoID}`
+//     )
+//   ).data;
+// }
+// async function bd.obtenerVariable(clienteID) {
+//   return (
+//     await axios.get(`${process.env.VUE_APP_RUTA_API}/${clienteID}/lineas/all`)
+//   ).data;
+// }
 </script>

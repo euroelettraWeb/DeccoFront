@@ -34,27 +34,12 @@ export default {
 };
 </script>
 <script setup>
-import axios from "axios";
+import bd from "../../../helpers/bd";
 import { onMounted, ref, computed } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
 import { routerStore } from "../../../stores/index";
-
-async function obtenerDatosVariables(
-  operacion,
-  modo,
-  filtrado,
-  variables,
-  maquinaID
-) {
-  return (
-    await axios.post(
-      `${process.env.VUE_APP_RUTA_API}/variable/multiple/${operacion}/${modo}/${filtrado}/`,
-      { variables, maquinaID }
-    )
-  ).data;
-}
 
 // function range(rangeName, array) {
 //   let returnt = [];
@@ -62,7 +47,7 @@ async function obtenerDatosVariables(
 //     const element = array[index];
 //     let startR = new Date(element.x).getTime();
 //     let endR = new Date(element.y).getTime();
-//     let obj = { x: rangeName, y: [startR, endR] };
+//     let bd.obj = { x: rangeName, y: [startR, endR] };
 //     returnt.push(obj);
 //   }
 //   return returnt;
@@ -203,7 +188,7 @@ let chartOptions = computed(() => {
 onMounted(async () => {
   cargado.value = false;
 
-  agitadores = await obtenerDatosVariables(
+  agitadores = await bd.obtenerDatosVariables(
     "8H",
     "registros",
     "formatoRangos",

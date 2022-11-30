@@ -73,7 +73,7 @@ export default {
 };
 </script>
 <script setup>
-import axios from "axios";
+import bd from "../../../helpers/bd";
 import { onMounted, ref, computed, reactive } from "vue";
 import { routerStore } from "../../../stores/index";
 import DECCODAFHistoricoCard from "../deccodaf/DECCODAFHistorico.vue";
@@ -89,9 +89,9 @@ let select2 = ref({ id: 0, nombre: "" });
 onMounted(async () => {
   cargado.value = false;
   let lista = [];
-  lineaList.value = await obtenerLinea(routerStore().clienteID);
+  lineaList.value = await bd.obtenerLineas(routerStore().clienteID);
   for (const iterator of lineaList.value) {
-    let sistemas = await obtenerMaquina("cliente", iterator.id, 0);
+    let sistemas = await bd.obtenerMaquina("cliente", iterator.id, 0);
     lista.push({
       id: iterator.id,
       nombre: iterator.nombre,
@@ -102,18 +102,6 @@ onMounted(async () => {
 
   cargado.value = true;
 });
-async function obtenerLinea(clienteID) {
-  return (
-    await axios.get(`${process.env.VUE_APP_RUTA_API}/${clienteID}/lineas/all`)
-  ).data;
-}
-async function obtenerMaquina(modo, clienteID, grupoID) {
-  return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/maquinas/${modo}/${clienteID}/${grupoID}`
-    )
-  ).data;
-}
 function changeItem() {
   nombres2.value = select.value.sistemas;
 }

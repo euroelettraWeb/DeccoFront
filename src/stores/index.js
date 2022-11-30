@@ -237,29 +237,29 @@ export const routerStore = defineStore("router", {
               }
             });
           break;
-        case "deccodaf:MarchaParo":
-          router
-            .push({
-              name: this.routes.deccodafMarchaParo,
-              params: { id, linea },
-            })
-            .catch((failure) => {
-              if (
-                isNavigationFailure(failure, NavigationFailureType.duplicated)
-              ) {
-              }
-            });
-          break;
-        case "deccodaf:Consumo":
-          router
-            .push({ name: this.routes.deccodafConsumo, params: { id, linea } })
-            .catch((failure) => {
-              if (
-                isNavigationFailure(failure, NavigationFailureType.duplicated)
-              ) {
-              }
-            });
-          break;
+          // case "deccodaf:MarchaParo":
+          //   router
+          //     .push({
+          //       name: this.routes.deccodafMarchaParo,
+          //       params: { id, linea },
+          //     })
+          //     .catch((failure) => {
+          //       if (
+          //         isNavigationFailure(failure, NavigationFailureType.duplicated)
+          //       ) {
+          //       }
+          //     });
+          //   break;
+          // case "deccodaf:Consumo":
+          //   router
+          //     .push({ name: this.routes.deccodafConsumo, params: { id, linea } })
+          //     .catch((failure) => {
+          //       if (
+          //         isNavigationFailure(failure, NavigationFailureType.duplicated)
+          //       ) {
+          //       }
+          //     });
+          //   break;
           // case "deccodaf:Registros":
           //   router.push(this.routes.deccodafRegistros).catch((failure) => {
           //     if (

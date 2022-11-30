@@ -2,26 +2,45 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-card>
-          <v-row>
+        <v-card class="mb-2"
+          ><v-row>
             <v-col>
-              <v-card-title> Fruta procesada </v-card-title>
-              <v-card-subtitle> Total Kilos </v-card-subtitle>
+              <v-card-subtitle>
+                Cajas por Ciclo y Peso por Caja
+              </v-card-subtitle>
             </v-col>
           </v-row>
           <v-row>
             <v-col>
               <ApexChart
                 v-if="cargado"
-                ref="chartRef3"
+                ref="chartRef"
                 height="350"
                 type="line"
                 :options="chartOptions"
-                :series="kilos"
+                :series="cajas"
               />
             </v-col>
           </v-row>
         </v-card>
+        <v-card class="mb-2">
+          <v-row>
+            <v-col>
+              <v-card-subtitle> Total Cajas </v-card-subtitle>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <ApexChart
+                v-if="cargado"
+                ref="chartRef2"
+                height="350"
+                type="line"
+                :options="chartOptions"
+                :series="totalCajas"
+              />
+            </v-col> </v-row
+        ></v-card>
       </v-col>
     </v-row>
   </v-container>
@@ -32,8 +51,8 @@ export default {
 };
 </script>
 <script setup>
-import axios from "axios";
-import { onMounted, ref, computed, reactive } from "vue";
+import bd from "../../../helpers/bd";
+import { onMounted, ref, computed, defineProps } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
@@ -41,30 +60,14 @@ import { routerStore } from "../../../stores/index";
 
 const socket = io("http://localhost:3000");
 
-async function obtenerDatosVariables(
-  operacion,
-  modo,
-  filtrado,
-  variables,
-  maquinaID
-) {
-  return (
-    await axios.post(
-      `${process.env.VUE_APP_RUTA_API}/variable/multiple/${operacion}/${modo}/${filtrado}/`,
-      { variables, maquinaID }
-    )
-  ).data;
-}
-
 let cargado = ref(false);
-let tKg = {};
+let cajaV = {};
+let tCajas = {};
 
 const chartRef = ref(null);
 const chartRef2 = ref(null);
-const chartRef3 = ref(null);
-let registrosT = ref([]);
 let cajas = ref([]);
-let kilos = ref([]);
+let totalCajas = ref([]);
 var lastZoom = null;
 let chartOptions = computed(() => {
   return {
@@ -128,57 +131,69 @@ let chartOptions = computed(() => {
     },
   };
 });
+const props = defineProps({
+  caja1: { type: Number, default: 1 },
+  caja2: { type: Number, default: 1 },
+  total: { type: Number, default: 1 },
+});
 onMounted(async () => {
   cargado.value = false;
 
-  tKg = await obtenerDatosVariables(
+  cajaV = await bd.obtenerDatosVariables(
     "8H",
     "registros",
     "formatoLinea",
-    [69],
+    [props.caja1, props.caja2],
     routerStore().lineasID
   );
-  kilos.value = tKg;
-  // socket.on("variable_66_actualizada", (data) => {
-  //   registrosT.value[0].data.push({
-  //     x: new Date(moment(data.x).toISOString()).getTime(),
-  //     y: data.y,
-  //   });
-  //   if (chartRef.value) {
-  //     chartRef.value.updateSeries(registrosT.value);
-  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-  //   }
-  // });
-  // socket.on("variable_67_actualizada", (data) => {
-  //   registrosT.value[1].data.push({
-  //     x: new Date(moment(data.x).toISOString()).getTime(),
-  //     y: data.y,
-  //   });
-  //   if (chartRef.value) {
-  //     chartRef.value.updateSeries(registrosT.value);
-  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-  //   }
-  // });
-  // socket.on("variable_68_actualizada", (data) => {
-  //   registrosT.value[0].data.push({
-  //     x: new Date(moment(data.x).toISOString()).getTime(),
-  //     y: data.y,
-  //   });
-  //   if (chartRef.value) {
-  //     chartRef.value.updateSeries(registrosT.value);
-  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-  //   }
-  // });
-  // socket.on("variable_69_actualizada", (data) => {
-  //   registrosT.value[0].data.push({
-  //     x: new Date(moment(data.x).toISOString()).getTime(),
-  //     y: data.y,
-  //   });
-  //   if (chartRef.value) {
-  //     chartRef.value.updateSeries(registrosT.value);
-  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-  //   }
-  // });
+  tCajas = await bd.obtenerDatosVariables(
+    "8H",
+    "registros",
+    "formatoLinea",
+    [props.total],
+    routerStore().lineasID
+  );
+  cajas.value = cajaV;
+  totalCajas.value = tCajas;
+  socket.on(
+    `variable_${routerStore().lineasID}_${props.caja1}_actualizada`,
+    (data) => {
+      cajas.value[0].data.push({
+        x: new Date(moment(data.x).toISOString()).getTime(),
+        y: data.y,
+      });
+      if (chartRef.value) {
+        chartRef.value.updateSeries(cajas.value);
+        if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+      }
+    }
+  );
+  socket.on(
+    `variable_${routerStore().lineasID}_${props.caja2}_actualizada`,
+    (data) => {
+      cajas.value[1].data.push({
+        x: new Date(moment(data.x).toISOString()).getTime(),
+        y: data.y,
+      });
+      if (chartRef.value) {
+        chartRef.value.updateSeries(cajas.value);
+        if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+      }
+    }
+  );
+  socket.on(
+    `variable_${routerStore().lineasID}_${props.total}_actualizada`,
+    (data) => {
+      totalCajas.value[0].data.push({
+        x: new Date(moment(data.x).toISOString()).getTime(),
+        y: data.y,
+      });
+      if (chartRef2.value) {
+        chartRef2.value.updateSeries(totalCajas.value);
+        if (lastZoom) chartRef2.value.zoomX(lastZoom[0], lastZoom[1]);
+      }
+    }
+  );
   cargado.value = true;
 });
 </script>

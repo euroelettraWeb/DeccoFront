@@ -2,22 +2,19 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-card>
-          <v-row>
-            <v-col>
-              <v-card-title> Fruta procesada </v-card-title>
-              <v-card-subtitle> Total Kilos </v-card-subtitle>
-            </v-col>
+        <v-card
+          ><v-row>
+            <v-col><v-card-title>CO2</v-card-title></v-col>
           </v-row>
           <v-row>
             <v-col>
               <ApexChart
                 v-if="cargado"
-                ref="chartRef3"
+                ref="chartRef"
                 height="350"
                 type="line"
                 :options="chartOptions"
-                :series="kilos"
+                :series="registrosT"
               />
             </v-col>
           </v-row>
@@ -28,11 +25,12 @@
 </template>
 <script>
 export default {
-  name: "FrutaProcesada",
+  name: "EvolucionCO2Card",
+  setup() {},
 };
 </script>
 <script setup>
-import axios from "axios";
+import bd from "../../../helpers/bd";
 import { onMounted, ref, computed, reactive } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
@@ -41,26 +39,11 @@ import { routerStore } from "../../../stores/index";
 
 const socket = io("http://localhost:3000");
 
-async function obtenerDatosVariables(
-  operacion,
-  modo,
-  filtrado,
-  variables,
-  maquinaID
-) {
-  return (
-    await axios.post(
-      `${process.env.VUE_APP_RUTA_API}/variable/multiple/${operacion}/${modo}/${filtrado}/`,
-      { variables, maquinaID }
-    )
-  ).data;
-}
-
 let cargado = ref(false);
-let tKg = {};
+let dosis = {};
 
-const chartRef3 = ref(null);
-let kilos = ref([]);
+const chartRef = ref(null);
+let registrosT = ref([]);
 var lastZoom = null;
 let chartOptions = computed(() => {
   return {
@@ -103,13 +86,12 @@ let chartOptions = computed(() => {
     },
     xaxis: {
       type: "datetime",
-      datetimeUTC: false,
-      min: new Date(moment().subtract(8, "hours")).getTime(),
-      max: moment(),
+      // datetimeUTC: false,
       tickAmount: 15,
       labels: {
         minHeight: 125,
         rotate: -70,
+        minHeight: 125,
         rotateAlways: true,
         formatter: function (value, timestamp) {
           return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
@@ -117,64 +99,71 @@ let chartOptions = computed(() => {
       },
     },
     stroke: {
-      width: 1.9,
-    },
-    legend: {
-      showForSingleSeries: true,
+      width: 1.1,
     },
   };
 });
 onMounted(async () => {
   cargado.value = false;
 
-  tKg = await obtenerDatosVariables(
+  dosis = await bd.obtenerDatosVariables(
     "8H",
     "registros",
     "formatoLinea",
-    [48],
+    [34, 35, 36, 37, 38],
     routerStore().lineasID
   );
-  kilos.value = tKg;
-  // socket.on("variable_45_actualizada", (data) => {
-  //   registrosT.value[0].data.push({
-  //     x: new Date(moment(data.x).toISOString()).getTime(),
-  //     y: data.y,
-  //   });
-  //   if (chartRef.value) {
-  //     chartRef.value.updateSeries(registrosT.value);
-  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-  //   }
-  // });
-  // socket.on("variable_46_actualizada", (data) => {
-  //   registrosT.value[1].data.push({
-  //     x: new Date(moment(data.x).toISOString()).getTime(),
-  //     y: data.y,
-  //   });
-  //   if (chartRef.value) {
-  //     chartRef.value.updateSeries(registrosT.value);
-  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-  //   }
-  // });
-  // socket.on("variable_47_actualizada", (data) => {
-  //   registrosT.value[0].data.push({
-  //     x: new Date(moment(data.x).toISOString()).getTime(),
-  //     y: data.y,
-  //   });
-  //   if (chartRef.value) {
-  //     chartRef.value.updateSeries(registrosT.value);
-  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-  //   }
-  // });
-  // socket.on("variable_48_actualizada", (data) => {
-  //   registrosT.value[1].data.push({
-  //     x: new Date(moment(data.x).toISOString()).getTime(),
-  //     y: data.y,
-  //   });
-  //   if (chartRef.value) {
-  //     chartRef.value.updateSeries(registrosT.value);
-  //     if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-  //   }
-  // });
+  registrosT.value = dosis;
+  socket.on(`variable_${routerStore().lineasID}_34_actualizada`, (data) => {
+    registrosT.value[0].data.push({
+      x: new Date(moment(data.x).toISOString()).getTime(),
+      y: data.y,
+    });
+    if (chartRef.value) {
+      chartRef.value.updateSeries(registrosT.value);
+      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+    }
+  });
+  socket.on(`variable_${routerStore().lineasID}_35_actualizada`, (data) => {
+    registrosT.value[1].data.push({
+      x: new Date(moment(data.x).toISOString()).getTime(),
+      y: data.y,
+    });
+    if (chartRef.value) {
+      chartRef.value.updateSeries(registrosT.value);
+      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+    }
+  });
+  socket.on(`variable_${routerStore().lineasID}_36_actualizada`, (data) => {
+    registrosT.value[2].data.push({
+      x: new Date(moment(data.x).toISOString()).getTime(),
+      y: data.y,
+    });
+    if (chartRef.value) {
+      chartRef.value.updateSeries(registrosT.value);
+      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+    }
+  });
+  socket.on(`variable_${routerStore().lineasID}_37_actualizada`, (data) => {
+    registrosT.value[3].data.push({
+      x: new Date(moment(data.x).toISOString()).getTime(),
+      y: data.y,
+    });
+    if (chartRef.value) {
+      chartRef.value.updateSeries(registrosT.value);
+      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+    }
+  });
+  socket.on(`variable_${routerStore().lineasID}_38_actualizada`, (data) => {
+    registrosT.value[4].data.push({
+      x: new Date(moment(data.x).toISOString()).getTime(),
+      y: data.y,
+    });
+    if (chartRef.value) {
+      chartRef.value.updateSeries(registrosT.value);
+      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+    }
+  });
   cargado.value = true;
 });
 </script>

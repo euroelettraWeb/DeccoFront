@@ -58,29 +58,17 @@ export default {
 };
 </script>
 <script setup>
-import axios from "axios";
+import bd from "../../../helpers/bd";
 import { onMounted, ref, computed, reactive } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
 const socket = io("http://localhost:3000");
 
-async function obtenerDatosVariable(operacion, modo, filtrado, variableID) {
-  return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variable/${operacion}/${modo}/${filtrado}/${variableID}`
-    )
-  ).data;
-}
-
-async function obtenerVariable() {
-  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/variable/all`)).data;
-}
-
 async function changeItem(value) {
   if (value.unidadMedida == "I/0") {
     lineas.value = false;
-    variable = await obtenerDatosVariable(
+    variable = await bd.obtenerDatosVariable(
       "8H",
       "registros",
       "formatoRangos",
@@ -89,7 +77,7 @@ async function changeItem(value) {
     series2.value = variable.registros;
   } else {
     lineas.value = true;
-    variable = await obtenerDatosVariable(
+    variable = await bd.obtenerDatosVariable(
       "8H",
       "registros",
       "formatoLinea",
@@ -224,7 +212,7 @@ let chartOptions2 = computed(() => {
 
 onMounted(async () => {
   cargado.value = false;
-  variables = await obtenerVariable();
+  variables = await bd.obtenerVariables();
   for (let index = 0; index < variables.length; index++) {
     const element = variables[index];
     selectItems.value.push({

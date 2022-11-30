@@ -89,6 +89,7 @@ export default {
 };
 </script>
 <script setup>
+import bd from "../../helpers/bd";
 import axios from "axios";
 import { routerStore } from "../../stores/index";
 import { ref, onMounted } from "vue";
@@ -111,8 +112,8 @@ let plc = [];
 let plcId = ref(0);
 
 onMounted(async () => {
-  cliente = await obtenerCliente(routerStore().clienteID);
-  plc = await obtenerPLC(routerStore().clienteID);
+  cliente = await bd.obtenerCliente(routerStore().clienteID);
+  plc = await bd.obtenerClientePLC(routerStore().clienteID);
   nombre.value = cliente[0].nombre;
   src.value = cliente[0].img;
   ip.value = plc[0].ip;
@@ -149,14 +150,7 @@ async function validate() {
     }
   }
 }
-async function obtenerCliente(id) {
-  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/clientes/${id}`))
-    .data;
-}
-async function obtenerPLC(id) {
-  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/plcs/cliente/${id}`))
-    .data;
-}
+
 function reset() {
   form.value.reset();
 }

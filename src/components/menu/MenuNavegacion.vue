@@ -154,6 +154,7 @@ export default {
 };
 </script>
 <script setup>
+import bd from "../../helpers/bd";
 import { userStore, routerStore, navStore } from "../../stores/index";
 import { storeToRefs } from "pinia";
 import axios from "axios";
@@ -164,22 +165,6 @@ const { estadoPanelLateral } = storeToRefs(navStore());
 const router = routerStore();
 const { clienteID } = storeToRefs(routerStore());
 
-async function obtenerVariable() {
-  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/clientes/all`)).data;
-}
-
-async function obtenerLinea(clienteID) {
-  return (
-    await axios.get(`${process.env.VUE_APP_RUTA_API}/${clienteID}/lineas/all`)
-  ).data;
-}
-async function obtenerMaquina(modo, clienteID, grupoID) {
-  return (
-    await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/maquinas/${modo}/${clienteID}/${grupoID}`
-    )
-  ).data;
-}
 const items = (array) => {
   let list = [];
   if (array) {
@@ -205,7 +190,7 @@ const items = (array) => {
             estado: element.deccodafID ? true : false,
             items: [
               { title: "Principal", route: "deccodaf:Principal" },
-              { title: "Estado", route: "deccodaf:MarchaParo" },
+              // { title: "Estado", route: "deccodaf:MarchaParo" },
               // { title: "Consumo", route: "deccodaf:Consumo" },
               // { title: "Registros", route: "deccodaf:Registros" },
             ],
@@ -216,7 +201,7 @@ const items = (array) => {
             estado: element.deccodosID ? true : false,
             items: [
               { title: "Principal", route: "deccodos:Principal" },
-              { title: "Estado", route: "deccodos:MarchaParo" },
+              // { title: "Estado", route: "deccodos:MarchaParo" },
               // { title: "Consumo", route: "deccodos:Consumo" },
               // { title: "Registros", route: "deccodos:Registros" },
             ],
@@ -250,9 +235,9 @@ let clienteActivo = computed(() => {
 
 onMounted(async () => {
   if (clienteID.value != 0) select.value = clienteID;
-  clientes = await obtenerVariable();
+  clientes = await bd.obtenerClientes();
   if (select.value) {
-    lineas = await obtenerLinea(select.value);
+    lineas = await bd.obtenerLineas(select.value);
     stateLineas.value = true;
   } else {
     stateLineas.value = false;
@@ -260,10 +245,10 @@ onMounted(async () => {
   watch(select, async (val) => {
     if (val) {
       stateLineas.value = false;
-      lineas = await obtenerLinea(val);
+      lineas = await bd.obtenerLineas(val);
       for (let index = 0; index < lineas.length; index++) {
         let element = lineas[index];
-        let maq = await obtenerMaquina("linea", element.id);
+        let maq = await bd.obtenerMaquina("linea", element.id);
         let deccowsID = maq.find((maquina) => maquina.grupoID == 3);
         let deccodosID = maq.find((maquina) => maquina.grupoID == 2);
         let deccodafID = maq.find((maquina) => maquina.grupoID == 1);

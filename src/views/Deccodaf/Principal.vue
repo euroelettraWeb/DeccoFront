@@ -5,11 +5,27 @@
     </h1>
     <v-row>
       <v-col>
-        <TablaTurnos />
-        <TablaTotalTurnos />
-        <Estado />
-        <ConsumoDosisFungicida />
-        <FrutaProcesada />
+        <v-switch
+          v-model="turnos"
+          color="info"
+          prepend-icon="mdi-clock"
+          label="Turnos"
+          >Turnos</v-switch
+        >
+        <TablaTurnos v-if="turnos" />
+        <TablaTotalTurnos
+          v-if="turnos"
+          :variables="[25, 26, 27, 28, 29, 30]"
+          :marcha="[1, 12, 14]"
+        />
+        <TablaTotal
+          v-else
+          :variables="[25, 26, 27, 28, 29, 30]"
+          :marcha="[1, 12, 14]"
+        />
+        <Estado :activo="1" :auto="13" :manual="15" :alarma="12" :fc="14" />
+        <Dosis title="Dosis de fungicida" :variables="[7, 8, 9, 10, 11]" />
+        <FrutaProcesadaComun :fruta="19" />
         <v-btn
           color="info"
           @click="
@@ -33,26 +49,22 @@ export default {
 </script>
 <script setup>
 import { routerStore } from "../../stores/index";
-import axios from "axios";
-import Estado from "../../components/cards/deccodaf/Estado.vue";
-import FrutaProcesada from "../../components/cards/deccodaf/FrutaProcesada.vue";
-import ConsumoDosisFungicida from "../../components/cards/deccodaf/ConsumoDosisFungicida.vue";
+import bd from "../../helpers/bd";
+import Estado from "../../components/cards/comun/Estado.vue";
+import Dosis from "../../components/cards/comun/Dosis.vue";
+import TablaTotal from "../../components/tablas/comun/TablaTotal.vue";
 import { onMounted, ref } from "vue";
 import TablaTurnos from "../../components/tablas/comun/TablaTurnos.vue";
-import TablaTotalTurnos from "../../components/tablas/deccodaf/TablaTotalTurnos.vue";
-async function obtenerLinea(id) {
-  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/lineas/${id}`)).data;
-}
-async function obtenerCliente(id) {
-  return (await axios.get(`${process.env.VUE_APP_RUTA_API}/clientes/${id}`))
-    .data;
-}
+import TablaTotalTurnos from "../../components/tablas/comun/TablaTotalTurnos.vue";
+import FrutaProcesadaComun from "../../components/cards/comun/FrutaProcesadaComun.vue";
+
 let nombreLinea = ref("");
 let nombreCliente = ref("");
+let turnos = ref(true);
 onMounted(async () => {
-  nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
+  nombreLinea.value = (await bd.obtenerLinea(routerStore().lineasID))[0].nombre;
   nombreCliente.value = (
-    await obtenerCliente(routerStore().clienteID)
+    await bd.obtenerCliente(routerStore().clienteID)
   )[0].nombre;
 });
 </script>

@@ -45,73 +45,6 @@ import io from "socket.io-client";
 import moment from "moment";
 import { routerStore } from "../../../stores/index";
 
-function newValue(series, value, chartRef, lastZoom, nameI) {
-  let elemento0 = series.value[0].data.findLast(
-    (node) => node.x == names[nameI],
-    routerStore().lineasID
-  );
-  let elemento1 = series.value[1].data.findLast(
-    (node) => node.x == names[nameI],
-    routerStore().lineasID
-  );
-  if (elemento0 && elemento1) {
-    let last = moment(elemento0.y[1]).isBefore(moment(elemento1.y[1])) ? 0 : 1;
-
-    if (value.y == last) {
-      let index = series.value[value.y].data.findLastIndex(
-        (node) => node.x == names[nameI]
-      );
-      series.value[value.y].data[index].y[1] = new Date(value.x).getTime();
-    } else {
-      let index = series.value[1].data.findLastIndex(
-        (node) => node.x == names[nameI]
-      );
-      series.value[value.y].data.push({
-        x: names[nameI],
-        y: [
-          new Date(series.value[value.y].data[index].y[1]).getTime(),
-          new Date(value.x).getTime(),
-        ],
-      });
-    }
-  } else {
-    if (elemento0) {
-      let index = series.value[0].data.findLastIndex(
-        (node) => node.x == names[nameI]
-      );
-      series.value[0].data.push({
-        x: names[nameI],
-        y: [
-          new Date(series.value[0].data[index].y[1]).getTime(),
-          new Date(value.x).getTime(),
-        ],
-      });
-    } else {
-      if (elemento1) {
-        let index = series.value[1].data.findLastIndex(
-          (node) => node.x == names[nameI]
-        );
-        series.value[1].data.push({
-          x: names[nameI],
-          y: [
-            new Date(series.value[1].data[index].y[1]).getTime(),
-            new Date(value.x).getTime(),
-          ],
-        });
-      } else {
-        series.value[value.y].data.push({
-          x: names[nameI],
-          y: [new Date(value.x).getTime(), new Date(value.x).getTime() + 500],
-        });
-      }
-    }
-    if (chartRef.value) {
-      chartRef.value.updateSeries(series.value);
-      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-    }
-  }
-}
-
 const socket = io("http://localhost:3000");
 const chartRef2 = ref(null);
 var lastZoom = null;
@@ -205,16 +138,10 @@ onMounted(async () => {
     "8H",
     "registros",
     "formatoRangos",
-    [64, 65],
+    [44],
     routerStore().lineasID
   );
   series.value = bombas;
-  // socket.on("variable_64_actualizada", (data) => {
-  //   newValue(series, data, chartRef, lastZoom, 0);
-  // });
-  // socket.on("variable_64_actualizada", (data) => {
-  //   newValue(series, data, chartRef, lastZoom, 1);
-  // });
   cargado.value = true;
 });
 </script>
