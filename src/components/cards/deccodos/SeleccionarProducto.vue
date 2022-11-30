@@ -47,14 +47,13 @@
 </template>
 <script>
 export default {
-  name: "FrutaProcesada",
+  name: "SeleccionarProductos",
 };
 </script>
 <script setup>
 import axios from "axios";
 import bd from "../../../helpers/bd";
-import { onMounted, ref, computed, reactive } from "vue";
-import moment from "moment";
+import { onMounted, ref } from "vue";
 import { routerStore } from "../../../stores/index";
 
 let cargado = ref(false);
@@ -80,7 +79,6 @@ onMounted(async () => {
   cargado.value = true;
 });
 async function save() {
-  console.log("Guardar", productos.value);
   for (let i = 0; i < productos.value.length; i++) {
     if (productos.value[i].id == bomba1.value.id) {
       productos.value[i].activo = 0;
