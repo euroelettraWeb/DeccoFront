@@ -41,17 +41,17 @@
               <DECCODAFHistoricoCard
                 v-if="select2.grupoID === 1"
                 :linea="select.id"
-                :sistema="select2.id"
+                :maquina="select2.id"
               /><!-- :linea="select.id" :sistema="select2.id" -->
               <DECCODOSHistorico
                 v-if="select2.grupoID === 2"
                 :linea="select.id"
-                :sistema="select2.id"
+                :maquina="select2.id"
               />
               <DECCOWSHistorico
                 v-if="select2.grupoID === 3"
                 :linea="select.id"
-                :sistema="select2.id"
+                :maquina="select2.id"
               />
             </v-col>
             <v-col v-else class="d-flex justify-center align-center">
@@ -83,7 +83,7 @@ let cargado = ref(false);
 let lineaList = ref({});
 let nombres = ref([]);
 let select = ref(null);
-let nombres2 = ref([]); // TODO Llamada BD
+let nombres2 = ref([]);
 let select2 = ref({ id: 0, nombre: "" });
 
 onMounted(async () => {
@@ -91,7 +91,7 @@ onMounted(async () => {
   let lista = [];
   lineaList.value = await bd.obtenerLineas(routerStore().clienteID);
   for (const iterator of lineaList.value) {
-    let sistemas = await bd.obtenerMaquina("cliente", iterator.id, 0);
+    let sistemas = await bd.obtenerMaquina("linea", iterator.id, 0);
     lista.push({
       id: iterator.id,
       nombre: iterator.nombre,

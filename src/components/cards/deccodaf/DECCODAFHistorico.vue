@@ -125,7 +125,7 @@ import DatePicker from "vue-time-date-range-picker/dist/vdprDatePicker";
 
 const props = defineProps({
   linea: { type: Number, default: 1 },
-  maquinaID: { type: Number, default: 1 },
+  maquina: { type: Number, default: 1 },
 });
 
 const socket = io("http://localhost:3000");
@@ -156,7 +156,7 @@ async function dateApplied(date1, date2) {
     [1],
     inicio.value,
     fin.value,
-    props.maquinaID
+    props.maquina
   );
   let autoManual = await bd.obtenerDatosHistoricoVariable(
     "historico",
@@ -165,19 +165,20 @@ async function dateApplied(date1, date2) {
     [13, 15],
     inicio.value,
     fin.value,
-    props.maquinaID
+    props.maquina
   );
   for (let index = 0; index < autoManual[1].data.length; index++) {
     const element = autoManual[1].data[index];
     estado[1].data.push(element);
   }
   marcha = await bd.obtenerVariablesMarcha(
+    routerStore().clienteID,
     "historico",
     [1, 12, 14],
-    inicio.value,
-    fin.value,
     "registros",
-    props.maquinaID
+    props.maquina,
+    inicio.value,
+    fin.value
   );
   funcMaquina = await bd.obtenerDatosHistoricoVariable(
     "historico",
@@ -186,7 +187,7 @@ async function dateApplied(date1, date2) {
     [12, 14],
     inicio.value,
     fin.value,
-    props.maquinaID
+    props.maquina
   );
   dosis = await bd.obtenerDatosHistoricoVariable(
     "historico",
@@ -195,7 +196,7 @@ async function dateApplied(date1, date2) {
     [7, 8, 9, 10, 11],
     inicio.value,
     fin.value,
-    props.maquinaID
+    props.maquina
   );
   kilos = await bd.obtenerDatosHistoricoVariable(
     "historico",
@@ -204,7 +205,7 @@ async function dateApplied(date1, date2) {
     [19],
     inicio.value,
     fin.value,
-    props.maquinaID
+    props.maquina
   );
   cajas = await bd.obtenerDatosHistoricoVariable(
     "historico",
@@ -213,7 +214,7 @@ async function dateApplied(date1, date2) {
     [18],
     inicio.value,
     fin.value,
-    props.maquinaID
+    props.maquina
   );
   cporu = await bd.obtenerDatosHistoricoVariable(
     "historico",
@@ -222,7 +223,7 @@ async function dateApplied(date1, date2) {
     [16, 17],
     inicio.value,
     fin.value,
-    props.maquinaID
+    props.maquina
   );
   totales = await bd.obtenerDatosHistoricoVariable(
     "historico",
@@ -231,7 +232,7 @@ async function dateApplied(date1, date2) {
     [25, 26, 27, 28, 29, 30],
     inicio.value,
     fin.value,
-    props.maquinaID
+    props.maquina
   );
   series.value = estado;
   for (let index = 0; index < funcMaquina[1].data.length; index++) {
@@ -391,7 +392,7 @@ onMounted(async () => {
     [1],
     null,
     null,
-    props.maquinaID
+    props.maquina
   );
   let autoManual = await bd.obtenerDatosHistoricoVariable(
     "8H",
@@ -400,19 +401,18 @@ onMounted(async () => {
     [13, 15],
     null,
     null,
-    props.maquinaID
+    props.maquina
   );
   for (let index = 0; index < autoManual[1].data.length; index++) {
     const element = autoManual[1].data[index];
     estado[1].data.push(element);
   }
   marcha = await bd.obtenerVariablesMarcha(
+    routerStore().clienteID,
     "8H",
     [1, 12, 14],
-    null,
-    null,
     "registros",
-    props.maquinaID
+    props.maquina
   );
   funcMaquina = await bd.obtenerDatosHistoricoVariable(
     "8H",
@@ -421,7 +421,7 @@ onMounted(async () => {
     [12, 14],
     null,
     null,
-    props.maquinaID
+    props.maquina
   );
   dosis = await bd.obtenerDatosHistoricoVariable(
     "8H",
@@ -430,7 +430,7 @@ onMounted(async () => {
     [7, 8, 9, 10, 11],
     null,
     null,
-    props.maquinaID
+    props.maquina
   );
   kilos = await bd.obtenerDatosHistoricoVariable(
     "8H",
@@ -439,7 +439,7 @@ onMounted(async () => {
     [19],
     null,
     null,
-    props.maquinaID
+    props.maquina
   );
   cajas = await bd.obtenerDatosHistoricoVariable(
     "8H",
@@ -448,7 +448,7 @@ onMounted(async () => {
     [18],
     null,
     null,
-    props.maquinaID
+    props.maquina
   );
   cporu = await bd.obtenerDatosHistoricoVariable(
     "8H",
@@ -457,7 +457,7 @@ onMounted(async () => {
     [16, 17],
     null,
     null,
-    props.maquinaID
+    props.maquina
   );
   totales = await bd.obtenerDatosHistoricoVariable(
     "8H",
@@ -466,7 +466,7 @@ onMounted(async () => {
     [25, 26, 27, 28, 29, 30],
     null,
     null,
-    props.maquinaID
+    props.maquina
   );
   series.value = estado;
   for (let index = 0; index < funcMaquina[1].data.length; index++) {

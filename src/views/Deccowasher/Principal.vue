@@ -12,20 +12,33 @@
           label="Turnos"
           >Turnos</v-switch
         >
-        <TablaTurnos v-if="turnos" />
+        <TablaTurnos v-if="turnos" :tipo="1" />
         <TablaTotalTurnos
           v-if="turnos"
           :variables="[70, 71, 72, 69]"
           :marcha="[57, 60, 62]"
+          :tipo="3"
         />
         <TablaTotal
           v-else
           :variables="[70, 71, 72, 69]"
           :marcha="[57, 60, 62]"
+          :tipo="3"
         />
-        <Estado :activo="57" :auto="61" :manual="63" :alarma="60" :fc="62" />
-        <Dosis title="Dosis de Desinfectante y Jabon" :variables="[58, 59]" />
-        <FrutaProcesadaComun :fruta="69" />
+        <Estado
+          :activo="57"
+          :auto="61"
+          :manual="63"
+          :alarma="60"
+          :fc="62"
+          :tipo="3"
+        />
+        <Dosis
+          title="Dosis de Desinfectante y Jabon"
+          :variables="[58, 59]"
+          :tipo="3"
+        />
+        <FrutaProcesadaComun :fruta="69" :tipo="3" />
         <v-btn
           color="info"
           @click="

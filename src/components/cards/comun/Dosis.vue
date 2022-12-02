@@ -108,35 +108,36 @@ let chartOptions = computed(() => {
 const props = defineProps({
   title: { type: String, default: "Dosis" },
   variables: { type: Array, default: new Array() },
+  tipo: { type: Number, default: 1 },
 });
 
 onMounted(async () => {
   cargado.value = false;
+  let maquinaID = (
+    await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
+  )[0].id;
 
   dosis = await bd.obtenerDatosVariables(
     "8H",
     "registros",
     "formatoLinea",
     props.variables,
-    routerStore().lineasID
+    maquinaID
   );
 
   registrosT.value = dosis;
   for (let index = 0; index < props.variables.length; index++) {
     const element = props.variables[index];
-    socket.on(
-      `variable_${routerStore().lineasID}_${element}_actualizada`,
-      (data) => {
-        registrosT.value[index].data.push({
-          x: new Date(moment(data.x).toISOString()).getTime(),
-          y: data.y,
-        });
-        if (chartRef.value) {
-          chartRef.value.updateSeries(registrosT.value);
-          if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-        }
+    socket.on(`variable_${maquinaID}_${element}_actualizada`, (data) => {
+      registrosT.value[index].data.push({
+        x: new Date(moment(data.x).toISOString()).getTime(),
+        y: data.y,
+      });
+      if (chartRef.value) {
+        chartRef.value.updateSeries(registrosT.value);
+        if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
       }
-    );
+    });
   }
   cargado.value = true;
 });

@@ -4,16 +4,18 @@
       <v-col>
         <v-card>
           <v-row
-            ><v-col><v-card-title>Estado</v-card-title></v-col>
+            ><v-col
+              ><v-card-title>{{ props.title }}</v-card-title></v-col
+            >
           </v-row>
           <v-row>
             <v-col v-if="cargado">
               <v-row>
                 <v-col>
                   <ApexChart
-                    ref="chartRef2"
+                    ref="chartRef"
                     type="rangeBar"
-                    height="300"
+                    :height="props.height"
                     :options="chartOptions"
                     :series="series"
                 /></v-col>
@@ -34,7 +36,7 @@
 </template>
 <script>
 export default {
-  name: "EstadoSistema",
+  name: "GraficasEstado",
 };
 </script>
 <script setup>
@@ -45,75 +47,8 @@ import io from "socket.io-client";
 import moment from "moment";
 import { routerStore } from "../../../stores/index";
 
-function newValue(series, value, chartRef, lastZoom, nameI) {
-  let elemento0 = series.value[0].data.findLast(
-    (node) => node.x == names[nameI],
-    routerStore().lineasID
-  );
-  let elemento1 = series.value[1].data.findLast(
-    (node) => node.x == names[nameI],
-    routerStore().lineasID
-  );
-  if (elemento0 && elemento1) {
-    let last = moment(elemento0.y[1]).isBefore(moment(elemento1.y[1])) ? 0 : 1;
-
-    if (value.y == last) {
-      let index = series.value[value.y].data.findLastIndex(
-        (node) => node.x == names[nameI]
-      );
-      series.value[value.y].data[index].y[1] = new Date(value.x).getTime();
-    } else {
-      let index = series.value[1].data.findLastIndex(
-        (node) => node.x == names[nameI]
-      );
-      series.value[value.y].data.push({
-        x: names[nameI],
-        y: [
-          new Date(series.value[value.y].data[index].y[1]).getTime(),
-          new Date(value.x).getTime(),
-        ],
-      });
-    }
-  } else {
-    if (elemento0) {
-      let index = series.value[0].data.findLastIndex(
-        (node) => node.x == names[nameI]
-      );
-      series.value[0].data.push({
-        x: names[nameI],
-        y: [
-          new Date(series.value[0].data[index].y[1]).getTime(),
-          new Date(value.x).getTime(),
-        ],
-      });
-    } else {
-      if (elemento1) {
-        let index = series.value[1].data.findLastIndex(
-          (node) => node.x == names[nameI]
-        );
-        series.value[1].data.push({
-          x: names[nameI],
-          y: [
-            new Date(series.value[1].data[index].y[1]).getTime(),
-            new Date(value.x).getTime(),
-          ],
-        });
-      } else {
-        series.value[value.y].data.push({
-          x: names[nameI],
-          y: [new Date(value.x).getTime(), new Date(value.x).getTime() + 500],
-        });
-      }
-    }
-    if (chartRef.value) {
-      chartRef.value.updateSeries(series.value);
-      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-    }
-  }
-}
-
 const socket = io("http://localhost:3000");
-const chartRef2 = ref(null);
+const chartRef = ref(null);
 var lastZoom = null;
 let cargado = ref(false);
 let series = ref([]);
@@ -179,7 +114,7 @@ let chartOptions = computed(() => {
       datetimeUTC: false,
       min: new Date(moment().subtract(8, "hours")).getTime(),
       max: moment(),
-      tickAmount: 15,
+      tickAmount: 20,
       labels: {
         minHeight: 125,
         rotate: -70,
@@ -199,22 +134,47 @@ let chartOptions = computed(() => {
     },
   };
 });
+
+const props = defineProps({
+  variables: { type: Array, default: new Array() },
+  title: { type: String, default: "" },
+  height: { type: Number, default: 300 },
+  tipo: { type: Number, default: 1 },
+});
+
 onMounted(async () => {
   cargado.value = false;
+
+  let maquinaID = (
+    await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
+  )[0].id;
+
   bombas = await bd.obtenerDatosVariables(
     "8H",
     "registros",
     "formatoRangos",
-    [64, 65],
-    routerStore().lineasID
+    props.variables,
+    maquinaID
   );
   series.value = bombas;
-  // socket.on("variable_64_actualizada", (data) => {
-  //   newValue(series, data, chartRef, lastZoom, 0);
-  // });
-  // socket.on("variable_64_actualizada", (data) => {
-  //   newValue(series, data, chartRef, lastZoom, 1);
-  // });
+  for (let index = 0; index < props.variables.length; index++) {
+    socket.on(
+      `variable_${maquinaID}_${props.variables[index]}_actualizada`,
+      async (data) => {
+        let bomba = await bd.obtenerDatosVariables(
+          "8H",
+          "registros",
+          "formatoRangos",
+          props.variables,
+          maquinaID
+        );
+        if (chartRef.value) {
+          chartRef.value.updateSeries(bomba);
+          if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+        }
+      }
+    );
+  }
   cargado.value = true;
 });
 </script>

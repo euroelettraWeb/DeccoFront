@@ -122,9 +122,7 @@ async function save() {
 onMounted(async () => {
   cargado.value = false;
   let maquina = await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, 2);
-  console.log(maquina);
   let t = await bd.obtenerProductos("maquina", maquina[0].id);
-  console.log(t[0]);
   if (t.length > 1) {
     tanque1.value = t[0].nombre;
     tanque2.value = t[1].nombre;
@@ -134,19 +132,4 @@ onMounted(async () => {
   }
   cargado.value = true;
 });
-
-// async function bd.obtenerDatosVariable(modo, maquinaID) {
-//   return (
-//     await axios.get(
-//       `${process.env.VUE_APP_RUTA_API}/productos/${modo}/${maquinaID}`
-//     )
-//   ).data;
-// }
-// async function bd.obtenerMaquina(modo, lineaID, grupoID) {
-//   return (
-//     await axios.get(
-//       `${process.env.VUE_APP_RUTA_API}/maquinas/${modo}/${lineaID}/${grupoID}`
-//     )
-//   ).data;
-// }
 </script>

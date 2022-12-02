@@ -46,6 +46,7 @@ let tKg = {};
 
 const props = defineProps({
   fruta: { type: Number, default: 1 },
+  tipo: { type: Number, default: 1 },
 });
 
 const chartRef3 = ref(null);
@@ -101,7 +102,7 @@ let chartOptions = computed(() => {
         rotate: -70,
         rotateAlways: true,
         formatter: function (value, timestamp) {
-          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
+          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
         },
       },
     },
@@ -116,27 +117,28 @@ let chartOptions = computed(() => {
 onMounted(async () => {
   cargado.value = false;
 
+  let maquinaID = (
+    await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
+  )[0].id;
+
   tKg = await bd.obtenerDatosVariables(
     "8H",
     "registros",
     "formatoLinea",
     [props.fruta],
-    routerStore().lineasID
+    maquinaID
   );
   kilos.value = tKg;
-  socket.on(
-    `variable_${routerStore().lineasID}_${props.fruta}_actualizada`,
-    (data) => {
-      kilos.value[0].data.push({
-        x: new Date(moment(data.x).toISOString()).getTime(),
-        y: data.y,
-      });
-      if (chartRef3.value) {
-        chartRef3.value.updateSeries(kilos.value);
-        if (lastZoom) chartRef3.value.zoomX(lastZoom[0], lastZoom[1]);
-      }
+  socket.on(`variable_${maquinaID}_${props.fruta}_actualizada`, (data) => {
+    kilos.value[0].data.push({
+      x: new Date(moment(data.x).toISOString()).getTime(),
+      y: data.y,
+    });
+    if (chartRef3.value) {
+      chartRef3.value.updateSeries(kilos.value);
+      if (lastZoom) chartRef3.value.zoomX(lastZoom[0], lastZoom[1]);
     }
-  );
+  });
   cargado.value = true;
 });
 </script>

@@ -51,93 +51,6 @@ import io from "socket.io-client";
 import moment from "moment";
 import { routerStore } from "../../../stores/index";
 
-// function newValue(newArray, value, nameI) {
-//   let elemento0 = newArray[0].data.findLast((node) => node.x == nameI);
-//   let elemento1 = newArray[1].data.findLast((node) => node.x == nameI);
-//   let last = moment(elemento0.y[1]).isAfter(elemento1.y[1]) ? 0 : 1;
-//   let index = newArray[last].data.findLastIndex(
-//     (node) => node.x == nameI
-//   );
-//   // console.log("last", last);
-//   // console.log(index);
-//   // console.log(newArray[value.y].data);
-//   // console.log(newArray[value.y].data[index].y[1]);
-//   if (value.y == last) {
-//     // console.log(newArray[value.y].data[index].y[1]);
-//     newArray[value.y].data[index].y[1] = new Date(value.x).getTime();
-//     // console.log(newArray[value.y].data[index]);
-//   } else {
-//     // console.log(newArray[value.y].data[index].y[1]);
-//     let obj = {
-//       x: nameI,
-//       y: [
-//         new Date(newArray[value.y].data[index].y[1]).getTime(),
-//         new Date(value.x).getTime(),
-//       ],
-//     };
-//     // newArray[value.y].data.push(obj);
-//     // console.log(newArray[value.y].data.push(obj));
-//   }
-//   return newArray;
-// }
-
-function newValue(series, value, chartRef, lastZoom, nameI) {
-  let elemento0 = series.value[0].data.findLast((node) => node.x == nameI);
-  let elemento1 = series.value[1].data.findLast((node) => node.x == nameI);
-  if (elemento0 && elemento1) {
-    let last = moment(elemento0.y[1]).isBefore(moment(elemento1.y[1])) ? 0 : 1;
-
-    if (value.y == last) {
-      let index = series.value[value.y].data.findLastIndex(
-        (node) => node.x == nameI
-      );
-      series.value[value.y].data[index].y[1] = new Date(value.x).getTime();
-    } else {
-      let index = series.value[1].data.findLastIndex((node) => node.x == nameI);
-      series.value[value.y].data.push({
-        x: nameI,
-        y: [
-          new Date(series.value[value.y].data[index].y[1]).getTime(),
-          new Date(value.x).getTime(),
-        ],
-      });
-    }
-  } else {
-    if (elemento0) {
-      let index = series.value[0].data.findLastIndex((node) => node.x == nameI);
-      series.value[0].data.push({
-        x: nameI,
-        y: [
-          new Date(series.value[0].data[index].y[1]).getTime(),
-          new Date(value.x).getTime(),
-        ],
-      });
-    } else {
-      if (elemento1) {
-        let index = series.value[1].data.findLastIndex(
-          (node) => node.x == nameI
-        );
-        series.value[1].data.push({
-          x: nameI,
-          y: [
-            new Date(series.value[1].data[index].y[1]).getTime(),
-            new Date(value.x).getTime(),
-          ],
-        });
-      } else {
-        series.value[value.y].data.push({
-          x: nameI,
-          y: [new Date(value.x).getTime(), new Date(value.x).getTime() + 500],
-        });
-      }
-    }
-    if (chartRef.value) {
-      chartRef.value.updateSeries(series.value);
-      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-    }
-  }
-}
-
 const socket = io("http://localhost:3000");
 const chartRef = ref(null);
 const chartRef2 = ref(null);
@@ -238,24 +151,29 @@ const props = defineProps({
   manual: { type: Number, default: 1 },
   alarma: { type: Number, default: 1 },
   fc: { type: Number, default: 1 },
+  tipo: { type: Number, default: 1 },
 });
 
 onMounted(async () => {
   cargado.value = false;
+
+  let maquinaID = (
+    await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
+  )[0].id;
 
   modoMaquina = await bd.obtenerDatosVariables(
     "8H",
     "registros",
     "formatoRangos",
     [props.activo],
-    routerStore().lineasID
+    maquinaID
   );
   autoManual = await bd.obtenerDatosVariables(
     "8H",
     "registros",
     "formatoRangos",
     [props.auto, props.manual],
-    routerStore().lineasID
+    maquinaID
   );
   for (let index = 0; index < autoManual[1].data.length; index++) {
     const element = autoManual[1].data[index];
@@ -266,14 +184,14 @@ onMounted(async () => {
     "8H",
     [props.activo, props.alarma, props.fc],
     "registros",
-    routerStore().lineasID
+    maquinaID
   );
   funcMaquina = await bd.obtenerDatosVariables(
     "8H",
     "registros",
     "formatoRangos",
     [props.alarma, props.fc],
-    routerStore().lineasID
+    maquinaID
   );
   series.value = modoMaquina;
   for (let index = 0; index < funcMaquina[1].data.length; index++) {
@@ -287,21 +205,208 @@ onMounted(async () => {
   }
   series2.value = funcMaquina;
   series3.value = marcha;
-  // socket.on("variable_1_actualizada", (data) => {
-  //   newValue(series, data, chartRef, lastZoom, names[0]);
-  // });
-  // socket.on("variable_12_actualizada", (data) => {
-  //   newValue(series2, data, chartRef2, lastZoom, names2[0]);
-  // });
-  // socket.on("variable_13_actualizada", (data) => {
-  //   newValue(series, data, chartRef, lastZoom, names[1]);
-  // });
-  // socket.on("variable_14_actualizada", (data) => {
-  //   newValue(series2, data, chartRef2, lastZoom, names2[1]);
-  // });
-  // socket.on("variable_15_actualizada", (data) => {
-  //   newValue(series, data, chartRef, lastZoom, names[2]);
-  // });
+
+  socket.on(
+    `variable_${maquinaID}_${props.manual}_actualizada`,
+    async (data) => {
+      let modoMaquina = await bd.obtenerDatosVariables(
+        "8H",
+        "registros",
+        "formatoRangos",
+        [props.activo],
+        maquinaID
+      );
+      let autoManual = await bd.obtenerDatosVariables(
+        "8H",
+        "registros",
+        "formatoRangos",
+        [props.auto, props.manual],
+        maquinaID
+      );
+      for (let index = 0; index < autoManual[1].data.length; index++) {
+        const element = autoManual[1].data[index];
+        modoMaquina[1].data.push(element);
+      }
+      if (chartRef.value) {
+        chartRef.value.updateSeries(modoMaquina);
+        if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+      }
+    }
+  );
+  socket.on(`variable_${maquinaID}_${props.auto}_actualizada`, async (data) => {
+    let modoMaquina = await bd.obtenerDatosVariables(
+      "8H",
+      "registros",
+      "formatoRangos",
+      [props.activo],
+      maquinaID
+    );
+    let autoManual = await bd.obtenerDatosVariables(
+      "8H",
+      "registros",
+      "formatoRangos",
+      [props.auto, props.manual],
+      maquinaID
+    );
+    for (let index = 0; index < autoManual[1].data.length; index++) {
+      const element = autoManual[1].data[index];
+      modoMaquina[1].data.push(element);
+    }
+    if (chartRef.value) {
+      chartRef.value.updateSeries(modoMaquina);
+      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+    }
+  });
+  socket.on(
+    `variable_${maquinaID}_${props.manual}_actualizada`,
+    async (data) => {
+      let marcha = await bd.obtenerVariablesMarcha(
+        routerStore().clienteID,
+        "8H",
+        [props.activo, props.alarma, props.fc],
+        "registros",
+        maquinaID
+      );
+      let funcMaquina = await bd.obtenerDatosVariables(
+        "8H",
+        "registros",
+        "formatoRangos",
+        [props.alarma, props.fc],
+        maquinaID
+      );
+      for (let index = 0; index < funcMaquina[1].data.length; index++) {
+        let element = funcMaquina[1].data[index];
+        if (element.x == "Alarma") {
+          element.fillColor = "#fdd835";
+        } else {
+          element.fillColor = "#3949ab";
+        }
+        marcha[1].data.push(element);
+      }
+      if (chartRef2.value) {
+        chartRef2.value.updateSeries(marcha);
+        if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+      }
+    }
+  );
+
+  socket.on(
+    `variable_${maquinaID}_${props.alarma}_actualizada`,
+    async (data) => {
+      let marcha = await bd.obtenerVariablesMarcha(
+        routerStore().clienteID,
+        "8H",
+        [props.activo, props.alarma, props.fc],
+        "registros",
+        maquinaID
+      );
+      let funcMaquina = await bd.obtenerDatosVariables(
+        "8H",
+        "registros",
+        "formatoRangos",
+        [props.alarma, props.fc],
+        maquinaID
+      );
+      for (let index = 0; index < funcMaquina[1].data.length; index++) {
+        let element = funcMaquina[1].data[index];
+        if (element.x == "Alarma") {
+          element.fillColor = "#fdd835";
+        } else {
+          element.fillColor = "#3949ab";
+        }
+        marcha[1].data.push(element);
+      }
+      if (chartRef2.value) {
+        chartRef2.value.updateSeries(marcha);
+        if (lastZoom) chartRef2.value.zoomX(lastZoom[0], lastZoom[1]);
+      }
+    }
+  );
+  socket.on(`variable_${maquinaID}_${props.fc}_actualizada`, async (data) => {
+    let marcha = await bd.obtenerVariablesMarcha(
+      routerStore().clienteID,
+      "8H",
+      [props.activo, props.alarma, props.fc],
+      "registros",
+      maquinaID
+    );
+    let funcMaquina = await bd.obtenerDatosVariables(
+      "8H",
+      "registros",
+      "formatoRangos",
+      [props.alarma, props.fc],
+      maquinaID
+    );
+    for (let index = 0; index < funcMaquina[1].data.length; index++) {
+      let element = funcMaquina[1].data[index];
+      if (element.x == "Alarma") {
+        element.fillColor = "#fdd835";
+      } else {
+        element.fillColor = "#3949ab";
+      }
+      marcha[1].data.push(element);
+    }
+    if (chartRef2.value) {
+      chartRef2.value.updateSeries(marcha);
+      if (lastZoom) chartRef2.value.zoomX(lastZoom[0], lastZoom[1]);
+    }
+  });
+
+  socket.on(
+    `variable_${maquinaID}_${props.activo}_actualizada`,
+    async (data) => {
+      let modoMaquina = await bd.obtenerDatosVariables(
+        "8H",
+        "registros",
+        "formatoRangos",
+        [props.activo],
+        maquinaID
+      );
+      let autoManual = await bd.obtenerDatosVariables(
+        "8H",
+        "registros",
+        "formatoRangos",
+        [props.auto, props.manual],
+        maquinaID
+      );
+      for (let index = 0; index < autoManual[1].data.length; index++) {
+        const element = autoManual[1].data[index];
+        modoMaquina[1].data.push(element);
+      }
+      if (chartRef.value) {
+        chartRef.value.updateSeries(modoMaquina);
+        if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+      }
+
+      let marcha = await bd.obtenerVariablesMarcha(
+        routerStore().clienteID,
+        "8H",
+        [props.activo, props.alarma, props.fc],
+        "registros",
+        maquinaID
+      );
+      let funcMaquina = await bd.obtenerDatosVariables(
+        "8H",
+        "registros",
+        "formatoRangos",
+        [props.alarma, props.fc],
+        maquinaID
+      );
+      for (let index = 0; index < funcMaquina[1].data.length; index++) {
+        let element = funcMaquina[1].data[index];
+        if (element.x == "Alarma") {
+          element.fillColor = "#fdd835";
+        } else {
+          element.fillColor = "#3949ab";
+        }
+        marcha[1].data.push(element);
+      }
+      if (chartRef2.value) {
+        chartRef2.value.updateSeries(marcha);
+        if (lastZoom) chartRef2.value.zoomX(lastZoom[0], lastZoom[1]);
+      }
+    }
+  );
   cargado.value = true;
 });
 </script>

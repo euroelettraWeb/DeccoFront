@@ -26,13 +26,6 @@
         </v-list-item>
       </v-list>
     </v-menu>
-    <!-- <template v-if="existeUsuario && esRutaMaquina" #extension>
-      <v-tabs align-with-title>
-        <v-tab @click="vistaOFs"> OF planificadas </v-tab>
-        <v-tab @click="vistaMotivosParo"> Definir motivos de paro </v-tab>
-        <v-tab @click="vistaHistorico"> Historico OF </v-tab>
-      </v-tabs>
-    </template> -->
   </v-app-bar>
 </template>
 
@@ -45,14 +38,6 @@ export default {
 import { userStore, navStore } from "../../stores/index";
 const user = userStore();
 const nav = navStore();
-
-// const esRutaMaquina = () => {
-//   return this.$route.name !== "Login" &&
-//     this.$route.name !== "Maquinas" &&
-//     this.$route.name !== "Home"
-//     ? true
-//     : false;
-// };
 
 const logout = () => user.logout();
 

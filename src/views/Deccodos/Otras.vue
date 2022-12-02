@@ -5,8 +5,13 @@
     </h1>
     <v-row>
       <v-col>
-        <EstadoCepillo />
-        <CajasComun :caja1="45" :caja2="46" :total="47" />
+        <GraficaEstadoCard
+          :variables="[44]"
+          :height="300"
+          title="Estado de las bombas"
+          :tipo="2"
+        />
+        <CajasComun :caja1="45" :caja2="46" :total="47" :tipo="2" />
       </v-col>
     </v-row>
   </v-container>
@@ -22,7 +27,7 @@ import { routerStore } from "../../stores/index";
 import bd from "../../helpers/bd";
 import { onMounted, ref } from "vue";
 import CajasComun from "../../components/cards/comun/CajasComun.vue";
-import EstadoCepillo from "../../components/cards/deccodos/EstadoCepillo.vue";
+import GraficaEstadoCard from "../../components/cards/comun/GraficaEstadoCard.vue";
 
 let nombreLinea = ref("");
 let nombreCliente = ref("");

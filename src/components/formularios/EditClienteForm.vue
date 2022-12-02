@@ -70,11 +70,6 @@
                     <v-icon light> mdi-content-save </v-icon> Guardar
                   </v-btn>
                 </v-col>
-                <!-- <v-col>
-                  <v-btn color="error" class="mr-4" @click="reset">
-                    Limpiar
-                  </v-btn>
-                </v-col> -->
               </v-row>
             </v-container>
           </v-form>

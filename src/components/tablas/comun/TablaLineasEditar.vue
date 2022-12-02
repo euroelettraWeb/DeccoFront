@@ -255,7 +255,6 @@ function save() {
   } else {
     lineas.value.push(editedItem.value);
   }
-  console.log(lineas);
   close();
 }
 

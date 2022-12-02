@@ -8,6 +8,37 @@
           </v-row>
           <v-row>
             <v-col
+              ><v-card-subtitle>Linea</v-card-subtitle>
+              <v-select
+                v-model="select"
+                :items="nombres"
+                label="Linea"
+                item-text="nombre"
+                item-value="id"
+                :hide-selected="true"
+                return-object
+                dense
+                solo
+                @change="changeItem2"
+              />
+            </v-col>
+            <v-col cols="6"
+              ><v-card-subtitle>Sistema</v-card-subtitle>
+              <v-select
+                v-model="select2"
+                :items="nombres2"
+                label="Sistema"
+                item-text="nombre"
+                item-value="id"
+                :hide-selected="true"
+                return-object
+                dense
+                solo
+              ></v-select
+            ></v-col>
+          </v-row>
+          <v-row>
+            <v-col
               ><v-select
                 :items="selectItems"
                 label="Variable"
@@ -63,6 +94,7 @@ import { onMounted, ref, computed, reactive } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
+import { routerStore } from "../../../stores/index";
 const socket = io("http://localhost:3000");
 
 async function changeItem(value) {
@@ -72,6 +104,7 @@ async function changeItem(value) {
       "8H",
       "registros",
       "formatoRangos",
+      select2.value.id,
       value.id
     );
     series2.value = variable.registros;
@@ -81,6 +114,7 @@ async function changeItem(value) {
       "8H",
       "registros",
       "formatoLinea",
+      select2.value.id,
       value.id
     );
     series.value = variable.registros;
@@ -92,6 +126,11 @@ let lineas = ref(true);
 let variables = {};
 let variable = {};
 let selectItems = ref([]);
+let lineaList = ref({});
+let nombres = ref([]);
+let select = ref(null);
+let nombres2 = ref([]);
+let select2 = ref({ id: 0, nombre: "" });
 
 const chartRef = ref(null);
 const chartRef2 = ref(null);
@@ -212,6 +251,7 @@ let chartOptions2 = computed(() => {
 
 onMounted(async () => {
   cargado.value = false;
+  lineaList.value = await bd.obtenerLineas(routerStore().clienteID);
   variables = await bd.obtenerVariables();
   for (let index = 0; index < variables.length; index++) {
     const element = variables[index];
@@ -221,16 +261,19 @@ onMounted(async () => {
       unidadMedida: element.unidadMedida,
     });
   }
-  //   socket.on("variable_46_actualizada", (data) => {
-  //     series.value[0].data.push({
-  //       x: new Date(moment(data.x).toISOString()).getTime(),
-  //       y: data.y,
-  //     });
-  //     if (chartRef.value) {
-  //       chartRef.value.updateSeries(series.value);
-  //       if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-  //     }
-  //   });
+  let lista = [];
+  for (const iterator of lineaList.value) {
+    let sistemas = await bd.obtenerMaquina("linea", iterator.id, 0);
+    lista.push({
+      id: iterator.id,
+      nombre: iterator.nombre,
+      sistemas: sistemas,
+    });
+  }
+  nombres.value = lista;
   cargado.value = true;
 });
+function changeItem2() {
+  nombres2.value = select.value.sistemas;
+}
 </script>

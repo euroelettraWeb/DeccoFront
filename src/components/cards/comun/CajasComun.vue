@@ -135,65 +135,60 @@ const props = defineProps({
   caja1: { type: Number, default: 1 },
   caja2: { type: Number, default: 1 },
   total: { type: Number, default: 1 },
+  tipo: { type: Number, default: 1 },
 });
 onMounted(async () => {
   cargado.value = false;
+  let maquinaID = (
+    await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
+  )[0].id;
 
   cajaV = await bd.obtenerDatosVariables(
     "8H",
     "registros",
     "formatoLinea",
     [props.caja1, props.caja2],
-    routerStore().lineasID
+    maquinaID
   );
   tCajas = await bd.obtenerDatosVariables(
     "8H",
     "registros",
     "formatoLinea",
     [props.total],
-    routerStore().lineasID
+    maquinaID
   );
   cajas.value = cajaV;
   totalCajas.value = tCajas;
-  socket.on(
-    `variable_${routerStore().lineasID}_${props.caja1}_actualizada`,
-    (data) => {
-      cajas.value[0].data.push({
-        x: new Date(moment(data.x).toISOString()).getTime(),
-        y: data.y,
-      });
-      if (chartRef.value) {
-        chartRef.value.updateSeries(cajas.value);
-        if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-      }
+  socket.on(`variable_${maquinaID}_${props.caja1}_actualizada`, (data) => {
+    cajas.value[0].data.push({
+      x: new Date(moment(data.x).toISOString()).getTime(),
+      y: data.y,
+    });
+    if (chartRef.value) {
+      chartRef.value.updateSeries(cajas.value);
+      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
     }
-  );
-  socket.on(
-    `variable_${routerStore().lineasID}_${props.caja2}_actualizada`,
-    (data) => {
-      cajas.value[1].data.push({
-        x: new Date(moment(data.x).toISOString()).getTime(),
-        y: data.y,
-      });
-      if (chartRef.value) {
-        chartRef.value.updateSeries(cajas.value);
-        if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-      }
+  });
+  socket.on(`variable_${maquinaID}_${props.caja2}_actualizada`, (data) => {
+    cajas.value[1].data.push({
+      x: new Date(moment(data.x).toISOString()).getTime(),
+      y: data.y,
+    });
+    if (chartRef.value) {
+      chartRef.value.updateSeries(cajas.value);
+      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
     }
-  );
-  socket.on(
-    `variable_${routerStore().lineasID}_${props.total}_actualizada`,
-    (data) => {
-      totalCajas.value[0].data.push({
-        x: new Date(moment(data.x).toISOString()).getTime(),
-        y: data.y,
-      });
-      if (chartRef2.value) {
-        chartRef2.value.updateSeries(totalCajas.value);
-        if (lastZoom) chartRef2.value.zoomX(lastZoom[0], lastZoom[1]);
-      }
+  });
+  socket.on(`variable_${maquinaID}_${props.total}_actualizada`, (data) => {
+    totalCajas.value[0].data.push({
+      x: new Date(moment(data.x).toISOString()).getTime(),
+      y: data.y,
+    });
+    if (chartRef2.value) {
+      chartRef2.value.updateSeries(totalCajas.value);
+      if (lastZoom) chartRef2.value.zoomX(lastZoom[0], lastZoom[1]);
     }
-  );
+  });
   cargado.value = true;
 });
 </script>

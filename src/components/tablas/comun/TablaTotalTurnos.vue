@@ -88,10 +88,15 @@ let cargado = ref(false);
 const props = defineProps({
   variables: { type: Array, default: new Array() },
   marcha: { type: Array, default: new Array(3) },
+  tipo: { type: Number, default: 1 },
 });
 
 onMounted(async () => {
   cargado.value = false;
+
+  let maquinaID = (
+    await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
+  )[0].id;
 
   let clienteID = routerStore().clienteID;
   for (let index = 0; index < props.variables.length; index++) {
@@ -100,7 +105,7 @@ onMounted(async () => {
       clienteID,
       "24H",
       element,
-      routerStore().lineasID
+      maquinaID
     );
     unidades.value.push({
       id: index,
@@ -129,9 +134,8 @@ onMounted(async () => {
     "24H",
     props.marcha,
     "turnos",
-    routerStore().lineasID
+    maquinaID
   );
-  console.log(horasMarcha);
   consumosM.value.push({
     id: unidades.value.length,
     name: Math.max(0, Math.round(horasMarcha.total[0] / 60)),

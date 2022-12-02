@@ -44,10 +44,16 @@ const obtenerMaquina = async (modo, id, grupoID) =>
     )
   ).data;
 
-const obtenerDatosVariable = async (operacion, modo, filtrado, variableID) =>
+const obtenerDatosVariable = async (
+  operacion,
+  modo,
+  filtrado,
+  maquinaID,
+  variableID
+) =>
   (
     await axios.get(
-      `${process.env.VUE_APP_RUTA_API}/variable/${operacion}/${modo}/${filtrado}/${variableID}`
+      `${process.env.VUE_APP_RUTA_API}/variable/${operacion}/${modo}/${filtrado}/${maquinaID}/${variableID}`
     )
   ).data;
 

@@ -73,14 +73,14 @@ let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-  agua = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 25);
-  totalP1 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 26);
-  totalP2 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 27);
-  totalP3 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 28);
-  totalP4 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 29);
-  totalP5 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 30);
-  tCajas = await bd.obtenerDatosVariable("8H", "registros", "sinfiltro", 18);
-  tKg = await bd.obtenerDatosVariable("8H", "registros", "sinfiltro", 19);
+  agua = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 1, 25);
+  totalP1 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 1, 26);
+  totalP2 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 1, 27);
+  totalP3 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 1, 28);
+  totalP4 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 1, 29);
+  totalP5 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 1, 30);
+  tCajas = await bd.obtenerDatosVariable("8H", "registros", "sinfiltro", 1, 18);
+  tKg = await bd.obtenerDatosVariable("8H", "registros", "sinfiltro", 1, 19);
 
   consumos.value = [
     {

@@ -119,16 +119,21 @@ async function save() {
         .then(() => {});
     }
   } else {
+    let update = [];
     for (let index = 0; index < array.length; index++) {
       const element = array[index];
-      axios
-        .post(`${process.env.VUE_APP_RUTA_API}/productos/actualizar`, {
-          nombre: element,
-          id: productos.value[index].id,
-          activo: productos.value[index].activo,
-        })
-        .then(() => {});
+      update.push({
+        nombre: element,
+        id: tanques.value[index].id,
+        activo: tanques.value[index].activo,
+      });
     }
+    axios.post(
+      `${process.env.VUE_APP_RUTA_API}/productos/actualizar/multiple`,
+      {
+        productos: update,
+      }
+    );
   }
 }
 
@@ -141,6 +146,7 @@ onMounted(async () => {
     producto2.value = t[1].nombre;
     producto3.value = t[2].nombre;
     producto4.value = t[3].nombre;
+    producto5.value = t[4].nombre;
     productos.value = t;
   }
   cargado.value = true;

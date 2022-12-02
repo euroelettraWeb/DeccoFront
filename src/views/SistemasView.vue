@@ -2,7 +2,7 @@
   <v-container fluid class="fill-height">
     <v-row justify="center">
       <v-col v-for="item in nombres" :key="item.id">
-        <CardLineas :linea="item" /><!-- :linea="item.linea" -->
+        <CardLineas :linea="item" />
       </v-col>
     </v-row>
     <v-row>
@@ -59,7 +59,7 @@ onMounted(async () => {
   if (deccoc) deccodocontrol.value = deccoc.activa;
   nombres.value = lineas;
   watch(clienteID, async (val) => {
-    lineas = await bd.obtenerClientes(clienteID.value);
+    lineas = await bd.obtenerLineas(clienteID.value);
 
     for (let index = 0; index < lineas.length; index++) {
       let element = lineas[index];

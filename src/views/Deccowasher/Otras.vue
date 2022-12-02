@@ -5,7 +5,13 @@
     </h1>
     <v-row>
       <v-col>
-        <EstadoBomba /> <CajasComun :caja1="66" :caja2="67" :total="68" />
+        <GraficaEstadoCard
+          :variables="[64, 65]"
+          :height="400"
+          title="Estado de las bombas"
+          :tipo="3"
+        />
+        <CajasComun :caja1="66" :caja2="67" :total="68" :tipo="3" />
       </v-col>
     </v-row>
   </v-container>
@@ -20,8 +26,8 @@ export default {
 import { routerStore } from "../../stores/index";
 import bd from "../../helpers/bd";
 import { onMounted, ref } from "vue";
-import EstadoBomba from "../../components/cards/deccowasher/EstadoBomba.vue";
 import CajasComun from "../../components/cards/comun/CajasComun.vue";
+import GraficaEstadoCard from "../../components/cards/comun/GraficaEstadoCard.vue";
 
 let nombreLinea = ref("");
 let nombreCliente = ref("");
