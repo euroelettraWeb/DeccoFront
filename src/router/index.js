@@ -1,4 +1,3 @@
-import Vue from "vue";
 import { storeToRefs } from "pinia";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
@@ -15,19 +14,10 @@ import DECCODAFPrincipal from "../views/Deccodaf/Principal.vue";
 import DECCODOSPrincipal from "../views/Deccodos/Principal.vue";
 import DECCOWASHERPrincipal from "../views/Deccowasher/Principal.vue";
 import DECCOCONTROLPrincipal from "../views/Deccocontrol/Principal.vue";
-// import DECCODAFTotales from "../views/Deccodaf/Totales.vue";
-// import DECCODAFEstado from "../views/Deccodaf/Estado.vue";
-// import DECCODAFegistros from "../views/Deccodaf/Registros.vue";
 import DECCODAFOtras from "../views/Deccodaf/Otras.vue";
-// import DECCODOSFTotales from "../views/Deccodos/Totales.vue";
-// import DECCODOSEstado from "../views/Deccodos/Estado.vue";
-// import DECCODOSRegistros from "../views/Deccodos/Registros.vue";
 import DECCODOSOtras from "../views/Deccodos/Otras.vue";
-// import DECCOWSTotales from "../views/Deccowasher/Totales.vue";
 import DECCOWSOtras from "../views/Deccowasher/Otras.vue";
-// import DECCOWSEstado from "../views/Deccowasher/Estado.vue";
-// import DECCOWSRegistros from "../views/Deccowasher/Registros.vue";
-import { routerStore, userStore } from "../stores/index";
+import { userStore } from "../stores/index";
 
 function checkLogin(to, from, next) {
   if (to.meta.rutaProtegida) {
@@ -86,13 +76,6 @@ const routes = [
     meta: { title: "DECCO - Cliente", rutaProtegida: true },
     beforeEnter: checkLogin,
   },
-  // {
-  //   path: "/cliente/:id",
-  //   name: "Sistemas",
-  //   component: SistemasView,
-  //   meta: { title: "DECCO - Sistemas", rutaProtegida: true },
-  // beforeEnter: checkLogin,
-  // },
   {
     path: "/cliente/:id/sistemas",
     name: "Sistemas",
@@ -128,27 +111,6 @@ const routes = [
     meta: { title: "DECCO - DECCODAF", rutaProtegida: true },
     beforeEnter: checkLogin,
   },
-  // {
-  //   path: "/cliente/:id/sistemas/:linea/deccodaf/estado",
-  //   name: "DECCODAF - Estado",
-  //   component: DECCODAFEstado,
-  //   meta: { title: "DECCO - DECCODAF", rutaProtegida: true },
-  //   beforeEnter: checkLogin,
-  // },
-  // {
-  //   path: "/cliente/:id/sistemas/:linea/deccodaf/consumo",
-  //   name: "DECCODAF - Consumo",
-  //   component: DECCODAFTotales,
-  //   meta: { title: "DECCO - DECCODAF", rutaProtegida: true },
-  //   beforeEnter: checkLogin,
-  // },
-  // {
-  //   path: "/sistemas/deccodaf/registros",
-  //   name: "DECCODAF - Registros",
-  //   component: DECCODARegistros,
-  //   meta: { title: "DECCO - DECCODAF", rutaProtegida: true },
-  // beforeEnter: checkLogin,
-  // },
   {
     path: "/cliente/:id/sistemas/:linea/deccodaf/otras",
     name: "DECCODAF - Otras",
@@ -163,27 +125,6 @@ const routes = [
     meta: { title: "DECCO - DECCODOS", rutaProtegida: true },
     beforeEnter: checkLogin,
   },
-  // {
-  //   path: "/cliente/:id/sistemas/:linea/deccodos/estado",
-  //   name: "DECCODOS - Estado",
-  //   component: DECCODOSEstado,
-  //   meta: { title: "DECCO - DECCODOS", rutaProtegida: true },
-  //   beforeEnter: checkLogin,
-  // },
-  // {
-  //   path: "/cliente/:id/sistemas/:linea/deccodos/consumo",
-  //   name: "DECCODOS - Consumo",
-  //   component: DECCODOSFTotales,
-  //   meta: { title: "DECCO - DECCODOS", rutaProtegida: true },
-  //   beforeEnter: checkLogin,
-  // },
-  // {
-  //   path: "/sistemas/deccodos/registros",
-  //   name: "DECCODOS -Registros",
-  //   component: DECCODOSRegistros,
-  //   meta: { title: "DECCO - DECCODOS", rutaProtegida: true },
-  // beforeEnter: checkLogin,
-  // },
   {
     path: "/cliente/:id/sistemas/:linea/deccodos/otras",
     name: "DECCODOS - Otras",
@@ -205,27 +146,6 @@ const routes = [
     meta: { title: "DECCO - DECCOWASHER", rutaProtegida: true },
     beforeEnter: checkLogin,
   },
-  // {
-  //   path: "/cliente/:id/sistemas/:linea/deccowasher/estado",
-  //   name: "DECCOWASHER - Estado",
-  //   component: DECCOWSEstado,
-  //   meta: { title: "DECCO - DECCOWASHER", rutaProtegida: true },
-  //   beforeEnter: checkLogin,
-  // },
-  // {
-  //   path: "/cliente/:id/sistemas/:linea/deccowasher/consumo",
-  //   name: "DECCOWASHER - Consumo",
-  //   component: DECCOWSTotales,
-  //   meta: { title: "DECCO - DECCOWASHER", rutaProtegida: true },
-  //   beforeEnter: checkLogin,
-  // },
-  // {
-  //   path: "/sistemas/deccowasher/registros",
-  //   name: "DECCOWASHER - Registros",
-  //   component: DECCOWSRegistros,
-  //   meta: { title: "DECCO - DECCOWASHER", rutaProtegida: true },
-  // beforeEnter: checkLogin,
-  // },
   {
     path: "/cliente/:id/sistemas/deccocontrol",
     name: "DECCOCONTROL",

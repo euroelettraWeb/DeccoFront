@@ -64,20 +64,11 @@ export const routerStore = defineStore("router", {
       historico: "Historico",
       informe: "Informe",
       deccodaf: "DECCODAF",
-      deccodafMarchaParo: "DECCODAF - Estado",
-      deccodafConsumo: "DECCODAF - Consumo",
-      // deccodafRegistros: "/sistemas/deccodaf/registros",
       deccodafOtras: "DECCODAF - Otras",
       deccodos: "DECCODOS",
-      deccodosMarchaParo: "DECCODOS - Estado",
-      deccodosConsumo: "DECCODOS - Consumo",
       deccodosOtras: "DECCODOS - Otras",
-      // deccodosRegistros: "/sistemas/deccodos/registros",
       deccowasher: "DECCOWASHER",
       deccowasherOtras: "DECCOWASHER - Otras",
-      // deccowasherMarchaParo: "DECCOWASHER - Estado",
-      // deccowasherConsumo: "DECCOWASHER - Consumo",
-      // deccowasherRegistros: "/deccowasher/registros",
       deccocontrol: "DECCOCONTROL",
     },
     clienteID: ref(null),
@@ -237,37 +228,6 @@ export const routerStore = defineStore("router", {
               }
             });
           break;
-          // case "deccodaf:MarchaParo":
-          //   router
-          //     .push({
-          //       name: this.routes.deccodafMarchaParo,
-          //       params: { id, linea },
-          //     })
-          //     .catch((failure) => {
-          //       if (
-          //         isNavigationFailure(failure, NavigationFailureType.duplicated)
-          //       ) {
-          //       }
-          //     });
-          //   break;
-          // case "deccodaf:Consumo":
-          //   router
-          //     .push({ name: this.routes.deccodafConsumo, params: { id, linea } })
-          //     .catch((failure) => {
-          //       if (
-          //         isNavigationFailure(failure, NavigationFailureType.duplicated)
-          //       ) {
-          //       }
-          //     });
-          //   break;
-          // case "deccodaf:Registros":
-          //   router.push(this.routes.deccodafRegistros).catch((failure) => {
-          //     if (
-          //       isNavigationFailure(failure, NavigationFailureType.duplicated)
-          //     ) {
-          //     }
-          //   });
-          break;
         case "deccodaf:Otras":
           router
             .push({
@@ -291,37 +251,6 @@ export const routerStore = defineStore("router", {
               }
             });
           break;
-        case "deccodos:MarchaParo":
-          router
-            .push({
-              name: this.routes.deccodosMarchaParo,
-              params: { id, linea },
-            })
-            .catch((failure) => {
-              if (
-                isNavigationFailure(failure, NavigationFailureType.duplicated)
-              ) {
-              }
-            });
-          break;
-        case "deccodos:Consumo":
-          router
-            .push({ name: this.routes.deccodosConsumo, params: { id, linea } })
-            .catch((failure) => {
-              if (
-                isNavigationFailure(failure, NavigationFailureType.duplicated)
-              ) {
-              }
-            });
-          break;
-        // case "deccodos:Registros":
-        //   router.push(this.routes.deccodosRegistros).catch((failure) => {
-        //     if (
-        //       isNavigationFailure(failure, NavigationFailureType.duplicated)
-        //     ) {
-        //     }
-        //   });
-        //   break;
         case "deccodos:Otras":
           router
             .push({
@@ -358,40 +287,6 @@ export const routerStore = defineStore("router", {
               }
             });
           break;
-        // case "deccowasher:MarchaParo":
-        //   router
-        //     .push({
-        //       name: this.routes.deccowasherMarchaParo,
-        //       params: { id, linea },
-        //     })
-        //     .catch((failure) => {
-        //       if (
-        //         isNavigationFailure(failure, NavigationFailureType.duplicated)
-        //       ) {
-        //       }
-        //     });
-        //   break;
-        // case "deccowasher:Consumo":
-        //   router
-        //     .push({
-        //       name: this.routes.deccowasherConsumo,
-        //       params: { id, linea },
-        //     })
-        //     .catch((failure) => {
-        //       if (
-        //         isNavigationFailure(failure, NavigationFailureType.duplicated)
-        //       ) {
-        //       }
-        //     });
-        //   break;
-        // case "deccowasher:Registros":
-        //   router.push(this.routes.deccowasherRegistros).catch((failure) => {
-        //     if (
-        //       isNavigationFailure(failure, NavigationFailureType.duplicated)
-        //     ) {
-        //     }
-        //   });
-        //   break;
         case "deccocontrol:Principal":
           router
             .push({ name: this.routes.deccocontrol, params: { id, linea } })
