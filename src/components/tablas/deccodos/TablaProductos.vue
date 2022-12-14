@@ -73,7 +73,7 @@
 </template>
 <script>
 export default {
-  name: "TablaTurnos",
+  name: "TablaProductos",
 };
 </script>
 <script setup>

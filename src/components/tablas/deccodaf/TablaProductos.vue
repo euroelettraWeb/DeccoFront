@@ -78,12 +78,12 @@
 </template>
 <script>
 export default {
-  name: "TablaTurnos",
+  name: "TablaProductos",
 };
 </script>
 <script setup>
 import bd from "../../../helpers/bd";
-import { computed, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { routerStore } from "../../../stores";
 
 let cargado = ref(false);

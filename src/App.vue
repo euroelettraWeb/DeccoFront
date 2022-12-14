@@ -3,12 +3,6 @@
 </template>
 
 <script>
-import { io } from "socket.io-client";
-import axios from "axios";
-import moment from "moment";
-import MainView from "./views/MainView.vue";
-import { ref, provide, watch, onMounted } from "vue";
-import { routerStore } from "./stores";
 export default {
   name: "App",
   metaInfo: {
@@ -17,75 +11,7 @@ export default {
 };
 </script>
 <script setup>
-let ahora = ref(null);
-let socket = ref(null);
-// const router = routerStore();
-
-// let usuarioValidado = ref(null);
-// let usuarioConectado = ref(null);
-
-// const registrarEvento = async (evento) => {
-//   await axios.post(`${process.env.VUE_APP_RUTA_API}/eventos/crear/`, evento);
-// };
-
-// // let establecerUsuario = () => {
-// //   if (usuarioValidado.value) {
-// //     window.localStorage.setItem("usuarioValidado", usuarioValidado.value);
-// //     socket.value = io(process.env.VUE_APP_RUTA_API, { forceNew: true });
-// //     redirigirTrasExcesoDeConexiones(socket, router, usuarioConectado);
-// //     logoutClientesMismaIPLocal(socket, usuarioValidado);
-// //     usuarioConectado.value = true;
-// //     router.homeRoute();
-// //   } else {
-// //     window.localStorage.removeItem("usuarioValidado");
-// //     socket.value.emit("logoutCliente");
-// //     usuarioConectado.value = false;
-// //     socket.value = null;
-// //     router.login();
-// //   }
-// // };
-
-// let establecerAhora = () => {
-//   let fecha = new Date();
-//   let horarioActual = new Date(
-//     fecha.getTime() - fecha.getTimezoneOffset() * 60000
-//   );
-//   ahora.value = moment(horarioActual);
-// };
-
-// // watch(usuarioValidado, establecerUsuario);
-
-// // if (window.localStorage.getItem("usuarioValidado")) {
-// //   usuarioValidado.value = window.localStorage.getItem("usuarioValidado");
-// // }
-
-// // onMounted(async () => {
-// //   setInterval(establecerAhora, 1000);
-// // });
-// provide("ahora", ahora);
-// provide("socket", socket);
-
-// provide("usuarioValidado", usuarioValidado);
-// provide("usuarioConectado", usuarioConectado);
-// provide("registrarEvento", registrarEvento);
-// function redirigirTrasExcesoDeConexiones(socket, router, usuarioConectado) {
-//   if (socket.value) {
-//     socket.value.on("desconexionServidor", () => {
-//       router.error();
-//       usuarioConectado.value = false;
-//       socket.value.disconnect(true);
-//       socket.value = null;
-//     });
-//   }
-// }
-
-// function logoutClientesMismaIPLocal(socket, usuarioValidado) {
-//   if (socket.value) {
-//     socket.value.on("logoutServidor", () => {
-//       usuarioValidado.value = null;
-//     });
-//   }
-// }
+import MainView from "./views/MainView.vue";
 </script>
 
 <style>

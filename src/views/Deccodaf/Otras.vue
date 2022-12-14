@@ -24,7 +24,7 @@
 
 <script>
 export default {
-  name: "DECCOWASHERPrincipal",
+  name: "DECCODAFOtras",
 };
 </script>
 <script setup>

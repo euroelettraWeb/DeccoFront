@@ -113,7 +113,7 @@
           </v-list-item-icon>
           <v-list-item-title>Historico</v-list-item-title>
         </v-list-item>
-        <v-list-item
+        <!-- <v-list-item
           v-if="usuarioLogeado && clienteActivo"
           link
           @click="router.menu('informe', router.clienteID)"
@@ -122,7 +122,7 @@
             <v-icon>mdi-table</v-icon>
           </v-list-item-icon>
           <v-list-item-title>Informe</v-list-item-title>
-        </v-list-item>
+        </v-list-item> -->
         <v-list-item
           v-if="usuarioLogeado && clienteActivo"
           link

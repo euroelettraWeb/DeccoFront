@@ -19,7 +19,7 @@
 
 <script>
 export default {
-  name: "DECCOWASHERPrincipal",
+  name: "DECCOWASHEROtras",
 };
 </script>
 <script setup>

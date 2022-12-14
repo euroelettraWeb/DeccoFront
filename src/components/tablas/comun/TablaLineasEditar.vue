@@ -128,7 +128,7 @@
 
 <script>
 export default {
-  name: "TablaLineas",
+  name: "TablaLineasEditar",
 };
 </script>
 <script setup>

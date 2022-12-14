@@ -239,7 +239,7 @@ export default {
 <script setup>
 import axios from "axios";
 import bd from "../../../helpers/bd";
-import { computed, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { routerStore } from "../../../stores";
 
 let cargado = ref(false);
