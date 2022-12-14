@@ -1,14 +1,14 @@
 import Vue from "vue";
 import App from "./App.vue";
 
-import { Chart, registerables } from "chart.js";
+// import { Chart, registerables } from "chart.js";
 
-import "chartjs-adapter-moment";
-import zoomPlugin from "chartjs-plugin-zoom";
-import annotationPlugin from "chartjs-plugin-annotation";
-import streamingPlugin from "chartjs-plugin-streaming";
+// import "chartjs-adapter-moment";
+// import zoomPlugin from "chartjs-plugin-zoom";
+// import annotationPlugin from "chartjs-plugin-annotation";
+// import streamingPlugin from "chartjs-plugin-streaming";
 import { createPinia, PiniaVuePlugin } from "pinia";
-Chart.register(...registerables, zoomPlugin, annotationPlugin, streamingPlugin);
+// Chart.register(...registerables, zoomPlugin, annotationPlugin, streamingPlugin);
 Vue.use(PiniaVuePlugin);
 
 const pinia = createPinia();
