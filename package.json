@@ -28,7 +28,7 @@
     "vue": "^2.7.14",
     "vue-apexcharts": "^1.6.2",
     "vue-chartjs": "^4.1.1",
-    "vue-router": "^3.2.0",
+    "vue-router": "^3.6.5",
     "vue-time-date-range-picker": "^1.6.0",
     "vuetify": "^2.6.9",
     "xlsx": "^0.17.5"
