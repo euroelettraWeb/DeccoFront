@@ -75,25 +75,23 @@ let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-  ta2D = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 49);
-  ta3D = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 50);
-  totalP1 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 51);
-  totalP2 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 52);
-  totalP3 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 53);
-  totalP4 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 54);
-  totalP5 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 55);
-  cera = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 56);
 
-  consumos.value = [
-    { id: 0, name: ta2D.registros[0].y },
-    { id: 1, name: ta3D.registros[0].y },
-    { id: 2, name: totalP1.registros[0].y },
-    { id: 3, name: totalP2.registros[0].y },
-    { id: 4, name: totalP3.registros[0].y },
-    { id: 5, name: totalP4.registros[0].y },
-    { id: 6, name: totalP5.registros[0].y },
-    { id: 7, name: cera.registros[0].y },
-  ];
+  let ultimos = await bd.obtenerDatosVariableGeneral(
+    "8H",
+    "ultimo",
+    "individual",
+    "sinfiltro",
+    [49, 50, 51, 52, 53, 54, 55, 56],
+    maquina[0].id,
+    routerStore().clienteID
+  );
+  for (let index = 0; index < ultimos.length; index++) {
+    const ultimo = ultimos[index];
+    consumos.value.push({
+      id: index,
+      name: ultimo.registros[0].y,
+    });
+  }
   cargado.value = true;
 });
 </script>

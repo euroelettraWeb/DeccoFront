@@ -65,15 +65,24 @@ let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-  agua = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 70);
-  tDes = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 71);
-  tJabon = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 72);
+  let maquina = await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, 1);
 
-  consumos.value = [
-    { id: 0, name: agua.registros[0].y },
-    { id: 1, name: tDes.registros[0].y },
-    { id: 2, name: tJabon.registros[0].y },
-  ];
+  let ultimos = await bd.obtenerDatosVariableGeneral(
+    "8H",
+    "ultimo",
+    "individual",
+    "sinfiltro",
+    [70, 71, 72],
+    maquina[0].id,
+    routerStore().clienteID
+  );
+  for (let index = 0; index < ultimos.length; index++) {
+    const ultimo = ultimos[index];
+    consumos.value.push({
+      id: index,
+      name: ultimo.registros[0].y,
+    });
+  }
   cargado.value = true;
 });
 </script>

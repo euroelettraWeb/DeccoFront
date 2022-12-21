@@ -21,45 +21,73 @@
             /></v-col>
           </v-row>
           <v-row>
-            <v-col v-if="cargado">
-              <v-simple-table dense>
-                <template #default>
-                  <thead>
-                    <tr>
-                      <th class="text-left"></th>
-                      <th
-                        v-for="item in consumos"
-                        :key="item.id"
-                        class="text-left"
-                      >
-                        {{ item.nombre }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Total</td>
-                      <td v-for="item in consumos" :key="item.id">
-                        {{ item.total }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-simple-table>
-              <ApexChart
-                ref="chartRef"
-                type="rangeBar"
-                height="300"
-                :options="rangeOptions"
-                :series="series"
-              />
-              <ApexChart
-                ref="chartRef2"
-                type="rangeBar"
-                height="300"
-                :options="rangeOptions"
-                :series="series2"
-              />
+            <v-col>
+              <v-col v-if="cargado7">
+                <v-simple-table dense>
+                  <template #default>
+                    <thead>
+                      <tr>
+                        <th class="text-left"></th>
+                        <th
+                          v-for="item in consumos"
+                          :key="item.id"
+                          class="text-left"
+                        >
+                          {{ item.nombre }}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Total</td>
+                        <td v-for="item in consumos" :key="item.id">
+                          {{ item.total }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-simple-table>
+              </v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+              <v-col v-if="cargado1">
+                <ApexChart
+                  ref="chartRef"
+                  type="rangeBar"
+                  height="300"
+                  :options="rangeOptions"
+                  :series="series"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+              <v-col v-if="cargado2">
+                <ApexChart
+                  ref="chartRef2"
+                  type="rangeBar"
+                  height="300"
+                  :options="rangeOptions"
+                  :series="series2"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
               <!-- <ApexChart
                   ref="chartRef3"
                   type="rangeBar"
@@ -67,42 +95,70 @@
                   :options="rangeOptions"
                   :series="series3"
                 /> -->
-              <ApexChart
-                ref="chartRef4"
-                type="line"
-                height="300"
-                :options="chartOptions"
-                :series="seriesL"
-              />
-              <ApexChart
-                ref="chartRef5"
-                type="line"
-                height="300"
-                :options="chartOptions"
-                :series="seriesL2"
-              />
-              <ApexChart
-                ref="chartRef6"
-                type="line"
-                height="300"
-                :options="chartOptions"
-                :series="seriesL3"
-              />
-              <ApexChart
-                ref="chartRef7"
-                type="line"
-                height="300"
-                :options="chartOptions"
-                :series="seriesL4"
-              />
-            </v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
+              <v-col v-if="cargado3">
+                <ApexChart
+                  ref="chartRef4"
+                  type="line"
+                  height="300"
+                  :options="chartOptions"
+                  :series="seriesL"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+              <v-col v-if="cargado4">
+                <ApexChart
+                  ref="chartRef5"
+                  type="line"
+                  height="300"
+                  :options="chartOptions"
+                  :series="seriesL2"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+              <v-col v-if="cargado5">
+                <ApexChart
+                  ref="chartRef6"
+                  type="line"
+                  height="300"
+                  :options="chartOptions"
+                  :series="seriesL3"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+              <v-col v-if="cargado6">
+                <ApexChart
+                  ref="chartRef7"
+                  type="line"
+                  height="300"
+                  :options="chartOptions"
+                  :series="seriesL4"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
             </v-col>
           </v-row>
         </v-card>
@@ -116,10 +172,9 @@ export default {
 </script>
 <script setup>
 import bd from "../../../helpers/bd";
-import { onMounted, ref, computed, reactive } from "vue";
+import { onMounted, ref, computed, onUnmounted } from "vue";
 import { routerStore } from "../../../stores/index";
 import es from "apexcharts/dist/locales/es.json";
-import io from "socket.io-client";
 import moment from "moment";
 import DatePicker from "vue-time-date-range-picker/dist/vdprDatePicker";
 
@@ -127,8 +182,6 @@ const props = defineProps({
   linea: { type: Number, default: 1 },
   maquina: { type: Number, default: 1 },
 });
-
-const socket = io("http://localhost:3000");
 
 function onReset() {
   inicio.value = "";
@@ -147,94 +200,72 @@ async function dateApplied(date1, date2) {
   let cporu = {};
   let cajas = {};
   let kilos = {};
+  series.value = [];
+  series2.value = [];
+  seriesL.value = [];
+  seriesL2.value = [];
+  seriesL3.value = [];
+  seriesL4.value = [];
 
   cargado.value = false;
-  estado = await bd.obtenerDatosHistoricoVariable(
+  cargado1.value = false;
+  cargado2.value = false;
+  cargado3.value = false;
+  cargado4.value = false;
+  cargado5.value = false;
+  cargado6.value = false;
+  cargado7.value = false;
+  estado = await bd.obtenerDatosVariableGeneral(
     "historico",
     "registros",
+    "individual",
     "formatoRangos",
     [1],
+    props.maquina,
+    routerStore().clienteID,
     inicio.value,
-    fin.value,
-    props.maquina
+    fin.value
   );
-  let autoManual = await bd.obtenerDatosHistoricoVariable(
+
+  let autoManual = await bd.obtenerDatosVariableGeneral(
     "historico",
     "registros",
+    "individual",
     "formatoRangos",
     [13, 15],
+    props.maquina,
+    routerStore().clienteID,
     inicio.value,
-    fin.value,
-    props.maquina
+    fin.value
   );
   for (let index = 0; index < autoManual[1].data.length; index++) {
     const element = autoManual[1].data[index];
     estado[1].data.push(element);
   }
-  marcha = await bd.obtenerVariablesMarcha(
-    routerStore().clienteID,
+  series.value = estado;
+  cargado1.value = true;
+  marcha = await bd.obtenerDatosVariableGeneral(
     "historico",
-    [1, 12, 14],
     "registros",
+    "multiple",
+    "marchaFormatoRangos",
+    [1, 12, 14],
     props.maquina,
+    routerStore().clienteID,
     inicio.value,
     fin.value
   );
-  funcMaquina = await bd.obtenerDatosHistoricoVariable(
+  funcMaquina = await bd.obtenerDatosVariableGeneral(
     "historico",
     "registros",
+    "individual",
     "formatoRangos",
     [12, 14],
+    props.maquina,
+    routerStore().clienteID,
     inicio.value,
-    fin.value,
-    props.maquina
+    fin.value
   );
-  dosis = await bd.obtenerDatosHistoricoVariable(
-    "historico",
-    "registros",
-    "formatoLinea",
-    [7, 8, 9, 10, 11],
-    inicio.value,
-    fin.value,
-    props.maquina
-  );
-  kilos = await bd.obtenerDatosHistoricoVariable(
-    "historico",
-    "registros",
-    "formatoLinea",
-    [19],
-    inicio.value,
-    fin.value,
-    props.maquina
-  );
-  cajas = await bd.obtenerDatosHistoricoVariable(
-    "historico",
-    "registros",
-    "formatoLinea",
-    [18],
-    inicio.value,
-    fin.value,
-    props.maquina
-  );
-  cporu = await bd.obtenerDatosHistoricoVariable(
-    "historico",
-    "registros",
-    "formatoLinea",
-    [16, 17],
-    inicio.value,
-    fin.value,
-    props.maquina
-  );
-  totales = await bd.obtenerDatosHistoricoVariable(
-    "historico",
-    "totales",
-    "sinfiltro",
-    [25, 26, 27, 28, 29, 30],
-    inicio.value,
-    fin.value,
-    props.maquina
-  );
-  series.value = estado;
   for (let index = 0; index < funcMaquina[1].data.length; index++) {
     let element = funcMaquina[1].data[index];
     if (element.x == "Alarma") {
@@ -245,10 +276,72 @@ async function dateApplied(date1, date2) {
     marcha[1].data.push(element);
   }
   series2.value = marcha;
+  cargado2.value = true;
+  dosis = await bd.obtenerDatosVariableGeneral(
+    "historico",
+    "registros",
+    "individual",
+    "formatoLinea",
+    [7, 8, 9, 10, 11],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
+  );
   seriesL.value = dosis;
-  seriesL2.value = cporu;
-  seriesL3.value = cajas;
+  cargado3.value = true;
+
+  kilos = await bd.obtenerDatosVariableGeneral(
+    "historico",
+    "registros",
+    "individual",
+    "formatoLinea",
+    [19],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
+  );
   seriesL4.value = kilos;
+  cargado4.value = true;
+
+  cajas = await bd.obtenerDatosVariableGeneral(
+    "historico",
+    "registros",
+    "individual",
+    "formatoLinea",
+    [18],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
+  );
+  seriesL3.value = cajas;
+  cargado5.value = true;
+  cporu = await bd.obtenerDatosVariableGeneral(
+    "historico",
+    "registros",
+    "individual",
+    "formatoLinea",
+    [16, 17],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
+  );
+  seriesL2.value = cporu;
+  cargado6.value = true;
+  totales = await bd.obtenerDatosVariableGeneral(
+    "historico",
+    "totales",
+    "individual",
+    "sinfiltro",
+    [25, 26, 27, 28, 29, 30],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
+  );
   let total = [];
   for (let index = 0; index < totales.length; index++) {
     const element = totales[index];
@@ -259,10 +352,18 @@ async function dateApplied(date1, date2) {
     });
   }
   consumos.value = total;
+  cargado7.value = true;
   cargado.value = true;
 }
 
 let cargado = ref(false);
+let cargado1 = ref(false);
+let cargado2 = ref(false);
+let cargado3 = ref(false);
+let cargado4 = ref(false);
+let cargado5 = ref(false);
+let cargado6 = ref(false);
+let cargado7 = ref(false);
 
 const chartRef = ref(null);
 const chartRef2 = ref(null);
@@ -303,7 +404,7 @@ let chartOptions = computed(() => {
     xaxis: {
       type: "datetime",
       datetimeUTC: false,
-      tickAmount: 15,
+      tickAmount: 25,
       labels: {
         minHeight: 125,
         rotate: -70,
@@ -356,7 +457,7 @@ let rangeOptions = computed(() => {
     xaxis: {
       type: "datetime",
       datetimeUTC: false,
-      tickAmount: 15,
+      tickAmount: 25,
       labels: {
         minHeight: 125,
         rotate: -70,
@@ -385,90 +486,50 @@ let cajas = {};
 let kilos = {};
 onMounted(async () => {
   cargado.value = false;
-  estado = await bd.obtenerDatosHistoricoVariable(
+  cargado1.value = false;
+  estado = await bd.obtenerDatosVariableGeneral(
     "8H",
     "registros",
+    "individual",
     "formatoRangos",
     [1],
-    null,
-    null,
-    props.maquina
+    props.maquina,
+    routerStore().clienteID
   );
-  let autoManual = await bd.obtenerDatosHistoricoVariable(
+  let autoManual = await bd.obtenerDatosVariableGeneral(
     "8H",
     "registros",
+    "individual",
     "formatoRangos",
     [13, 15],
-    null,
-    null,
-    props.maquina
+    props.maquina,
+    routerStore().clienteID
   );
   for (let index = 0; index < autoManual[1].data.length; index++) {
     const element = autoManual[1].data[index];
     estado[1].data.push(element);
   }
-  marcha = await bd.obtenerVariablesMarcha(
-    routerStore().clienteID,
+  series.value = estado;
+  cargado1.value = true;
+  cargado2.value = false;
+  marcha = await bd.obtenerDatosVariableGeneral(
     "8H",
+    "registros",
+    "multiple",
+    "marchaFormatoRangos",
     [1, 12, 14],
-    "registros",
-    props.maquina
+    props.maquina,
+    routerStore().clienteID
   );
-  funcMaquina = await bd.obtenerDatosHistoricoVariable(
+  funcMaquina = await bd.obtenerDatosVariableGeneral(
     "8H",
     "registros",
+    "individual",
     "formatoRangos",
     [12, 14],
-    null,
-    null,
-    props.maquina
+    props.maquina,
+    routerStore().clienteID
   );
-  dosis = await bd.obtenerDatosHistoricoVariable(
-    "8H",
-    "registros",
-    "formatoLinea",
-    [7, 8, 9, 10, 11],
-    null,
-    null,
-    props.maquina
-  );
-  kilos = await bd.obtenerDatosHistoricoVariable(
-    "8H",
-    "registros",
-    "formatoLinea",
-    [19],
-    null,
-    null,
-    props.maquina
-  );
-  cajas = await bd.obtenerDatosHistoricoVariable(
-    "8H",
-    "registros",
-    "formatoLinea",
-    [18],
-    null,
-    null,
-    props.maquina
-  );
-  cporu = await bd.obtenerDatosHistoricoVariable(
-    "8H",
-    "registros",
-    "formatoLinea",
-    [16, 17],
-    null,
-    null,
-    props.maquina
-  );
-  totales = await bd.obtenerDatosHistoricoVariable(
-    "8H",
-    "totales",
-    "sinfiltro",
-    [25, 26, 27, 28, 29, 30],
-    null,
-    null,
-    props.maquina
-  );
-  series.value = estado;
   for (let index = 0; index < funcMaquina[1].data.length; index++) {
     let element = funcMaquina[1].data[index];
     if (element.x == "Alarma") {
@@ -479,11 +540,65 @@ onMounted(async () => {
     marcha[1].data.push(element);
   }
   series2.value = marcha;
+  cargado2.value = true;
+  cargado3.value = false;
+  dosis = await bd.obtenerDatosVariableGeneral(
+    "8H",
+    "registros",
+    "individual",
+    "formatoLinea",
+    [7, 8, 9, 10, 11],
+    props.maquina,
+    routerStore().clienteID
+  );
   seriesL.value = dosis;
-  seriesL2.value = cporu;
-  seriesL3.value = cajas;
+  cargado3.value = true;
+  cargado4.value = false;
+  kilos = await bd.obtenerDatosVariableGeneral(
+    "8H",
+    "registros",
+    "individual",
+    "formatoLinea",
+    [19],
+    props.maquina,
+    routerStore().clienteID
+  );
   seriesL4.value = kilos;
-
+  cargado4.value = true;
+  cargado5.value = false;
+  cajas = await bd.obtenerDatosVariableGeneral(
+    "8H",
+    "registros",
+    "individual",
+    "formatoLinea",
+    [18],
+    props.maquina,
+    routerStore().clienteID
+  );
+  seriesL3.value = cajas;
+  cargado5.value = true;
+  cargado6.value = false;
+  cporu = await bd.obtenerDatosVariableGeneral(
+    "8H",
+    "registros",
+    "individual",
+    "formatoLinea",
+    [16, 17],
+    props.maquina,
+    routerStore().clienteID
+  );
+  seriesL2.value = cporu;
+  cargado6.value = true;
+  cargado7.value = false;
+  totales = await bd.obtenerDatosVariableGeneral(
+    "8H",
+    "totales",
+    "individual",
+    "sinfiltro",
+    [25, 26, 27, 28, 29, 30],
+    props.maquina,
+    routerStore().clienteID
+  );
   for (let index = 0; index < totales.length; index++) {
     const element = totales[index];
     consumos.value.push({
@@ -492,7 +607,17 @@ onMounted(async () => {
       total: Math.max(0, element.registros[0].total),
     });
   }
+  cargado7.value = true;
+
   cargado.value = true;
+});
+onUnmounted(() => {
+  series.value = [];
+  series2.value = [];
+  seriesL.value = [];
+  seriesL2.value = [];
+  seriesL3.value = [];
+  seriesL4.value = [];
 });
 </script>
 <style>

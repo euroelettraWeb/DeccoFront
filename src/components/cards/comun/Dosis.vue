@@ -88,7 +88,7 @@ let chartOptions = computed(() => {
     xaxis: {
       type: "datetime",
       // datetimeUTC: false,
-      tickAmount: 15,
+      tickAmount: 25,
       labels: {
         minHeight: 125,
         rotate: -70,
@@ -116,15 +116,15 @@ onMounted(async () => {
   let maquinaID = (
     await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
-
-  dosis = await bd.obtenerDatosVariables(
+  dosis = await bd.obtenerDatosVariableGeneral(
     "8H",
     "registros",
+    "individual",
     "formatoLinea",
     props.variables,
-    maquinaID
+    maquinaID,
+    routerStore().clienteID
   );
-
   registrosT.value = dosis;
   for (let index = 0; index < props.variables.length; index++) {
     const element = props.variables[index];

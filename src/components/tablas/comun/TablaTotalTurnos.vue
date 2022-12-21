@@ -97,43 +97,47 @@ onMounted(async () => {
   let maquinaID = (
     await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
-
-  for (let index = 0; index < props.variables.length; index++) {
-    const element = props.variables[index];
-    let i = await bd.obtenerDatosVariableTotal(
-      routerStore().clienteID,
-      "24H",
-      element,
-      maquinaID
-    );
+  let totales = await bd.obtenerDatosVariableGeneral(
+    "24H-Turno",
+    "turnosTotales",
+    "multipleConsulta",
+    "sinfiltro",
+    props.variables,
+    maquinaID,
+    routerStore().clienteID
+  );
+  for (let index = 0; index < totales.length; index++) {
+    const element = totales[index];
     unidades.value.push({
       id: index,
-      nombre: i.nombreCorto + " (" + i.unidadMedida + ")",
+      nombre: element.nombreCorto + " (" + element.unidadMedida + ")",
     });
     consumosM.value.push({
       id: index,
-      name: Math.max(0, i.registros[0][0].total),
+      name: Math.max(0, element.registros[0][0].total),
     });
     consumosT.value.push({
       id: index,
-      name: Math.max(0, i.registros[1][0].total),
+      name: Math.max(0, element.registros[1][0].total),
     });
     consumosN.value.push({
       id: index,
-      name: Math.max(0, i.registros[2][0].total),
+      name: Math.max(0, element.registros[2][0].total),
     });
     consumos.value.push({
       id: index,
-      name: Math.max(0, i.registros[3][0].total),
+      name: Math.max(0, element.registros[3][0].total),
     });
   }
   unidades.value.push({ id: unidades.value.length, nombre: "Marcha ( min )" });
-  let horasMarcha = await bd.obtenerVariablesMarcha(
-    routerStore().clienteID,
-    "24H",
+  let horasMarcha = await bd.obtenerDatosVariableGeneral(
+    "24H-Turno",
+    "registros",
+    "multiple",
+    "turnosMarcha",
     props.marcha,
-    "turnos",
-    maquinaID
+    maquinaID,
+    routerStore().clienteID
   );
   consumosM.value.push({
     id: unidades.value.length,

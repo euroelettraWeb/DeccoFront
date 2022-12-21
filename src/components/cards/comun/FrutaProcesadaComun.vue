@@ -96,7 +96,7 @@ let chartOptions = computed(() => {
       datetimeUTC: false,
       min: new Date(moment().subtract(8, "hours")).getTime(),
       max: moment(),
-      tickAmount: 15,
+      tickAmount: 25,
       labels: {
         minHeight: 125,
         rotate: -70,
@@ -121,12 +121,14 @@ onMounted(async () => {
     await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
 
-  tKg = await bd.obtenerDatosVariables(
+  tKg = await bd.obtenerDatosVariableGeneral(
     "8H",
     "registros",
+    "individual",
     "formatoLinea",
     [props.fruta],
-    maquinaID
+    maquinaID,
+    routerStore().clienteID
   );
   kilos.value = tKg;
   socket.on(`variable_${maquinaID}_${props.fruta}_actualizada`, (data) => {

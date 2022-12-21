@@ -52,7 +52,7 @@ const chartRef = ref(null);
 var lastZoom = null;
 let cargado = ref(false);
 let series = ref([]);
-let bombas = [];
+let formatoVariables = [];
 let chartOptions = computed(() => {
   return {
     chart: {
@@ -149,27 +149,31 @@ onMounted(async () => {
     await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
 
-  bombas = await bd.obtenerDatosVariables(
+  formatoVariables = await bd.obtenerDatosVariableGeneral(
     "8H",
     "registros",
+    "individual",
     "formatoRangos",
     props.variables,
-    maquinaID
+    maquinaID,
+    routerStore().clienteID
   );
-  series.value = bombas;
+  series.value = formatoVariables;
   for (let index = 0; index < props.variables.length; index++) {
     socket.on(
       `variable_${maquinaID}_${props.variables[index]}_actualizada`,
       async (data) => {
-        let bomba = await bd.obtenerDatosVariables(
+        let formatoVariable = await bd.obtenerDatosVariableGeneral(
           "8H",
           "registros",
+          "individual",
           "formatoRangos",
           props.variables,
-          maquinaID
+          maquinaID,
+          routerStore().clienteID
         );
         if (chartRef.value) {
-          chartRef.value.updateSeries(bomba);
+          chartRef.value.updateSeries(formatoVariable);
           if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
         }
       }

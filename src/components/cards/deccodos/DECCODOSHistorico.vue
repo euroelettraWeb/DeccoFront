@@ -59,13 +59,13 @@
                 :options="rangeOptions"
                 :series="series2"
               />
-              <ApexChart
+              <!-- <ApexChart
                 ref="chartRef3"
                 type="rangeBar"
                 height="200"
                 :options="rangeOptions"
                 :series="series3"
-              />
+              /> -->
               <ApexChart
                 ref="chartRef4"
                 type="line"
@@ -143,104 +143,72 @@ async function dateApplied(date1, date2) {
   let cporu = {};
   let cajas = {};
   let kilos = {};
+  series.value = [];
+  series2.value = [];
+  seriesL.value = [];
+  seriesL2.value = [];
+  seriesL3.value = [];
+  seriesL4.value = [];
 
   cargado.value = false;
-  estado = await bd.obtenerDatosHistoricoVariable(
+  cargado1.value = false;
+  cargado2.value = false;
+  cargado3.value = false;
+  cargado4.value = false;
+  cargado5.value = false;
+  cargado6.value = false;
+  cargado7.value = false;
+  cargado.value = false;
+  estado = await bd.obtenerDatosVariableGeneral(
     "historico",
     "registros",
+    "individual",
     "formatoRangos",
     [31],
+    props.maquina,
+    routerStore().clienteID,
     inicio.value,
-    fin.value,
-    props.maquina
+    fin.value
   );
-  let autoManual = await bd.obtenerDatosHistoricoVariable(
+  let autoManual = await bd.obtenerDatosVariableGeneral(
     "historico",
     "registros",
+    "individual",
     "formatoRangos",
     [41, 43],
+    props.maquina,
+    routerStore().clienteID,
     inicio.value,
-    fin.value,
-    props.maquina
+    fin.value
   );
   for (let index = 0; index < autoManual[1].data.length; index++) {
     const element = autoManual[1].data[index];
     estado[1].data.push(element);
   }
-  marcha = await bd.obtenerVariablesMarcha(
-    routerStore().clienteID,
+  series.value = estado;
+  cargado1.value = true;
+  marcha = await bd.obtenerDatosVariableGeneral(
     "historico",
-    [31, 40, 42],
     "registros",
+    "multiple",
+    "marchaFormatoRangos",
+    [31, 40, 42],
     props.maquina,
+    routerStore().clienteID,
     inicio.value,
     fin.value
   );
-  funcMaquina = await bd.obtenerDatosHistoricoVariable(
+  funcMaquina = await bd.obtenerDatosVariableGeneral(
     "historico",
     "registros",
+    "individual",
     "formatoRangos",
     [40, 42],
+    props.maquina,
+    routerStore().clienteID,
     inicio.value,
-    fin.value,
-    props.maquina
+    fin.value
   );
-  let cepillos = await bd.obtenerDatosHistoricoVariable(
-    "historico",
-    "registros",
-    "formatoRangos",
-    [44],
-    inicio.value,
-    fin.value,
-    props.maquina
-  );
-  series3.value = cepillos;
-  dosis = await bd.obtenerDatosHistoricoVariable(
-    "historico",
-    "registros",
-    "formatoLinea",
-    [34, 35, 36, 37, 38],
-    inicio.value,
-    fin.value,
-    props.maquina
-  );
-  kilos = await bd.obtenerDatosHistoricoVariable(
-    "historico",
-    "registros",
-    "formatoLinea",
-    [48],
-    inicio.value,
-    fin.value,
-    props.maquina
-  );
-  cajas = await bd.obtenerDatosHistoricoVariable(
-    "historico",
-    "registros",
-    "formatoLinea",
-    [47],
-    inicio.value,
-    fin.value,
-    props.maquina
-  );
-  cporu = await bd.obtenerDatosHistoricoVariable(
-    "historico",
-    "registros",
-    "formatoLinea",
-    [45, 46],
-    inicio.value,
-    fin.value,
-    props.maquina
-  );
-  totales = await bd.obtenerDatosHistoricoVariable(
-    "historico",
-    "totales",
-    "sinfiltro",
-    [51, 52, 53, 54, 54, 56],
-    inicio.value,
-    fin.value,
-    props.maquina
-  );
-  series.value = estado;
   for (let index = 0; index < funcMaquina[1].data.length; index++) {
     const element = funcMaquina[1].data[index];
     if (element.x == "Alarma") {
@@ -251,10 +219,83 @@ async function dateApplied(date1, date2) {
     marcha[1].data.push(element);
   }
   series2.value = marcha;
+  cargado2.value = true;
+  // let cepillos = await bd.obtenerDatosVariableGeneral(
+  //   "historico",
+  //   "registros",
+  //   "individual",
+  //   "formatoRangos",
+  //   [44],
+  //   props.maquina,
+  //   routerStore().clienteID,
+  //   inicio.value,
+  //   fin.value
+  // );
+  // series3.value = cepillos;
+  dosis = await bd.obtenerDatosVariableGeneral(
+    "historico",
+    "registros",
+    "individual",
+    "formatoLinea",
+    [34, 35, 36, 37, 38],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
+  );
   seriesL.value = dosis;
-  seriesL2.value = cporu;
-  seriesL3.value = cajas;
+  cargado3.value = true;
+  kilos = await bd.obtenerDatosVariableGeneral(
+    "historico",
+    "registros",
+    "individual",
+    "formatoLinea",
+    [48],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
+  );
   seriesL4.value = kilos;
+  cargado4.value = true;
+  cajas = await bd.obtenerDatosVariableGeneral(
+    "historico",
+    "registros",
+    "individual",
+    "formatoLinea",
+    [47],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
+  );
+  seriesL3.value = cajas;
+  cargado5.value = true;
+  cporu = await bd.obtenerDatosVariableGeneral(
+    "historico",
+    "registros",
+    "individual",
+    "formatoLinea",
+    [45, 46],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
+  );
+  seriesL2.value = cporu;
+  cargado6.value = true;
+  totales = await bd.obtenerDatosVariableGeneral(
+    "historico",
+    "totales",
+    "individual",
+    "sinfiltro",
+    [51, 52, 53, 54, 54, 56],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
+  );
+  series.value = estado;
   let total = [];
   for (let index = 0; index < totales.length; index++) {
     const element = totales[index];
@@ -265,10 +306,18 @@ async function dateApplied(date1, date2) {
     });
   }
   consumos.value = total;
+  cargado7.value = true;
   cargado.value = true;
 }
 
 let cargado = ref(false);
+let cargado1 = ref(false);
+let cargado2 = ref(false);
+let cargado3 = ref(false);
+let cargado4 = ref(false);
+let cargado5 = ref(false);
+let cargado6 = ref(false);
+let cargado7 = ref(false);
 
 const chartRef = ref(null);
 const chartRef2 = ref(null);
@@ -310,7 +359,7 @@ let chartOptions = computed(() => {
     xaxis: {
       type: "datetime",
       datetimeUTC: false,
-      tickAmount: 15,
+      tickAmount: 25,
       labels: {
         minHeight: 125,
         rotate: -70,
@@ -363,7 +412,7 @@ let rangeOptions = computed(() => {
     xaxis: {
       type: "datetime",
       datetimeUTC: false,
-      tickAmount: 15,
+      tickAmount: 25,
       labels: {
         minHeight: 125,
         rotate: -70,
@@ -392,102 +441,50 @@ let cajas = {};
 let kilos = {};
 onMounted(async () => {
   cargado.value = false;
-  estado = await bd.obtenerDatosHistoricoVariable(
+  cargado1.value = false;
+  estado = await bd.obtenerDatosVariableGeneral(
     "8H",
     "registros",
+    "individual",
     "formatoRangos",
     [31],
-    null,
-    null,
-    props.maquina
+    props.maquina,
+    routerStore().clienteID
   );
-  let autoManual = await bd.obtenerDatosHistoricoVariable(
+  let autoManual = await bd.obtenerDatosVariableGeneral(
     "8H",
     "registros",
+    "individual",
     "formatoRangos",
     [41, 43],
-    null,
-    null,
-    props.maquina
+    props.maquina,
+    routerStore().clienteID
   );
   for (let index = 0; index < autoManual[1].data.length; index++) {
     const element = autoManual[1].data[index];
     estado[1].data.push(element);
   }
-  marcha = await bd.obtenerVariablesMarcha(
-    routerStore().clienteID,
+  series.value = estado;
+  cargado1.value = true;
+  cargado2.value = false;
+  marcha = await bd.obtenerDatosVariableGeneral(
     "8H",
+    "registros",
+    "multiple",
+    "marchaFormatoRangos",
     [31, 40, 42],
-    "registros",
     props.maquina,
-    null,
-    null
+    routerStore().clienteID
   );
-  funcMaquina = await bd.obtenerDatosHistoricoVariable(
+  funcMaquina = await bd.obtenerDatosVariableGeneral(
     "8H",
     "registros",
+    "individual",
     "formatoRangos",
     [40, 42],
-    null,
-    null,
-    props.maquina
+    props.maquina,
+    routerStore().clienteID
   );
-  let cepillos = await bd.obtenerDatosHistoricoVariable(
-    "8H",
-    "registros",
-    "formatoRangos",
-    [44],
-    null,
-    null,
-    props.maquina
-  );
-  series3.value = cepillos;
-  dosis = await bd.obtenerDatosHistoricoVariable(
-    "8H",
-    "registros",
-    "formatoLinea",
-    [34, 35, 36, 37, 38],
-    null,
-    null,
-    props.maquina
-  );
-  kilos = await bd.obtenerDatosHistoricoVariable(
-    "8H",
-    "registros",
-    "formatoLinea",
-    [48],
-    null,
-    null,
-    props.maquina
-  );
-  cajas = await bd.obtenerDatosHistoricoVariable(
-    "8H",
-    "registros",
-    "formatoLinea",
-    [47],
-    null,
-    null,
-    props.maquina
-  );
-  cporu = await bd.obtenerDatosHistoricoVariable(
-    "8H",
-    "registros",
-    "formatoLinea",
-    [45, 46],
-    null,
-    null,
-    props.maquina
-  );
-  totales = await bd.obtenerDatosHistoricoVariable(
-    "8H",
-    "totales",
-    "sinfiltro",
-    [51, 52, 53, 54, 54, 56],
-    null,
-    null,
-    props.maquina
-  );
-  series.value = estado;
   for (let index = 0; index < funcMaquina[1].data.length; index++) {
     let element = funcMaquina[1].data[index];
     if (element.x == "Alarma") {
@@ -498,12 +495,75 @@ onMounted(async () => {
     marcha[1].data.push(element);
   }
   series2.value = marcha;
-  // series3.value = funcMaquina;
+  // let cepillos = await bd.obtenerDatosVariableGeneral(
+  //   "8H",
+  //   "registros",
+  //   "formatoRangos",
+  //   [44],
+  //   null,
+  //   null,
+  //   props.maquina
+  // );
+  // series3.value = cepillos;
+  cargado2.value = true;
+  cargado3.value = false;
+  dosis = await bd.obtenerDatosVariableGeneral(
+    "8H",
+    "registros",
+    "individual",
+    "formatoLinea",
+    [34, 35, 36, 37, 38],
+    props.maquina,
+    routerStore().clienteID
+  );
   seriesL.value = dosis;
-  seriesL2.value = cporu;
-  seriesL3.value = cajas;
+  cargado3.value = true;
+  cargado4.value = false;
+  kilos = await bd.obtenerDatosVariableGeneral(
+    "8H",
+    "registros",
+    "individual",
+    "formatoLinea",
+    [48],
+    props.maquina,
+    routerStore().clienteID
+  );
   seriesL4.value = kilos;
-
+  cargado4.value = true;
+  cargado5.value = false;
+  cajas = await bd.obtenerDatosVariableGeneral(
+    "8H",
+    "registros",
+    "individual",
+    "formatoLinea",
+    [47],
+    props.maquina,
+    routerStore().clienteID
+  );
+  seriesL3.value = cajas;
+  cargado5.value = true;
+  cargado6.value = false;
+  cporu = await bd.obtenerDatosVariableGeneral(
+    "8H",
+    "registros",
+    "individual",
+    "formatoLinea",
+    [45, 46],
+    props.maquina,
+    routerStore().clienteID
+  );
+  seriesL2.value = cporu;
+  cargado6.value = true;
+  cargado7.value = false;
+  totales = await bd.obtenerDatosVariableGeneral(
+    "8H",
+    "totales",
+    "individual",
+    "sinfiltro",
+    [51, 52, 53, 54, 54, 56],
+    props.maquina,
+    routerStore().clienteID
+  );
   for (let index = 0; index < totales.length; index++) {
     const element = totales[index];
     consumos.value.push({
@@ -512,6 +572,8 @@ onMounted(async () => {
       total: Math.max(0, element.registros[0].total),
     });
   }
+  cargado7.value = true;
+
   cargado.value = true;
 });
 </script>

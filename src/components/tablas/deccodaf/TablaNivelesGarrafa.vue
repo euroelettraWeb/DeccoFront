@@ -75,12 +75,17 @@ let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-  nivel = await bd.obtenerDatosVariables(
+  let maquinaID = (
+    await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, 1)
+  )[0].id;
+  nivel = await bd.obtenerDatosVariableGeneral(
     "8H",
     "registros",
-    "total",
+    "individual",
+    "totalRangos",
     [20, 21, 22, 23, 24],
-    routerStore().lineasID
+    maquinaID,
+    routerStore().clienteID
   );
 
   for (let index = 0; index < nivel.length; index++) {

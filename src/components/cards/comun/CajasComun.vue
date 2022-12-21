@@ -26,7 +26,7 @@
         <v-card class="mb-2">
           <v-row>
             <v-col>
-              <v-card-subtitle> Total Cajas </v-card-subtitle>
+              <v-card-subtitle> Cajas/min </v-card-subtitle>
             </v-col>
           </v-row>
           <v-row>
@@ -113,7 +113,7 @@ let chartOptions = computed(() => {
       datetimeUTC: false,
       min: new Date(moment().subtract(8, "hours")).getTime(),
       max: moment(),
-      tickAmount: 15,
+      tickAmount: 25,
       labels: {
         minHeight: 125,
         rotate: -70,
@@ -143,19 +143,23 @@ onMounted(async () => {
     await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
 
-  cajaV = await bd.obtenerDatosVariables(
+  cajaV = await bd.obtenerDatosVariableGeneral(
     "8H",
     "registros",
+    "individual",
     "formatoLinea",
     [props.caja1, props.caja2],
-    maquinaID
+    maquinaID,
+    routerStore().clienteID
   );
-  tCajas = await bd.obtenerDatosVariables(
+  tCajas = await bd.obtenerDatosVariableGeneral(
     "8H",
     "registros",
-    "formatoLinea",
+    "individual",
+    "unidadMinuto",
     [props.total],
-    maquinaID
+    maquinaID,
+    routerStore().clienteID
   );
   cajas.value = cajaV;
   totalCajas.value = tCajas;
@@ -179,16 +183,24 @@ onMounted(async () => {
       if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
     }
   });
-  socket.on(`variable_${maquinaID}_${props.total}_actualizada`, (data) => {
-    totalCajas.value[0].data.push({
-      x: new Date(moment(data.x).toISOString()).getTime(),
-      y: data.y,
-    });
-    if (chartRef2.value) {
-      chartRef2.value.updateSeries(totalCajas.value);
-      if (lastZoom) chartRef2.value.zoomX(lastZoom[0], lastZoom[1]);
+  socket.on(
+    `variable_${maquinaID}_${props.total}_actualizada`,
+    async (data) => {
+      let unidadMinuto = await bd.obtenerDatosVariableGeneral(
+        "8H",
+        "registros",
+        "individual",
+        "unidadMinuto",
+        [props.total],
+        maquinaID,
+        routerStore().clienteID
+      );
+      if (chartRef2.value) {
+        chartRef2.value.updateSeries(unidadMinuto);
+        if (lastZoom) chartRef2.value.zoomX(lastZoom[0], lastZoom[1]);
+      }
     }
-  });
+  );
   cargado.value = true;
 });
 </script>

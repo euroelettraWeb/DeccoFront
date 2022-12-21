@@ -12,11 +12,11 @@
           label="Turnos"
           >Turnos</v-switch
         >
-        <TablaTurnos v-if="turnos" />
+        <TablaTurnos v-if="turnos" /><!-- :marcha="[31, 40, 42]" -->
         <TablaTotalTurnos
           v-if="turnos"
           :variables="[49, 50, 51, 52, 53, 54, 55]"
-          :marcha="[31, 40, 42]"
+          :modo="[13, 15]"
           :tipo="2"
         />
         <TablaTotal
@@ -106,14 +106,8 @@
           :tipo="2"
         />
         <Dosis
-          :variables="[34, 35, 36, 37, 38]"
+          :variables="[32, 33, 34, 35, 36, 37, 38, 39]"
           title="Dosis Bombas"
-          :tipo="2"
-        />
-        <GraficaEstadoCard
-          :variables="[32, 33]"
-          :height="300"
-          title="Aplicadores"
           :tipo="2"
         />
         <FrutaProcesadaComun :fruta="48" :tipo="2" />
@@ -146,7 +140,8 @@ import TablaTotal from "../../components/tablas/comun/TablaTotal.vue";
 import { routerStore } from "../../stores/index";
 import bd from "../../helpers/bd";
 import { onMounted, ref } from "vue";
-import TablaTotalTurnos from "../../components/tablas/comun/TablaTotalTurnos.vue";
+import TablaTotalTurnos from "../../components/tablas/deccodos/TablaTotalTurnos.vue";
+// import TablaTotalTurnos from "../../components/tablas/comun/TablaTotalTurnos.vue";
 import Dosis from "../../components/cards/comun/Dosis.vue";
 import FrutaProcesadaComun from "../../components/cards/comun/FrutaProcesadaComun.vue";
 import GraficaEstadoCard from "../../components/cards/comun/GraficaEstadoCard.vue";

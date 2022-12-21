@@ -161,37 +161,45 @@ onMounted(async () => {
     await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
 
-  modoMaquina = await bd.obtenerDatosVariables(
+  modoMaquina = await bd.obtenerDatosVariableGeneral(
     "8H",
     "registros",
+    "individual",
     "formatoRangos",
     [props.activo],
-    maquinaID
+    maquinaID,
+    routerStore().clienteID
   );
-  autoManual = await bd.obtenerDatosVariables(
+  autoManual = await bd.obtenerDatosVariableGeneral(
     "8H",
     "registros",
+    "individual",
     "formatoRangos",
     [props.auto, props.manual],
-    maquinaID
+    maquinaID,
+    routerStore().clienteID
   );
   for (let index = 0; index < autoManual[1].data.length; index++) {
     const element = autoManual[1].data[index];
     modoMaquina[1].data.push(element);
   }
-  marcha = await bd.obtenerVariablesMarcha(
-    routerStore().clienteID,
+  marcha = await bd.obtenerDatosVariableGeneral(
     "8H",
+    "registros",
+    "multiple",
+    "marchaFormatoRangos",
     [props.activo, props.alarma, props.fc],
-    "registros",
-    maquinaID
+    maquinaID,
+    routerStore().clienteID
   );
-  funcMaquina = await bd.obtenerDatosVariables(
+  funcMaquina = await bd.obtenerDatosVariableGeneral(
     "8H",
     "registros",
+    "individual",
     "formatoRangos",
     [props.alarma, props.fc],
-    maquinaID
+    maquinaID,
+    routerStore().clienteID
   );
   series.value = modoMaquina;
   for (let index = 0; index < funcMaquina[1].data.length; index++) {
@@ -209,19 +217,23 @@ onMounted(async () => {
   socket.on(
     `variable_${maquinaID}_${props.manual}_actualizada`,
     async (data) => {
-      let modoMaquina = await bd.obtenerDatosVariables(
+      let modoMaquina = await bd.obtenerDatosVariableGeneral(
         "8H",
         "registros",
+        "individual",
         "formatoRangos",
         [props.activo],
-        maquinaID
+        maquinaID,
+        routerStore().clienteID
       );
-      let autoManual = await bd.obtenerDatosVariables(
+      let autoManual = await bd.obtenerDatosVariableGeneral(
         "8H",
         "registros",
+        "individual",
         "formatoRangos",
         [props.auto, props.manual],
-        maquinaID
+        maquinaID,
+        routerStore().clienteID
       );
       for (let index = 0; index < autoManual[1].data.length; index++) {
         const element = autoManual[1].data[index];
@@ -234,19 +246,23 @@ onMounted(async () => {
     }
   );
   socket.on(`variable_${maquinaID}_${props.auto}_actualizada`, async (data) => {
-    let modoMaquina = await bd.obtenerDatosVariables(
+    let modoMaquina = await bd.obtenerDatosVariableGeneral(
       "8H",
       "registros",
+      "individual",
       "formatoRangos",
       [props.activo],
-      maquinaID
+      maquinaID,
+      routerStore().clienteID
     );
-    let autoManual = await bd.obtenerDatosVariables(
+    let autoManual = await bd.obtenerDatosVariableGeneral(
       "8H",
       "registros",
+      "individual",
       "formatoRangos",
       [props.auto, props.manual],
-      maquinaID
+      maquinaID,
+      routerStore().clienteID
     );
     for (let index = 0; index < autoManual[1].data.length; index++) {
       const element = autoManual[1].data[index];
@@ -260,19 +276,23 @@ onMounted(async () => {
   socket.on(
     `variable_${maquinaID}_${props.manual}_actualizada`,
     async (data) => {
-      let marcha = await bd.obtenerVariablesMarcha(
-        routerStore().clienteID,
+      let marcha = await bd.obtenerDatosVariableGeneral(
         "8H",
+        "registros",
+        "multiple",
+        "marchaFormatoRangos",
         [props.activo, props.alarma, props.fc],
-        "registros",
-        maquinaID
+        maquinaID,
+        routerStore().clienteID
       );
-      let funcMaquina = await bd.obtenerDatosVariables(
+      let funcMaquina = await bd.obtenerDatosVariableGeneral(
         "8H",
         "registros",
+        "individual",
         "formatoRangos",
         [props.alarma, props.fc],
-        maquinaID
+        maquinaID,
+        routerStore().clienteID
       );
       for (let index = 0; index < funcMaquina[1].data.length; index++) {
         let element = funcMaquina[1].data[index];
@@ -293,19 +313,23 @@ onMounted(async () => {
   socket.on(
     `variable_${maquinaID}_${props.alarma}_actualizada`,
     async (data) => {
-      let marcha = await bd.obtenerVariablesMarcha(
-        routerStore().clienteID,
+      let marcha = await bd.obtenerDatosVariableGeneral(
         "8H",
+        "registros",
+        "multiple",
+        "marchaFormatoRangos",
         [props.activo, props.alarma, props.fc],
-        "registros",
-        maquinaID
+        maquinaID,
+        routerStore().clienteID
       );
-      let funcMaquina = await bd.obtenerDatosVariables(
+      let funcMaquina = await bd.obtenerDatosVariableGeneral(
         "8H",
         "registros",
+        "individual",
         "formatoRangos",
         [props.alarma, props.fc],
-        maquinaID
+        maquinaID,
+        routerStore().clienteID
       );
       for (let index = 0; index < funcMaquina[1].data.length; index++) {
         let element = funcMaquina[1].data[index];
@@ -323,19 +347,23 @@ onMounted(async () => {
     }
   );
   socket.on(`variable_${maquinaID}_${props.fc}_actualizada`, async (data) => {
-    let marcha = await bd.obtenerVariablesMarcha(
-      routerStore().clienteID,
+    let marcha = await bd.obtenerDatosVariableGeneral(
       "8H",
+      "registros",
+      "multiple",
+      "marchaFormatoRangos",
       [props.activo, props.alarma, props.fc],
-      "registros",
-      maquinaID
+      maquinaID,
+      routerStore().clienteID
     );
-    let funcMaquina = await bd.obtenerDatosVariables(
+    let funcMaquina = await bd.obtenerDatosVariableGeneral(
       "8H",
       "registros",
+      "individual",
       "formatoRangos",
       [props.alarma, props.fc],
-      maquinaID
+      maquinaID,
+      routerStore().clienteID
     );
     for (let index = 0; index < funcMaquina[1].data.length; index++) {
       let element = funcMaquina[1].data[index];
@@ -355,19 +383,23 @@ onMounted(async () => {
   socket.on(
     `variable_${maquinaID}_${props.activo}_actualizada`,
     async (data) => {
-      let modoMaquina = await bd.obtenerDatosVariables(
+      let modoMaquina = await bd.obtenerDatosVariableGeneral(
         "8H",
         "registros",
+        "individual",
         "formatoRangos",
         [props.activo],
-        maquinaID
+        maquinaID,
+        routerStore().clienteID
       );
-      let autoManual = await bd.obtenerDatosVariables(
+      let autoManual = await bd.obtenerDatosVariableGeneral(
         "8H",
         "registros",
+        "individual",
         "formatoRangos",
         [props.auto, props.manual],
-        maquinaID
+        maquinaID,
+        routerStore().clienteID
       );
       for (let index = 0; index < autoManual[1].data.length; index++) {
         const element = autoManual[1].data[index];
@@ -378,19 +410,23 @@ onMounted(async () => {
         if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
       }
 
-      let marcha = await bd.obtenerVariablesMarcha(
-        routerStore().clienteID,
+      let marcha = await bd.obtenerDatosVariableGeneral(
         "8H",
+        "registros",
+        "multiple",
+        "marchaFormatoRangos",
         [props.activo, props.alarma, props.fc],
-        "registros",
-        maquinaID
+        maquinaID,
+        routerStore().clienteID
       );
-      let funcMaquina = await bd.obtenerDatosVariables(
+      let funcMaquina = await bd.obtenerDatosVariableGeneral(
         "8H",
         "registros",
+        "individual",
         "formatoRangos",
         [props.alarma, props.fc],
-        maquinaID
+        maquinaID,
+        routerStore().clienteID
       );
       for (let index = 0; index < funcMaquina[1].data.length; index++) {
         let element = funcMaquina[1].data[index];

@@ -87,7 +87,7 @@ let chartOptions = computed(() => {
     xaxis: {
       type: "datetime",
       // datetimeUTC: false,
-      tickAmount: 15,
+      tickAmount: 25,
       labels: {
         minHeight: 125,
         rotate: -70,
@@ -106,12 +106,14 @@ let chartOptions = computed(() => {
 onMounted(async () => {
   cargado.value = false;
 
-  dosis = await bd.obtenerDatosVariables(
+  dosis = await bd.obtenerDatosVariableGeneral(
     "8H",
     "registros",
+    "individual",
     "formatoLinea",
     [34, 35, 36, 37, 38],
-    routerStore().lineasID
+    routerStore().lineasID,
+    routerStore().clienteID
   );
   registrosT.value = dosis;
   socket.on(`variable_${routerStore().lineasID}_34_actualizada`, (data) => {

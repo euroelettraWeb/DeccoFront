@@ -77,30 +77,37 @@ onMounted(async () => {
     await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
 
-  for (let index = 0; index < props.variables.length; index++) {
-    const element = props.variables[index];
-    let i = await bd.obtenerDatosVariableTotal(
-      routerStore().clienteID,
-      "24H",
-      element,
-      maquinaID
-    );
+  let totalesBD = await bd.obtenerDatosVariableGeneral(
+    "24H-Turno",
+    "totales",
+    "individual",
+    "sinfiltro",
+    props.variables,
+    maquinaID,
+    routerStore().clienteID
+  );
+  console.log(totalesBD);
+  for (let index = 0; index < totalesBD.length; index++) {
+    const element = totalesBD[index];
+    console.log(element);
     unidades.value.push({
       id: index,
-      nombre: i.nombreCorto + " (" + i.unidadMedida + ")",
+      nombre: element.nombreCorto + " (" + element.unidadMedida + ")",
     });
     consumos.value.push({
       id: index,
-      name: Math.max(0, i.registros[3][0].total),
+      name: Math.max(0, element.registros[0].total),
     });
   }
   unidades.value.push({ id: unidades.value.length, nombre: "Marcha ( min )" });
-  let horasMarcha = await bd.obtenerVariablesMarcha(
-    routerStore().clienteID,
-    "24H",
+  let horasMarcha = await bd.obtenerDatosVariableGeneral(
+    "24H-Turno",
+    "registros",
+    "multiple",
+    "totalMarcha",
     props.marcha,
-    "total",
-    maquinaID
+    maquinaID,
+    routerStore().clienteID
   );
   consumos.value.push({
     id: unidades.value.length,

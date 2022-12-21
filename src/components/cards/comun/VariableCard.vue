@@ -34,6 +34,7 @@
                 return-object
                 dense
                 solo
+                @change="changeItem3"
               ></v-select
             ></v-col>
           </v-row>
@@ -96,30 +97,6 @@ import io from "socket.io-client";
 import moment from "moment";
 import { routerStore } from "../../../stores/index";
 const socket = io("http://localhost:3000");
-
-async function changeItem(value) {
-  if (value.unidadMedida == "I/0") {
-    lineas.value = false;
-    variable = await bd.obtenerDatosVariable(
-      "8H",
-      "registros",
-      "formatoRangos",
-      select2.value.id,
-      value.id
-    );
-    series2.value = variable.registros;
-  } else {
-    lineas.value = true;
-    variable = await bd.obtenerDatosVariable(
-      "8H",
-      "registros",
-      "formatoLinea",
-      select2.value.id,
-      value.id
-    );
-    series.value = variable.registros;
-  }
-}
 
 let cargado = ref(false);
 let lineas = ref(true);
@@ -252,15 +229,6 @@ let chartOptions2 = computed(() => {
 onMounted(async () => {
   cargado.value = false;
   lineaList.value = await bd.obtenerLineas(routerStore().clienteID);
-  variables = await bd.obtenerVariables();
-  for (let index = 0; index < variables.length; index++) {
-    const element = variables[index];
-    selectItems.value.push({
-      id: element.id,
-      name: element.columna,
-      unidadMedida: element.unidadMedida,
-    });
-  }
   let lista = [];
   for (const iterator of lineaList.value) {
     let sistemas = await bd.obtenerMaquina("linea", iterator.id, 0);
@@ -273,7 +241,49 @@ onMounted(async () => {
   nombres.value = lista;
   cargado.value = true;
 });
+async function changeItem(value) {
+  if (value.unidadMedida == "I/0") {
+    lineas.value = false;
+    variable = await bd.obtenerDatosVariableGeneral(
+      "8H",
+      "registros",
+      "individual",
+      "formatoRangos",
+      [value.id],
+      select2.value.id,
+      routerStore().clienteID
+    );
+    series2.value = variable;
+  } else {
+    lineas.value = true;
+    variable = await bd.obtenerDatosVariableGeneral(
+      "8H",
+      "registros",
+      "individual",
+      "formatoLinea",
+      [value.id],
+      select2.value.id,
+      routerStore().clienteID
+    );
+    series.value = variable;
+  }
+}
 function changeItem2() {
   nombres2.value = select.value.sistemas;
+}
+async function changeItem3(value) {
+  console.log(value);
+  variables = await bd.obtenerVariables();
+  for (let index = 0; index < variables.length; index++) {
+    const element = variables[index];
+
+    if (element.maquinaID == value.id) {
+      selectItems.value.push({
+        id: element.id,
+        name: element.nombreCorto,
+        unidadMedida: element.unidadMedida,
+      });
+    }
+  }
 }
 </script>
