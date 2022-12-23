@@ -5,26 +5,8 @@
     </h1>
     <v-row>
       <v-col>
-        <v-switch
-          v-model="turnos"
-          color="info"
-          prepend-icon="mdi-clock"
-          label="Turnos"
-          >Turnos</v-switch
-        >
+        <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
         <TablaTurnos v-if="turnos" /><!-- :marcha="[31, 40, 42]" -->
-        <TablaTotalTurnos
-          v-if="turnos"
-          :variables="[49, 50, 51, 52, 53, 54, 55]"
-          :modo="[13, 15]"
-          :tipo="2"
-        />
-        <TablaTotal
-          v-else
-          :variables="[49, 50, 51, 52, 53, 54, 55]"
-          :marcha="[31, 40, 42]"
-          :tipo="2"
-        />
         <v-container>
           <v-card>
             <v-row>
@@ -97,6 +79,18 @@
             </v-row> </v-card
         ></v-container>
         <SeleccionarProducto v-if="productos" />
+        <TablaTotalTurnos
+          v-if="turnos"
+          :variables="[49, 50, 51, 52, 53, 54, 55]"
+          :modo="[13, 15]"
+          :tipo="2"
+        />
+        <TablaTotal
+          v-else
+          :variables="[49, 50, 51, 52, 53, 54, 55]"
+          :marcha="[31, 40, 42]"
+          :tipo="2"
+        />
         <Estado
           :activo="31"
           :auto="41"
@@ -107,7 +101,7 @@
         />
         <Dosis
           :variables="[32, 33, 34, 35, 36, 37, 38, 39]"
-          title="Dosis Bombas"
+          title="Dosis"
           :tipo="2"
         />
         <FrutaProcesadaComun :fruta="48" :tipo="2" />

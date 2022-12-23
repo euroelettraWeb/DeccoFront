@@ -5,25 +5,8 @@
     </h1>
     <v-row>
       <v-col>
-        <v-switch
-          v-model="turnos"
-          color="info"
-          prepend-icon="mdi-clock"
-          label="Turnos"
-          >Turnos</v-switch
-        >
+        <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
         <TablaTurnos v-if="turnos" :tipo="1" />
-        <TablaTotalTurnos
-          v-if="turnos"
-          :variables="[25, 26, 27, 28, 29, 30]"
-          :marcha="[1, 12, 14]"
-          :tipo="1"
-        />
-        <TablaTotal
-          v-else
-          :variables="[25, 26, 27, 28, 29, 30]"
-          :marcha="[1, 12, 14]"
-        />
         <v-container>
           <v-card>
             <v-row>
@@ -102,6 +85,17 @@
               </v-col>
             </v-row> </v-card
         ></v-container>
+        <TablaTotalTurnos
+          v-if="turnos"
+          :variables="[25, 26, 27, 28, 29, 30]"
+          :marcha="[1, 12, 14]"
+          :tipo="1"
+        />
+        <TablaTotal
+          v-else
+          :variables="[25, 26, 27, 28, 29, 30]"
+          :marcha="[1, 12, 14]"
+        />
         <Estado
           :activo="1"
           :auto="13"

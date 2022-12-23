@@ -5,13 +5,7 @@
     </h1>
     <v-row>
       <v-col>
-        <v-switch
-          v-model="turnos"
-          color="info"
-          prepend-icon="mdi-clock"
-          label="Turnos"
-          >Turnos</v-switch
-        >
+        <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
         <TablaTurnos v-if="turnos" :tipo="1" />
         <TablaTotalTurnos
           v-if="turnos"

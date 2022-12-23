@@ -8,10 +8,16 @@
         <GraficaEstadoCard
           :variables="[44]"
           :height="300"
-          title="Estado de las bombas"
+          title="Activacion limpieza cepillos"
           :tipo="2"
         />
         <CajasComun :caja1="45" :caja2="46" :total="47" :tipo="2" />
+        <!-- <GraficaEstadoCard
+          :variables="[20]"
+          :height="300"
+          title="Presencia de fruta"
+          :tipo="2"
+        /> -->
       </v-col>
     </v-row>
   </v-container>

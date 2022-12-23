@@ -12,6 +12,24 @@
           :tipo="3"
         />
         <CajasComun :caja1="66" :caja2="67" :total="68" :tipo="3" />
+        <!-- <GraficaEstadoCard
+          :variables="[20]"
+          :height="300"
+          title="Presencia de fruta"
+          :tipo="3"
+        /> -->
+        <!-- <GraficaEstadoCard
+          :variables="[20]"
+          :height="300"
+          title="Señal de nivel"
+          :tipo="3"
+        /> -->
+        <!-- <GraficaEstadoCard
+          :variables="[20]"
+          :height="300"
+          title="Nivel de garrafas"
+          :tipo="2"
+        /> -->
       </v-col>
     </v-row>
   </v-container>

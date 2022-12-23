@@ -107,7 +107,7 @@
                       </td>
                     </tr>
                     <tr>
-                      <th>Total Hoy</th>
+                      <th rowspan="2">Total Hoy</th>
                       <td>Auto</td>
                       <td
                         v-for="item in consumosA"
@@ -121,7 +121,6 @@
                       </td>
                     </tr>
                     <tr>
-                      <th></th>
                       <td>Manual</td>
                       <td
                         v-for="item in consumosM"
@@ -168,7 +167,7 @@ let consumosNA = ref([]);
 let consumosA = ref([]);
 let unidades = ref([
   { d: 0, nombre: "Aplicador 2 Discos" },
-  { d: 1, nombre: "Aplicador 2 Discos" },
+  { d: 1, nombre: "Aplicador 3 Discos" },
   { d: 2, nombre: "Bomba 1" },
   { d: 3, nombre: "Bomba 2" },
   { d: 4, nombre: "Bomba 3" },

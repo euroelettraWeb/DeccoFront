@@ -309,7 +309,7 @@ async function dateApplied(date1, date2) {
     "historico",
     "registros",
     "individual",
-    "formatoLinea",
+    "unidadMinuto",
     [18],
     props.maquina,
     routerStore().clienteID,
@@ -570,7 +570,7 @@ onMounted(async () => {
     "8H",
     "registros",
     "individual",
-    "formatoLinea",
+    "unidadMinuto",
     [18],
     props.maquina,
     routerStore().clienteID

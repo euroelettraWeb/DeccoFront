@@ -127,7 +127,7 @@ let chartOptions = computed(() => {
       width: 1.9,
     },
     legend: {
-      showForSingleSeries: true,
+      showForSingleSeries: false,
     },
   };
 });

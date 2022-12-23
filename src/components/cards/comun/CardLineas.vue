@@ -14,25 +14,19 @@
               sub-group
             >
               <template #activator>
-                <v-list-item-content>
+                <v-list-item-content
+                  @click="
+                    if (item.estado)
+                      router.menu(
+                        item.route,
+                        props.linea.clienteID,
+                        props.linea.id
+                      );
+                  "
+                >
                   <v-list-item-title> {{ item.title }} </v-list-item-title>
                 </v-list-item-content>
               </template>
-              <div v-if="item.estado">
-                <v-list-item v-for="child in item.items" :key="child.title">
-                  <v-list-item-content
-                    @click="
-                      router.menu(
-                        child.route,
-                        props.linea.clienteID,
-                        props.linea.id
-                      )
-                    "
-                  >
-                    <v-list-item-title> {{ child.title }} </v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </div>
             </v-list-group>
           </v-list>
         </v-navigation-drawer>
@@ -73,34 +67,19 @@ let items = computed(() => [
   {
     action: "mdi-hand-water",
     estado: props.linea.deccowsID ? true : false,
-    items: [
-      { title: "Principal", route: "deccowasher:Principal" },
-      // { title: "Estado", route: "deccowasher:MarchaParo" },
-      // { title: "Consumo", route: "deccowasher:Consumo" },
-      // { title: "Registros", route: "deccowasher:Registros" },
-    ],
+    route: "deccowasher:Principal",
     title: "DECCOWASHER",
   },
   {
     action: "mdi-flask",
     estado: props.linea.deccodafID ? true : false,
-    items: [
-      { title: "Principal", route: "deccodaf:Principal" },
-      // { title: "Estado", route: "deccodaf:MarchaParo" },
-      // { title: "Consumo", route: "deccodaf:Consumo" },
-      // { title: "Registros", route: "deccodaf:Registros" },
-    ],
+    route: "deccodaf:Principal",
     title: "DECCODAF",
   },
   {
     action: "mdi-numeric-2",
     estado: props.linea.deccodosID ? true : false,
-    items: [
-      { title: "Principal", route: "deccodos:Principal" },
-      // { title: "Estado", route: "deccodos:MarchaParo" },
-      // { title: "Consumo", route: "deccodos:Consumo" },
-      // { title: "Registros", route: "deccodos:Registros" },
-    ],
+    route: "deccodos:Principal",
     title: "DECCODOS",
   },
   // {

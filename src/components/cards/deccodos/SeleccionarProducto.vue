@@ -60,13 +60,14 @@ let cargado = ref(false);
 
 let productos = ref(null);
 
-let bomba1 = ref({});
-let bomba2 = ref({});
+let bomba1 = ref(null);
+let bomba2 = ref(null);
 
 onMounted(async () => {
   cargado.value = false;
   let maquina = await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, 2);
   let t = await bd.obtenerProductos("maquina", maquina[0].id);
+
   for (let index = 0; index < t.length; index++) {
     if (t[index].activo == 0) {
       bomba1.value = t[index];
@@ -74,7 +75,7 @@ onMounted(async () => {
       bomba2.value = t[index];
     }
   }
-  if (bomba2.value == {}) bomba2.value = bomba1.value;
+  if (bomba2.value == null) bomba2.value = bomba1.value;
   productos.value = t;
   cargado.value = true;
 });

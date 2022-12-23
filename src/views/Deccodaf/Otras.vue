@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <h1 class="transition-swing text-h2">
-      {{ nombreCliente }} - DECCOWASHER - {{ nombreLinea }}
+      {{ nombreCliente }} - DECCODAF - {{ nombreLinea }}
     </h1>
     <v-row>
       <v-col>
@@ -11,6 +11,11 @@
           :height="300"
           title="Estado de los agitadores"
           :tipo="1" />
+        <!-- <GraficaEstadoCard
+          :variables="[20]"
+          :height="300"
+          title="Señal del nivel"
+          :tipo="1" /> -->
         <GraficaEstadoCard
           :variables="[20, 21, 22, 23, 24]"
           :height="300"
