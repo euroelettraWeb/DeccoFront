@@ -7,15 +7,15 @@
     class="accent-4"
   >
     <v-list>
-      <v-list-item link>
+      <v-list-item>
         <v-list-item-avatar>
-          <v-img src="../../assets/logo_cliente.jpg"></v-img>
+          <v-img src="../../assets/logo_cliente.png"></v-img>
         </v-list-item-avatar>
 
         <v-list-item-content>
           <v-list-item-title><b>Decco</b></v-list-item-title>
           <v-list-item-subtitle
-            ><i>Naturally PostHarvest</i></v-list-item-subtitle
+            ><i>More. Beautiful. Fresh.</i></v-list-item-subtitle
           >
         </v-list-item-content>
       </v-list-item>

@@ -4,7 +4,7 @@
       <v-col
         cols="2"
         style="
-          background-image: url('logo_cliente.jpg');
+          background-image: url('logo_cliente.png');
           background-size: contain;
           background-position: right;
           height: 300px;

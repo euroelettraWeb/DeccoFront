@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app color="red accent-4" dark>
+  <v-app-bar app color="primary" dark>
     <v-app-bar-nav-icon @click="nav.displayMensaje"></v-app-bar-nav-icon>
 
     <v-toolbar-title>GestProd</v-toolbar-title>

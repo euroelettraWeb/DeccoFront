@@ -83,8 +83,12 @@
                   indeterminate
                 ></v-progress-circular>
               </v-col>
-            </v-row> </v-card
-        ></v-container>
+            </v-row>
+          </v-card>
+          <v-snackbar v-model="guardado" :timeout="5000" color="primary">
+            {{ mensaje }}</v-snackbar
+          >
+        </v-container>
         <TablaTotalTurnos
           v-if="turnos"
           :variables="[25, 26, 27, 28, 29, 30]"
@@ -155,6 +159,8 @@ let producto5 = ref(null);
 
 let productos = ref(null);
 let cargado = ref(false);
+let guardado = ref(false);
+let mensaje = ref("");
 
 async function save() {
   let array = [
@@ -175,6 +181,8 @@ async function save() {
         })
         .then(() => {});
     }
+    mensaje.value = "Guardado";
+    guardado.value = true;
   } else {
     let update = [];
     for (let index = 0; index < array.length; index++) {
@@ -191,11 +199,22 @@ async function save() {
         productos: update,
       }
     );
+    // .then(
+    //   (response) => {
+    //     mensaje.value = "Guardado";
+    //   },
+    //   (error) => {
+    //     mensaje.value = "Error";
+    //   }
+    // );
+    mensaje.value = "Guardado";
+    guardado.value = true;
   }
 }
 
 onMounted(async () => {
   cargado.value = false;
+  guardado.value = false;
   nombreLinea.value = (await bd.obtenerLinea(routerStore().lineasID))[0].nombre;
   nombreCliente.value = (
     await bd.obtenerCliente(routerStore().clienteID)

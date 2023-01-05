@@ -43,6 +43,9 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-snackbar v-model="guardado" :timeout="5000" color="primary">
+      {{ mensaje }}</v-snackbar
+    >
   </v-container>
 </template>
 <script>
@@ -62,6 +65,8 @@ let productos = ref(null);
 
 let bomba1 = ref(null);
 let bomba2 = ref(null);
+let guardado = ref(false);
+let mensaje = ref("");
 
 onMounted(async () => {
   cargado.value = false;
@@ -92,5 +97,7 @@ async function save() {
   axios.post(`${process.env.VUE_APP_RUTA_API}/productos/actualizar/multiple`, {
     productos: productos.value,
   });
+  mensaje.value = "Guardado";
+  guardado.value = true;
 }
 </script>

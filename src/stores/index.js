@@ -1,9 +1,8 @@
-import Vue, { reactive, ref } from "vue";
+import { reactive, ref } from "vue";
 import { defineStore } from "pinia";
 import axios from "axios";
 import router from "../router/index";
 import VueRouter from "vue-router";
-import moment from "moment";
 import CryptoJS from "crypto-js";
 
 const { isNavigationFailure, NavigationFailureType } = VueRouter;
@@ -17,7 +16,7 @@ export const userStore = defineStore("user", {
   getters: {},
 
   actions: {
-    login: async function ({ datosLogin }) {
+    login: async function ({ datosLogin, evento }) {
       let credenciales = {
         usuario: datosLogin.usuario,
         password: CryptoJS.MD5(datosLogin.password).toString(),
@@ -26,6 +25,7 @@ export const userStore = defineStore("user", {
         await axios.post(`${process.env.VUE_APP_RUTA_API}/login/`, credenciales)
       ).data;
       if (!resultadoConsulta.error) {
+        axios.post(`${process.env.VUE_APP_RUTA_API}/eventos/crear/`, evento);
         this.usuario = resultadoConsulta;
         this.usuarioValido = true;
         router.push({ name: "Home" });

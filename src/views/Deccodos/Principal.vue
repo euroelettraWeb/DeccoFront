@@ -76,8 +76,12 @@
                   indeterminate
                 ></v-progress-circular>
               </v-col>
-            </v-row> </v-card
-        ></v-container>
+            </v-row>
+          </v-card>
+          <v-snackbar v-model="guardado" :timeout="5000" color="primary">
+            {{ mensaje }}</v-snackbar
+          ></v-container
+        >
         <SeleccionarProducto v-if="productos" />
         <TablaTotalTurnos
           v-if="turnos"
@@ -153,6 +157,8 @@ let tanques = ref(null);
 
 let cargado = ref(false);
 let productos = ref(true);
+let guardado = ref(false);
+let mensaje = ref("");
 
 async function save() {
   productos.value = false;
@@ -168,6 +174,8 @@ async function save() {
         })
         .then(() => {});
     }
+    mensaje.value = "Guardado";
+    guardado.value = true;
   } else {
     let update = [];
     for (let index = 0; index < array.length; index++) {
@@ -184,6 +192,8 @@ async function save() {
         productos: update,
       }
     );
+    mensaje.value = "Guardado";
+    guardado.value = true;
   }
   productos.value = true;
 }
