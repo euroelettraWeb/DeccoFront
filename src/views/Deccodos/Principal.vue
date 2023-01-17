@@ -136,7 +136,12 @@ import Estado from "../../components/cards/comun/Estado.vue";
 import TablaTurnos from "../../components/tablas/comun/TablaTurnos.vue";
 import TablaTotal from "../../components/tablas/comun/TablaTotal.vue";
 import { routerStore } from "../../stores/index";
-import bd from "../../helpers/bd";
+import {
+  obtenerLinea,
+  obtenerCliente,
+  obtenerMaquina,
+  obtenerProductos,
+} from "../../helpers/bd";
 import { onMounted, ref } from "vue";
 import TablaTotalTurnos from "../../components/tablas/deccodos/TablaTotalTurnos.vue";
 // import TablaTotalTurnos from "../../components/tablas/comun/TablaTotalTurnos.vue";
@@ -163,7 +168,7 @@ let mensaje = ref("");
 async function save() {
   productos.value = false;
   let array = [tanque1.value, tanque2.value, tanque3.value, tanque4.value];
-  let maquina = await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, 2);
+  let maquina = await obtenerMaquina("lineaTipo", routerStore().lineasID, 2);
   if (!tanques.value) {
     for (let index = 0; index < array.length; index++) {
       const element = array[index];
@@ -200,12 +205,12 @@ async function save() {
 
 onMounted(async () => {
   cargado.value = false;
-  nombreLinea.value = (await bd.obtenerLinea(routerStore().lineasID))[0].nombre;
+  nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
   nombreCliente.value = (
-    await bd.obtenerCliente(routerStore().clienteID)
+    await obtenerCliente(routerStore().clienteID)
   )[0].nombre;
-  let maquina = await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, 2);
-  let t = await bd.obtenerProductos("maquina", maquina[0].id);
+  let maquina = await obtenerMaquina("lineaTipo", routerStore().lineasID, 2);
+  let t = await obtenerProductos("maquina", maquina[0].id);
   if (t.length > 1) {
     tanque1.value = t[0].nombre;
     tanque2.value = t[1].nombre;

@@ -61,7 +61,7 @@ import TablaTurnos from "../../components/tablas/comun/TablaTurnos.vue";
 import TablaTotal from "../../components/tablas/comun/TablaTotal.vue";
 import FrutaProcesadaComun from "../../components/cards/comun/FrutaProcesadaComun.vue";
 import { routerStore } from "../../stores/index";
-import bd from "../../helpers/bd";
+import { obtenerLinea, obtenerCliente } from "../../helpers/bd";
 import { onMounted, ref } from "vue";
 import TablaTotalTurnos from "../../components/tablas/comun/TablaTotalTurnos.vue";
 
@@ -69,9 +69,9 @@ let nombreLinea = ref("");
 let nombreCliente = ref("");
 let turnos = ref(true);
 onMounted(async () => {
-  nombreLinea.value = (await bd.obtenerLinea(routerStore().lineasID))[0].nombre;
+  nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
   nombreCliente.value = (
-    await bd.obtenerCliente(routerStore().clienteID)
+    await obtenerCliente(routerStore().clienteID)
   )[0].nombre;
 });
 </script>

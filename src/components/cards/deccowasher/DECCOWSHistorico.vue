@@ -114,11 +114,10 @@ export default {
 };
 </script>
 <script setup>
-import bd from "../../../helpers/bd";
-import { onMounted, ref, computed, reactive } from "vue";
+import { obtenerDatosVariableGeneral } from "../../../helpers/bd";
+import { onMounted, ref, computed } from "vue";
 import { routerStore } from "../../../stores/index";
 import es from "apexcharts/dist/locales/es.json";
-import io from "socket.io-client";
 import moment from "moment";
 import DatePicker from "vue-time-date-range-picker/dist/vdprDatePicker";
 
@@ -127,16 +126,11 @@ const props = defineProps({
   maquina: { type: Number, default: 1 },
 });
 
-const socket = io("http://localhost:3000");
-
 function onReset() {
   inicio.value = "";
   fin.value = "";
 }
 async function dateApplied(date1, date2) {
-  // this.events.push(
-  //   new Event("date-applied", `${date1.toString()} - ${date2.toString()}`)
-  // );
   inicio.value = moment(date1).format("YYYY-MM-DDTHH:mm:ss");
   fin.value = moment(date2).format("YYYY-MM-DDTHH:mm:ss");
   let estado = {};
@@ -161,7 +155,7 @@ async function dateApplied(date1, date2) {
   cargado5.value = false;
   cargado6.value = false;
   cargado7.value = false;
-  estado = await bd.obtenerDatosVariableGeneral(
+  estado = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -173,7 +167,7 @@ async function dateApplied(date1, date2) {
     fin.value
   );
 
-  let autoManual = await bd.obtenerDatosVariableGeneral(
+  let autoManual = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -190,7 +184,7 @@ async function dateApplied(date1, date2) {
   }
   series.value = estado;
   cargado1.value = true;
-  marcha = await bd.obtenerDatosVariableGeneral(
+  marcha = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "multiple",
@@ -201,7 +195,7 @@ async function dateApplied(date1, date2) {
     inicio.value,
     fin.value
   );
-  funcMaquina = await bd.obtenerDatosVariableGeneral(
+  funcMaquina = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -223,7 +217,7 @@ async function dateApplied(date1, date2) {
   }
   series2.value = marcha;
   cargado2.value = true;
-  // let bombas = await bd.obtenerDatosVariableGeneral(
+  // let bombas = await obtenerDatosVariableGeneral(
   // "historico",
   // "registros",
   // "individual",
@@ -235,7 +229,7 @@ async function dateApplied(date1, date2) {
   // fin.value
   // );
   // series3.value = bombas;
-  dosis = await bd.obtenerDatosVariableGeneral(
+  dosis = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -248,7 +242,7 @@ async function dateApplied(date1, date2) {
   );
   seriesL.value = dosis;
   cargado3.value = true;
-  kilos = await bd.obtenerDatosVariableGeneral(
+  kilos = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -261,7 +255,7 @@ async function dateApplied(date1, date2) {
   );
   seriesL4.value = kilos;
   cargado4.value = true;
-  cajas = await bd.obtenerDatosVariableGeneral(
+  cajas = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -274,7 +268,7 @@ async function dateApplied(date1, date2) {
   );
   seriesL3.value = cajas;
   cargado5.value = true;
-  cporu = await bd.obtenerDatosVariableGeneral(
+  cporu = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -287,7 +281,7 @@ async function dateApplied(date1, date2) {
   );
   seriesL2.value = cporu;
   cargado6.value = true;
-  totales = await bd.obtenerDatosVariableGeneral(
+  totales = await obtenerDatosVariableGeneral(
     "historico",
     "totales",
     "individual",
@@ -324,15 +318,12 @@ let cargado7 = ref(false);
 
 const chartRef = ref(null);
 const chartRef2 = ref(null);
-const chartRef3 = ref(null);
 const chartRef4 = ref(null);
 const chartRef5 = ref(null);
 const chartRef6 = ref(null);
 const chartRef7 = ref(null);
-const chartRef8 = ref(null);
 let series = ref([]);
 let series2 = ref([]);
-let series3 = ref([]);
 let seriesL = ref([]);
 let seriesL2 = ref([]);
 let seriesL3 = ref([]);
@@ -368,7 +359,7 @@ let chartOptions = computed(() => {
         rotate: -70,
         minHeight: 125,
         rotateAlways: true,
-        formatter: function (value, timestamp) {
+        formatter: function (value) {
           return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
         },
       },
@@ -398,7 +389,7 @@ let rangeOptions = computed(() => {
       animations: { enabled: false },
     },
     colors: [
-      function ({ value, seriesIndex, w }) {
+      function ({ seriesIndex }) {
         if (seriesIndex == 0) {
           return "#d50000";
         } else {
@@ -420,7 +411,7 @@ let rangeOptions = computed(() => {
         minHeight: 125,
         rotate: -70,
         rotateAlways: true,
-        formatter: function (value, timestamp) {
+        formatter: function (value) {
           return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
         },
       },
@@ -445,7 +436,7 @@ let kilos = {};
 onMounted(async () => {
   cargado.value = false;
   cargado1.value = false;
-  estado = await bd.obtenerDatosVariableGeneral(
+  estado = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "individual",
@@ -454,7 +445,7 @@ onMounted(async () => {
     props.maquina,
     routerStore().clienteID
   );
-  let autoManual = await bd.obtenerDatosVariableGeneral(
+  let autoManual = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "individual",
@@ -470,7 +461,7 @@ onMounted(async () => {
   series.value = estado;
   cargado1.value = true;
   cargado2.value = false;
-  marcha = await bd.obtenerDatosVariableGeneral(
+  marcha = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "multiple",
@@ -479,7 +470,7 @@ onMounted(async () => {
     props.maquina,
     routerStore().clienteID
   );
-  funcMaquina = await bd.obtenerDatosVariableGeneral(
+  funcMaquina = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "individual",
@@ -498,7 +489,7 @@ onMounted(async () => {
     marcha[1].data.push(element);
   }
   series2.value = marcha;
-  // let bombas = await bd.obtenerDatosVariableGeneral(
+  // let bombas = await obtenerDatosVariableGeneral(
   //   "8H",
   //   "registros",
   //   "individual",
@@ -510,7 +501,7 @@ onMounted(async () => {
   // series3.value = bombas;
   cargado2.value = true;
   cargado3.value = false;
-  dosis = await bd.obtenerDatosVariableGeneral(
+  dosis = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "individual",
@@ -522,7 +513,7 @@ onMounted(async () => {
   seriesL.value = dosis;
   cargado3.value = true;
   cargado4.value = false;
-  kilos = await bd.obtenerDatosVariableGeneral(
+  kilos = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "individual",
@@ -534,7 +525,7 @@ onMounted(async () => {
   seriesL4.value = kilos;
   cargado4.value = true;
   cargado5.value = false;
-  cajas = await bd.obtenerDatosVariableGeneral(
+  cajas = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "individual",
@@ -545,7 +536,7 @@ onMounted(async () => {
   );
   seriesL3.value = cajas;
   cargado5.value = true;
-  cporu = await bd.obtenerDatosVariableGeneral(
+  cporu = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "individual",
@@ -557,7 +548,7 @@ onMounted(async () => {
   seriesL2.value = cporu;
   cargado6.value = true;
   cargado7.value = false;
-  totales = await bd.obtenerDatosVariableGeneral(
+  totales = await obtenerDatosVariableGeneral(
     "8H",
     "totales",
     "individual",

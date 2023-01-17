@@ -78,8 +78,8 @@ export default {
 </script>
 <script setup>
 import axios from "axios";
-import bd from "../../../helpers/bd";
-import { computed, onMounted, ref } from "vue";
+import { obtenerProductos, obtenerMaquina } from "../../../helpers/bd";
+import { onMounted, ref } from "vue";
 import { routerStore } from "../../../stores";
 
 let cargado = ref(false);
@@ -95,7 +95,7 @@ let tanques = ref(null);
 
 async function save() {
   let array = [tanque1.value, tanque2.value, tanque3.value, tanque4.value];
-  let maquina = await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, 2);
+  let maquina = await obtenerMaquina("lineaTipo", routerStore().lineasID, 2);
   if (!tanques.value) {
     for (let index = 0; index < array.length; index++) {
       const element = array[index];
@@ -121,8 +121,8 @@ async function save() {
 
 onMounted(async () => {
   cargado.value = false;
-  let maquina = await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, 2);
-  let t = await bd.obtenerProductos("maquina", maquina[0].id);
+  let maquina = await obtenerMaquina("lineaTipo", routerStore().lineasID, 2);
+  let t = await obtenerProductos("maquina", maquina[0].id);
   if (t.length > 1) {
     tanque1.value = t[0].nombre;
     tanque2.value = t[1].nombre;

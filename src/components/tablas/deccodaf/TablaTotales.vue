@@ -52,29 +52,16 @@ export default {
 };
 </script>
 <script setup>
-import bd from "../../../helpers/bd";
+import { obtenerDatosVariableGeneral } from "../../../helpers/bd";
 import { onMounted, ref } from "vue";
 
 let consumos = ref([]);
-let agua = [];
-let totalP1 = [];
-let totalP2 = [];
-let totalP3 = [];
-let totalP4 = [];
-let totalP5 = [];
-
-let aguaU = [];
-let totalP1U = [];
-let totalP2U = [];
-let totalP3U = [];
-let totalP4U = [];
-let totalP5U = [];
 
 let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-  let ultimos = await bd.obtenerDatosVariableGeneral(
+  let ultimos = await obtenerDatosVariableGeneral(
     "8H",
     "ultimo",
     "individual",
@@ -83,7 +70,7 @@ onMounted(async () => {
     maquinaID,
     routerStore().clienteID
   );
-  let primeros = await bd.obtenerDatosVariableGeneral(
+  let primeros = await obtenerDatosVariableGeneral(
     "8H",
     "primero",
     "individual",

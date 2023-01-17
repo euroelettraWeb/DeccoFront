@@ -30,7 +30,7 @@ export default {
 };
 </script>
 <script setup>
-import bd from "../../../helpers/bd";
+import { obtenerDatosVariableGeneral } from "../../../helpers/bd";
 import { onMounted, ref, computed, reactive } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
@@ -106,7 +106,7 @@ let chartOptions = computed(() => {
 onMounted(async () => {
   cargado.value = false;
 
-  dosis = await bd.obtenerDatosVariableGeneral(
+  dosis = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "individual",

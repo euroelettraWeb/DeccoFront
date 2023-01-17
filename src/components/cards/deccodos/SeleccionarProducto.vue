@@ -55,7 +55,7 @@ export default {
 </script>
 <script setup>
 import axios from "axios";
-import bd from "../../../helpers/bd";
+import { obtenerMaquina, obtenerProductos } from "../../../helpers/bd";
 import { onMounted, ref } from "vue";
 import { routerStore } from "../../../stores/index";
 
@@ -70,8 +70,8 @@ let mensaje = ref("");
 
 onMounted(async () => {
   cargado.value = false;
-  let maquina = await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, 2);
-  let t = await bd.obtenerProductos("maquina", maquina[0].id);
+  let maquina = await obtenerMaquina("lineaTipo", routerStore().lineasID, 2);
+  let t = await obtenerProductos("maquina", maquina[0].id);
 
   for (let index = 0; index < t.length; index++) {
     if (t[index].activo == 0) {

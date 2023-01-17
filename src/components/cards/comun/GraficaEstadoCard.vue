@@ -40,7 +40,10 @@ export default {
 };
 </script>
 <script setup>
-import bd from "../../../helpers/bd";
+import {
+  obtenerMaquina,
+  obtenerDatosVariableGeneral,
+} from "../../../helpers/bd";
 import { onMounted, ref, computed } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
@@ -146,10 +149,10 @@ onMounted(async () => {
   cargado.value = false;
 
   let maquinaID = (
-    await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
+    await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
 
-  formatoVariables = await bd.obtenerDatosVariableGeneral(
+  formatoVariables = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "individual",
@@ -163,7 +166,7 @@ onMounted(async () => {
     socket.on(
       `variable_${maquinaID}_${props.variables[index]}_actualizada`,
       async (data) => {
-        let formatoVariable = await bd.obtenerDatosVariableGeneral(
+        let formatoVariable = await obtenerDatosVariableGeneral(
           "8H",
           "registros",
           "individual",

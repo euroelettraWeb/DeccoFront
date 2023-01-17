@@ -114,11 +114,10 @@ export default {
 };
 </script>
 <script setup>
-import bd from "../../../helpers/bd";
+import { obtenerDatosVariableGeneral } from "../../../helpers/bd";
 import { onMounted, ref, computed, reactive } from "vue";
 import { routerStore } from "../../../stores/index";
 import es from "apexcharts/dist/locales/es.json";
-import io from "socket.io-client";
 import moment from "moment";
 import DatePicker from "vue-time-date-range-picker/dist/vdprDatePicker";
 
@@ -126,8 +125,6 @@ const props = defineProps({
   linea: { type: Number, default: 1 },
   maquina: { type: Number, default: 1 },
 });
-
-const socket = io("http://localhost:3000");
 
 function onReset() {
   inicio.value = "";
@@ -159,7 +156,7 @@ async function dateApplied(date1, date2) {
   cargado6.value = false;
   cargado7.value = false;
   cargado.value = false;
-  estado = await bd.obtenerDatosVariableGeneral(
+  estado = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -170,7 +167,7 @@ async function dateApplied(date1, date2) {
     inicio.value,
     fin.value
   );
-  let autoManual = await bd.obtenerDatosVariableGeneral(
+  let autoManual = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -187,7 +184,7 @@ async function dateApplied(date1, date2) {
   }
   series.value = estado;
   cargado1.value = true;
-  marcha = await bd.obtenerDatosVariableGeneral(
+  marcha = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "multiple",
@@ -198,7 +195,7 @@ async function dateApplied(date1, date2) {
     inicio.value,
     fin.value
   );
-  funcMaquina = await bd.obtenerDatosVariableGeneral(
+  funcMaquina = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -220,19 +217,7 @@ async function dateApplied(date1, date2) {
   }
   series2.value = marcha;
   cargado2.value = true;
-  // let cepillos = await bd.obtenerDatosVariableGeneral(
-  //   "historico",
-  //   "registros",
-  //   "individual",
-  //   "formatoRangos",
-  //   [44],
-  //   props.maquina,
-  //   routerStore().clienteID,
-  //   inicio.value,
-  //   fin.value
-  // );
-  // series3.value = cepillos;
-  dosis = await bd.obtenerDatosVariableGeneral(
+  dosis = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -245,7 +230,7 @@ async function dateApplied(date1, date2) {
   );
   seriesL.value = dosis;
   cargado3.value = true;
-  kilos = await bd.obtenerDatosVariableGeneral(
+  kilos = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -258,7 +243,7 @@ async function dateApplied(date1, date2) {
   );
   seriesL4.value = kilos;
   cargado4.value = true;
-  cajas = await bd.obtenerDatosVariableGeneral(
+  cajas = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -271,7 +256,7 @@ async function dateApplied(date1, date2) {
   );
   seriesL3.value = cajas;
   cargado5.value = true;
-  cporu = await bd.obtenerDatosVariableGeneral(
+  cporu = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -284,7 +269,7 @@ async function dateApplied(date1, date2) {
   );
   seriesL2.value = cporu;
   cargado6.value = true;
-  totales = await bd.obtenerDatosVariableGeneral(
+  totales = await obtenerDatosVariableGeneral(
     "historico",
     "totales",
     "individual",
@@ -442,7 +427,7 @@ let kilos = {};
 onMounted(async () => {
   cargado.value = false;
   cargado1.value = false;
-  estado = await bd.obtenerDatosVariableGeneral(
+  estado = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "individual",
@@ -451,7 +436,7 @@ onMounted(async () => {
     props.maquina,
     routerStore().clienteID
   );
-  let autoManual = await bd.obtenerDatosVariableGeneral(
+  let autoManual = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "individual",
@@ -467,7 +452,7 @@ onMounted(async () => {
   series.value = estado;
   cargado1.value = true;
   cargado2.value = false;
-  marcha = await bd.obtenerDatosVariableGeneral(
+  marcha = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "multiple",
@@ -476,7 +461,7 @@ onMounted(async () => {
     props.maquina,
     routerStore().clienteID
   );
-  funcMaquina = await bd.obtenerDatosVariableGeneral(
+  funcMaquina = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "individual",
@@ -495,7 +480,7 @@ onMounted(async () => {
     marcha[1].data.push(element);
   }
   series2.value = marcha;
-  // let cepillos = await bd.obtenerDatosVariableGeneral(
+  // let cepillos = await obtenerDatosVariableGeneral(
   //   "8H",
   //   "registros",
   //   "formatoRangos",
@@ -507,7 +492,7 @@ onMounted(async () => {
   // series3.value = cepillos;
   cargado2.value = true;
   cargado3.value = false;
-  dosis = await bd.obtenerDatosVariableGeneral(
+  dosis = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "individual",
@@ -519,7 +504,7 @@ onMounted(async () => {
   seriesL.value = dosis;
   cargado3.value = true;
   cargado4.value = false;
-  kilos = await bd.obtenerDatosVariableGeneral(
+  kilos = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "individual",
@@ -531,7 +516,7 @@ onMounted(async () => {
   seriesL4.value = kilos;
   cargado4.value = true;
   cargado5.value = false;
-  cajas = await bd.obtenerDatosVariableGeneral(
+  cajas = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "individual",
@@ -543,7 +528,7 @@ onMounted(async () => {
   seriesL3.value = cajas;
   cargado5.value = true;
   cargado6.value = false;
-  cporu = await bd.obtenerDatosVariableGeneral(
+  cporu = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "individual",
@@ -555,7 +540,7 @@ onMounted(async () => {
   seriesL2.value = cporu;
   cargado6.value = true;
   cargado7.value = false;
-  totales = await bd.obtenerDatosVariableGeneral(
+  totales = await obtenerDatosVariableGeneral(
     "8H",
     "totales",
     "individual",

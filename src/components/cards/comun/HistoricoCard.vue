@@ -73,8 +73,8 @@ export default {
 };
 </script>
 <script setup>
-import bd from "../../../helpers/bd";
-import { onMounted, ref, computed, reactive } from "vue";
+import { obtenerLineas, obtenerMaquina } from "../../../helpers/bd";
+import { onMounted, ref } from "vue";
 import { routerStore } from "../../../stores/index";
 import DECCODAFHistoricoCard from "../deccodaf/DECCODAFHistorico.vue";
 import DECCODOSHistorico from "../deccodos/DECCODOSHistorico.vue";
@@ -89,9 +89,9 @@ let select2 = ref({ id: 0, nombre: "" });
 onMounted(async () => {
   cargado.value = false;
   let lista = [];
-  lineaList.value = await bd.obtenerLineas(routerStore().clienteID);
+  lineaList.value = await obtenerLineas(routerStore().clienteID);
   for (const iterator of lineaList.value) {
-    let sistemas = await bd.obtenerMaquina("linea", iterator.id, 0);
+    let sistemas = await obtenerMaquina("linea", iterator.id, 0);
     lista.push({
       id: iterator.id,
       nombre: iterator.nombre,

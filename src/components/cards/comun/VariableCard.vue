@@ -90,7 +90,11 @@ export default {
 };
 </script>
 <script setup>
-import bd from "../../../helpers/bd";
+import {
+  obtenerLineas,
+  obtenerMaquina,
+  obtenerVariables,
+} from "../../../helpers/bd";
 import { onMounted, ref, computed, reactive } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
@@ -228,10 +232,10 @@ let chartOptions2 = computed(() => {
 
 onMounted(async () => {
   cargado.value = false;
-  lineaList.value = await bd.obtenerLineas(routerStore().clienteID);
+  lineaList.value = await obtenerLineas(routerStore().clienteID);
   let lista = [];
   for (const iterator of lineaList.value) {
-    let sistemas = await bd.obtenerMaquina("linea", iterator.id, 0);
+    let sistemas = await obtenerMaquina("linea", iterator.id, 0);
     lista.push({
       id: iterator.id,
       nombre: iterator.nombre,
@@ -244,7 +248,7 @@ onMounted(async () => {
 async function changeItem(value) {
   if (value.unidadMedida == "I/0") {
     lineas.value = false;
-    variable = await bd.obtenerDatosVariableGeneral(
+    variable = await obtenerDatosVariableGeneral(
       "8H",
       "registros",
       "individual",
@@ -256,7 +260,7 @@ async function changeItem(value) {
     series2.value = variable;
   } else {
     lineas.value = true;
-    variable = await bd.obtenerDatosVariableGeneral(
+    variable = await obtenerDatosVariableGeneral(
       "8H",
       "registros",
       "individual",
@@ -273,7 +277,7 @@ function changeItem2() {
 }
 async function changeItem3(value) {
   console.log(value);
-  variables = await bd.obtenerVariables();
+  variables = await obtenerVariables();
   for (let index = 0; index < variables.length; index++) {
     const element = variables[index];
 

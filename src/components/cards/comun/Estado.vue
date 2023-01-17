@@ -44,7 +44,10 @@ export default {
 };
 </script>
 <script setup>
-import bd from "../../../helpers/bd";
+import {
+  obtenerMaquina,
+  obtenerDatosVariableGeneral,
+} from "../../../helpers/bd";
 import { onMounted, ref, computed } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
@@ -158,10 +161,10 @@ onMounted(async () => {
   cargado.value = false;
 
   let maquinaID = (
-    await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
+    await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
 
-  modoMaquina = await bd.obtenerDatosVariableGeneral(
+  modoMaquina = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "individual",
@@ -170,7 +173,7 @@ onMounted(async () => {
     maquinaID,
     routerStore().clienteID
   );
-  autoManual = await bd.obtenerDatosVariableGeneral(
+  autoManual = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "individual",
@@ -183,7 +186,7 @@ onMounted(async () => {
     const element = autoManual[1].data[index];
     modoMaquina[1].data.push(element);
   }
-  marcha = await bd.obtenerDatosVariableGeneral(
+  marcha = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "multiple",
@@ -192,7 +195,7 @@ onMounted(async () => {
     maquinaID,
     routerStore().clienteID
   );
-  funcMaquina = await bd.obtenerDatosVariableGeneral(
+  funcMaquina = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "individual",
@@ -217,7 +220,7 @@ onMounted(async () => {
   socket.on(
     `variable_${maquinaID}_${props.manual}_actualizada`,
     async (data) => {
-      let modoMaquina = await bd.obtenerDatosVariableGeneral(
+      let modoMaquina = await obtenerDatosVariableGeneral(
         "8H",
         "registros",
         "individual",
@@ -226,7 +229,7 @@ onMounted(async () => {
         maquinaID,
         routerStore().clienteID
       );
-      let autoManual = await bd.obtenerDatosVariableGeneral(
+      let autoManual = await obtenerDatosVariableGeneral(
         "8H",
         "registros",
         "individual",
@@ -246,7 +249,7 @@ onMounted(async () => {
     }
   );
   socket.on(`variable_${maquinaID}_${props.auto}_actualizada`, async (data) => {
-    let modoMaquina = await bd.obtenerDatosVariableGeneral(
+    let modoMaquina = await obtenerDatosVariableGeneral(
       "8H",
       "registros",
       "individual",
@@ -255,7 +258,7 @@ onMounted(async () => {
       maquinaID,
       routerStore().clienteID
     );
-    let autoManual = await bd.obtenerDatosVariableGeneral(
+    let autoManual = await obtenerDatosVariableGeneral(
       "8H",
       "registros",
       "individual",
@@ -276,7 +279,7 @@ onMounted(async () => {
   socket.on(
     `variable_${maquinaID}_${props.manual}_actualizada`,
     async (data) => {
-      let marcha = await bd.obtenerDatosVariableGeneral(
+      let marcha = await obtenerDatosVariableGeneral(
         "8H",
         "registros",
         "multiple",
@@ -285,7 +288,7 @@ onMounted(async () => {
         maquinaID,
         routerStore().clienteID
       );
-      let funcMaquina = await bd.obtenerDatosVariableGeneral(
+      let funcMaquina = await obtenerDatosVariableGeneral(
         "8H",
         "registros",
         "individual",
@@ -313,7 +316,7 @@ onMounted(async () => {
   socket.on(
     `variable_${maquinaID}_${props.alarma}_actualizada`,
     async (data) => {
-      let marcha = await bd.obtenerDatosVariableGeneral(
+      let marcha = await obtenerDatosVariableGeneral(
         "8H",
         "registros",
         "multiple",
@@ -322,7 +325,7 @@ onMounted(async () => {
         maquinaID,
         routerStore().clienteID
       );
-      let funcMaquina = await bd.obtenerDatosVariableGeneral(
+      let funcMaquina = await obtenerDatosVariableGeneral(
         "8H",
         "registros",
         "individual",
@@ -347,7 +350,7 @@ onMounted(async () => {
     }
   );
   socket.on(`variable_${maquinaID}_${props.fc}_actualizada`, async (data) => {
-    let marcha = await bd.obtenerDatosVariableGeneral(
+    let marcha = await obtenerDatosVariableGeneral(
       "8H",
       "registros",
       "multiple",
@@ -356,7 +359,7 @@ onMounted(async () => {
       maquinaID,
       routerStore().clienteID
     );
-    let funcMaquina = await bd.obtenerDatosVariableGeneral(
+    let funcMaquina = await obtenerDatosVariableGeneral(
       "8H",
       "registros",
       "individual",
@@ -383,7 +386,7 @@ onMounted(async () => {
   socket.on(
     `variable_${maquinaID}_${props.activo}_actualizada`,
     async (data) => {
-      let modoMaquina = await bd.obtenerDatosVariableGeneral(
+      let modoMaquina = await obtenerDatosVariableGeneral(
         "8H",
         "registros",
         "individual",
@@ -392,7 +395,7 @@ onMounted(async () => {
         maquinaID,
         routerStore().clienteID
       );
-      let autoManual = await bd.obtenerDatosVariableGeneral(
+      let autoManual = await obtenerDatosVariableGeneral(
         "8H",
         "registros",
         "individual",
@@ -410,7 +413,7 @@ onMounted(async () => {
         if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
       }
 
-      let marcha = await bd.obtenerDatosVariableGeneral(
+      let marcha = await obtenerDatosVariableGeneral(
         "8H",
         "registros",
         "multiple",
@@ -419,7 +422,7 @@ onMounted(async () => {
         maquinaID,
         routerStore().clienteID
       );
-      let funcMaquina = await bd.obtenerDatosVariableGeneral(
+      let funcMaquina = await obtenerDatosVariableGeneral(
         "8H",
         "registros",
         "individual",

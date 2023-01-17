@@ -56,25 +56,20 @@ export default {
 };
 </script>
 <script setup>
+import {
+  obtenerDatosVariableGeneral,
+  obtenerMaquina,
+} from "../../../helpers/bd";
 import bd from "../../../helpers/bd";
 import { onMounted, ref } from "vue";
 
 let consumos = ref([]);
-let agua = [];
-let totalP1 = [];
-let totalP2 = [];
-let totalP3 = [];
-let totalP4 = [];
-let totalP5 = [];
-let tCajas = {};
-let tKg = {};
-
 let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-  let maquinaID = (await bd.obtenerMaquina("lineaTipo", 1, 1))[0].id;
-  let ultimos = await bd.obtenerDatosVariableGeneral(
+  let maquinaID = (await obtenerMaquina("lineaTipo", 1, 1))[0].id;
+  let ultimos = await obtenerDatosVariableGeneral(
     "8H",
     "ultimo",
     "individual",

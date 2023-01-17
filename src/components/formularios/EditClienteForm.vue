@@ -107,8 +107,8 @@ let plc = [];
 let plcId = ref(0);
 
 onMounted(async () => {
-  cliente = await bd.obtenerCliente(routerStore().clienteID);
-  plc = await bd.obtenerClientePLC(routerStore().clienteID);
+  cliente = await obtenerCliente(routerStore().clienteID);
+  plc = await obtenerClientePLC(routerStore().clienteID);
   nombre.value = cliente[0].nombre;
   src.value = cliente[0].img;
   ip.value = plc[0].ip;

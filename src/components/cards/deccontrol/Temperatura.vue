@@ -106,7 +106,7 @@ let chartOptions = computed(() => {
 onMounted(async () => {
   cargado.value = false;
 
-  dosis = await bd.obtenerDatosVariableGeneral(
+  dosis = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "individual",

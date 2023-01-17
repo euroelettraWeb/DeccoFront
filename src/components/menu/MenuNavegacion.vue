@@ -148,7 +148,11 @@ export default {
 };
 </script>
 <script setup>
-import bd from "../../helpers/bd";
+import {
+  obtenerClientes,
+  obtenerLineas,
+  obtenerMaquina,
+} from "../../helpers/bd";
 import { userStore, routerStore, navStore } from "../../stores/index";
 import { storeToRefs } from "pinia";
 import { onMounted, ref, computed, reactive, watch } from "vue";
@@ -213,9 +217,9 @@ let clienteActivo = computed(() => {
 
 onMounted(async () => {
   if (clienteID.value != 0) select.value = clienteID;
-  clientes = await bd.obtenerClientes();
+  clientes = await obtenerClientes();
   if (select.value) {
-    lineas = await bd.obtenerLineas(select.value);
+    lineas = await obtenerLineas(select.value);
     stateLineas.value = true;
   } else {
     stateLineas.value = false;
@@ -223,10 +227,10 @@ onMounted(async () => {
   watch(select, async (val) => {
     if (val) {
       stateLineas.value = false;
-      lineas = await bd.obtenerLineas(val);
+      lineas = await obtenerLineas(val);
       for (let index = 0; index < lineas.length; index++) {
         let element = lineas[index];
-        let maq = await bd.obtenerMaquina("linea", element.id);
+        let maq = await obtenerMaquina("linea", element.id);
         let deccowsID = maq.find((maquina) => maquina.grupoID == 3);
         let deccodosID = maq.find((maquina) => maquina.grupoID == 2);
         let deccodafID = maq.find((maquina) => maquina.grupoID == 1);

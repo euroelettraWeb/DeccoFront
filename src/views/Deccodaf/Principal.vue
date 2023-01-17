@@ -138,7 +138,12 @@ export default {
 <script setup>
 import axios from "axios";
 import { routerStore } from "../../stores/index";
-import bd from "../../helpers/bd";
+import {
+  obtenerLinea,
+  obtenerCliente,
+  obtenerMaquina,
+  obtenerProductos,
+} from "../../helpers/bd";
 import Estado from "../../components/cards/comun/Estado.vue";
 import Dosis from "../../components/cards/comun/Dosis.vue";
 import TablaTotal from "../../components/tablas/comun/TablaTotal.vue";
@@ -170,7 +175,7 @@ async function save() {
     producto4.value,
     producto5.value,
   ];
-  let maquina = await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, 1);
+  let maquina = await obtenerMaquina("lineaTipo", routerStore().lineasID, 1);
   if (!productos.value) {
     for (let index = 0; index < array.length; index++) {
       const element = array[index];
@@ -215,12 +220,12 @@ async function save() {
 onMounted(async () => {
   cargado.value = false;
   guardado.value = false;
-  nombreLinea.value = (await bd.obtenerLinea(routerStore().lineasID))[0].nombre;
+  nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
   nombreCliente.value = (
-    await bd.obtenerCliente(routerStore().clienteID)
+    await obtenerCliente(routerStore().clienteID)
   )[0].nombre;
-  let maquina = await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, 1);
-  let t = await bd.obtenerProductos("maquina", maquina[0].id);
+  let maquina = await obtenerMaquina("lineaTipo", routerStore().lineasID, 1);
+  let t = await obtenerProductos("maquina", maquina[0].id);
   if (t.length > 1) {
     producto1.value = t[0].nombre;
     producto2.value = t[1].nombre;

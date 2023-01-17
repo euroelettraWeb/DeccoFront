@@ -59,7 +59,7 @@ const obtenerDatosVariableGeneral = async (
     )
   ).data;
 
-export default {
+export {
   obtenerDatosVariableGeneral,
   obtenerLinea,
   obtenerLineas,

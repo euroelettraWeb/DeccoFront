@@ -76,7 +76,7 @@ let cargado = ref(false);
 onMounted(async () => {
   cargado.value = false;
 
-  let ultimos = await bd.obtenerDatosVariableGeneral(
+  let ultimos = await obtenerDatosVariableGeneral(
     "8H",
     "ultimo",
     "individual",

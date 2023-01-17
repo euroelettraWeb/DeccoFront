@@ -26,7 +26,7 @@ export default {
 </script>
 
 <script setup>
-import bd from "../helpers/bd";
+import { obtenerMaquina, obtenerLineas } from "../helpers/bd";
 import { onMounted, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { routerStore } from "../stores/index";
@@ -39,11 +39,11 @@ let cargado = ref(false);
 let deccodocontrol = ref(false);
 onMounted(async () => {
   cargado.value = false;
-  lineas = await bd.obtenerLineas(clienteID.value);
+  lineas = await obtenerLineas(clienteID.value);
 
   for (let index = 0; index < lineas.length; index++) {
     let element = lineas[index];
-    let maq = await bd.obtenerMaquina("linea", element.id, 0);
+    let maq = await obtenerMaquina("linea", element.id, 0);
     let deccowsID = maq.find((maquina) => maquina.grupoID == 3);
     let deccodosID = maq.find((maquina) => maquina.grupoID == 2);
     let deccodafID = maq.find((maquina) => maquina.grupoID == 1);
@@ -51,19 +51,15 @@ onMounted(async () => {
     if (deccodosID) lineas[index].deccodosID = deccodosID.activa;
     if (deccodafID) lineas[index].deccodafID = deccodafID.activa;
   }
-  let deccoc = await bd.obtenerMaquina(
-    "clienteTipo",
-    routerStore().clienteID,
-    4
-  );
+  let deccoc = await obtenerMaquina("clienteTipo", routerStore().clienteID, 4);
   if (deccoc) deccodocontrol.value = deccoc.activa;
   nombres.value = lineas;
   watch(clienteID, async (val) => {
-    lineas = await bd.obtenerLineas(clienteID.value);
+    lineas = await obtenerLineas(clienteID.value);
 
     for (let index = 0; index < lineas.length; index++) {
       let element = lineas[index];
-      let maq = await bd.obtenerMaquina("linea", element.id, 0);
+      let maq = await obtenerMaquina("linea", element.id, 0);
       let deccowsID = maq.find((maquina) => maquina.grupoID == 3);
       let deccodosID = maq.find((maquina) => maquina.grupoID == 2);
       let deccodafID = maq.find((maquina) => maquina.grupoID == 1);
@@ -72,7 +68,7 @@ onMounted(async () => {
       if (deccodafID) lineas[index].deccodafID = deccodafID.activa;
     }
     nombres.value = lineas;
-    let deccoc = await bd.obtenerMaquina(
+    let deccoc = await obtenerMaquina(
       "clienteTipo",
       routerStore().clienteID,
       4

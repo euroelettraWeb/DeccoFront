@@ -157,7 +157,10 @@ export default {
 };
 </script>
 <script setup>
-import bd from "../../../helpers/bd";
+import {
+  obtenerDatosVariableGeneral,
+  obtenerMaquina,
+} from "../../../helpers/bd";
 import { onMounted, ref } from "vue";
 import { routerStore } from "../../../stores/index";
 
@@ -193,9 +196,9 @@ onMounted(async () => {
   cargado.value = false;
 
   let maquinaID = (
-    await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
+    await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
-  let horasMarchaAuto = await bd.obtenerDatosVariableGeneral(
+  let horasMarchaAuto = await obtenerDatosVariableGeneral(
     "24H-Turno",
     "registrosY",
     "multiple",
@@ -204,7 +207,7 @@ onMounted(async () => {
     maquinaID,
     routerStore().clienteID
   );
-  let horasMarchaManual = await bd.obtenerDatosVariableGeneral(
+  let horasMarchaManual = await obtenerDatosVariableGeneral(
     "24H-Turno",
     "registrosY",
     "multiple",
@@ -215,7 +218,7 @@ onMounted(async () => {
   );
   for (let index = 0; index < props.variables.length; index++) {
     const element = props.variables[index];
-    let i = await bd.obtenerDatosVariableGeneral(
+    let i = await obtenerDatosVariableGeneral(
       "24H-Turno",
       "registrosY",
       "multiple",

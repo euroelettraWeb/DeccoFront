@@ -82,7 +82,7 @@ export default {
 };
 </script>
 <script setup>
-import bd from "../../../helpers/bd";
+import { obtenerMaquina } from "../../../helpers/bd";
 import { onMounted, ref } from "vue";
 import { routerStore } from "../../../stores";
 
@@ -107,7 +107,7 @@ async function save() {
     producto4.value,
     producto5.value,
   ];
-  let maquina = await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, 2);
+  let maquina = await obtenerMaquina("lineaTipo", routerStore().lineasID, 2);
   if (!productos.value) {
     for (let index = 0; index < array.length; index++) {
       const element = array[index];
@@ -139,8 +139,8 @@ async function save() {
 
 onMounted(async () => {
   cargado.value = false;
-  let maquina = await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, 1);
-  let t = await bd.obtenerProductos("maquina", maquina[0].id);
+  let maquina = await obtenerMaquina("lineaTipo", routerStore().lineasID, 1);
+  let t = await obtenerProductos("maquina", maquina[0].id);
   if (t.length > 1) {
     producto1.value = t[0].nombre;
     producto2.value = t[1].nombre;
