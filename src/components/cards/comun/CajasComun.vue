@@ -47,11 +47,14 @@
 </template>
 <script>
 export default {
-  name: "FrutaProcesada",
+  name: "CajasCard",
 };
 </script>
 <script setup>
-import bd from "../../../helpers/bd";
+import {
+  obtenerMaquina,
+  obtenerDatosVariableGeneral,
+} from "../../../helpers/bd";
 import { onMounted, ref, computed } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
@@ -140,10 +143,10 @@ const props = defineProps({
 onMounted(async () => {
   cargado.value = false;
   let maquinaID = (
-    await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
+    await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
 
-  cajaV = await bd.obtenerDatosVariableGeneral(
+  cajaV = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "individual",
@@ -152,7 +155,7 @@ onMounted(async () => {
     maquinaID,
     routerStore().clienteID
   );
-  tCajas = await bd.obtenerDatosVariableGeneral(
+  tCajas = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "individual",
@@ -186,7 +189,7 @@ onMounted(async () => {
   socket.on(
     `variable_${maquinaID}_${props.total}_actualizada`,
     async (data) => {
-      let unidadMinuto = await bd.obtenerDatosVariableGeneral(
+      let unidadMinuto = await obtenerDatosVariableGeneral(
         "8H",
         "registros",
         "individual",
