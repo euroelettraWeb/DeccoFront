@@ -19,12 +19,13 @@
           :marcha="[57, 60, 62]"
           :tipo="3"
         />
+        <TablaAlarmasTurnos v-if="turnos" />
+        <TablaAlarmas v-else />
         <Estado
           :activo="57"
-          :auto="61"
-          :manual="63"
-          :alarma="60"
-          :fc="62"
+          :auto-manual="[61, 63]"
+          :marcha="[57, 60, 62]"
+          :alarma="[60, 62]"
           :tipo="3"
         />
         <Dosis
@@ -64,6 +65,8 @@ import { routerStore } from "../../stores/index";
 import { obtenerLinea, obtenerCliente } from "../../helpers/bd";
 import { onMounted, ref } from "vue";
 import TablaTotalTurnos from "../../components/tablas/comun/TablaTotalTurnos.vue";
+import TablaAlarmas from "../../components/tablas/comun/TablaAlarmas.vue";
+import TablaAlarmasTurnos from "../../components/tablas/comun/TablaAlarmasTurnos.vue";
 
 let nombreLinea = ref("");
 let nombreCliente = ref("");

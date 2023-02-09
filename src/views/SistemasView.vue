@@ -11,7 +11,7 @@
         <v-btn
           :disabled="!deccodocontrol"
           @click="routerStore().deccocontrol(routerStore().clienteID)"
-          ><v-icon light>mdi-snowflake</v-icon> DECCOCONTROL</v-btn
+          ><v-icon light>mdi-snowflake</v-icon>DECCOCONTROL</v-btn
         >
       </v-col>
       <v-spacer />

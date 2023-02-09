@@ -5,7 +5,7 @@
         <v-col v-if="cargado">
           <v-row>
             <v-col>
-              <v-card-title>Consumo Hoy</v-card-title>
+              <v-card-title>Alarmas en este periodo</v-card-title>
             </v-col>
           </v-row>
           <v-row>
@@ -26,8 +26,26 @@
                   </thead>
                   <tbody>
                     <tr>
-                      <td>Total</td>
-                      <td v-for="item in consumos" :key="item.id">
+                      <td>T. mañana</td>
+                      <td v-for="item in alarmasM" :key="item.id">
+                        {{ item.name }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>T. tarde</td>
+                      <td v-for="item in alarmasT" :key="item.id">
+                        {{ item.name }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>T. noche</td>
+                      <td v-for="item in alarmasN" :key="item.id">
+                        {{ item.name }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Total Hoy</td>
+                      <td v-for="item in alarmas" :key="item.id">
                         {{ item.name }}
                       </td>
                     </tr>
@@ -51,7 +69,7 @@
 </template>
 <script>
 export default {
-  name: "TablaTotal",
+  name: "TablaTotalTurnos",
 };
 </script>
 <script setup>
@@ -62,7 +80,10 @@ import {
 import { onMounted, ref } from "vue";
 import { routerStore } from "../../../stores/index";
 
-let consumos = ref([]);
+let alarmasM = ref([]);
+let alarmasT = ref([]);
+let alarmasN = ref([]);
+let alarmas = ref([]);
 let unidades = ref([]);
 
 let cargado = ref(false);
@@ -75,30 +96,40 @@ const props = defineProps({
 
 onMounted(async () => {
   cargado.value = false;
+
   let maquinaID = (
     await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
-
-  let totalesBD = await obtenerDatosVariableGeneral(
+  let totales = await obtenerDatosVariableGeneral(
     "24H-Turno",
     "registros",
     "individual",
-    "totalRangos",
+    "tiempoTurnos",
     props.variables,
     maquinaID,
     routerStore().clienteID
   );
-  console.log(totalesBD);
-  for (let index = 0; index < totalesBD.length; index++) {
-    const element = totalesBD[index];
-    console.log(element);
+  for (let index = 0; index < totales.length; index++) {
+    const element = totales[index];
     unidades.value.push({
       id: index,
       nombre: element.nombreCorto + " (" + element.unidadMedida + ")",
     });
-    consumos.value.push({
+    alarmasM.value.push({
       id: index,
-      name: Math.max(0, element.registros[0].total1),
+      name: Math.max(0, element.registros[0].total),
+    });
+    alarmasT.value.push({
+      id: index,
+      name: Math.max(0, element.registros[1].total),
+    });
+    alarmasN.value.push({
+      id: index,
+      name: Math.max(0, element.registros[2].total),
+    });
+    alarmas.value.push({
+      id: index,
+      name: Math.max(0, element.registros[3].total),
     });
   }
   unidades.value.push({ id: unidades.value.length, nombre: "Marcha ( min )" });
@@ -106,14 +137,26 @@ onMounted(async () => {
     "24H-Turno",
     "registros",
     "multiple",
-    "totalMarcha",
+    "turnosMarcha",
     props.marcha,
     maquinaID,
     routerStore().clienteID
   );
-  consumos.value.push({
+  alarmasM.value.push({
     id: unidades.value.length,
-    name: Math.max(0, Math.round(horasMarcha.total / 60)),
+    name: Math.max(0, Math.round(horasMarcha.total[0] / 60)),
+  });
+  alarmasT.value.push({
+    id: unidades.value.length,
+    name: Math.max(0, Math.round(horasMarcha.total[1] / 60)),
+  });
+  alarmasN.value.push({
+    id: unidades.value.length,
+    name: Math.max(0, Math.round(horasMarcha.total[2] / 60)),
+  });
+  alarmas.value.push({
+    id: unidades.value.length,
+    name: Math.max(0, Math.round(horasMarcha.total[3] / 60)),
   });
   cargado.value = true;
 });

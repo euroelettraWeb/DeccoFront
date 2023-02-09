@@ -5,11 +5,7 @@
         <v-card>
           <v-row>
             <v-col v-if="cargado">
-              <v-row>
-                <v-col>
-                  <v-card-title>Actividad en niveles de garrafas</v-card-title>
-                </v-col>
-              </v-row>
+              <v-card-title>Actividad en niveles de garrafas</v-card-title>
               <v-row>
                 <v-col class="mx-4 mb-4">
                   <v-simple-table dense>

@@ -95,12 +95,14 @@
           :marcha="[31, 40, 42]"
           :tipo="2"
         />
+        <TablaAlarmasTurnos v-if="turnos" />
+        <TablaAlarmas v-else />
+
         <Estado
           :activo="31"
-          :auto="41"
-          :manual="43"
-          :alarma="40"
-          :fc="42"
+          :auto-manual="[41, 43]"
+          :marcha="[31, 40, 42]"
+          :alarma="[40, 42]"
           :tipo="2"
         />
         <Dosis
@@ -149,6 +151,8 @@ import Dosis from "../../components/cards/comun/Dosis.vue";
 import FrutaProcesadaComun from "../../components/cards/comun/FrutaProcesadaComun.vue";
 import GraficaEstadoCard from "../../components/cards/comun/GraficaEstadoCard.vue";
 import SeleccionarProducto from "../../components/cards/deccodos/SeleccionarProducto.vue";
+import TablaAlarmas from "../../components/tablas/comun/TablaAlarmas.vue";
+import TablaAlarmasTurnos from "../../components/tablas/comun/TablaAlarmasTurnos.vue";
 
 let nombreLinea = ref("");
 let nombreCliente = ref("");

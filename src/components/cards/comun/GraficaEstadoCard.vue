@@ -3,23 +3,16 @@
     ><v-row>
       <v-col>
         <v-card>
-          <v-row
-            ><v-col
-              ><v-card-title>{{ props.title }}</v-card-title></v-col
-            >
-          </v-row>
+          <v-card-title>{{ props.title }}</v-card-title>
           <v-row>
             <v-col v-if="cargado">
-              <v-row>
-                <v-col>
-                  <ApexChart
-                    ref="chartRef"
-                    type="rangeBar"
-                    :height="props.height"
-                    :options="chartOptions"
-                    :series="series"
-                /></v-col>
-              </v-row>
+              <ApexChart
+                ref="chartRef"
+                type="rangeBar"
+                :height="props.height"
+                :options="chartOptions"
+                :series="series"
+              />
             </v-col>
             <v-col v-else class="d-flex justify-center align-center">
               <v-progress-circular
@@ -133,7 +126,7 @@ let chartOptions = computed(() => {
       },
     },
     legend: {
-      height: 60,
+      height: 20,
     },
   };
 });

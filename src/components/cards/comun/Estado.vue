@@ -8,22 +8,20 @@
           </v-row>
           <v-row>
             <v-col v-if="cargado">
-              <v-row>
-                <v-col>
-                  <ApexChart
-                    ref="chartRef"
-                    type="rangeBar"
-                    height="300"
-                    :options="chartOptions"
-                    :series="series" />
-                  <ApexChart
-                    ref="chartRef3"
-                    type="rangeBar"
-                    height="300"
-                    :options="chartOptions"
-                    :series="series3"
-                /></v-col>
-              </v-row>
+              <ApexChart
+                ref="chartRef"
+                type="rangeBar"
+                height="300"
+                :options="chartOptions"
+                :series="series"
+              />
+              <ApexChart
+                ref="chartRef3"
+                type="rangeBar"
+                height="300"
+                :options="chartOptions"
+                :series="series3"
+              />
             </v-col>
             <v-col v-else class="d-flex justify-center align-center">
               <v-progress-circular
@@ -150,9 +148,8 @@ let chartOptions = computed(() => {
 });
 const props = defineProps({
   activo: { type: Number, default: 1 },
-  auto: { type: Number, default: 1 },
-  manual: { type: Number, default: 1 },
-  alarma: { type: Number, default: 1 },
+  autoManual: { type: Array, default: new Array() },
+  alarma: { type: Array, default: new Array() },
   fc: { type: Number, default: 1 },
   tipo: { type: Number, default: 1 },
 });
@@ -178,7 +175,7 @@ onMounted(async () => {
     "registros",
     "individual",
     "formatoRangos",
-    [props.auto, props.manual],
+    props.autoManual,
     maquinaID,
     routerStore().clienteID
   );
@@ -186,12 +183,13 @@ onMounted(async () => {
     const element = autoManual[1].data[index];
     modoMaquina[1].data.push(element);
   }
+
   marcha = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
     "multiple",
     "marchaFormatoRangos",
-    [props.activo, props.alarma, props.fc],
+    props.marcha,
     maquinaID,
     routerStore().clienteID
   );
@@ -200,7 +198,7 @@ onMounted(async () => {
     "registros",
     "individual",
     "formatoRangos",
-    [props.alarma, props.fc],
+    props.alarmas,
     maquinaID,
     routerStore().clienteID
   );
@@ -216,10 +214,9 @@ onMounted(async () => {
   }
   series2.value = funcMaquina;
   series3.value = marcha;
-
-  socket.on(
-    `variable_${maquinaID}_${props.manual}_actualizada`,
-    async (data) => {
+  for (let index = 0; index < props.autoManual.length; index++) {
+    const element = props.autoManual[index];
+    socket.on(`variable_${maquinaID}_${element}_actualizada`, async (data) => {
       let modoMaquina = await obtenerDatosVariableGeneral(
         "8H",
         "registros",
@@ -234,7 +231,7 @@ onMounted(async () => {
         "registros",
         "individual",
         "formatoRangos",
-        [props.auto, props.manual],
+        props.autoManual,
         maquinaID,
         routerStore().clienteID
       );
@@ -246,82 +243,18 @@ onMounted(async () => {
         chartRef.value.updateSeries(modoMaquina);
         if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
       }
-    }
-  );
-  socket.on(`variable_${maquinaID}_${props.auto}_actualizada`, async (data) => {
-    let modoMaquina = await obtenerDatosVariableGeneral(
-      "8H",
-      "registros",
-      "individual",
-      "formatoRangos",
-      [props.activo],
-      maquinaID,
-      routerStore().clienteID
-    );
-    let autoManual = await obtenerDatosVariableGeneral(
-      "8H",
-      "registros",
-      "individual",
-      "formatoRangos",
-      [props.auto, props.manual],
-      maquinaID,
-      routerStore().clienteID
-    );
-    for (let index = 0; index < autoManual[1].data.length; index++) {
-      const element = autoManual[1].data[index];
-      modoMaquina[1].data.push(element);
-    }
-    if (chartRef.value) {
-      chartRef.value.updateSeries(modoMaquina);
-      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-    }
-  });
-  socket.on(
-    `variable_${maquinaID}_${props.manual}_actualizada`,
-    async (data) => {
-      let marcha = await obtenerDatosVariableGeneral(
-        "8H",
-        "registros",
-        "multiple",
-        "marchaFormatoRangos",
-        [props.activo, props.alarma, props.fc],
-        maquinaID,
-        routerStore().clienteID
-      );
-      let funcMaquina = await obtenerDatosVariableGeneral(
-        "8H",
-        "registros",
-        "individual",
-        "formatoRangos",
-        [props.alarma, props.fc],
-        maquinaID,
-        routerStore().clienteID
-      );
-      for (let index = 0; index < funcMaquina[1].data.length; index++) {
-        let element = funcMaquina[1].data[index];
-        if (element.x == "Alarma") {
-          element.fillColor = "#fdd835";
-        } else {
-          element.fillColor = "#3949ab";
-        }
-        marcha[1].data.push(element);
-      }
-      if (chartRef2.value) {
-        chartRef2.value.updateSeries(marcha);
-        if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-      }
-    }
-  );
+    });
+  }
 
-  socket.on(
-    `variable_${maquinaID}_${props.alarma}_actualizada`,
-    async (data) => {
+  for (let index = 0; index < prop.alarma.length; index++) {
+    const element = prop.alarma[index];
+    socket.on(`variable_${maquinaID}_${element}_actualizada`, async (data) => {
       let marcha = await obtenerDatosVariableGeneral(
         "8H",
         "registros",
         "multiple",
         "marchaFormatoRangos",
-        [props.activo, props.alarma, props.fc],
+        props.marcha,
         maquinaID,
         routerStore().clienteID
       );
@@ -347,41 +280,8 @@ onMounted(async () => {
         chartRef2.value.updateSeries(marcha);
         if (lastZoom) chartRef2.value.zoomX(lastZoom[0], lastZoom[1]);
       }
-    }
-  );
-  socket.on(`variable_${maquinaID}_${props.fc}_actualizada`, async (data) => {
-    let marcha = await obtenerDatosVariableGeneral(
-      "8H",
-      "registros",
-      "multiple",
-      "marchaFormatoRangos",
-      [props.activo, props.alarma, props.fc],
-      maquinaID,
-      routerStore().clienteID
-    );
-    let funcMaquina = await obtenerDatosVariableGeneral(
-      "8H",
-      "registros",
-      "individual",
-      "formatoRangos",
-      [props.alarma, props.fc],
-      maquinaID,
-      routerStore().clienteID
-    );
-    for (let index = 0; index < funcMaquina[1].data.length; index++) {
-      let element = funcMaquina[1].data[index];
-      if (element.x == "Alarma") {
-        element.fillColor = "#fdd835";
-      } else {
-        element.fillColor = "#3949ab";
-      }
-      marcha[1].data.push(element);
-    }
-    if (chartRef2.value) {
-      chartRef2.value.updateSeries(marcha);
-      if (lastZoom) chartRef2.value.zoomX(lastZoom[0], lastZoom[1]);
-    }
-  });
+    });
+  }
 
   socket.on(
     `variable_${maquinaID}_${props.activo}_actualizada`,
@@ -400,7 +300,7 @@ onMounted(async () => {
         "registros",
         "individual",
         "formatoRangos",
-        [props.auto, props.manual],
+        props.autoManual,
         maquinaID,
         routerStore().clienteID
       );
@@ -418,7 +318,7 @@ onMounted(async () => {
         "registros",
         "multiple",
         "marchaFormatoRangos",
-        [props.activo, props.alarma, props.fc],
+        props.marcha,
         maquinaID,
         routerStore().clienteID
       );

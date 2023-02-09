@@ -100,12 +100,13 @@
           :variables="[25, 26, 27, 28, 29, 30]"
           :marcha="[1, 12, 14]"
         />
+        <TablaAlarmasTurnos v-if="turnos" />
+        <TablaAlarmas v-else />
         <Estado
           :activo="1"
-          :auto="13"
-          :manual="15"
-          :alarma="12"
-          :fc="14"
+          :auto-manual="[13, 15]"
+          :marcha="[1, 12, 14]"
+          :alarma="[12, 14]"
           :tipo="1"
         />
         <Dosis
@@ -151,6 +152,8 @@ import { onMounted, ref } from "vue";
 import TablaTurnos from "../../components/tablas/comun/TablaTurnos.vue";
 import TablaTotalTurnos from "../../components/tablas/comun/TablaTotalTurnos.vue";
 import FrutaProcesadaComun from "../../components/cards/comun/FrutaProcesadaComun.vue";
+import TablaAlarmas from "../../components/tablas/comun/TablaAlarmas.vue";
+import TablaAlarmasTurnos from "../../components/tablas/comun/TablaAlarmasTurnos.vue";
 
 let nombreLinea = ref("");
 let nombreCliente = ref("");
