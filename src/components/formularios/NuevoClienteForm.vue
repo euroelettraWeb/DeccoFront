@@ -115,22 +115,16 @@ async function validate() {
         src: src.value,
       })
     ).data;
-    let dataPlc = (
-      await axios.post(`${process.env.VUE_APP_RUTA_API}/plcs/nuevo`, {
-        ip: ip.value,
-        puerto: puerto.value,
-        usuario: usuario.value != "" ? usuario.value : "NULL",
-        password: contraseña.value != "" ? contraseña.value : "NULL",
-        descripcion: descripcion.value,
-        clienteID: dataCliente[0].id,
-      })
-    ).data;
-    if (dataCliente[0].id) {
-      routerStore().clienteID = dataCliente[0].id;
-      routerStore().clienteNuevoLinea(dataCliente[0].id);
-    } else {
-      form.value.reset();
-    }
+    await axios.post(`${process.env.VUE_APP_RUTA_API}/plcs/nuevo`, {
+      ip: ip.value,
+      puerto: puerto.value,
+      usuario: usuario.value != "" ? usuario.value : "NULL",
+      password: contraseña.value != "" ? contraseña.value : "NULL",
+      descripcion: descripcion.value,
+      clienteID: dataCliente[0].id,
+    });
+    routerStore().clienteID = dataCliente[0].id;
+    routerStore().clienteNuevoLinea(dataCliente[0].id);
   }
 }
 function reset() {
