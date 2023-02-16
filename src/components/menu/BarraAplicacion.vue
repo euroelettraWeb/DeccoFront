@@ -39,7 +39,8 @@ export default {
 };
 </script>
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { obtenerCliente, obtenerLinea } from "../../helpers/bd";
 import { userStore, navStore, routerStore } from "../../stores/index";
 const user = userStore();
 const nav = navStore();
