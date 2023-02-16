@@ -46,14 +46,19 @@ const user = userStore();
 const nav = navStore();
 let nombreLinea = ref("");
 let nombreCliente = ref("");
-let maquina = routerStore.getMaquinaNombre;
+let maquina = ref("");
 
 const logout = () => user.logout();
 onMounted(async () => {
-  nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
-  nombreCliente.value = (
-    await obtenerCliente(routerStore().clienteID)
-  )[0].nombre;
+  let maquinaNombre = routerStore.getMaquinaNombre;
+  if (maquinaNombre) {
+    nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
+    nombreCliente.value = (
+      await obtenerCliente(routerStore().clienteID)
+    )[0].nombre;
+    maquina.value =
+      nombreCliente.value + " - " + maquinaNombre + " - " + nombreCliente.value;
+  }
 });
 // const evento = () => {
 //   let ahora = new Date().toLocaleString();

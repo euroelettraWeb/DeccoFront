@@ -84,7 +84,7 @@ export default {
 };
 </script>
 <script setup>
-import { obtenerCliente } from "../../helpers/bd";
+import { obtenerCliente, obtenerClientePLC } from "../../helpers/bd";
 import axios from "axios";
 import { routerStore } from "../../stores/index";
 import { ref, onMounted } from "vue";
