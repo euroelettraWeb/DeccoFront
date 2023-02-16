@@ -6,6 +6,10 @@
 
     <v-spacer></v-spacer>
 
+    <v-toolbar-title
+      >{{ nombreCliente }} - {{ maquina }} - {{ nombreLinea }}</v-toolbar-title
+    >
+
     <v-btn v-if="!user.usuarioValido" to="/login" outlined>
       <v-icon left>mdi-account-circle</v-icon>
       Iniciar sesion
@@ -35,12 +39,21 @@ export default {
 };
 </script>
 <script setup>
-import { userStore, navStore } from "../../stores/index";
+import { ref } from "vue";
+import { userStore, navStore, routerStore } from "../../stores/index";
 const user = userStore();
 const nav = navStore();
+let nombreLinea = ref("");
+let nombreCliente = ref("");
+let maquina = routerStore.getMaquinaNombre;
 
 const logout = () => user.logout();
-
+onMounted(async () => {
+  nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
+  nombreCliente.value = (
+    await obtenerCliente(routerStore().clienteID)
+  )[0].nombre;
+});
 // const evento = () => {
 //   let ahora = new Date().toLocaleString();
 //   let partes = ahora.split(", ");

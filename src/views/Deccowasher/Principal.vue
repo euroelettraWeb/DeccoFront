@@ -1,8 +1,8 @@
 <template>
   <v-container>
-    <h1 class="transition-swing text-h2">
+    <!-- <h1 class="transition-swing text-h2">
       {{ nombreCliente }} - DECCOWASHER - {{ nombreLinea }}
-    </h1>
+    </h1> -->
     <v-row>
       <v-col>
         <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
@@ -72,9 +72,9 @@ let nombreLinea = ref("");
 let nombreCliente = ref("");
 let turnos = ref(true);
 onMounted(async () => {
-  nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
-  nombreCliente.value = (
-    await obtenerCliente(routerStore().clienteID)
-  )[0].nombre;
+  // nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
+  // nombreCliente.value = (
+  //   await obtenerCliente(routerStore().clienteID)
+  // )[0].nombre;
 });
 </script>

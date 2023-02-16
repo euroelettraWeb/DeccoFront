@@ -1,8 +1,8 @@
 <template>
   <v-container>
-    <h1 class="transition-swing text-h2">
+    <!-- <h1 class="transition-swing text-h2">
       {{ nombreCliente }} - DECCOCONTROL - {{ nombreLinea }}
-    </h1>
+    </h1> -->
     <v-row>
       <v-col><!-- <Temperatura /> <EvolucionC02 /> <Humedad /> --></v-col>
     </v-row>
