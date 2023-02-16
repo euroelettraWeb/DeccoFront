@@ -267,7 +267,7 @@ async function guardarLineas() {
     for (let index = 0; index < lineas.value.length; index++) {
       let element = lineas.value[index];
       let linea = await obtenerLinea(element.id);
-      if (linea) {
+      if (linea.length != 0) {
         let maquinas = await obtenerMaquina("linea", element.id, 0);
         let deccowsID = maquinas.find((maquina) => maquina.grupoID == 3);
         let deccodosID = maquinas.find((maquina) => maquina.grupoID == 2);
