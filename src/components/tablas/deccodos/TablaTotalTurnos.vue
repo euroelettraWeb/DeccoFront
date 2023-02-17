@@ -187,7 +187,7 @@ let consumosMarchaManual = ref([]);
 let cargado = ref(false);
 
 const props = defineProps({
-  variables: { type: Array, default: new Array() },
+  variables: { type: Array, default: () => [] },
   modo: { type: Array, default: new Array(2) },
   tipo: { type: Number, default: 2 },
 });

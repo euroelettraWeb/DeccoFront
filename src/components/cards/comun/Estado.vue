@@ -148,8 +148,8 @@ let chartOptions = computed(() => {
 });
 const props = defineProps({
   activo: { type: Number, default: 1 },
-  autoManual: { type: Array, default: new Array() },
-  alarma: { type: Array, default: new Array() },
+  autoManual: { type: Array, default: () => [] },
+  alarma: { type: Array, default: () => [] },
   fc: { type: Number, default: 1 },
   tipo: { type: Number, default: 1 },
 });

@@ -89,8 +89,8 @@ let unidades = ref([]);
 let cargado = ref(false);
 
 const props = defineProps({
-  variables: { type: Array, default: new Array() },
-  marcha: { type: Array, default: new Array(3) },
+  variables: { type: Array, default: () => [] },
+  marcha: { type: Array, default: () => [] },
   tipo: { type: Number, default: 1 },
 });
 

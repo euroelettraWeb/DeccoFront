@@ -110,7 +110,7 @@ let chartOptions = computed(() => {
 
 const props = defineProps({
   title: { type: String, default: "Dosis" },
-  variables: { type: Array, default: new Array() },
+  variables: { type: Array, default: () => [] },
   tipo: { type: Number, default: 1 },
 });
 
