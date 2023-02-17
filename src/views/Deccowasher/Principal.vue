@@ -8,7 +8,7 @@
         <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
         <TablaTurnos v-if="turnos" :tipo="1" />
         <TablaTotalTurnos
-          v-if="turnos"
+          v-if="turnos && turnosA.value.length > 1"
           :variables="[70, 71, 72, 69]"
           :marcha="[57, 60, 62]"
           :tipo="3"
@@ -62,7 +62,7 @@ import TablaTurnos from "../../components/tablas/comun/TablaTurnos.vue";
 import TablaTotal from "../../components/tablas/comun/TablaTotal.vue";
 import FrutaProcesadaComun from "../../components/cards/comun/FrutaProcesadaComun.vue";
 import { routerStore } from "../../stores/index";
-import { obtenerLinea, obtenerCliente } from "../../helpers/bd";
+import { obtenerLinea, obtenerCliente, obtenerTurnos } from "../../helpers/bd";
 import { onMounted, ref } from "vue";
 import TablaTotalTurnos from "../../components/tablas/comun/TablaTotalTurnos.vue";
 import TablaAlarmas from "../../components/tablas/comun/TablaAlarmas.vue";
@@ -71,7 +71,10 @@ import TablaAlarmasTurnos from "../../components/tablas/comun/TablaAlarmasTurnos
 let nombreLinea = ref("");
 let nombreCliente = ref("");
 let turnos = ref(true);
+let turnosA = ref([]);
 onMounted(async () => {
+  turnosA.value = await obtenerTurnos(routerStore().clienteID);
+  turnos.value = turnosA.value.length > 0 ? true : false;
   // nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
   // nombreCliente.value = (
   //   await obtenerCliente(routerStore().clienteID)

@@ -109,60 +109,59 @@ onMounted(async () => {
     maquinaID,
     routerStore().clienteID
   );
-  if (totales.length > 0) {
-    for (let index = 0; index < totales.length; index++) {
-      const element = totales[index];
-      unidades.value.push({
-        id: index,
-        nombre: element.nombreCorto + " (" + element.unidadMedida + ")",
-      });
-      consumosM.value.push({
-        id: index,
-        name: Math.max(0, element.registros[0][0].total),
-      });
-      consumosT.value.push({
-        id: index,
-        name: Math.max(0, element.registros[1][0].total),
-      });
-      consumosN.value.push({
-        id: index,
-        name: Math.max(0, element.registros[2][0].total),
-      });
-      consumos.value.push({
-        id: index,
-        name: Math.max(0, element.registros[3][0].total),
-      });
-    }
+  for (let index = 0; index < totales.length; index++) {
+    const element = totales[index];
     unidades.value.push({
-      id: unidades.value.length,
-      nombre: "Marcha ( min )",
+      id: index,
+      nombre: element.nombreCorto + " (" + element.unidadMedida + ")",
     });
-    let horasMarcha = await obtenerDatosVariableGeneral(
-      "24H-Turno",
-      "registros",
-      "multiple",
-      "turnosMarcha",
-      props.marcha,
-      maquinaID,
-      routerStore().clienteID
-    );
     consumosM.value.push({
-      id: unidades.value.length,
-      name: Math.max(0, Math.round(horasMarcha.total[0] / 60)),
+      id: index,
+      name: Math.max(0, element.registros[0][0].total),
     });
     consumosT.value.push({
-      id: unidades.value.length,
-      name: Math.max(0, Math.round(horasMarcha.total[1] / 60)),
+      id: index,
+      name: Math.max(0, element.registros[1][0].total),
     });
     consumosN.value.push({
-      id: unidades.value.length,
-      name: Math.max(0, Math.round(horasMarcha.total[2] / 60)),
+      id: index,
+      name: Math.max(0, element.registros[2][0].total),
     });
     consumos.value.push({
-      id: unidades.value.length,
-      name: Math.max(0, Math.round(horasMarcha.total[3] / 60)),
+      id: index,
+      name: Math.max(0, element.registros[3][0].total),
     });
   }
+  unidades.value.push({
+    id: unidades.value.length,
+    nombre: "Marcha ( min )",
+  });
+  let horasMarcha = await obtenerDatosVariableGeneral(
+    "24H-Turno",
+    "registros",
+    "multiple",
+    "turnosMarcha",
+    props.marcha,
+    maquinaID,
+    routerStore().clienteID
+  );
+  consumosM.value.push({
+    id: unidades.value.length,
+    name: Math.max(0, Math.round(horasMarcha.total[0] / 60)),
+  });
+  consumosT.value.push({
+    id: unidades.value.length,
+    name: Math.max(0, Math.round(horasMarcha.total[1] / 60)),
+  });
+  consumosN.value.push({
+    id: unidades.value.length,
+    name: Math.max(0, Math.round(horasMarcha.total[2] / 60)),
+  });
+  consumos.value.push({
+    id: unidades.value.length,
+    name: Math.max(0, Math.round(horasMarcha.total[3] / 60)),
+  });
+
   cargado.value = true;
 });
 </script>
