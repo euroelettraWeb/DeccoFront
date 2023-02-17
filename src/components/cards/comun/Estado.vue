@@ -150,6 +150,7 @@ const props = defineProps({
   activo: { type: Number, default: 1 },
   autoManual: { type: Array, default: () => [] },
   alarma: { type: Array, default: () => [] },
+  marcha: { type: Array, default: () => [] },
   fc: { type: Number, default: 1 },
   tipo: { type: Number, default: 1 },
 });

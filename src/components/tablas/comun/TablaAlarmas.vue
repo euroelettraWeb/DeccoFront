@@ -92,11 +92,11 @@ onMounted(async () => {
     const element = totalesBD[index];
     unidades.value.push({
       id: index,
-      nombre: element.nombreCorto + " (" + element.unidadMedida + ")",
+      nombre: element.nombreCorto + " ( min )",
     });
     consumos.value.push({
       id: index,
-      name: Math.max(0, element.registros[0].total1),
+      name: Math.max(0, element.registros.total1),
     });
   }
   unidades.value.push({ id: unidades.value.length, nombre: "Marcha ( min )" });
