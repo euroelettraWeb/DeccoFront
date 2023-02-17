@@ -19,7 +19,7 @@
           :marcha="[57, 60, 62]"
           :tipo="3"
         />
-        <TablaAlarmasTurnos v-if="turnos" />
+        <TablaAlarmasTurnos v-if="turnos && turnosA.value.length > 1" />
         <TablaAlarmas v-else />
         <Estado
           :activo="57"

@@ -276,7 +276,6 @@ function changeItem2() {
   nombres2.value = select.value.sistemas;
 }
 async function changeItem3(value) {
-  console.log(value);
   variables = await obtenerVariables();
   for (let index = 0; index < variables.length; index++) {
     const element = variables[index];

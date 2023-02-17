@@ -89,10 +89,8 @@ onMounted(async () => {
     maquinaID,
     routerStore().clienteID
   );
-  console.log(totalesBD);
   for (let index = 0; index < totalesBD.length; index++) {
     const element = totalesBD[index];
-    console.log(element);
     unidades.value.push({
       id: index,
       nombre: element.nombreCorto + " (" + element.unidadMedida + ")",
