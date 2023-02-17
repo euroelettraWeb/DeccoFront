@@ -8,7 +8,7 @@
         <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
         <TablaTurnos v-if="turnos" :tipo="1" />
         <TablaTotalTurnos
-          v-if="turnos && turnosA.value.length > 1"
+          v-if="turnos && turnosA.length > 1"
           :variables="[70, 71, 72, 69]"
           :marcha="[57, 60, 62]"
           :tipo="3"
@@ -19,8 +19,16 @@
           :marcha="[57, 60, 62]"
           :tipo="3"
         />
-        <TablaAlarmasTurnos v-if="turnos && turnosA.value.length > 1" />
-        <TablaAlarmas v-else />
+        <TablaAlarmasTurnos
+          v-if="turnos && turnosA.length > 1"
+          :variables="[60, 62, 84, 85, 86, 87]"
+          :marcha="[57, 60, 62]"
+        />
+        <TablaAlarmas
+          v-else
+          :variables="[60, 62, 84, 85, 86, 87]"
+          :marcha="[57, 60, 62]"
+        />
         <Estado
           :activo="57"
           :auto-manual="[61, 63]"

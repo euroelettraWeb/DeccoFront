@@ -81,7 +81,7 @@ onMounted(async () => {
   )[0].id;
 
   let totalesBD = await obtenerDatosVariableGeneral(
-    "24H-Turno",
+    "24H",
     "totales",
     "individual",
     "sinfiltro",
@@ -102,7 +102,7 @@ onMounted(async () => {
   }
   unidades.value.push({ id: unidades.value.length, nombre: "Marcha ( min )" });
   let horasMarcha = await obtenerDatosVariableGeneral(
-    "24H-Turno",
+    "24H",
     "registros",
     "multiple",
     "totalMarcha",
