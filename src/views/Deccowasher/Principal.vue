@@ -23,11 +23,13 @@
           v-if="turnos && turnosA.length > 1"
           :variables="[60, 62, 84, 85, 86, 87]"
           :marcha="[57, 60, 62]"
+          :tipo="3"
         />
         <TablaAlarmas
           v-else
           :variables="[60, 62, 84, 85, 86, 87]"
           :marcha="[57, 60, 62]"
+          :tipo="3"
         />
         <Estado
           :activo="57"
