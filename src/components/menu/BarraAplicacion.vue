@@ -7,7 +7,7 @@
     <v-spacer></v-spacer>
 
     <v-toolbar-title> {{ maquina }} </v-toolbar-title>
-
+    <v-spacer></v-spacer>
     <v-btn v-if="!user.usuarioValido" to="/login" outlined>
       <v-icon left>mdi-account-circle</v-icon>
       Iniciar sesion
@@ -56,12 +56,16 @@ let maquina = computed(() => {
 
 const logout = () => user.logout();
 onMounted(async () => {
-  if (routerStore().maquina) {
-    nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
-    nombreCliente.value = (
-      await obtenerCliente(routerStore().clienteID)
-    )[0].nombre;
-  }
+  watchEffect(async () => {
+    if (routerStore().maquina) {
+      nombreLinea.value = (
+        await obtenerLinea(routerStore().lineasID)
+      )[0].nombre;
+      nombreCliente.value = (
+        await obtenerCliente(routerStore().clienteID)
+      )[0].nombre;
+    }
+  });
 });
 // const evento = () => {
 //   let ahora = new Date().toLocaleString();
