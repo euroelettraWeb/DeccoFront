@@ -408,6 +408,7 @@ let cargado4 = ref(false);
 let cargado5 = ref(false);
 let cargado6 = ref(false);
 let cargado7 = ref(false);
+let cargado8 = ref(false);
 
 const chartRef = ref(null);
 const chartRef2 = ref(null);
@@ -675,7 +676,7 @@ onMounted(async () => {
     props.maquina,
     routerStore().clienteID
   );
-  for (let index = 0; index < totales.length; index++) {
+  for (let index = 0; index < alarmas.value.length; index++) {
     const element = alarma[index];
     alarmas.value.push({
       id: index,

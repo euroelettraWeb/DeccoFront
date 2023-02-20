@@ -206,7 +206,7 @@ export default {
 </script>
 <script setup>
 import { obtenerDatosVariableGeneral } from "../../../helpers/bd";
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, onUnmounted } from "vue";
 import { routerStore } from "../../../stores/index";
 import es from "apexcharts/dist/locales/es.json";
 import moment from "moment";
