@@ -153,6 +153,7 @@ import {
   obtenerCliente,
   obtenerMaquina,
   obtenerProductos,
+  obtenerTurnos,
 } from "../../helpers/bd";
 import { onMounted, ref } from "vue";
 import TablaTotalTurnos from "../../components/tablas/deccodos/TablaTotalTurnos.vue";

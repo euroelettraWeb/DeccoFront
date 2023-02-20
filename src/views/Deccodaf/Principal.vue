@@ -149,6 +149,7 @@ import {
   obtenerCliente,
   obtenerMaquina,
   obtenerProductos,
+  obtenerTurnos,
 } from "../../helpers/bd";
 import Estado from "../../components/cards/comun/Estado.vue";
 import Dosis from "../../components/cards/comun/Dosis.vue";

@@ -96,7 +96,7 @@ onMounted(async () => {
     });
     consumos.value.push({
       id: index,
-      name: Math.max(0, element.registros.total1),
+      name: Math.max(0, Math.round(element.registros.total1 / 60)),
     });
   }
   unidades.value.push({ id: unidades.value.length, nombre: "Marcha ( min )" });
