@@ -11,6 +11,7 @@
           <v-row class="pl-8">
             <v-col
               ><date-picker
+                class="selectdates"
                 apply-button-label="Use"
                 :date-input="dateInput"
                 :format="'DD MM YYYY HH:mm'"
@@ -20,88 +21,178 @@
             /></v-col>
           </v-row>
           <v-row>
-            <v-col v-if="cargado">
-              <v-simple-table dense>
-                <template #default>
-                  <thead>
-                    <tr>
-                      <th class="text-left"></th>
-                      <th
-                        v-for="item in consumos"
-                        :key="item.id"
-                        class="text-left"
-                      >
-                        {{ item.nombre }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Total</td>
-                      <td v-for="item in consumos" :key="item.id">
-                        {{ item.total }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-simple-table>
-              <ApexChart
-                ref="chartRef"
-                type="rangeBar"
-                height="300"
-                :options="rangeOptions"
-                :series="series"
-              />
-              <ApexChart
-                ref="chartRef2"
-                type="rangeBar"
-                height="300"
-                :options="rangeOptions"
-                :series="series2"
-              />
+            <v-col>
+              <v-col v-if="cargado7">
+                <v-simple-table dense>
+                  <template #default>
+                    <thead>
+                      <tr>
+                        <th class="text-left"></th>
+                        <th
+                          v-for="item in consumos"
+                          :key="item.id"
+                          class="text-left"
+                        >
+                          {{ item.nombre }}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Total</td>
+                        <td v-for="item in consumos" :key="item.id">
+                          {{ item.total }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-simple-table>
+              </v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+              <v-col v-if="cargado8">
+                <v-simple-table dense>
+                  <template #default>
+                    <thead>
+                      <tr>
+                        <th class="text-left"></th>
+                        <th
+                          v-for="item in alarmas"
+                          :key="item.id"
+                          class="text-left"
+                        >
+                          {{ item.nombre }}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Total</td>
+                        <td v-for="item in alarmas" :key="item.id">
+                          {{ item.total }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-simple-table>
+              </v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+              <v-col v-if="cargado1">
+                <ApexChart
+                  ref="chartRef"
+                  type="rangeBar"
+                  height="300"
+                  :options="rangeOptions"
+                  :series="series"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+              <v-col v-if="cargado2">
+                <ApexChart
+                  ref="chartRef2"
+                  type="rangeBar"
+                  height="300"
+                  :options="rangeOptions"
+                  :series="series2"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
               <!-- <ApexChart
-                ref="chartRef3"
-                type="rangeBar"
-                height="200"
-                :options="rangeOptions"
-                :series="series3"
-              /> -->
-              <ApexChart
-                ref="chartRef4"
-                type="line"
-                height="300"
-                :options="chartOptions"
-                :series="seriesL"
-              />
-              <ApexChart
-                ref="chartRef5"
-                type="line"
-                height="300"
-                :options="chartOptions"
-                :series="seriesL2"
-              />
-              <ApexChart
-                ref="chartRef6"
-                type="line"
-                height="300"
-                :options="chartOptions"
-                :series="seriesL3"
-              />
-              <ApexChart
-                ref="chartRef7"
-                type="line"
-                height="300"
-                :options="chartOptions"
-                :series="seriesL4"
-              />
-            </v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
+                  ref="chartRef3"
+                  type="rangeBar"
+                  height="300"
+                  :options="rangeOptions"
+                  :series="series3"
+                /> -->
+              <v-col v-if="cargado3">
+                <ApexChart
+                  ref="chartRef4"
+                  type="line"
+                  height="300"
+                  :options="chartOptions"
+                  :series="seriesL"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+              <v-col v-if="cargado4">
+                <ApexChart
+                  ref="chartRef5"
+                  type="line"
+                  height="300"
+                  :options="chartOptions"
+                  :series="seriesL2"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+              <v-col v-if="cargado5">
+                <ApexChart
+                  ref="chartRef6"
+                  type="line"
+                  height="300"
+                  :options="chartOptions"
+                  :series="seriesL3"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+              <v-col v-if="cargado6">
+                <ApexChart
+                  ref="chartRef7"
+                  type="line"
+                  height="300"
+                  :options="chartOptions"
+                  :series="seriesL4"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
             </v-col>
           </v-row>
         </v-card>
@@ -140,6 +231,7 @@ async function dateApplied(date1, date2) {
   let cporu = {};
   let cajas = {};
   let kilos = {};
+  let alarma = {};
   series.value = [];
   series2.value = [];
   seriesL.value = [];
@@ -304,6 +396,28 @@ async function dateApplied(date1, date2) {
   }
   consumos.value = total;
   cargado7.value = true;
+  alarma = await obtenerDatosVariableGeneral(
+    "historico",
+    "totales",
+    "individual",
+    "sinfiltro",
+    [1, 12, 14, 73, 74, 75],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
+  );
+  let totalA = [];
+  for (let index = 0; index < alarma.length; index++) {
+    const element = alarma[index];
+    totalA.push({
+      id: index,
+      nombre: element.nombreCorto + "( " + element.unidadMedida + " )",
+      total: Math.max(0, element.registros[0].total),
+    });
+  }
+  alarmas.value = totalA;
+  cargado8.value = true;
   cargado.value = true;
 }
 
@@ -315,6 +429,7 @@ let cargado4 = ref(false);
 let cargado5 = ref(false);
 let cargado6 = ref(false);
 let cargado7 = ref(false);
+let cargado8 = ref(false);
 
 const chartRef = ref(null);
 const chartRef2 = ref(null);
@@ -330,6 +445,7 @@ let seriesL3 = ref([]);
 let seriesL4 = ref([]);
 
 let consumos = ref([]);
+let alarmas = ref([]);
 let totales = {};
 
 let sameDateFormat = {
@@ -433,6 +549,7 @@ let dosis = {};
 let cporu = {};
 let cajas = {};
 let kilos = {};
+let alarma = {};
 onMounted(async () => {
   cargado.value = false;
   cargado1.value = false;
@@ -566,8 +683,36 @@ onMounted(async () => {
     });
   }
   cargado7.value = true;
-
+  cargado8.value = false;
+  alarma = await obtenerDatosVariableGeneral(
+    "8H",
+    "registros",
+    "individual",
+    "totalRangos",
+    [12, 14, 73, 74, 75],
+    props.maquina,
+    routerStore().clienteID
+  );
+  for (let index = 0; index < totales.length; index++) {
+    const element = alarma[index];
+    alarmas.value.push({
+      id: index,
+      nombre: element.nombreCorto + "( min )",
+      total: Math.max(0, Math.round(element.registros.total1 / 60)),
+    });
+  }
+  cargado8.value = true;
   cargado.value = true;
+});
+onUnmounted(() => {
+  series.value = [];
+  series2.value = [];
+  seriesL.value = [];
+  seriesL2.value = [];
+  seriesL3.value = [];
+  seriesL4.value = [];
+  consumos.value = [];
+  alarmas.value = [];
 });
 </script>
 <style>

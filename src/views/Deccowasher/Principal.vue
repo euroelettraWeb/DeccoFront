@@ -1,8 +1,6 @@
 <template>
   <v-container>
-    <!-- <h1 class="transition-swing text-h2">
-      {{ nombreCliente }} - DECCOWASHER - {{ nombreLinea }}
-    </h1> -->
+    <!--  -->
     <v-row>
       <v-col>
         <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>

@@ -1,8 +1,5 @@
 <template>
   <v-container>
-    <h1 class="transition-swing text-h2">
-      {{ nombreCliente }} - DECCODAF - {{ nombreLinea }}
-    </h1>
     <v-row>
       <v-col>
         <CajasComun :caja1="16" :caja2="17" :total="18" :tipo="1" />
@@ -11,11 +8,6 @@
           :height="300"
           title="Estado de los agitadores"
           :tipo="1" />
-        <!-- <GraficaEstadoCard
-          :variables="[20]"
-          :height="300"
-          title="Señal del nivel"
-          :tipo="1" /> -->
         <GraficaEstadoCard
           :variables="[20, 21, 22, 23, 24]"
           :height="300"

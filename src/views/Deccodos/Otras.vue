@@ -1,8 +1,5 @@
 <template>
   <v-container>
-    <h1 class="transition-swing text-h2">
-      {{ nombreCliente }} - DECCODOS - {{ nombreLinea }}
-    </h1>
     <v-row>
       <v-col>
         <GraficaEstadoCard
@@ -12,12 +9,6 @@
           :tipo="2"
         />
         <CajasComun :caja1="45" :caja2="46" :total="47" :tipo="2" />
-        <!-- <GraficaEstadoCard
-          :variables="[20]"
-          :height="300"
-          title="Presencia de fruta"
-          :tipo="2"
-        /> -->
       </v-col>
     </v-row>
   </v-container>
