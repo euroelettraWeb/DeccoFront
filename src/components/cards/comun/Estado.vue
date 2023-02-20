@@ -198,7 +198,7 @@ onMounted(async () => {
     "registros",
     "individual",
     "formatoRangos",
-    props.alarmas,
+    props.alarma,
     maquinaID,
     routerStore().clienteID
   );
@@ -246,7 +246,7 @@ onMounted(async () => {
     });
   }
 
-  for (let index = 0; index < prop.alarma.length; index++) {
+  for (let index = 0; index < props.alarma.length; index++) {
     const element = prop.alarma[index];
     socket.on(`variable_${maquinaID}_${element}_actualizada`, async (data) => {
       let marcha = await obtenerDatosVariableGeneral(
