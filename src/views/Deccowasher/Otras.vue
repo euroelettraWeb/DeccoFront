@@ -6,9 +6,9 @@
     <v-row>
       <v-col>
         <GraficaEstadoCard
-          :variables="[64, 65]"
+          :variables="[64, 65, 84, 85, 86, 87, 88]"
           :height="400"
-          title="Estado de las bombas"
+          title="Estado de las bombas, niveles, bidon y presencia de fruta"
           :tipo="3"
         />
         <CajasComun :caja1="66" :caja2="67" :total="68" :tipo="3" />
