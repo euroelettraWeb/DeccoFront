@@ -82,18 +82,6 @@ export const routerStore = defineStore("router", {
     getLinea(state) {
       return state.lineasID;
     },
-    getMaquinaNombre(state) {
-      switch (state.maquina) {
-        case 1:
-          return "DECCODAF";
-        case 2:
-          return "DECCODOS";
-        case 3:
-          return "DECCOWASHER";
-        default:
-          return "";
-      }
-    },
   },
   actions: {
     homeRoute: async function ({}) {

@@ -6,9 +6,7 @@
 
     <v-spacer></v-spacer>
 
-    <v-toolbar-title
-      >{{ nombreCliente }} - {{ maquina }} - {{ nombreLinea }}</v-toolbar-title
-    >
+    <v-toolbar-title> {{ maquina }} </v-toolbar-title>
 
     <v-btn v-if="!user.usuarioValido" to="/login" outlined>
       <v-icon left>mdi-account-circle</v-icon>
@@ -39,14 +37,22 @@ export default {
 };
 </script>
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { obtenerCliente, obtenerLinea } from "../../helpers/bd";
 import { userStore, navStore, routerStore } from "../../stores/index";
 const user = userStore();
 const nav = navStore();
 let nombreLinea = ref("");
 let nombreCliente = ref("");
-let maquina = ref("");
+let maquina = computed(() => {
+  return (
+    nombreCliente.value +
+    " - " +
+    routerStore().getMaquinaNombre() +
+    " - " +
+    nombreLinea.value
+  );
+});
 
 const logout = () => user.logout();
 onMounted(async () => {
@@ -55,12 +61,6 @@ onMounted(async () => {
     nombreCliente.value = (
       await obtenerCliente(routerStore().clienteID)
     )[0].nombre;
-    maquina.value =
-      nombreCliente.value +
-      " - " +
-      routerStore().getMaquinaNombre() +
-      " - " +
-      nombreCliente.value;
   }
 });
 // const evento = () => {
