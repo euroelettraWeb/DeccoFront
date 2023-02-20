@@ -151,7 +151,6 @@ const props = defineProps({
   autoManual: { type: Array, default: () => [] },
   alarma: { type: Array, default: () => [] },
   marcha: { type: Array, default: () => [] },
-  fc: { type: Number, default: 1 },
   tipo: { type: Number, default: 1 },
 });
 
@@ -264,7 +263,7 @@ onMounted(async () => {
         "registros",
         "individual",
         "formatoRangos",
-        [props.alarma, props.fc],
+        props.alarma,
         maquinaID,
         routerStore().clienteID
       );
@@ -328,7 +327,7 @@ onMounted(async () => {
         "registros",
         "individual",
         "formatoRangos",
-        [props.alarma, props.fc],
+        props.alarma,
         maquinaID,
         routerStore().clienteID
       );
