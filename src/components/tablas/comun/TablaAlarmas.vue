@@ -5,7 +5,7 @@
         <v-col v-if="cargado">
           <v-row>
             <v-col>
-              <v-card-title>Consumo Hoy</v-card-title>
+              <v-card-title>Alarmas Hoy</v-card-title>
             </v-col>
           </v-row>
           <v-row>

@@ -84,7 +84,7 @@
         >
         <SeleccionarProducto v-if="productos" />
         <TablaTotalTurnos
-          v-if="turnos"
+          v-if="turnos && turnosA.length > 1"
           :variables="[49, 50, 51, 52, 53, 54, 55]"
           :modo="[13, 15]"
           :tipo="2"
@@ -95,8 +95,18 @@
           :marcha="[31, 40, 42]"
           :tipo="2"
         />
-        <TablaAlarmasTurnos v-if="turnos" />
-        <TablaAlarmas v-else />
+        <TablaAlarmasTurnos
+          v-if="turnos && turnosA.length > 1"
+          :variables="[60, 62, 84, 85, 86, 87]"
+          :marcha="[57, 60, 62]"
+          :tipo="2"
+        />
+        <TablaAlarmas
+          v-else
+          :variables="[40, 42]"
+          :marcha="[31, 40, 42]"
+          :tipo="2"
+        />
 
         <Estado
           :activo="31"
@@ -206,13 +216,15 @@ async function save() {
   }
   productos.value = true;
 }
-
+let turnosA = ref([]);
 onMounted(async () => {
   cargado.value = false;
-  nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
-  nombreCliente.value = (
-    await obtenerCliente(routerStore().clienteID)
-  )[0].nombre;
+  turnosA.value = await obtenerTurnos(routerStore().clienteID);
+  turnos.value = turnosA.value.length > 0 ? true : false;
+  // nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
+  // nombreCliente.value = (
+  //   await obtenerCliente(routerStore().clienteID)
+  // )[0].nombre;
   let maquina = await obtenerMaquina("lineaTipo", routerStore().lineasID, 2);
   let t = await obtenerProductos("maquina", maquina[0].id);
   if (t.length > 1) {

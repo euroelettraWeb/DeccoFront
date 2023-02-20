@@ -90,7 +90,7 @@
           >
         </v-container>
         <TablaTotalTurnos
-          v-if="turnos"
+          v-if="turnos && turnosA.length > 1"
           :variables="[25, 26, 27, 28, 29, 30]"
           :marcha="[1, 12, 14]"
           :tipo="1"
@@ -100,13 +100,18 @@
           :variables="[25, 26, 27, 28, 29, 30]"
           :marcha="[1, 12, 14]"
         />
-        <TablaAlarmasTurnos v-if="turnos" />
+        <TablaAlarmasTurnos
+          v-if="turnos && turnosA.length > 1"
+          :variables="[12, 14, 73, 74, 75]"
+          :marcha="[1, 12, 14, 73, 74, 75]"
+          :tipo="1"
+        />
         <TablaAlarmas v-else />
         <Estado
           :activo="1"
           :auto-manual="[13, 15]"
-          :marcha="[1, 12, 14]"
-          :alarma="[12, 14]"
+          :marcha="[1, 12, 14, 73, 74, 75]"
+          :alarma="[12, 14, 73, 74, 75]"
           :tipo="1"
         />
         <Dosis
@@ -219,14 +224,16 @@ async function save() {
     guardado.value = true;
   }
 }
-
+let turnosA = ref([]);
 onMounted(async () => {
   cargado.value = false;
+  turnosA.value = await obtenerTurnos(routerStore().clienteID);
+  turnos.value = turnosA.value.length > 0 ? true : false;
   guardado.value = false;
-  nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
-  nombreCliente.value = (
-    await obtenerCliente(routerStore().clienteID)
-  )[0].nombre;
+  // nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
+  // nombreCliente.value = (
+  //   await obtenerCliente(routerStore().clienteID)
+  // )[0].nombre;
   let maquina = await obtenerMaquina("lineaTipo", routerStore().lineasID, 1);
   let t = await obtenerProductos("maquina", maquina[0].id);
   if (t.length > 1) {
