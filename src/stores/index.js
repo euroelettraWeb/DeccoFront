@@ -153,7 +153,7 @@ export const routerStore = defineStore("router", {
         case 3:
           return "DECCOWASHER";
         default:
-          return "";
+          return null;
       }
     },
     deccodaf: async function (id, linea) {

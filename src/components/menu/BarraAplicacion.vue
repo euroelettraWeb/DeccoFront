@@ -50,14 +50,17 @@ let maquina = ref("");
 
 const logout = () => user.logout();
 onMounted(async () => {
-  let maquinaNombre = routerStore.getMaquinaNombre;
-  if (maquinaNombre) {
+  if (routerStore().getMaquinaNombre()) {
     nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
     nombreCliente.value = (
       await obtenerCliente(routerStore().clienteID)
     )[0].nombre;
     maquina.value =
-      nombreCliente.value + " - " + maquinaNombre + " - " + nombreCliente.value;
+      nombreCliente.value +
+      " - " +
+      routerStore().getMaquinaNombre() +
+      " - " +
+      nombreCliente.value;
   }
 });
 // const evento = () => {
