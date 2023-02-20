@@ -106,7 +106,12 @@
           :marcha="[1, 12, 14, 73, 74, 75]"
           :tipo="1"
         />
-        <TablaAlarmas v-else />
+        <TablaAlarmas
+          v-else
+          :variables="[12, 14, 73, 74, 75]"
+          :marcha="[1, 12, 14, 73, 74, 75]"
+          :tipo="1"
+        />
         <Estado
           :activo="1"
           :auto-manual="[13, 15]"
