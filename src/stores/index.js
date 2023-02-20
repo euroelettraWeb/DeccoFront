@@ -132,41 +132,29 @@ export const routerStore = defineStore("router", {
         params: { id },
       });
     },
-    getMaquinaNombre: function () {
-      switch (this.maquina) {
-        case 1:
-          return "DECCODAF";
-        case 2:
-          return "DECCODOS";
-        case 3:
-          return "DECCOWASHER";
-        default:
-          return null;
-      }
-    },
     deccodaf: async function (id, linea) {
-      this.maquina = 1;
+      this.maquina = "DECCODAF";
       router.push({
         name: this.routes.deccodaf,
         params: { id, linea },
       });
     },
     deccodos: async function (id, linea) {
-      this.maquina = 2;
+      this.maquina = "DECCODOS";
       router.push({
         name: this.routes.deccodos,
         params: { id, linea },
       });
     },
     deccowasher: async function (id, linea) {
-      this.maquina = 3;
+      this.maquina = "DECCOWASHER";
       router.push({
         name: this.routes.deccowasher,
         params: { id, linea },
       });
     },
     deccocontrol: async function (id) {
-      this.maquina = 4;
+      this.maquina = "DECCOCONTROL";
       router.push({
         name: this.routes.deccocontrol,
         params: { id },
@@ -237,7 +225,7 @@ export const routerStore = defineStore("router", {
             });
           break;
         case "deccodaf:Principal":
-          this.maquina = 1;
+          this.maquina = "DECCODAF";
           router
             .push({
               name: this.routes.deccodaf,
@@ -251,7 +239,7 @@ export const routerStore = defineStore("router", {
             });
           break;
         case "deccodaf:Otras":
-          this.maquina = 1;
+          this.maquina = "DECCODAF";
           router
             .push({
               name: this.routes.deccodafOtras,
@@ -265,7 +253,7 @@ export const routerStore = defineStore("router", {
             });
           break;
         case "deccodos:Principal":
-          this.maquina = 2;
+          this.maquina = "DECCODOS";
           router
             .push({ name: this.routes.deccodos, params: { id, linea } })
             .catch((failure) => {
@@ -276,7 +264,7 @@ export const routerStore = defineStore("router", {
             });
           break;
         case "deccodos:Otras":
-          this.maquina = 2;
+          this.maquina = "DECCODOS";
           router
             .push({
               name: this.routes.deccodosOtras,
@@ -290,7 +278,7 @@ export const routerStore = defineStore("router", {
             });
           break;
         case "deccowasher:Principal":
-          this.maquina = 3;
+          this.maquina = "DECCOWASHER";
           router
             .push({ name: this.routes.deccowasher, params: { id, linea } })
             .catch((failure) => {
@@ -301,7 +289,7 @@ export const routerStore = defineStore("router", {
             });
           break;
         case "deccowasher:Otras":
-          this.maquina = 3;
+          this.maquina = "DECCOWASHER";
           router
             .push({
               name: this.routes.deccowasherOtras,
@@ -315,7 +303,7 @@ export const routerStore = defineStore("router", {
             });
           break;
         case "deccocontrol:Principal":
-          this.maquina = 4;
+          this.maquina = "DECCOCONTROL";
           router
             .push({ name: this.routes.deccocontrol, params: { id, linea } })
             .catch((failure) => {

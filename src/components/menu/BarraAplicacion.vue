@@ -48,7 +48,7 @@ let maquina = computed(() => {
   return (
     nombreCliente.value +
     " - " +
-    routerStore().getMaquinaNombre() +
+    routerStore().maquina +
     " - " +
     nombreLinea.value
   );
@@ -56,7 +56,7 @@ let maquina = computed(() => {
 
 const logout = () => user.logout();
 onMounted(async () => {
-  if (routerStore().getMaquinaNombre()) {
+  if (routerStore().maquina) {
     nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
     nombreCliente.value = (
       await obtenerCliente(routerStore().clienteID)
