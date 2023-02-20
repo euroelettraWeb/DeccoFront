@@ -6,7 +6,9 @@
 
     <v-spacer></v-spacer>
 
-    <v-toolbar-title> {{ maquina }} </v-toolbar-title>
+    <v-toolbar-title v-if="routerStore().maquina">
+      {{ maquina }}
+    </v-toolbar-title>
     <v-spacer></v-spacer>
     <v-btn v-if="!user.usuarioValido" to="/login" outlined>
       <v-icon left>mdi-account-circle</v-icon>
