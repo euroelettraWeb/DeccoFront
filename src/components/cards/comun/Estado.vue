@@ -247,7 +247,7 @@ onMounted(async () => {
   }
 
   for (let index = 0; index < props.alarma.length; index++) {
-    const element = prop.alarma[index];
+    const element = props.alarma[index];
     socket.on(`variable_${maquinaID}_${element}_actualizada`, async (data) => {
       let marcha = await obtenerDatosVariableGeneral(
         "8H",
