@@ -401,7 +401,7 @@ async function dateApplied(date1, date2) {
     "registros",
     "individual",
     "totalRangos",
-    [60, 62, 84, 85, 86, 87],
+    [60, 62],
     props.maquina,
     routerStore().clienteID,
     inicio.value,
@@ -412,7 +412,7 @@ async function dateApplied(date1, date2) {
     const element = alarma[index];
     totalA.push({
       id: index,
-      nombre: element.nombreCorto + "( " + element.unidadMedida + " )",
+      nombre: element.nombreCorto + "( min )",
       total: Math.max(0, Math.round(element.registros.total1 / 60)),
     });
   }
@@ -689,7 +689,7 @@ onMounted(async () => {
     "registros",
     "individual",
     "totalRangos",
-    [60, 62, 84, 85, 86, 87],
+    [60, 62],
     props.maquina,
     routerStore().clienteID
   );
