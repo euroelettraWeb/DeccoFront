@@ -693,7 +693,7 @@ onMounted(async () => {
     props.maquina,
     routerStore().clienteID
   );
-  for (let index = 0; index < totales.length; index++) {
+  for (let index = 0; index < alarma.length; index++) {
     const element = alarma[index];
     alarmas.value.push({
       id: index,

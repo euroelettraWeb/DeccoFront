@@ -238,6 +238,7 @@ async function dateApplied(date1, date2) {
   cargado5.value = false;
   cargado6.value = false;
   cargado7.value = false;
+  cargado8.value = false;
   cargado.value = false;
   estado = await obtenerDatosVariableGeneral(
     "historico",
@@ -676,7 +677,7 @@ onMounted(async () => {
     props.maquina,
     routerStore().clienteID
   );
-  for (let index = 0; index < alarmas.value.length; index++) {
+  for (let index = 0; index < alarma.value.length; index++) {
     const element = alarma[index];
     alarmas.value.push({
       id: index,
