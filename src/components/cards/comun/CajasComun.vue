@@ -159,7 +159,7 @@ onMounted(async () => {
     "8H",
     "registros",
     "individual",
-    "unidadMinuto",
+    "unidadTiempo",
     [props.total],
     maquinaID,
     routerStore().clienteID
@@ -189,17 +189,17 @@ onMounted(async () => {
   socket.on(
     `variable_${maquinaID}_${props.total}_actualizada`,
     async (data) => {
-      let unidadMinuto = await obtenerDatosVariableGeneral(
+      let unidadTiempo = await obtenerDatosVariableGeneral(
         "8H",
         "registros",
         "individual",
-        "unidadMinuto",
+        "unidadTiempo",
         [props.total],
         maquinaID,
         routerStore().clienteID
       );
       if (chartRef2.value) {
-        chartRef2.value.updateSeries(unidadMinuto);
+        chartRef2.value.updateSeries(unidadTiempo);
         if (lastZoom) chartRef2.value.zoomX(lastZoom[0], lastZoom[1]);
       }
     }
