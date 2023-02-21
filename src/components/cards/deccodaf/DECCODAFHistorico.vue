@@ -402,7 +402,7 @@ async function dateApplied(date1, date2) {
     totalA.push({
       id: index,
       nombre: element.nombreCorto + "( " + element.unidadMedida + " )",
-      total: Math.max(0, element.registros[0].total),
+      total: Math.max(0, Math.round(element.registros.total1 / 60)),
     });
   }
   alarmas.value = totalA;
