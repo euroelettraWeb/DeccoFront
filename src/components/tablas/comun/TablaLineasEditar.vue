@@ -315,7 +315,7 @@ async function guardarLineas() {
           if (element.deccows)
             axios
               .post(`${process.env.VUE_APP_RUTA_API}/maquinas/nuevo`, {
-                nombre: "Deccowahser",
+                nombre: "Deccowasher",
                 nombreLinea: element.nombre,
                 clienteID: routerStore().clienteID,
                 grupoID: 3,
@@ -336,7 +336,7 @@ async function guardarLineas() {
         let maquinas = [];
         if (element.deccodaf) maquinas.push({ nombre: "Deccodaf", tipo: 1 });
         if (element.deccodos) maquinas.push({ nombre: "Deccodos", tipo: 2 });
-        if (element.deccows) maquinas.push({ nombre: "Deccowahser", tipo: 3 });
+        if (element.deccows) maquinas.push({ nombre: "Deccowasher", tipo: 3 });
         // maquinas.push({ nombre: "DECCOCONTROL", tipo: 4 });
         axios
           .post(`${process.env.VUE_APP_RUTA_API}/lineas/nuevo`, {
