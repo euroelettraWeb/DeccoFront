@@ -378,9 +378,9 @@ async function dateApplied(date1, date2) {
   cargado7.value = true;
   alarma = await obtenerDatosVariableGeneral(
     "historico",
-    "totales",
+    "registros",
     "individual",
-    "sinfiltro",
+    "totalRangos",
     [40, 42],
     props.maquina,
     routerStore().clienteID,
