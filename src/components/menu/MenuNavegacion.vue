@@ -23,6 +23,7 @@
 
     <v-divider></v-divider>
     <v-select
+      v-if="usuarioLogeado"
       v-model="select"
       :items="nombres"
       label="Cliente"
