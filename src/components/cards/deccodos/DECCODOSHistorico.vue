@@ -381,7 +381,7 @@ async function dateApplied(date1, date2) {
     "totales",
     "individual",
     "sinfiltro",
-    [1, 12, 14, 73, 74, 75],
+    [40, 42],
     props.maquina,
     routerStore().clienteID,
     inicio.value,

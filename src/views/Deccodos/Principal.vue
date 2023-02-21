@@ -94,8 +94,8 @@
         />
         <TablaAlarmasTurnos
           v-if="turnos && turnosA.length > 1"
-          :variables="[60, 62, 84, 85, 86, 87]"
-          :marcha="[57, 60, 62]"
+          :variables="[40, 42]"
+          :marcha="[31, 40, 42]"
           :tipo="2"
         />
         <TablaAlarmas

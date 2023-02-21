@@ -401,7 +401,7 @@ async function dateApplied(date1, date2) {
     "totales",
     "individual",
     "sinfiltro",
-    [1, 12, 14, 73, 74, 75],
+    [60, 62, 84, 85, 86, 87],
     props.maquina,
     routerStore().clienteID,
     inicio.value,
@@ -689,7 +689,7 @@ onMounted(async () => {
     "registros",
     "individual",
     "totalRangos",
-    [12, 14, 73, 74, 75],
+    [60, 62, 84, 85, 86, 87],
     props.maquina,
     routerStore().clienteID
   );
