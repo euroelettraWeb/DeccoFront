@@ -394,12 +394,29 @@ async function dateApplied(date1, date2) {
       total: Math.max(0, element.registros[0].total).toFixed(3),
     });
   }
+  let totalFruta = await obtenerDatosVariableGeneral(
+    "historico",
+    "totales",
+    "individual",
+    "sinfiltro",
+    [48],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
+  );
+  total.push({
+    id: total.length,
+    nombre:
+      totalFruta[0].nombreCorto + "( " + totalFruta[0].unidadMedida + " )",
+    total: Math.max(0, totalFruta[0].registros[0].total).toFixed(0),
+  });
   let marchat = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "multiple",
     "totalMarcha",
-    [31, 40, 42],
+    [57, 60, 62],
     props.maquina,
     routerStore().clienteID,
     inicio.value,
@@ -696,6 +713,23 @@ onMounted(async () => {
       id: index,
       nombre: element.nombreCorto + "( " + element.unidadMedida + " )",
       total: Math.max(0, element.registros[0].total).toFixed(3),
+    });
+  }
+  if (!isNullOrUndefined(deccodos.value)) {
+    let totalFruta = await obtenerDatosVariableGeneral(
+      "8H",
+      "totales",
+      "individual",
+      "sinfiltro",
+      [48],
+      deccodos.value,
+      routerStore().clienteID
+    );
+    consumos.value.push({
+      id: consumos.value.length,
+      nombre:
+        totalFruta[0].nombreCorto + "( " + totalFruta[0].unidadMedida + " )",
+      total: Math.max(0, totalFruta[0].registros[0].total).toFixed(0),
     });
   }
   let horasMarcha = await obtenerDatosVariableGeneral(
