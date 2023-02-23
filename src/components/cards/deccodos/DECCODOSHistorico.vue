@@ -385,6 +385,12 @@ async function dateApplied(date1, date2) {
     inicio.value,
     fin.value
   );
+  consumos.value.push({
+    id: consumos.value.length,
+    nombre:
+      totalFruta[0].nombreCorto + "( " + totalFruta[0].unidadMedida + " )",
+    total: Math.max(0, totalFruta[0].registros[0].total).toFixed(3),
+  });
   consumos.value = total;
   cargado7.value = true;
   alarma = await obtenerDatosVariableGeneral(
@@ -698,7 +704,7 @@ onMounted(async () => {
     "multiple",
     "totalMarcha",
     [31, 40, 42],
-    maquinaID,
+    props.maquina,
     routerStore().clienteID
   );
   consumos.value.push({
