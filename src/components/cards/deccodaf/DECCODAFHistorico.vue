@@ -701,7 +701,7 @@ onMounted(async () => {
       total: Math.max(0, element.registros[0].total).toFixed(3),
     });
   }
-  if (!isNullOrUndefined(deccodos.value)) {
+  if (!deccodos.value) {
     let totalFruta = await obtenerDatosVariableGeneral(
       "8H",
       "totales",
