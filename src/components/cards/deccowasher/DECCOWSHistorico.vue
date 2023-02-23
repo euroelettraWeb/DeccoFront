@@ -205,7 +205,10 @@ export default {
 };
 </script>
 <script setup>
-import { obtenerDatosVariableGeneral } from "../../../helpers/bd";
+import {
+  obtenerDatosVariableGeneral,
+  obtenerMaquina,
+} from "../../../helpers/bd";
 import { onMounted, ref, computed, onUnmounted } from "vue";
 import { routerStore } from "../../../stores/index";
 import es from "apexcharts/dist/locales/es.json";
@@ -394,23 +397,25 @@ async function dateApplied(date1, date2) {
       total: Math.max(0, element.registros[0].total).toFixed(3),
     });
   }
-  let totalFruta = await obtenerDatosVariableGeneral(
-    "historico",
-    "totales",
-    "individual",
-    "sinfiltro",
-    [48],
-    props.maquina,
-    routerStore().clienteID,
-    inicio.value,
-    fin.value
-  );
-  total.push({
-    id: total.length,
-    nombre:
-      totalFruta[0].nombreCorto + "( " + totalFruta[0].unidadMedida + " )",
-    total: Math.max(0, totalFruta[0].registros[0].total).toFixed(0),
-  });
+  if (deccodos.value) {
+    let totalFruta = await obtenerDatosVariableGeneral(
+      "historico",
+      "totales",
+      "individual",
+      "sinfiltro",
+      [48],
+      deccodos.value,
+      routerStore().clienteID,
+      inicio.value,
+      fin.value
+    );
+    total.push({
+      id: total.length,
+      nombre:
+        totalFruta[0].nombreCorto + "( " + totalFruta[0].unidadMedida + " )",
+      total: Math.max(0, totalFruta[0].registros[0].total).toFixed(0),
+    });
+  }
   let marchat = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -479,6 +484,7 @@ let seriesL4 = ref([]);
 
 let consumos = ref([]);
 let alarmas = ref([]);
+let deccodos = ref(null);
 let totales = {};
 
 let sameDateFormat = {
@@ -586,6 +592,8 @@ let alarma = {};
 onMounted(async () => {
   cargado.value = false;
   cargado1.value = false;
+  let maquina = await obtenerMaquina("lineaTipo", props.linea, 2);
+  deccodos.value = maquina[0].id;
   estado = await obtenerDatosVariableGeneral(
     "8H",
     "registros",
@@ -715,7 +723,7 @@ onMounted(async () => {
       total: Math.max(0, element.registros[0].total).toFixed(3),
     });
   }
-  if (!deccodos.value) {
+  if (deccodos.value) {
     let totalFruta = await obtenerDatosVariableGeneral(
       "8H",
       "totales",
