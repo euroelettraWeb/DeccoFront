@@ -385,11 +385,27 @@ async function dateApplied(date1, date2) {
     inicio.value,
     fin.value
   );
-  consumos.value.push({
-    id: consumos.value.length,
+  total.push({
+    id: total.length,
     nombre:
       totalFruta[0].nombreCorto + "( " + totalFruta[0].unidadMedida + " )",
-    total: Math.max(0, totalFruta[0].registros[0].total).toFixed(3),
+    total: Math.max(0, totalFruta[0].registros[0].total).toFixed(0),
+  });
+  let marchat = await obtenerDatosVariableGeneral(
+    "historico",
+    "registros",
+    "multiple",
+    "totalMarcha",
+    [31, 40, 42],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
+  );
+  total.push({
+    id: total.length,
+    nombre: marchat[0].nombreCorto + "( " + marchat[0].unidadMedida + " )",
+    total: Math.max(0, marchat[0].registros[0].total).toFixed(0),
   });
   consumos.value = total;
   cargado7.value = true;
@@ -696,7 +712,7 @@ onMounted(async () => {
     id: consumos.value.length,
     nombre:
       totalFruta[0].nombreCorto + "( " + totalFruta[0].unidadMedida + " )",
-    total: Math.max(0, totalFruta[0].registros[0].total).toFixed(3),
+    total: Math.max(0, totalFruta[0].registros[0].total).toFixed(0),
   });
   let horasMarcha = await obtenerDatosVariableGeneral(
     "8H",
