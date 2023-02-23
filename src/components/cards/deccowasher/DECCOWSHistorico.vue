@@ -394,6 +394,22 @@ async function dateApplied(date1, date2) {
       total: Math.max(0, element.registros[0].total).toFixed(3),
     });
   }
+  let marchat = await obtenerDatosVariableGeneral(
+    "historico",
+    "registros",
+    "multiple",
+    "totalMarcha",
+    [31, 40, 42],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
+  );
+  total.push({
+    id: total.length,
+    nombre: "Marcha ( min )",
+    total: Math.max(0, marchat.total).toFixed(0),
+  });
   consumos.value = total;
   cargado7.value = true;
   alarma = await obtenerDatosVariableGeneral(
@@ -682,6 +698,20 @@ onMounted(async () => {
       total: Math.max(0, element.registros[0].total).toFixed(3),
     });
   }
+  let horasMarcha = await obtenerDatosVariableGeneral(
+    "8H",
+    "registros",
+    "multiple",
+    "totalMarcha",
+    [57, 60, 62],
+    props.maquina,
+    routerStore().clienteID
+  );
+  consumos.value.push({
+    id: consumos.value.length,
+    nombre: "Marcha ( min )",
+    total: Math.max(0, Math.round(horasMarcha.total / 60)),
+  });
   cargado7.value = true;
   cargado8.value = false;
   alarma = await obtenerDatosVariableGeneral(
