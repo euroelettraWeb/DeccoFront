@@ -404,7 +404,7 @@ async function dateApplied(date1, date2) {
   );
   total.push({
     id: total.length,
-    nombre: marchat[0].nombreCorto + "( " + marchat[0].unidadMedida + " )",
+    nombre: "Marcha ( min )",
     total: Math.max(0, marchat[0].registros[0].total).toFixed(0),
   });
   consumos.value = total;
