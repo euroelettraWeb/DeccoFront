@@ -661,7 +661,7 @@ onMounted(async () => {
     consumos.value.push({
       id: index,
       nombre: element.nombreCorto + "( " + element.unidadMedida + " )",
-      total: Math.max(0, element.registros[0].total),
+      total: Math.max(0, element.registros[0].total).toFixed(3),
     });
   }
   cargado7.value = true;
