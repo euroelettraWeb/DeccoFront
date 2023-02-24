@@ -481,6 +481,10 @@ let chartOptions = computed(() => {
       locales: [es],
       defaultLocale: "es",
       animations: { enabled: false },
+      zoom: {
+        type: "xy",
+        autoScaleYaxis: true,
+      },
     },
     xaxis: {
       type: "datetime",
