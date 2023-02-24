@@ -112,7 +112,7 @@ onMounted(async () => {
     });
     consumos.value.push({
       id: index,
-      name: Math.max(0, element.registros[0].total),
+      name: Math.max(0, element.registros[0].total).toFixed(2),
     });
   }
   unidades.value.push({ id: unidades.value.length, nombre: "Marcha ( min )" });
