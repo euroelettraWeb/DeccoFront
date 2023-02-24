@@ -233,36 +233,36 @@ onMounted(async () => {
     // });
     consumosMA.value.push({
       id: index,
-      name: Math.max(0, i.registros.auto[0]),
+      name: Math.max(0, i.registros.auto[0]).toFixed(2),
     });
     consumosTA.value.push({
       id: index,
-      name: Math.max(0, i.registros.auto[1]),
+      name: Math.max(0, i.registros.auto[1]).toFixed(2),
     });
     consumosNA.value.push({
       id: index,
-      name: Math.max(0, i.registros.auto[2]),
+      name: Math.max(0, i.registros.auto[2]).toFixed(2),
     });
     consumosA.value.push({
       id: index,
-      name: Math.max(0, i.registros.auto[3]),
+      name: Math.max(0, i.registros.auto[3]).toFixed(2),
     });
 
     consumosMM.value.push({
       id: index,
-      name: Math.max(0, i.registros.manual[0]),
+      name: Math.max(0, i.registros.manual[0]).toFixed(2),
     });
     consumosTM.value.push({
       id: index,
-      name: Math.max(0, i.registros.manual[1]),
+      name: Math.max(0, i.registros.manual[1]).toFixed(2),
     });
     consumosNM.value.push({
       id: index,
-      name: Math.max(0, i.registros.manual[2]),
+      name: Math.max(0, i.registros.manual[2]).toFixed(2),
     });
     consumosM.value.push({
       id: index,
-      name: Math.max(0, i.registros.manual[3]),
+      name: Math.max(0, i.registros.manual[3]).toFixed(2),
     });
   }
 
