@@ -337,19 +337,6 @@ async function dateApplied(date1, date2) {
   );
   seriesL.value = dosis;
   cargado3.value = true;
-  kilos = await obtenerDatosVariableGeneral(
-    "historico",
-    "registros",
-    "individual",
-    "formatoLinea",
-    [69],
-    props.maquina,
-    routerStore().clienteID,
-    inicio.value,
-    fin.value
-  );
-  seriesL4.value = kilos;
-  cargado4.value = true;
   cajas = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -415,6 +402,18 @@ async function dateApplied(date1, date2) {
         totalFruta[0].nombreCorto + "( " + totalFruta[0].unidadMedida + " )",
       total: Math.max(0, totalFruta[0].registros[0].total).toFixed(0),
     });
+    kilos = await obtenerDatosVariableGeneral(
+      "historico",
+      "registros",
+      "individual",
+      "formatoLinea",
+      [48],
+      deccodos.value,
+      routerStore().clienteID,
+      inicio.value,
+      fin.value
+    );
+    seriesL4.value = kilos;
   }
   let marchat = await obtenerDatosVariableGeneral(
     "historico",
@@ -674,18 +673,6 @@ onMounted(async () => {
   );
   seriesL.value = dosis;
   cargado3.value = true;
-  cargado4.value = false;
-  kilos = await obtenerDatosVariableGeneral(
-    "8H",
-    "registros",
-    "individual",
-    "formatoLinea",
-    [69],
-    props.maquina,
-    routerStore().clienteID
-  );
-  seriesL4.value = kilos;
-  cargado4.value = true;
   cargado5.value = false;
   cajas = await obtenerDatosVariableGeneral(
     "8H",
@@ -743,6 +730,18 @@ onMounted(async () => {
         totalFruta[0].nombreCorto + "( " + totalFruta[0].unidadMedida + " )",
       total: Math.max(0, totalFruta[0].registros[0].total).toFixed(0),
     });
+    cargado4.value = false;
+    kilos = await obtenerDatosVariableGeneral(
+      "8H",
+      "registros",
+      "individual",
+      "formatoLinea",
+      [48],
+      deccodos.value,
+      routerStore().clienteID
+    );
+    seriesL4.value = kilos;
+    cargado4.value = true;
   }
   let horasMarcha = await obtenerDatosVariableGeneral(
     "8H",
