@@ -109,6 +109,21 @@ onMounted(async () => {
     maquinaID,
     routerStore().clienteID
   );
+  let deccodos = (
+    await obtenerMaquina("lineaTipo", routerStore().lineasID, 2)
+  )[0].id;
+  if (deccodos != null) {
+    let totalFruta = await obtenerDatosVariableGeneral(
+      "24H-Turno",
+      "turnosTotales",
+      "multipleConsulta",
+      "sinfiltro",
+      [48],
+      deccodos,
+      routerStore().clienteID
+    );
+    totales.push(totalFruta[0]);
+  }
   for (let index = 0; index < totales.length; index++) {
     const element = totales[index];
     unidades.value.push({

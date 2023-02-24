@@ -121,7 +121,7 @@
           :variables="[7, 8, 9, 10, 11]"
           :tipo="1"
         />
-        <FrutaProcesadaComun :fruta="19" :tipo="1" />
+        <FrutaProcesadaComun :fruta="48" :tipo="2" />
         <v-btn
           color="info"
           @click="
