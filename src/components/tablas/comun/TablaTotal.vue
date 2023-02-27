@@ -110,13 +110,14 @@ onMounted(async () => {
     );
     for (let index = 0; index < totalesBD.length; index++) {
       const element = totalesBD[index];
+      let n = Math.max(0, element.registros[0].total);
+      let d =
+        totalesFruta[0].registros[0].total > 0
+          ? (totalesFruta[0].registros[0].total / n).toFixed(2)
+          : 0;
       consumosFruta.value.push({
         id: index,
-        name:
-          Math.max(
-            0,
-            element.registros[0].total / totalesFruta[0].registros[0].total
-          ).toFixed(2) + " l/kg",
+        name: d + " l/kg",
       });
     }
     totalesBD.push(totalesFruta[0]);
