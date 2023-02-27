@@ -77,8 +77,6 @@ let chartOptions = computed(() => {
     xaxis: {
       type: "datetime",
       datetimeUTC: false,
-      min: new Date(moment().subtract(8, "hours")).getTime(),
-      max: moment(),
       tickAmount: 25,
       labels: {
         minHeight: 125,

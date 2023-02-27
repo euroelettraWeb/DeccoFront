@@ -131,8 +131,6 @@ let chartOptions = computed(() => {
     xaxis: {
       type: "datetime",
       datetimeUTC: false,
-      min: new Date(moment().subtract(8, "hours")).getTime(),
-      max: moment(),
     },
     stroke: {
       width: 1.9,
@@ -158,8 +156,6 @@ let chartOptions2 = computed(() => {
     xaxis: {
       type: "datetime",
       datetimeUTC: false,
-      min: new Date(moment().subtract(8, "hours")).getTime(),
-      max: moment(),
     },
     tooltip: {
       x: {
