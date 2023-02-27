@@ -61,33 +61,13 @@ let chartOptions = computed(() => {
       locales: [es],
       defaultLocale: "es",
       animations: { enabled: false },
+      zoom: {
+        type: "xy",
+        autoScaleYaxis: true,
+      },
       events: {
-        beforeZoom: (e, { xaxis }) => {
-          if (moment(xaxis.min).isBefore(moment().subtract(8, "hours"))) {
-            return {
-              xaxis: {
-                min: new Date(moment().subtract(8, "hours")).getTime(),
-                max: xaxis.max,
-              },
-            };
-          }
-          if (moment(xaxis.max).isAfter(moment())) {
-            return {
-              xaxis: {
-                min: xaxis.min,
-                max: moment(),
-              },
-            };
-          }
-        },
         beforeResetZoom: function () {
           lastZoom = null;
-          return {
-            xaxis: {
-              min: new Date(moment().subtract(8, "hours")).getTime(),
-              max: moment(),
-            },
-          };
         },
         zoomed: function (_, value) {
           lastZoom = [value.xaxis.min, value.xaxis.max];
