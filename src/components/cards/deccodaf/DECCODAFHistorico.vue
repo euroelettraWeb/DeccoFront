@@ -36,6 +36,14 @@
                           {{ item.nombre }}
                         </th>
                       </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Total</td>
+                        <td v-for="item in consumos" :key="item.id">
+                          {{ item.total }}
+                        </td>
+                      </tr>
                       <tr v-if="consumosFruta">
                         <td>Total l/kg</td>
                         <td v-for="item in consumosFruta" :key="item.id">
@@ -45,14 +53,6 @@
                       <tr v-else>
                         <td>
                           Fruta no disponible: Maquina Deccodos no disponible
-                        </td>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Total</td>
-                        <td v-for="item in consumos" :key="item.id">
-                          {{ item.total }}
                         </td>
                       </tr>
                     </tbody>
@@ -418,7 +418,7 @@ async function dateApplied(date1, date2) {
       let n = Math.max(0, element.registros[0].total);
       let d =
         totalFruta[0].registros[0].total > 0
-          ? (n / totalFruta[0].registros[0].total).toFixed(2)
+          ? (n / totalFruta[0].registros[0].total).toFixed(3)
           : 0;
       consumosFruta.value.push({
         id: index,
@@ -736,7 +736,7 @@ onMounted(async () => {
       let n = Math.max(0, element.registros[0].total);
       let d =
         totalFruta[0].registros[0].total > 0
-          ? (n / totalFruta[0].registros[0].total).toFixed(2)
+          ? (n / totalFruta[0].registros[0].total).toFixed(3)
           : 0;
       consumosFruta.value.push({
         id: index,

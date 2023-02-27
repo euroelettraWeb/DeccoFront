@@ -132,19 +132,19 @@ onMounted(async () => {
     });
     consumosM.value.push({
       id: index,
-      name: Math.max(0, element.registros[0][0].total).toFixed(2),
+      name: Math.max(0, element.registros[0][0].total).toFixed(3),
     });
     consumosT.value.push({
       id: index,
-      name: Math.max(0, element.registros[1][0].total).toFixed(2),
+      name: Math.max(0, element.registros[1][0].total).toFixed(3),
     });
     consumosN.value.push({
       id: index,
-      name: Math.max(0, element.registros[2][0].total).toFixed(2),
+      name: Math.max(0, element.registros[2][0].total).toFixed(3),
     });
     consumos.value.push({
       id: index,
-      name: Math.max(0, element.registros[3][0].total).toFixed(2),
+      name: Math.max(0, element.registros[3][0].total).toFixed(3),
     });
   }
   unidades.value.push({

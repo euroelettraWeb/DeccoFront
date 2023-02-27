@@ -82,14 +82,6 @@ let chartOptions = computed(() => {
         type: "xy",
         autoScaleYaxis: true,
       },
-      events: {
-        beforeResetZoom: function () {
-          lastZoom = null;
-        },
-        zoomed: function (_, value) {
-          lastZoom = [value.xaxis.min, value.xaxis.max];
-        },
-      },
     },
     xaxis: {
       type: "datetime",
@@ -151,7 +143,7 @@ onMounted(async () => {
     });
     if (chartRef.value) {
       chartRef.value.updateSeries(cajas.value);
-      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+      // if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
     }
   });
   socket.on(`variable_${maquinaID}_${props.caja2}_actualizada`, (data) => {
@@ -161,7 +153,7 @@ onMounted(async () => {
     });
     if (chartRef.value) {
       chartRef.value.updateSeries(cajas.value);
-      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+      // if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
     }
   });
   socket.on(
@@ -178,7 +170,7 @@ onMounted(async () => {
       );
       if (chartRef2.value) {
         chartRef2.value.updateSeries(unidadTiempo);
-        if (lastZoom) chartRef2.value.zoomX(lastZoom[0], lastZoom[1]);
+        // if (lastZoom) chartRef2.value.zoomX(lastZoom[0], lastZoom[1]);
       }
     }
   );

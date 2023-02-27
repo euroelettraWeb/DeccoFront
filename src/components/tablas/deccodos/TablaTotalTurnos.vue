@@ -233,36 +233,36 @@ onMounted(async () => {
     // });
     consumosMA.value.push({
       id: index,
-      name: Math.max(0, i.registros.auto[0]).toFixed(2),
+      name: Math.max(0, i.registros.auto[0]).toFixed(3),
     });
     consumosTA.value.push({
       id: index,
-      name: Math.max(0, i.registros.auto[1]).toFixed(2),
+      name: Math.max(0, i.registros.auto[1]).toFixed(3),
     });
     consumosNA.value.push({
       id: index,
-      name: Math.max(0, i.registros.auto[2]).toFixed(2),
+      name: Math.max(0, i.registros.auto[2]).toFixed(3),
     });
     consumosA.value.push({
       id: index,
-      name: Math.max(0, i.registros.auto[3]).toFixed(2),
+      name: Math.max(0, i.registros.auto[3]).toFixed(3),
     });
 
     consumosMM.value.push({
       id: index,
-      name: Math.max(0, i.registros.manual[0]).toFixed(2),
+      name: Math.max(0, i.registros.manual[0]).toFixed(3),
     });
     consumosTM.value.push({
       id: index,
-      name: Math.max(0, i.registros.manual[1]).toFixed(2),
+      name: Math.max(0, i.registros.manual[1]).toFixed(3),
     });
     consumosNM.value.push({
       id: index,
-      name: Math.max(0, i.registros.manual[2]).toFixed(2),
+      name: Math.max(0, i.registros.manual[2]).toFixed(3),
     });
     consumosM.value.push({
       id: index,
-      name: Math.max(0, i.registros.manual[3]).toFixed(2),
+      name: Math.max(0, i.registros.manual[3]).toFixed(3),
     });
   }
 

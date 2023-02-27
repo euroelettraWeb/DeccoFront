@@ -113,7 +113,7 @@ onMounted(async () => {
       let n = Math.max(0, element.registros[0].total);
       let d =
         totalesFruta[0].registros[0].total > 0
-          ? (n / totalesFruta[0].registros[0].total).toFixed(2)
+          ? (n / totalesFruta[0].registros[0].total).toFixed(3)
           : 0;
       consumosFruta.value.push({
         id: index,
@@ -130,7 +130,7 @@ onMounted(async () => {
     });
     consumos.value.push({
       id: index,
-      name: Math.max(0, element.registros[0].total).toFixed(2),
+      name: Math.max(0, element.registros[0].total).toFixed(3),
     });
   }
   unidades.value.push({ id: unidades.value.length, nombre: "Marcha ( min )" });

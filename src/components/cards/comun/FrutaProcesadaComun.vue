@@ -65,14 +65,6 @@ let chartOptions = computed(() => {
         type: "xy",
         autoScaleYaxis: true,
       },
-      events: {
-        beforeResetZoom: function () {
-          lastZoom = null;
-        },
-        zoomed: function (_, value) {
-          lastZoom = [value.xaxis.min, value.xaxis.max];
-        },
-      },
     },
     xaxis: {
       type: "datetime",
@@ -119,7 +111,7 @@ onMounted(async () => {
     });
     if (chartRef3.value) {
       chartRef3.value.updateSeries(kilos.value);
-      if (lastZoom) chartRef3.value.zoomX(lastZoom[0], lastZoom[1]);
+      // if (lastZoom) chartRef3.value.zoomX(lastZoom[0], lastZoom[1]);
     }
   });
   cargado.value = true;

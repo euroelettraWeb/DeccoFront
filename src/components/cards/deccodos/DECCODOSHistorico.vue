@@ -382,7 +382,7 @@ async function dateApplied(date1, date2) {
     let n = Math.max(0, element.registros[0].total);
     let d =
       totalFruta[0].registros[0].total > 0
-        ? (n / totalFruta[0].registros[0].total).toFixed(2)
+        ? (n / totalFruta[0].registros[0].total).toFixed(3)
         : 0;
     consumosFruta.value.push({
       id: index,
@@ -730,7 +730,7 @@ onMounted(async () => {
     let n = Math.max(0, element.registros[0].total);
     let d =
       totalFruta[0].registros[0].total > 0
-        ? (n / totalFruta[0].registros[0].total).toFixed(2)
+        ? (n / totalFruta[0].registros[0].total).toFixed(3)
         : 0;
     consumosFruta.value.push({
       id: index,
