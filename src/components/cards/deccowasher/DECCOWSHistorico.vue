@@ -425,6 +425,7 @@ async function dateApplied(date1, date2) {
       fin.value
     );
     seriesL4.value = kilos;
+    consumosFruta.value = [];
     for (let index = 0; index < totales.length; index++) {
       const element = totales[index];
       let n = Math.max(0, element.registros[0].total);

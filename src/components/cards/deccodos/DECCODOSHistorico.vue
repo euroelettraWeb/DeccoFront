@@ -372,6 +372,17 @@ async function dateApplied(date1, date2) {
   );
   series.value = estado;
   let total = [];
+  let totalFruta = await obtenerDatosVariableGeneral(
+    "historico",
+    "totales",
+    "individual",
+    "sinfiltro",
+    [48],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
+  );
   for (let index = 0; index < totales.length; index++) {
     const element = totales[index];
     total.push({
@@ -389,17 +400,6 @@ async function dateApplied(date1, date2) {
       name: d,
     });
   }
-  let totalFruta = await obtenerDatosVariableGeneral(
-    "historico",
-    "totales",
-    "individual",
-    "sinfiltro",
-    [48],
-    props.maquina,
-    routerStore().clienteID,
-    inicio.value,
-    fin.value
-  );
   total.push({
     id: total.length,
     nombre:
