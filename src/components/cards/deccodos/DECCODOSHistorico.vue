@@ -43,6 +43,12 @@
                           {{ item.total }}
                         </td>
                       </tr>
+                      <tr>
+                        <td>Total l/kg</td>
+                        <td v-for="item in consumosFruta" :key="item.id">
+                          {{ item.name }}
+                        </td>
+                      </tr>
                     </tbody>
                   </template>
                 </v-simple-table>
@@ -373,6 +379,15 @@ async function dateApplied(date1, date2) {
       nombre: element.nombreCorto + "( " + element.unidadMedida + " )",
       total: Math.max(0, element.registros[0].total).toFixed(3),
     });
+    let n = Math.max(0, element.registros[0].total);
+    let d =
+      totalFruta[0].registros[0].total > 0
+        ? (n / totalFruta[0].registros[0].total).toFixed(2)
+        : 0;
+    consumosFruta.value.push({
+      id: index,
+      name: d,
+    });
   }
   let totalFruta = await obtenerDatosVariableGeneral(
     "historico",
@@ -463,6 +478,7 @@ let seriesL4 = ref([]);
 let consumos = ref([]);
 let alarmas = ref([]);
 let totales = {};
+let consumosFruta = ref([]);
 
 let sameDateFormat = {
   from: "DD MM YYYY, HH:mm",
@@ -710,6 +726,15 @@ onMounted(async () => {
       id: index,
       nombre: element.nombreCorto + "( " + element.unidadMedida + " )",
       total: Math.max(0, element.registros[0].total).toFixed(3),
+    });
+    let n = Math.max(0, element.registros[0].total);
+    let d =
+      totalFruta[0].registros[0].total > 0
+        ? (n / totalFruta[0].registros[0].total).toFixed(2)
+        : 0;
+    consumosFruta.value.push({
+      id: index,
+      name: d,
     });
   }
   consumos.value.push({

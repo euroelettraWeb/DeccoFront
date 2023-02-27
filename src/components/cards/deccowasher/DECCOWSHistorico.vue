@@ -44,6 +44,17 @@
                           {{ item.total }}
                         </td>
                       </tr>
+                      <tr v-if="consumosFruta">
+                        <td>Total l/kg</td>
+                        <td v-for="item in consumosFruta" :key="item.id">
+                          {{ item.name }}
+                        </td>
+                      </tr>
+                      <tr v-else>
+                        <td>
+                          Fruta no disponible: Maquina Deccodos no disponible
+                        </td>
+                      </tr>
                     </tbody>
                   </template>
                 </v-simple-table>
@@ -414,6 +425,18 @@ async function dateApplied(date1, date2) {
       fin.value
     );
     seriesL4.value = kilos;
+    for (let index = 0; index < totales.length; index++) {
+      const element = totales[index];
+      let n = Math.max(0, element.registros[0].total);
+      let d =
+        totalFruta[0].registros[0].total > 0
+          ? (n / totalFruta[0].registros[0].total).toFixed(2)
+          : 0;
+      consumosFruta.value.push({
+        id: index,
+        name: d,
+      });
+    }
   }
   let marchat = await obtenerDatosVariableGeneral(
     "historico",
@@ -485,6 +508,7 @@ let consumos = ref([]);
 let alarmas = ref([]);
 let deccodos = ref(null);
 let totales = {};
+let consumosFruta = ref([]);
 
 let sameDateFormat = {
   from: "DD MM YYYY, HH:mm",
@@ -741,6 +765,18 @@ onMounted(async () => {
       routerStore().clienteID
     );
     seriesL4.value = kilos;
+    for (let index = 0; index < totales.length; index++) {
+      const element = totales[index];
+      let n = Math.max(0, element.registros[0].total);
+      let d =
+        totalFruta[0].registros[0].total > 0
+          ? (n / totalFruta[0].registros[0].total).toFixed(2)
+          : 0;
+      consumosFruta.value.push({
+        id: index,
+        name: d,
+      });
+    }
     cargado4.value = true;
   }
   let horasMarcha = await obtenerDatosVariableGeneral(
