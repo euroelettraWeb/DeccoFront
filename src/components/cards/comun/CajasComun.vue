@@ -147,7 +147,7 @@ onMounted(async () => {
   )[0].id;
 
   cajaV = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "formatoLinea",
@@ -156,7 +156,7 @@ onMounted(async () => {
     routerStore().clienteID
   );
   tCajas = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "unidadTiempo",
@@ -190,7 +190,7 @@ onMounted(async () => {
     `variable_${maquinaID}_${props.total}_actualizada`,
     async (data) => {
       let unidadTiempo = await obtenerDatosVariableGeneral(
-        "8H",
+        "24H",
         "registros",
         "individual",
         "unidadTiempo",

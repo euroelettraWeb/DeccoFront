@@ -574,7 +574,7 @@ onMounted(async () => {
   cargado.value = false;
   cargado1.value = false;
   estado = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "formatoRangos",
@@ -583,7 +583,7 @@ onMounted(async () => {
     routerStore().clienteID
   );
   let autoManual = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "formatoRangos",
@@ -599,7 +599,7 @@ onMounted(async () => {
   cargado1.value = true;
   cargado2.value = false;
   marcha = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "multiple",
     "marchaFormatoRangos",
@@ -608,7 +608,7 @@ onMounted(async () => {
     routerStore().clienteID
   );
   funcMaquina = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "formatoRangos",
@@ -627,7 +627,7 @@ onMounted(async () => {
   }
   series2.value = marcha;
   // let cepillos = await obtenerDatosVariableGeneral(
-  //   "8H",
+  //   "24H",
   //   "registros",
   //   "formatoRangos",
   //   [44],
@@ -639,7 +639,7 @@ onMounted(async () => {
   cargado2.value = true;
   cargado3.value = false;
   dosis = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "formatoLinea",
@@ -651,7 +651,7 @@ onMounted(async () => {
   cargado3.value = true;
   cargado4.value = false;
   kilos = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "formatoLinea",
@@ -663,7 +663,7 @@ onMounted(async () => {
   cargado4.value = true;
   cargado5.value = false;
   cajas = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "unidadTiempo",
@@ -675,7 +675,7 @@ onMounted(async () => {
   cargado5.value = true;
   cargado6.value = false;
   cporu = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "formatoLinea",
@@ -687,7 +687,7 @@ onMounted(async () => {
   cargado6.value = true;
   cargado7.value = false;
   totales = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "totales",
     "individual",
     "sinfiltro",
@@ -696,7 +696,7 @@ onMounted(async () => {
     routerStore().clienteID
   );
   let totalFruta = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "totales",
     "individual",
     "sinfiltro",
@@ -719,7 +719,7 @@ onMounted(async () => {
     total: Math.max(0, totalFruta[0].registros[0].total).toFixed(0),
   });
   let horasMarcha = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "multiple",
     "totalMarcha",
@@ -735,7 +735,7 @@ onMounted(async () => {
   cargado7.value = true;
   cargado8.value = false;
   alarma = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "totalRangos",

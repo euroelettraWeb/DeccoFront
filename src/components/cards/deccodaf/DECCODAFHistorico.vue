@@ -590,7 +590,7 @@ onMounted(async () => {
   let maquina = await obtenerMaquina("lineaTipo", props.linea, 2);
   deccodos.value = maquina[0].id;
   estado = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "formatoRangos",
@@ -599,7 +599,7 @@ onMounted(async () => {
     routerStore().clienteID
   );
   let autoManual = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "formatoRangos",
@@ -615,7 +615,7 @@ onMounted(async () => {
   cargado1.value = true;
   cargado2.value = false;
   marcha = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "multiple",
     "marchaFormatoRangos",
@@ -624,7 +624,7 @@ onMounted(async () => {
     routerStore().clienteID
   );
   funcMaquina = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "formatoRangos",
@@ -645,7 +645,7 @@ onMounted(async () => {
   cargado2.value = true;
   cargado3.value = false;
   dosis = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "formatoLinea",
@@ -658,7 +658,7 @@ onMounted(async () => {
 
   cargado5.value = false;
   cajas = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "unidadTiempo",
@@ -670,7 +670,7 @@ onMounted(async () => {
   cargado5.value = true;
   cargado6.value = false;
   cporu = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "formatoLinea",
@@ -682,7 +682,7 @@ onMounted(async () => {
   cargado6.value = true;
   cargado7.value = false;
   totales = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "totales",
     "individual",
     "sinfiltro",
@@ -700,7 +700,7 @@ onMounted(async () => {
   }
   if (deccodos.value) {
     let totalFruta = await obtenerDatosVariableGeneral(
-      "8H",
+      "24H",
       "totales",
       "individual",
       "sinfiltro",
@@ -716,7 +716,7 @@ onMounted(async () => {
     });
     cargado4.value = false;
     kilos = await obtenerDatosVariableGeneral(
-      "8H",
+      "24H",
       "registros",
       "individual",
       "formatoLinea",
@@ -728,7 +728,7 @@ onMounted(async () => {
     cargado4.value = true;
   }
   let horasMarcha = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "multiple",
     "totalMarcha",
@@ -744,7 +744,7 @@ onMounted(async () => {
   cargado7.value = true;
   cargado8.value = false;
   alarma = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "totalRangos",

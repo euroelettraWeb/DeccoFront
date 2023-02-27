@@ -62,7 +62,7 @@ let cargado = ref(false);
 onMounted(async () => {
   cargado.value = false;
   let ultimos = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "ultimo",
     "individual",
     "sinfiltro",
@@ -71,7 +71,7 @@ onMounted(async () => {
     routerStore().clienteID
   );
   let primeros = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "primero",
     "individual",
     "sinfiltro",

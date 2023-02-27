@@ -249,7 +249,7 @@ async function changeItem(value) {
   if (value.unidadMedida == "I/0") {
     lineas.value = false;
     variable = await obtenerDatosVariableGeneral(
-      "8H",
+      "24H",
       "registros",
       "individual",
       "formatoRangos",
@@ -261,7 +261,7 @@ async function changeItem(value) {
   } else {
     lineas.value = true;
     variable = await obtenerDatosVariableGeneral(
-      "8H",
+      "24H",
       "registros",
       "individual",
       "formatoLinea",

@@ -146,7 +146,7 @@ onMounted(async () => {
   )[0].id;
 
   formatoVariables = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "formatoRangos",
@@ -160,7 +160,7 @@ onMounted(async () => {
       `variable_${maquinaID}_${props.variables[index]}_actualizada`,
       async (data) => {
         let formatoVariable = await obtenerDatosVariableGeneral(
-          "8H",
+          "24H",
           "registros",
           "individual",
           "formatoRangos",

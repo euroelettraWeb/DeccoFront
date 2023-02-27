@@ -71,7 +71,7 @@ onMounted(async () => {
   let maquina = await obtenerMaquina("lineaTipo", routerStore().lineasID, 1);
 
   let ultimos = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "ultimo",
     "individual",
     "sinfiltro",

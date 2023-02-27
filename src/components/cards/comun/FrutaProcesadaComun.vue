@@ -125,7 +125,7 @@ onMounted(async () => {
   )[0].id;
 
   tKg = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "formatoLinea",

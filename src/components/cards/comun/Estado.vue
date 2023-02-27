@@ -162,7 +162,7 @@ onMounted(async () => {
   )[0].id;
 
   modoMaquina = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "formatoRangos",
@@ -171,7 +171,7 @@ onMounted(async () => {
     routerStore().clienteID
   );
   autoManual = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "formatoRangos",
@@ -185,7 +185,7 @@ onMounted(async () => {
   }
 
   marcha = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "multiple",
     "marchaFormatoRangos",
@@ -194,7 +194,7 @@ onMounted(async () => {
     routerStore().clienteID
   );
   funcMaquina = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "formatoRangos",
@@ -218,7 +218,7 @@ onMounted(async () => {
     const element = props.autoManual[index];
     socket.on(`variable_${maquinaID}_${element}_actualizada`, async (data) => {
       let modoMaquina = await obtenerDatosVariableGeneral(
-        "8H",
+        "24H",
         "registros",
         "individual",
         "formatoRangos",
@@ -227,7 +227,7 @@ onMounted(async () => {
         routerStore().clienteID
       );
       let autoManual = await obtenerDatosVariableGeneral(
-        "8H",
+        "24H",
         "registros",
         "individual",
         "formatoRangos",
@@ -250,7 +250,7 @@ onMounted(async () => {
     const element = props.alarma[index];
     socket.on(`variable_${maquinaID}_${element}_actualizada`, async (data) => {
       let marcha = await obtenerDatosVariableGeneral(
-        "8H",
+        "24H",
         "registros",
         "multiple",
         "marchaFormatoRangos",
@@ -259,7 +259,7 @@ onMounted(async () => {
         routerStore().clienteID
       );
       let funcMaquina = await obtenerDatosVariableGeneral(
-        "8H",
+        "24H",
         "registros",
         "individual",
         "formatoRangos",
@@ -287,7 +287,7 @@ onMounted(async () => {
     `variable_${maquinaID}_${props.activo}_actualizada`,
     async (data) => {
       let modoMaquina = await obtenerDatosVariableGeneral(
-        "8H",
+        "24H",
         "registros",
         "individual",
         "formatoRangos",
@@ -296,7 +296,7 @@ onMounted(async () => {
         routerStore().clienteID
       );
       let autoManual = await obtenerDatosVariableGeneral(
-        "8H",
+        "24H",
         "registros",
         "individual",
         "formatoRangos",
@@ -314,7 +314,7 @@ onMounted(async () => {
       }
 
       let marcha = await obtenerDatosVariableGeneral(
-        "8H",
+        "24H",
         "registros",
         "multiple",
         "marchaFormatoRangos",
@@ -323,7 +323,7 @@ onMounted(async () => {
         routerStore().clienteID
       );
       let funcMaquina = await obtenerDatosVariableGeneral(
-        "8H",
+        "24H",
         "registros",
         "individual",
         "formatoRangos",

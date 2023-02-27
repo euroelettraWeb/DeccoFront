@@ -71,7 +71,7 @@ onMounted(async () => {
   let t = await obtenerProductos("maquina", maquina[0].id);
   cargado.value = false;
   let ultimos = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "ultimo",
     "individual",
     "sinfiltro",

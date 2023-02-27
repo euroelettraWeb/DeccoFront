@@ -31,6 +31,12 @@
                         {{ item.name }}
                       </td>
                     </tr>
+                    <tr>
+                      <td>Total</td>
+                      <td v-for="item in consumosFruta" :key="item.id">
+                        {{ item.name }}
+                      </td>
+                    </tr>
                   </tbody>
                 </template>
               </v-simple-table>
@@ -64,7 +70,7 @@ import { routerStore } from "../../../stores/index";
 
 let consumos = ref([]);
 let unidades = ref([]);
-
+let consumosFruta = ref([]);
 let cargado = ref(false);
 
 const props = defineProps({
@@ -102,6 +108,17 @@ onMounted(async () => {
       deccodos,
       routerStore().clienteID
     );
+    for (let index = 0; index < totalesBD.length; index++) {
+      const element = totalesBD[index];
+      consumosFruta.value.push({
+        id: index,
+        name:
+          Math.max(
+            0,
+            element.registros[0].total / totalesFruta[0].registros[0].total
+          ).toFixed(2) + " l/kg",
+      });
+    }
     totalesBD.push(totalesFruta[0]);
   }
   for (let index = 0; index < totalesBD.length; index++) {

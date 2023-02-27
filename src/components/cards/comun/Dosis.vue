@@ -120,7 +120,7 @@ onMounted(async () => {
     await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
   dosis = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "formatoLinea",

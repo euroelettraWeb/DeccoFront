@@ -78,7 +78,7 @@ onMounted(async () => {
     await obtenerMaquina("lineaTipo", routerStore().lineasID, 1)
   )[0].id;
   nivel = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "registros",
     "individual",
     "totalRangos",

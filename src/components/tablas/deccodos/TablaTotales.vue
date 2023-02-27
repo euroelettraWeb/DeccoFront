@@ -77,7 +77,7 @@ onMounted(async () => {
   cargado.value = false;
 
   let ultimos = await obtenerDatosVariableGeneral(
-    "8H",
+    "24H",
     "ultimo",
     "individual",
     "sinfiltro",
