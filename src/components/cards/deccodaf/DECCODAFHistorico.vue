@@ -398,7 +398,7 @@ async function dateApplied(date1, date2) {
     total.push({
       id: total.length,
       nombre: totalFruta[0].nombreCorto + "(  T  )",
-      total: Math.max(0, totalFruta[0].registros[0].total).toFixed(3),
+      total: Math.max(0, totalFruta[0].registros[0].total / 1000).toFixed(3),
     });
     kilos = await obtenerDatosVariableGeneral(
       "historico",
@@ -746,7 +746,7 @@ onMounted(async () => {
     consumos.value.push({
       id: consumos.value.length,
       nombre: totalFruta[0].nombreCorto + "(  T  )",
-      total: Math.max(0, totalFruta[0].registros[0].total).toFixed(3),
+      total: Math.max(0, totalFruta[0].registros[0].total / 1000).toFixed(3),
     });
     cargado4.value = false;
     kilos = await obtenerDatosVariableGeneral(
