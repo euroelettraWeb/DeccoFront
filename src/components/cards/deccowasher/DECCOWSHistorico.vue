@@ -45,7 +45,7 @@
                         </td>
                       </tr>
                       <tr v-if="consumosFruta">
-                        <td>Total l/kg</td>
+                        <td>Total l/T</td>
                         <td v-for="item in consumosFruta" :key="item.id">
                           {{ item.name }}
                         </td>
@@ -431,7 +431,7 @@ async function dateApplied(date1, date2) {
       let n = Math.max(0, element.registros[0].total);
       let d =
         totalFruta[0].registros[0].total > 0
-          ? (n / totalFruta[0].registros[0].total).toFixed(3)
+          ? (n / (totalFruta[0].registros[0].total / 1000)).toFixed(3)
           : 0;
       consumosFruta.value.push({
         id: index,
@@ -771,7 +771,7 @@ onMounted(async () => {
       let n = Math.max(0, element.registros[0].total);
       let d =
         totalFruta[0].registros[0].total > 0
-          ? (n / totalFruta[0].registros[0].total).toFixed(3)
+          ? (n / (totalFruta[0].registros[0].total / 1000)).toFixed(3)
           : 0;
       consumosFruta.value.push({
         id: index,
