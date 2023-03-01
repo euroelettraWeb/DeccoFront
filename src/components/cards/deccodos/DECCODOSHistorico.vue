@@ -402,9 +402,8 @@ async function dateApplied(date1, date2) {
   }
   total.push({
     id: total.length,
-    nombre:
-      totalFruta[0].nombreCorto + "( " + totalFruta[0].unidadMedida + " )",
-    total: Math.max(0, totalFruta[0].registros[0].total).toFixed(0),
+    nombre: totalFruta[0].nombreCorto + "(  T  )",
+    total: Math.max(0, totalFruta[0].registros[0].total / 1000).toFixed(0),
   });
   let marchat = await obtenerDatosVariableGeneral(
     "historico",
@@ -739,9 +738,8 @@ onMounted(async () => {
   }
   consumos.value.push({
     id: consumos.value.length,
-    nombre:
-      totalFruta[0].nombreCorto + "( " + totalFruta[0].unidadMedida + " )",
-    total: Math.max(0, totalFruta[0].registros[0].total).toFixed(0),
+    nombre: totalFruta[0].nombreCorto + "(  T  )",
+    total: Math.max(0, totalFruta[0].registros[0].total / 1000).toFixed(0),
   });
   let horasMarcha = await obtenerDatosVariableGeneral(
     "24H",

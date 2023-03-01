@@ -409,8 +409,7 @@ async function dateApplied(date1, date2) {
     );
     total.push({
       id: total.length,
-      nombre:
-        totalFruta[0].nombreCorto + "( " + totalFruta[0].unidadMedida + " )",
+      nombre: totalFruta[0].nombreCorto + "( T )",
       total: Math.max(0, totalFruta[0].registros[0].total).toFixed(0),
     });
     kilos = await obtenerDatosVariableGeneral(
@@ -751,8 +750,7 @@ onMounted(async () => {
     );
     consumos.value.push({
       id: consumos.value.length,
-      nombre:
-        totalFruta[0].nombreCorto + "( " + totalFruta[0].unidadMedida + " )",
+      nombre: totalFruta[0].nombreCorto + "(  T  )",
       total: Math.max(0, totalFruta[0].registros[0].total).toFixed(0),
     });
     cargado4.value = false;
