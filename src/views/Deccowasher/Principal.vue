@@ -7,13 +7,13 @@
         <TablaTurnos v-if="turnos" :tipo="1" />
         <TablaTotalTurnos
           v-if="turnos && turnosA.length > 1"
-          :variables="[70, 71, 72, 69]"
+          :variables="[70, 71, 72]"
           :marcha="[57, 60, 62]"
           :tipo="3"
         />
         <TablaTotal
           v-else
-          :variables="[70, 71, 72, 69]"
+          :variables="[70, 71, 72]"
           :marcha="[57, 60, 62]"
           :tipo="3"
         />

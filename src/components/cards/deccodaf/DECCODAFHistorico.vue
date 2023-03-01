@@ -380,7 +380,7 @@ async function dateApplied(date1, date2) {
     total.push({
       id: index,
       nombre: element.nombreCorto + "( " + element.unidadMedida + " )",
-      total: Math.max(0, element.registros[0].total),
+      total: Math.max(0, element.registros[0].total).round(3),
     });
   }
   if (deccodos.value) {
