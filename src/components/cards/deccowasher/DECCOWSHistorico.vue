@@ -306,7 +306,7 @@ async function dateApplied(date1, date2) {
     "registros",
     "individual",
     "formatoRangos",
-    [60, 62],
+    [60, 62, 84, 85, 86, 87],
     props.maquina,
     routerStore().clienteID,
     inicio.value,

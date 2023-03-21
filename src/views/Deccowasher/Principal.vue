@@ -33,7 +33,7 @@
           :activo="57"
           :auto-manual="[61, 63]"
           :marcha="[57, 60, 62]"
-          :alarma="[60, 62]"
+          :alarma="[60, 62, 88]"
           :tipo="3"
         />
         <Dosis

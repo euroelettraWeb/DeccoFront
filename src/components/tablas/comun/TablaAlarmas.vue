@@ -3,11 +3,7 @@
     <v-card>
       <v-row>
         <v-col v-if="cargado">
-          <v-row>
-            <v-col>
-              <v-card-title>Alarmas Hoy</v-card-title>
-            </v-col>
-          </v-row>
+          <v-card-title>Alarmas Hoy</v-card-title>
           <v-row>
             <v-col>
               <v-simple-table dense>
@@ -26,7 +22,6 @@
                   </thead>
                   <tbody>
                     <tr>
-                      <td>Total</td>
                       <td v-for="item in consumos" :key="item.id">
                         {{ item.name }}
                       </td>
@@ -115,4 +110,41 @@ onMounted(async () => {
   });
   cargado.value = true;
 });
+setInterval(async () => {
+  consumos.value = [];
+  let totalesBD = await obtenerDatosVariableGeneral(
+    "24H",
+    "totales",
+    "individual",
+    "sinfiltro",
+    props.variables,
+    maquinaID,
+    routerStore().clienteID
+  );
+
+  for (let index = 0; index < totalesBD.length; index++) {
+    const element = totalesBD[index];
+    consumos.value.push({
+      id: index,
+      name: Math.max(0, element.registros[0].total).toFixed(3),
+    });
+  }
+  unidades.value.push({
+    id: unidades.value.length,
+    nombre: "Marcha ( min )",
+  });
+  let horasMarcha = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "multiple",
+    "totalMarcha",
+    props.marcha,
+    maquinaID,
+    routerStore().clienteID
+  );
+  consumos.value.push({
+    id: unidades.value.length,
+    name: Math.max(0, Math.round(horasMarcha.total / 60)),
+  });
+}, 3000);
 </script>
