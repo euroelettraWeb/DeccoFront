@@ -117,6 +117,7 @@ let chartOptions = computed(() => {
     },
     legend: {
       height: 60,
+      show: false,
     },
   };
 });

@@ -9,7 +9,7 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col class="mx-4 mb-4">
+            <v-col>
               <v-simple-table dense>
                 <template #default>
                   <thead>
@@ -26,13 +26,13 @@
                   </thead>
                   <tbody>
                     <tr>
-                      <td>Total</td>
+                      <td></td>
                       <td v-for="item in consumos" :key="item.id">
                         {{ item.name }}
                       </td>
                     </tr>
                     <tr>
-                      <td>Total l/T</td>
+                      <td>litros/Tonelada</td>
                       <td v-for="item in consumosFruta" :key="item.id">
                         {{ item.name }}
                       </td>

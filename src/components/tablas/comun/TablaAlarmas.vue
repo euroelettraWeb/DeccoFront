@@ -9,7 +9,7 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col class="mx-4 mb-4">
+            <v-col>
               <v-simple-table dense>
                 <template #default>
                   <thead>
