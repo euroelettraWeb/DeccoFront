@@ -149,6 +149,7 @@ onMounted(async () => {
   cargado.value = true;
   setInterval(async () => {
     consumos.value = [];
+    consumosFruta.value = [];
     let totalesBD = await obtenerDatosVariableGeneral(
       "24H",
       "totales",
@@ -192,10 +193,6 @@ onMounted(async () => {
         name: Math.max(0, element.registros[0].total).toFixed(3),
       });
     }
-    unidades.value.push({
-      id: unidades.value.length,
-      nombre: "Marcha ( min )",
-    });
     let horasMarcha = await obtenerDatosVariableGeneral(
       "24H",
       "registros",
@@ -209,6 +206,6 @@ onMounted(async () => {
       id: unidades.value.length,
       name: Math.max(0, Math.round(horasMarcha.total / 60)),
     });
-  }, 3000);
+  }, 10000);
 });
 </script>

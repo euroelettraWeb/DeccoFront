@@ -10,7 +10,6 @@
                 <template #default>
                   <thead>
                     <tr>
-                      <th class="text-left"></th>
                       <th
                         v-for="item in unidades"
                         :key="item.id"
@@ -109,42 +108,37 @@ onMounted(async () => {
     name: Math.max(0, Math.round(horasMarcha.total / 60)),
   });
   cargado.value = true;
-});
-setInterval(async () => {
-  consumos.value = [];
-  let totalesBD = await obtenerDatosVariableGeneral(
-    "24H",
-    "totales",
-    "individual",
-    "sinfiltro",
-    props.variables,
-    maquinaID,
-    routerStore().clienteID
-  );
-
-  for (let index = 0; index < totalesBD.length; index++) {
-    const element = totalesBD[index];
+  setInterval(async () => {
+    consumos.value = [];
+    let totalesBD = await obtenerDatosVariableGeneral(
+      "24H",
+      "registros",
+      "individual",
+      "totalRangos",
+      props.variables,
+      maquinaID,
+      routerStore().clienteID
+    );
+    for (let index = 0; index < totalesBD.length; index++) {
+      const element = totalesBD[index];
+      consumos.value.push({
+        id: index,
+        name: Math.max(0, Math.round(element.registros.total1 / 60)),
+      });
+    }
+    let horasMarcha = await obtenerDatosVariableGeneral(
+      "24H",
+      "registros",
+      "multiple",
+      "totalMarcha",
+      props.marcha,
+      maquinaID,
+      routerStore().clienteID
+    );
     consumos.value.push({
-      id: index,
-      name: Math.max(0, element.registros[0].total).toFixed(3),
+      id: unidades.value.length,
+      name: Math.max(0, Math.round(horasMarcha.total / 60)),
     });
-  }
-  unidades.value.push({
-    id: unidades.value.length,
-    nombre: "Marcha ( min )",
-  });
-  let horasMarcha = await obtenerDatosVariableGeneral(
-    "24H",
-    "registros",
-    "multiple",
-    "totalMarcha",
-    props.marcha,
-    maquinaID,
-    routerStore().clienteID
-  );
-  consumos.value.push({
-    id: unidades.value.length,
-    name: Math.max(0, Math.round(horasMarcha.total / 60)),
-  });
-}, 3000);
+  }, 11000);
+});
 </script>
