@@ -103,7 +103,7 @@ let chartOptions = computed(() => {
       tickAmount: 20,
       labels: {
         minHeight: 125,
-        rotate: -70,
+        rotate: -45,
         rotateAlways: true,
         formatter: function (value, timestamp) {
           return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
@@ -113,6 +113,11 @@ let chartOptions = computed(() => {
     tooltip: {
       x: {
         format: "dd/MM/yyyy HH:mm:ss",
+      },
+      y: {
+        title: {
+          formatter: (seriesName) => "",
+        },
       },
     },
     legend: {

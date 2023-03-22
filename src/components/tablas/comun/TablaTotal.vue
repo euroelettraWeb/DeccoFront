@@ -28,7 +28,7 @@
                       </td>
                     </tr>
                     <tr>
-                      <td>litros/Tonelada</td>
+                      <td>Litros/Tonelada</td>
                       <td v-for="item in consumosFruta" :key="item.id">
                         {{ item.name }}
                       </td>
@@ -124,7 +124,7 @@ onMounted(async () => {
     const element = totalesBD[index];
     unidades.value.push({
       id: index,
-      nombre: element.nombreCorto + " (" + element.unidadMedida + ")",
+      nombre: element.descripcion,
     });
     consumos.value.push({
       id: index,
