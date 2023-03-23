@@ -98,22 +98,34 @@ onMounted(async () => {
     "24H",
     "registros",
     "individual",
-    "formatoLinea",
+    "formatoAcumuladores",
     [props.fruta],
     maquinaID,
     routerStore().clienteID
   );
   kilos.value = tKg;
-  socket.on(`variable_${maquinaID}_${props.fruta}_actualizada`, (data) => {
-    kilos.value[0].data.push({
-      x: new Date(moment(data.x).toISOString()).getTime(),
-      y: data.y,
-    });
-    if (chartRef3.value) {
-      chartRef3.value.updateSeries(kilos.value);
-      // if (lastZoom) chartRef3.value.zoomX(lastZoom[0], lastZoom[1]);
+  socket.on(
+    `variable_${maquinaID}_${props.fruta}_actualizada`,
+    async (data) => {
+      // kilos.value[0].data.push({
+      //   x: new Date(moment(data.x).toISOString()).getTime(),
+      //   y: data.y,
+      // });
+      let acc = await obtenerDatosVariableGeneral(
+        "24H",
+        "registros",
+        "individual",
+        "formatoAcumuladores",
+        [props.fruta],
+        maquinaID,
+        routerStore().clienteID
+      );
+      if (chartRef3.value) {
+        chartRef3.value.updateSeries(acc);
+        // if (lastZoom) chartRef2.value.zoomX(lastZoom[0], lastZoom[1]);
+      }
     }
-  });
+  );
   cargado.value = true;
 });
 </script>
