@@ -4,31 +4,37 @@
     <v-row>
       <v-col>
         <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
-        <TablaTurnos v-if="turnos" :tipo="1" />
-        <TablaTotalTurnos
-          v-if="turnos && turnosA.length > 1"
-          :variables="[70, 71, 72]"
-          :marcha="[57, 60, 62]"
-          :tipo="3"
-        />
-        <TablaTotal
-          v-else
-          :variables="[70, 71, 72]"
-          :marcha="[57, 60, 62]"
-          :tipo="3"
-        />
-        <TablaAlarmasTurnos
-          v-if="turnos && turnosA.length > 1"
-          :variables="[60, 62, 84, 85, 86, 87]"
-          :marcha="[57, 60, 62]"
-          :tipo="3"
-        />
-        <TablaAlarmas
-          v-else
-          :variables="[60, 62, 84, 85, 86, 87]"
-          :marcha="[57, 60, 62]"
-          :tipo="3"
-        />
+        <v-row>
+          <TablaTurnos v-if="turnos" :tipo="1" />
+          <v-col>
+            <TablaTotalTurnos
+              v-if="turnos && turnosA.length > 1"
+              :variables="[70, 71, 72]"
+              :marcha="[57, 60, 62]"
+              :tipo="3"
+            />
+            <TablaTotal
+              v-else
+              :variables="[70, 71, 72]"
+              :marcha="[57, 60, 62]"
+              :tipo="3"
+            />
+          </v-col>
+          <v-col>
+            <TablaAlarmasTurnos
+              v-if="turnos && turnosA.length > 1"
+              :variables="[60, 62, 84, 85, 86, 87]"
+              :marcha="[57, 60, 62]"
+              :tipo="3"
+            />
+            <TablaAlarmas
+              v-else
+              :variables="[60, 62, 84, 85, 86, 87]"
+              :marcha="[57, 60, 62]"
+              :tipo="3"
+            />
+          </v-col>
+        </v-row>
         <Estado
           :activo="57"
           :auto-manual="[61, 63]"
