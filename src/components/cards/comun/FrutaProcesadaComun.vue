@@ -3,22 +3,25 @@
     <v-row>
       <v-col>
         <v-card>
+          <v-card-title> Fruta procesada </v-card-title>
+          <v-card-subtitle> Total Kilos </v-card-subtitle>
           <v-row>
-            <v-col>
-              <v-card-title> Fruta procesada </v-card-title>
-              <v-card-subtitle> Total Kilos </v-card-subtitle>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
+            <v-col v-if="cargado">
               <ApexChart
-                v-if="cargado"
                 ref="chartRef3"
                 height="350"
                 type="line"
                 :options="chartOptions"
                 :series="kilos"
               />
+            </v-col>
+            <v-col v-else class="d-flex justify-center align-center">
+              <v-progress-circular
+                :size="100"
+                :width="7"
+                color="purple"
+                indeterminate
+              ></v-progress-circular>
             </v-col>
           </v-row>
         </v-card>

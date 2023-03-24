@@ -2,22 +2,25 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-card
-          ><v-row>
-            <v-col>
-              <v-card-title> {{ props.title }} </v-card-title>
-            </v-col>
-          </v-row>
+        <v-card>
+          <v-card-title> {{ props.title }} </v-card-title>
           <v-row>
-            <v-col>
+            <v-col v-if="cargado">
               <ApexChart
-                v-if="cargado"
                 ref="chartRef"
                 height="350"
                 type="line"
                 :options="chartOptions"
                 :series="registrosT"
               />
+            </v-col>
+            <v-col v-else class="d-flex justify-center align-center">
+              <v-progress-circular
+                :size="100"
+                :width="7"
+                color="purple"
+                indeterminate
+              ></v-progress-circular>
             </v-col>
           </v-row>
         </v-card>

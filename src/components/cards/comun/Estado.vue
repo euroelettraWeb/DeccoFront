@@ -1,40 +1,37 @@
 <template>
-  <v-container
-    ><v-row>
-      <v-col>
-        <v-card>
-          <v-row
-            ><v-col><v-card-title>Estado</v-card-title></v-col>
-          </v-row>
-          <v-row>
-            <v-col v-if="cargado">
-              <ApexChart
-                ref="chartRef"
-                type="rangeBar"
-                height="300"
-                :options="chartOptions"
-                :series="series"
-              />
-              <ApexChart
-                ref="chartRef3"
-                type="rangeBar"
-                height="300"
-                :options="chartOptions"
-                :series="series3"
-              />
-            </v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-col> </v-row
-  ></v-container>
+  <v-row>
+    <v-col>
+      <v-card>
+        <v-card-title>Estado</v-card-title>
+        <v-row>
+          <v-col v-if="cargado">
+            <ApexChart
+              ref="chartRef"
+              type="rangeBar"
+              height="100"
+              :options="chartOptions"
+              :series="series"
+            />
+            <ApexChart
+              ref="chartRef3"
+              type="rangeBar"
+              height="300"
+              :options="chartOptions"
+              :series="series3"
+            />
+          </v-col>
+          <v-col v-else class="d-flex justify-center align-center">
+            <v-progress-circular
+              :size="100"
+              :width="7"
+              color="purple"
+              indeterminate
+            ></v-progress-circular>
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 <script>
 export default {

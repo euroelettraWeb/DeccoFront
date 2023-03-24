@@ -2,14 +2,8 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-card class="mb-2"
-          ><v-row>
-            <v-col>
-              <v-card-subtitle>
-                Cajas por Ciclo y Peso por Caja
-              </v-card-subtitle>
-            </v-col>
-          </v-row>
+        <v-card class="mb-2">
+          <v-card-title> Cajas por Ciclo y Peso por Caja </v-card-title>
           <v-row>
             <v-col>
               <ApexChart
@@ -23,12 +17,8 @@
             </v-col>
           </v-row>
         </v-card>
-        <v-card class="mb-2">
-          <v-row>
-            <v-col>
-              <v-card-subtitle> Cajas/min </v-card-subtitle>
-            </v-col>
-          </v-row>
+        <v-card>
+          <v-card-title> Cajas/min </v-card-title>
           <v-row>
             <v-col>
               <ApexChart
