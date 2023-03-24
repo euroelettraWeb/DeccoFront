@@ -8,7 +8,7 @@
             <ApexChart
               ref="chartRef"
               type="rangeBar"
-              height="100"
+              height="225"
               :options="chartOptions"
               :series="series"
             />

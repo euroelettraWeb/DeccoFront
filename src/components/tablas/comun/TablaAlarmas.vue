@@ -6,7 +6,7 @@
           <v-card-title>Alarmas Hoy</v-card-title>
           <v-row>
             <v-col>
-              <v-simple-table dense>
+              <v-simple-table dense height="100px">
                 <template #default>
                   <thead>
                     <tr>
@@ -109,7 +109,6 @@ onMounted(async () => {
   });
   cargado.value = true;
   setInterval(async () => {
-    consumos.value = [];
     let totalesBD = await obtenerDatosVariableGeneral(
       "24H",
       "registros",
@@ -121,10 +120,10 @@ onMounted(async () => {
     );
     for (let index = 0; index < totalesBD.length; index++) {
       const element = totalesBD[index];
-      consumos.value.push({
+      consumos.value[index] = {
         id: index,
         name: Math.max(0, Math.round(element.registros.total1 / 60)),
-      });
+      };
     }
     let horasMarcha = await obtenerDatosVariableGeneral(
       "24H",
@@ -135,10 +134,11 @@ onMounted(async () => {
       maquinaID,
       routerStore().clienteID
     );
+    consumos.value.pop();
     consumos.value.push({
       id: unidades.value.length,
       name: Math.max(0, Math.round(horasMarcha.total / 60)),
     });
-  }, 11000);
+  }, 3000);
 });
 </script>

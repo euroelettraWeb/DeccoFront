@@ -6,7 +6,7 @@
           <v-card-title>Consumo Hoy</v-card-title>
           <v-row>
             <v-col>
-              <v-simple-table dense>
+              <v-simple-table dense height="100px">
                 <template #default>
                   <thead>
                     <tr>
@@ -148,8 +148,6 @@ onMounted(async () => {
 
   cargado.value = true;
   setInterval(async () => {
-    consumos.value = [];
-    consumosFruta.value = [];
     let totalesBD = await obtenerDatosVariableGeneral(
       "24H",
       "totales",
@@ -177,21 +175,23 @@ onMounted(async () => {
           totalesFruta[0].registros[0].total > 0
             ? (n / (totalesFruta[0].registros[0].total / 1000)).toFixed(3)
             : 0;
-        consumosFruta.value.push({
+        consumosFruta.value[index] = {
           id: index,
           name: d,
-        });
+        };
       }
       totalesFruta[0].registros[0].total =
         totalesFruta[0].registros[0].total / 1000;
       totalesBD.push(totalesFruta[0]);
+      consumosFruta.value.push({ id: 0, name: "" });
+      consumosFruta.value.pop();
     }
     for (let index = 0; index < totalesBD.length; index++) {
       const element = totalesBD[index];
-      consumos.value.push({
+      consumos.value[index] = {
         id: index,
         name: Math.max(0, element.registros[0].total).toFixed(3),
-      });
+      };
     }
     let horasMarcha = await obtenerDatosVariableGeneral(
       "24H",
@@ -202,6 +202,7 @@ onMounted(async () => {
       maquinaID,
       routerStore().clienteID
     );
+    consumos.value.pop();
     consumos.value.push({
       id: unidades.value.length,
       name: Math.max(0, Math.round(horasMarcha.total / 60)),
