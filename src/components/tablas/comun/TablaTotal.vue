@@ -207,6 +207,6 @@ onMounted(async () => {
       id: unidades.value.length,
       name: Math.max(0, Math.round(horasMarcha.total / 60)),
     });
-  }, 10000);
+  }, 3000);
 });
 </script>
