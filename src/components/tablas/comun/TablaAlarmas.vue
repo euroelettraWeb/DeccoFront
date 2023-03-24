@@ -6,7 +6,7 @@
           <v-card-title>Alarmas Hoy</v-card-title>
           <v-row>
             <v-col>
-              <v-simple-table dense height="100px">
+              <v-simple-table dense>
                 <template #default>
                   <thead>
                     <tr>
@@ -15,8 +15,11 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td v-for="item in consumos" :key="item.id">
+                    <tr v-for="item in consumos" :key="item.id">
+                      <td>
+                        {{ item.nombre }}
+                      </td>
+                      <td>
                         {{ item.name }}
                       </td>
                     </tr>
@@ -80,7 +83,7 @@ onMounted(async () => {
   for (let index = 0; index < totalesBD.length; index++) {
     const element = totalesBD[index];
     consumos.value.push({
-      id: index,
+      id: element.nombreCorto + index,
       nombre: element.nombreCorto,
       name: Math.max(0, Math.round(element.registros.total1 / 60)),
     });
@@ -113,7 +116,7 @@ onMounted(async () => {
     for (let index = 0; index < totalesBD.length; index++) {
       const element = totalesBD[index];
       consumos.value[index] = {
-        id: index,
+        id: element.nombreCorto + index,
         nombre: element.nombreCorto,
         name: Math.max(0, Math.round(element.registros.total1 / 60)),
       };
