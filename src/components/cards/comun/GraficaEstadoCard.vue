@@ -1,31 +1,32 @@
 <template>
-  <v-container
-    ><v-row>
-      <v-col>
-        <v-card>
-          <v-card-title>{{ props.title }}</v-card-title>
-          <v-row>
-            <v-col v-if="cargado">
-              <ApexChart
-                ref="chartRef"
-                type="rangeBar"
-                :height="props.height"
-                :options="chartOptions"
-                :series="series"
-              />
-            </v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-col> </v-row
-  ></v-container>
+  <v-row>
+    <v-col>
+      <v-switch v-model="mostrar" color="info" :label="props.title">
+        {{ props.title }}
+      </v-switch>
+      <v-card v-if="mostrar">
+        <v-row>
+          <v-col v-if="cargado">
+            <ApexChart
+              ref="chartRef"
+              type="rangeBar"
+              :height="props.height"
+              :options="chartOptions"
+              :series="series"
+            />
+          </v-col>
+          <v-col v-else class="d-flex justify-center align-center">
+            <v-progress-circular
+              :size="100"
+              :width="7"
+              color="purple"
+              indeterminate
+            ></v-progress-circular>
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 <script>
 export default {
@@ -87,7 +88,7 @@ let chartOptions = computed(() => {
       tickAmount: 20,
       labels: {
         minHeight: 125,
-        rotate: -70,
+        rotate: -45,
         rotateAlways: true,
         formatter: function (value, timestamp) {
           return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
