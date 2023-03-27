@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col>
-        <CajasComun :caja1="16" :caja2="17" :total="18" :tipo="1" />
+        <CajasComun :caja1="45" :caja2="46" :total="47" :tipo="2" />
         <GraficaEstadoCard
           :variables="[2, 3, 4, 5, 6]"
           :height="300"

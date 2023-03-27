@@ -8,7 +8,7 @@
           title="Estado de las bombas, niveles y bidon"
           :tipo="3"
         />
-        <CajasComun :caja1="66" :caja2="67" :total="68" :tipo="3" />
+        <CajasComun :caja1="45" :caja2="46" :total="48" :tipo="2" />
       </v-col>
     </v-row>
   </v-container>
