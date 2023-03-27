@@ -4,40 +4,28 @@
       <v-row>
         <v-col v-if="cargado">
           <v-card-title>Consumo Hoy</v-card-title>
-          <v-row>
-            <v-col>
-              <v-simple-table dense height="100px">
-                <template #default>
-                  <thead>
-                    <tr>
-                      <th class="text-left"></th>
-                      <th
-                        v-for="item in unidades"
-                        :key="item.id"
-                        class="text-left"
-                      >
-                        {{ item.nombre }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td></td>
-                      <td v-for="item in consumos" :key="item.id">
-                        {{ item.name }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Litros/Tonelada</td>
-                      <td v-for="item in consumosFruta" :key="item.id">
-                        {{ item.name }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-simple-table>
-            </v-col>
-          </v-row>
+          <v-simple-table dense>
+            <template #default>
+              <thead>
+                <tr>
+                  <th class="text-left"></th>
+                  <th>L</th>
+                  <th>Litros/Tonelada</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in consumos" :key="item.id">
+                  <td>{{ item.nombre }}</td>
+                  <td>
+                    {{ item.total }}
+                  </td>
+                  <td v-if="deccodos">
+                    {{ item.totalFruta }}
+                  </td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
         </v-col>
         <v-col v-else class="d-flex justify-center align-center">
           <v-progress-circular
@@ -66,7 +54,7 @@ import { routerStore } from "../../../stores/index";
 
 let consumos = ref([]);
 let unidades = ref([]);
-let consumosFruta = ref([]);
+let deccodos = ref(2);
 let cargado = ref(false);
 
 const props = defineProps({
@@ -81,7 +69,7 @@ onMounted(async () => {
   let maquinaID = (
     await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
-  let deccodos = (
+  deccodos.value = (
     await obtenerMaquina("lineaTipo", routerStore().lineasID, 2)
   )[0].id;
   let totalesBD = await obtenerDatosVariableGeneral(
@@ -94,14 +82,14 @@ onMounted(async () => {
     routerStore().clienteID
   );
 
-  if (deccodos) {
+  if (deccodos.value) {
     let totalesFruta = await obtenerDatosVariableGeneral(
       "24H",
       "totales",
       "individual",
       "sinfiltro",
       [48],
-      deccodos,
+      deccodos.value,
       routerStore().clienteID
     );
     for (let index = 0; index < totalesBD.length; index++) {
@@ -111,40 +99,30 @@ onMounted(async () => {
         totalesFruta[0].registros[0].total > 0
           ? (n / (totalesFruta[0].registros[0].total / 1000)).toFixed(3)
           : 0;
-      consumosFruta.value.push({
+      consumos.value.push({
         id: index,
-        name: d,
+        nombre: element.descripcion,
+        total: Math.max(0, element.registros[0].total).toFixed(3),
+        totalFruta: d,
       });
     }
     totalesFruta[0].registros[0].total =
       totalesFruta[0].registros[0].total / 1000;
-    totalesBD.push(totalesFruta[0]);
-  }
-  for (let index = 0; index < totalesBD.length; index++) {
-    const element = totalesBD[index];
-    unidades.value.push({
-      id: index,
-      nombre: element.descripcion,
-    });
     consumos.value.push({
-      id: index,
-      name: Math.max(0, element.registros[0].total).toFixed(3),
+      id: totalesBD.length,
+      nombre: "T Fruta",
+      total: totalesFruta[0].registros[0].total,
     });
+  } else {
+    for (let index = 0; index < totalesBD.length; index++) {
+      const element = totalesBD[index];
+      consumos.value.push({
+        id: index,
+        nombre: element.descripcion,
+        total: Math.max(0, element.registros[0].total).toFixed(3),
+      });
+    }
   }
-  unidades.value.push({ id: unidades.value.length, nombre: "Marcha ( min )" });
-  let horasMarcha = await obtenerDatosVariableGeneral(
-    "24H",
-    "registros",
-    "multiple",
-    "totalMarcha",
-    props.marcha,
-    maquinaID,
-    routerStore().clienteID
-  );
-  consumos.value.push({
-    id: unidades.value.length,
-    name: Math.max(0, Math.round(horasMarcha.total / 60)),
-  });
 
   cargado.value = true;
   setInterval(async () => {
@@ -158,14 +136,14 @@ onMounted(async () => {
       routerStore().clienteID
     );
 
-    if (deccodos) {
+    if (deccodos.value) {
       let totalesFruta = await obtenerDatosVariableGeneral(
         "24H",
         "totales",
         "individual",
         "sinfiltro",
         [48],
-        deccodos,
+        deccodos.value,
         routerStore().clienteID
       );
       for (let index = 0; index < totalesBD.length; index++) {
@@ -175,38 +153,46 @@ onMounted(async () => {
           totalesFruta[0].registros[0].total > 0
             ? (n / (totalesFruta[0].registros[0].total / 1000)).toFixed(3)
             : 0;
-        consumosFruta.value[index] = {
+        consumos.value[index] = {
           id: index,
-          name: d,
+          nombre: element.descripcion,
+          totalFruta: d,
+          total: Math.max(0, element.registros[0].total).toFixed(3),
         };
       }
       totalesFruta[0].registros[0].total =
         totalesFruta[0].registros[0].total / 1000;
-      totalesBD.push(totalesFruta[0]);
-      consumosFruta.value.push({ id: 0, name: "" });
-      consumosFruta.value.pop();
+      consumos.value.pop();
+      consumos.value.push({
+        id: totalesBD.length,
+        nombre: "T Fruta",
+        total: totalesFruta[0].registros[0].total,
+      });
+    } else {
+      for (let index = 0; index < totalesBD.length; index++) {
+        const element = totalesBD[index];
+        consumos.value[index] = {
+          id: index,
+          nombre: element.descripcion,
+          total: Math.max(0, element.registros[0].total).toFixed(3),
+        };
+      }
     }
-    for (let index = 0; index < totalesBD.length; index++) {
-      const element = totalesBD[index];
-      consumos.value[index] = {
-        id: index,
-        name: Math.max(0, element.registros[0].total).toFixed(3),
-      };
-    }
-    let horasMarcha = await obtenerDatosVariableGeneral(
-      "24H",
-      "registros",
-      "multiple",
-      "totalMarcha",
-      props.marcha,
-      maquinaID,
-      routerStore().clienteID
-    );
-    consumos.value.pop();
-    consumos.value.push({
-      id: unidades.value.length,
-      name: Math.max(0, Math.round(horasMarcha.total / 60)),
-    });
+
+    // let horasMarcha = await obtenerDatosVariableGeneral(
+    //   "24H",
+    //   "registros",
+    //   "multiple",
+    //   "totalMarcha",
+    //   props.marcha,
+    //   maquinaID,
+    //   routerStore().clienteID
+    // );
+    // consumos.value.pop();
+    // consumos.value.push({
+    //   id: unidades.value.length,
+    //   name: Math.max(0, Math.round(horasMarcha.total / 60)),
+    // });
   }, 3000);
 });
 </script>
