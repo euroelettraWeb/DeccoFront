@@ -47,6 +47,7 @@ import { routerStore } from "../../../stores/index";
 const socket = io("http://localhost:3000");
 
 let cargado = ref(false);
+let mostrar = ref(false);
 let dosis = {};
 
 const chartRef = ref(null);
