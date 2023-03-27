@@ -66,7 +66,7 @@ let chartOptions = computed(() => {
       tickAmount: 25,
       labels: {
         minHeight: 125,
-        rotate: -70,
+        rotate: -45,
         minHeight: 125,
         rotateAlways: true,
         formatter: function (value, timestamp) {
