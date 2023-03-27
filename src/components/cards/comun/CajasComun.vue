@@ -2,8 +2,10 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-card class="mb-2">
-          <v-card-title> Cajas por Ciclo y Peso por Caja </v-card-title>
+        <v-switch v-model="mostrar" color="info" label="Fruta procesada">
+          Cajas por Ciclo y Peso por Caja
+        </v-switch>
+        <v-card v-if="mostrar" class="mb-2">
           <v-row>
             <v-col>
               <ApexChart
@@ -17,8 +19,10 @@
             </v-col>
           </v-row>
         </v-card>
+        <v-switch v-model="mostrar" color="info" label="Fruta procesada">
+          Cajas/min
+        </v-switch>
         <v-card>
-          <v-card-title> Cajas/min </v-card-title>
           <v-row>
             <v-col>
               <ApexChart
@@ -79,7 +83,7 @@ let chartOptions = computed(() => {
       tickAmount: 25,
       labels: {
         minHeight: 125,
-        rotate: -70,
+        rotate: -45,
         rotateAlways: true,
         formatter: function (value, timestamp) {
           return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
@@ -122,7 +126,10 @@ onMounted(async () => {
     "unidadTiempo",
     [props.total],
     maquinaID,
-    routerStore().clienteID
+    routerStore().clienteID,
+    null,
+    null,
+    "Cajas/min"
   );
   cajas.value = cajaV;
   totalCajas.value = tCajas;
