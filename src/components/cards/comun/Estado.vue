@@ -1,23 +1,16 @@
 <template>
   <v-row>
     <v-col>
-      <v-card>
-        <v-card-title>Estado</v-card-title>
+      <v-switch v-model="mostrar" color="info" label="Estado">Estado</v-switch>
+      <v-card v-if="mostrar">
         <v-row>
           <v-col v-if="cargado">
             <ApexChart
               ref="chartRef"
               type="rangeBar"
-              height="225"
-              :options="chartOptions"
-              :series="series"
-            />
-            <ApexChart
-              ref="chartRef3"
-              type="rangeBar"
               height="300"
               :options="chartOptions"
-              :series="series3"
+              :series="series"
             />
           </v-col>
           <v-col v-else class="d-flex justify-center align-center">
@@ -51,14 +44,12 @@ import { routerStore } from "../../../stores/index";
 
 const socket = io("http://localhost:3000");
 const chartRef = ref(null);
-const chartRef2 = ref(null);
-const chartRef3 = ref(null);
-var lastZoom = null;
+
+let lastZoom = null;
 let cargado = ref(false);
+let mostrar = ref(true);
 let marcha = [];
 let series = ref([]);
-let series2 = ref([]);
-let series3 = ref([]);
 let modoMaquina = [];
 let autoManual = [];
 let funcMaquina = [];
@@ -118,7 +109,6 @@ let chartOptions = computed(() => {
       },
     },
     legend: {
-      height: 60,
       show: false,
     },
   };
@@ -131,13 +121,7 @@ const props = defineProps({
   tipo: { type: Number, default: 1 },
 });
 
-onMounted(async () => {
-  cargado.value = false;
-
-  let maquinaID = (
-    await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
-  )[0].id;
-
+async function dataGrafica(maquinaID) {
   modoMaquina = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -170,6 +154,14 @@ onMounted(async () => {
     maquinaID,
     routerStore().clienteID
   );
+  for (let index = 0; index < marcha[0].data.length; index++) {
+    const element = marcha[0].data[index];
+    modoMaquina[0].data.push(element);
+  }
+  for (let index = 0; index < marcha[1].data.length; index++) {
+    const element = marcha[1].data[index];
+    modoMaquina[1].data.push(element);
+  }
   funcMaquina = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -179,7 +171,6 @@ onMounted(async () => {
     maquinaID,
     routerStore().clienteID
   );
-  series.value = modoMaquina;
   for (let index = 0; index < funcMaquina[1].data.length; index++) {
     let element = funcMaquina[1].data[index];
     if (element.x == "Alarma") {
@@ -187,140 +178,35 @@ onMounted(async () => {
     } else {
       element.fillColor = "#3949ab";
     }
-    marcha[1].data.push(element);
+    modoMaquina[1].data.push(element);
   }
-  series2.value = funcMaquina;
-  series3.value = marcha;
+  series.value = modoMaquina;
+}
+onMounted(async () => {
+  cargado.value = false;
+  let maquinaID = (
+    await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
+  )[0].id;
+  dataGrafica(maquinaID);
+
   for (let index = 0; index < props.autoManual.length; index++) {
     const element = props.autoManual[index];
     socket.on(`variable_${maquinaID}_${element}_actualizada`, async (data) => {
-      let modoMaquina = await obtenerDatosVariableGeneral(
-        "24H",
-        "registros",
-        "individual",
-        "formatoRangos",
-        [props.activo],
-        maquinaID,
-        routerStore().clienteID
-      );
-      let autoManual = await obtenerDatosVariableGeneral(
-        "24H",
-        "registros",
-        "individual",
-        "formatoRangos",
-        props.autoManual,
-        maquinaID,
-        routerStore().clienteID
-      );
-      for (let index = 0; index < autoManual[1].data.length; index++) {
-        const element = autoManual[1].data[index];
-        modoMaquina[1].data.push(element);
-      }
-      if (chartRef.value) {
-        chartRef.value.updateSeries(modoMaquina);
-        if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-      }
+      dataGrafica(maquinaID);
     });
   }
 
   for (let index = 0; index < props.alarma.length; index++) {
     const element = props.alarma[index];
     socket.on(`variable_${maquinaID}_${element}_actualizada`, async (data) => {
-      let marcha = await obtenerDatosVariableGeneral(
-        "24H",
-        "registros",
-        "multiple",
-        "marchaFormatoRangos",
-        props.marcha,
-        maquinaID,
-        routerStore().clienteID
-      );
-      let funcMaquina = await obtenerDatosVariableGeneral(
-        "24H",
-        "registros",
-        "individual",
-        "formatoRangos",
-        props.alarma,
-        maquinaID,
-        routerStore().clienteID
-      );
-      for (let index = 0; index < funcMaquina[1].data.length; index++) {
-        let element = funcMaquina[1].data[index];
-        if (element.x == "Alarma") {
-          element.fillColor = "#fdd835";
-        } else {
-          element.fillColor = "#3949ab";
-        }
-        marcha[1].data.push(element);
-      }
-      if (chartRef2.value) {
-        chartRef2.value.updateSeries(marcha);
-        if (lastZoom) chartRef2.value.zoomX(lastZoom[0], lastZoom[1]);
-      }
+      dataGrafica(maquinaID);
     });
   }
 
   socket.on(
     `variable_${maquinaID}_${props.activo}_actualizada`,
     async (data) => {
-      let modoMaquina = await obtenerDatosVariableGeneral(
-        "24H",
-        "registros",
-        "individual",
-        "formatoRangos",
-        [props.activo],
-        maquinaID,
-        routerStore().clienteID
-      );
-      let autoManual = await obtenerDatosVariableGeneral(
-        "24H",
-        "registros",
-        "individual",
-        "formatoRangos",
-        props.autoManual,
-        maquinaID,
-        routerStore().clienteID
-      );
-      for (let index = 0; index < autoManual[1].data.length; index++) {
-        const element = autoManual[1].data[index];
-        modoMaquina[1].data.push(element);
-      }
-      if (chartRef.value) {
-        chartRef.value.updateSeries(modoMaquina);
-        if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-      }
-
-      let marcha = await obtenerDatosVariableGeneral(
-        "24H",
-        "registros",
-        "multiple",
-        "marchaFormatoRangos",
-        props.marcha,
-        maquinaID,
-        routerStore().clienteID
-      );
-      let funcMaquina = await obtenerDatosVariableGeneral(
-        "24H",
-        "registros",
-        "individual",
-        "formatoRangos",
-        props.alarma,
-        maquinaID,
-        routerStore().clienteID
-      );
-      for (let index = 0; index < funcMaquina[1].data.length; index++) {
-        let element = funcMaquina[1].data[index];
-        if (element.x == "Alarma") {
-          element.fillColor = "#fdd835";
-        } else {
-          element.fillColor = "#3949ab";
-        }
-        marcha[1].data.push(element);
-      }
-      if (chartRef2.value) {
-        chartRef2.value.updateSeries(marcha);
-        if (lastZoom) chartRef2.value.zoomX(lastZoom[0], lastZoom[1]);
-      }
+      dataGrafica(maquinaID);
     }
   );
   cargado.value = true;
