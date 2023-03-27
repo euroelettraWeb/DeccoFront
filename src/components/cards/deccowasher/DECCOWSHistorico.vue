@@ -306,7 +306,7 @@ async function dateApplied(date1, date2) {
     "registros",
     "individual",
     "formatoRangos",
-    [60, 62, 84, 85, 86, 87],
+    [60, 62, 84, 85, 86, 87, 88],
     props.maquina,
     routerStore().clienteID,
     inicio.value,
@@ -416,7 +416,7 @@ async function dateApplied(date1, date2) {
       "historico",
       "registros",
       "individual",
-      "formatoLinea",
+      "formatoAcumuladores",
       [48],
       deccodos.value,
       routerStore().clienteID,
@@ -461,7 +461,7 @@ async function dateApplied(date1, date2) {
     "registros",
     "individual",
     "totalRangos",
-    [60, 62],
+    [60, 62, 84, 85, 86, 87],
     props.maquina,
     routerStore().clienteID,
     inicio.value,
@@ -660,7 +660,7 @@ onMounted(async () => {
     "registros",
     "individual",
     "formatoRangos",
-    [60, 62],
+    [60, 62, 84, 85, 86, 87, 88],
     props.maquina,
     routerStore().clienteID
   );
@@ -758,7 +758,7 @@ onMounted(async () => {
       "24H",
       "registros",
       "individual",
-      "formatoLinea",
+      "formatoAcumuladores",
       [48],
       deccodos.value,
       routerStore().clienteID
@@ -799,7 +799,7 @@ onMounted(async () => {
     "registros",
     "individual",
     "totalRangos",
-    [60, 62],
+    [60, 62, 84, 85, 86, 87],
     props.maquina,
     routerStore().clienteID
   );
