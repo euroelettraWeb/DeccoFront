@@ -6,22 +6,20 @@
           <v-card-title>Alarmas Hoy</v-card-title>
           <v-row>
             <v-col>
-              <v-simple-table dense height="100px">
+              <v-simple-table dense>
                 <template #default>
                   <thead>
                     <tr>
-                      <th
-                        v-for="item in unidades"
-                        :key="item.id"
-                        class="text-left"
-                      >
-                        {{ item.nombre }}
-                      </th>
+                      <th></th>
+                      <th>Min</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td v-for="item in consumos" :key="item.id">
+                    <tr v-for="item in consumos" :key="item.id">
+                      <td>
+                        {{ item.nombre }}
+                      </td>
+                      <td>
                         {{ item.name }}
                       </td>
                     </tr>
@@ -84,16 +82,12 @@ onMounted(async () => {
   );
   for (let index = 0; index < totalesBD.length; index++) {
     const element = totalesBD[index];
-    unidades.value.push({
-      id: index,
-      nombre: element.nombreCorto + " ( min )",
-    });
     consumos.value.push({
-      id: index,
+      id: element.nombreCorto + index,
+      nombre: element.nombreCorto,
       name: Math.max(0, Math.round(element.registros.total1 / 60)),
     });
   }
-  unidades.value.push({ id: unidades.value.length, nombre: "Marcha ( min )" });
   let horasMarcha = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -105,6 +99,7 @@ onMounted(async () => {
   );
   consumos.value.push({
     id: unidades.value.length,
+    nombre: "Marcha",
     name: Math.max(0, Math.round(horasMarcha.total / 60)),
   });
   cargado.value = true;
@@ -121,7 +116,8 @@ onMounted(async () => {
     for (let index = 0; index < totalesBD.length; index++) {
       const element = totalesBD[index];
       consumos.value[index] = {
-        id: index,
+        id: element.nombreCorto + index,
+        nombre: element.nombreCorto,
         name: Math.max(0, Math.round(element.registros.total1 / 60)),
       };
     }
@@ -137,6 +133,7 @@ onMounted(async () => {
     consumos.value.pop();
     consumos.value.push({
       id: unidades.value.length,
+      nombre: "Marcha",
       name: Math.max(0, Math.round(horasMarcha.total / 60)),
     });
   }, 3000);
