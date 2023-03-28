@@ -48,6 +48,7 @@ const socket = io("http://localhost:3000");
 const chartRef = ref(null);
 var lastZoom = null;
 let cargado = ref(false);
+let mostrar = ref(true);
 let series = ref([]);
 let formatoVariables = [];
 let chartOptions = computed(() => {

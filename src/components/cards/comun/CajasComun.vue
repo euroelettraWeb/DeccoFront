@@ -19,10 +19,10 @@
             </v-col>
           </v-row>
         </v-card>
-        <v-switch v-model="mostrar" color="info" label="Fruta procesada">
+        <v-switch v-model="mostrar2" color="info" label="Fruta procesada">
           Cajas/min
         </v-switch>
-        <v-card>
+        <v-card v-if="mostrar2">
           <v-row>
             <v-col>
               <ApexChart
@@ -58,6 +58,8 @@ import { routerStore } from "../../../stores/index";
 const socket = io("http://localhost:3000");
 
 let cargado = ref(false);
+let mostrar = ref(true);
+let mostrar2 = ref(true);
 let cajaV = {};
 let tCajas = {};
 
