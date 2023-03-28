@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <v-row>
       <v-col>
         <GraficaEstadoCard
@@ -8,7 +8,7 @@
           title="Estado de las bombas, niveles y bidon"
           :tipo="3"
         />
-        <CajasComun :caja1="45" :caja2="46" :total="48" :tipo="2" />
+        <CajasComun :caja1="45" :caja2="46" :total="47" :tipo="2" />
       </v-col>
     </v-row>
   </v-container>
