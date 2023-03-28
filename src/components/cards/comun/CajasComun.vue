@@ -1,5 +1,5 @@
 <template>
-  <v-row>
+  <v-row no-gutters>
     <v-col>
       <v-switch
         v-model="mostrar"
@@ -9,7 +9,7 @@
         Cajas por Ciclo y Peso por Caja
       </v-switch>
       <v-card v-if="mostrar" class="mb-2">
-        <v-row>
+        <v-row no-gutters>
           <v-col>
             <ApexChart
               v-if="cargado"
@@ -26,7 +26,7 @@
         Cajas/min
       </v-switch>
       <v-card v-if="mostrar2">
-        <v-row>
+        <v-row no-gutters>
           <v-col>
             <ApexChart
               v-if="cargado"
@@ -69,7 +69,6 @@ const chartRef = ref(null);
 const chartRef2 = ref(null);
 let cajas = ref([]);
 let totalCajas = ref([]);
-var lastZoom = null;
 let chartOptions = computed(() => {
   return {
     chart: {
@@ -144,7 +143,6 @@ onMounted(async () => {
     });
     if (chartRef.value) {
       chartRef.value.updateSeries(cajas.value);
-      // if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
     }
   });
   socket.on(`variable_${maquinaID}_${props.caja2}_actualizada`, (data) => {
@@ -154,7 +152,6 @@ onMounted(async () => {
     });
     if (chartRef.value) {
       chartRef.value.updateSeries(cajas.value);
-      // if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
     }
   });
   socket.on(
@@ -171,7 +168,6 @@ onMounted(async () => {
       );
       if (chartRef2.value) {
         chartRef2.value.updateSeries(unidadTiempo);
-        // if (lastZoom) chartRef2.value.zoomX(lastZoom[0], lastZoom[1]);
       }
     }
   );
