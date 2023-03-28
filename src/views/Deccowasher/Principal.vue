@@ -1,46 +1,54 @@
 <template>
-  <v-container>
-    <!--  -->
+  <v-container fluid>
+    <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
+    <v-row>
+      <TablaTurnos v-if="turnos" :tipo="1" />
+      <v-col>
+        <TablaTotalTurnos
+          v-if="turnos && turnosA.length > 1"
+          :variables="[70, 71, 72]"
+          :marcha="[57, 60, 62]"
+          :tipo="3"
+        />
+        <TablaTotal
+          v-else
+          :variables="[70, 71, 72]"
+          :marcha="[57, 60, 62]"
+          :tipo="3"
+        />
+      </v-col>
+      <v-col>
+        <TablaAlarmasTurnos
+          v-if="turnos && turnosA.length > 1"
+          :variables="[60, 62, 84, 85, 86, 87]"
+          :marcha="[57, 60, 62]"
+          :tipo="3"
+        />
+        <TablaAlarmas
+          v-else
+          :variables="[60, 62, 84, 85, 86, 87]"
+          :marcha="[57, 60, 62]"
+          :tipo="3"
+        />
+      </v-col>
+    </v-row>
     <v-row>
       <v-col>
-        <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
-        <v-row>
-          <TablaTurnos v-if="turnos" :tipo="1" />
-          <v-col>
-            <TablaTotalTurnos
-              v-if="turnos && turnosA.length > 1"
-              :variables="[70, 71, 72]"
-              :marcha="[57, 60, 62]"
-              :tipo="3"
-            />
-            <TablaTotal
-              v-else
-              :variables="[70, 71, 72]"
-              :marcha="[57, 60, 62]"
-              :tipo="3"
-            />
-          </v-col>
-          <v-col>
-            <TablaAlarmasTurnos
-              v-if="turnos && turnosA.length > 1"
-              :variables="[60, 62, 84, 85, 86, 87]"
-              :marcha="[57, 60, 62]"
-              :tipo="3"
-            />
-            <TablaAlarmas
-              v-else
-              :variables="[60, 62, 84, 85, 86, 87]"
-              :marcha="[57, 60, 62]"
-              :tipo="3"
-            />
-          </v-col>
-        </v-row>
         <Estado
           :activo="57"
           :auto-manual="[61, 63]"
           :marcha="[57, 60, 62]"
           :alarma="[60, 62, 88]"
           :tipo="3"
+          :categories="[
+            'Activo',
+            'MarchaParo',
+            'Remoto',
+            'Manual',
+            'Falta de consenso',
+            'Alarma',
+            'Presencia de fruta',
+          ]"
         />
         <Dosis
           title="Dosis de Desinfectante y Jabon"
@@ -48,19 +56,19 @@
           :tipo="3"
         />
         <FrutaProcesadaComun :fruta="48" :tipo="2" />
-        <v-btn
-          color="info"
-          @click="
-            routerStore().menu(
-              'deccowasher:Otras',
-              routerStore().clienteID,
-              routerStore().lineasID
-            )
-          "
-          >Otras Variables</v-btn
-        >
       </v-col>
     </v-row>
+    <v-btn
+      color="info"
+      @click="
+        routerStore().menu(
+          'deccowasher:Otras',
+          routerStore().clienteID,
+          routerStore().lineasID
+        )
+      "
+      >Otras Variables</v-btn
+    >
   </v-container>
 </template>
 

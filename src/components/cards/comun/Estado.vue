@@ -89,6 +89,7 @@ let chartOptions = computed(() => {
       type: "datetime",
       datetimeUTC: false,
       tickAmount: 20,
+      categories: props.categories,
       labels: {
         minHeight: 125,
         rotate: -45,
@@ -119,6 +120,7 @@ const props = defineProps({
   alarma: { type: Array, default: () => [] },
   marcha: { type: Array, default: () => [] },
   tipo: { type: Number, default: 1 },
+  categories: { type: Array, default: () => [] },
 });
 
 async function dataGrafica(maquinaID) {
