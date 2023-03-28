@@ -1,45 +1,43 @@
 <template>
-  <v-container>
-    <v-card>
-      <v-row>
-        <v-col v-if="cargado">
-          <v-card-title>Alarmas Hoy</v-card-title>
-          <v-row>
-            <v-col>
-              <v-simple-table dense>
-                <template #default>
-                  <thead>
-                    <tr>
-                      <th></th>
-                      <th>Min</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="item in consumos" :key="item.id">
-                      <td>
-                        {{ item.nombre }}
-                      </td>
-                      <td>
-                        {{ item.name }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-simple-table>
-            </v-col>
-          </v-row>
-        </v-col>
-        <v-col v-else class="d-flex justify-center align-center">
-          <v-progress-circular
-            :size="100"
-            :width="7"
-            color="purple"
-            indeterminate
-          ></v-progress-circular>
-        </v-col>
-      </v-row>
-    </v-card>
-  </v-container>
+  <v-card>
+    <v-row>
+      <v-col v-if="cargado">
+        <v-card-title>Alarmas Hoy</v-card-title>
+        <v-row>
+          <v-col>
+            <v-simple-table dense>
+              <template #default>
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Min</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in consumos" :key="item.id">
+                    <td>
+                      {{ item.nombre }}
+                    </td>
+                    <td>
+                      {{ item.name }}
+                    </td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+          </v-col>
+        </v-row>
+      </v-col>
+      <v-col v-else class="d-flex justify-center align-center">
+        <v-progress-circular
+          :size="100"
+          :width="7"
+          color="purple"
+          indeterminate
+        ></v-progress-circular>
+      </v-col>
+    </v-row>
+  </v-card>
 </template>
 <script>
 export default {

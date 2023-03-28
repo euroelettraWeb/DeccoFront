@@ -96,6 +96,11 @@ let chartOptions = computed(() => {
         },
       },
     },
+    yaxis: {
+      labels: {
+        minWidth: 60,
+      },
+    },
     tooltip: {
       x: {
         format: "dd/MM/yyyy HH:mm:ss",

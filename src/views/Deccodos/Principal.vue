@@ -4,7 +4,7 @@
       <v-col>
         <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
         <TablaTurnos v-if="turnos" /><!-- :marcha="[31, 40, 42]" -->
-        <v-card>
+        <v-card class="mb-4">
           <v-row>
             <v-col v-if="cargado">
               <v-card-title>Productos</v-card-title>

@@ -90,6 +90,10 @@ let chartOptions = computed(() => {
         axisBorder: {
           show: true,
         },
+
+        labels: {
+          minWidth: 60,
+        },
       },
       {
         opposite: true,

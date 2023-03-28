@@ -93,6 +93,11 @@ let chartOptions = computed(() => {
         },
       },
     },
+    yaxis: {
+      labels: {
+        minWidth: 60,
+      },
+    },
     stroke: {
       width: 1.9,
     },

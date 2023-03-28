@@ -546,6 +546,11 @@ let chartOptions = computed(() => {
         },
       },
     },
+    yaxis: {
+      labels: {
+        minWidth: 60,
+      },
+    },
     stroke: {
       width: 1.9,
       height: 60,
@@ -596,6 +601,11 @@ let rangeOptions = computed(() => {
         formatter: function (value) {
           return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
         },
+      },
+    },
+    yaxis: {
+      labels: {
+        minWidth: 60,
       },
     },
     tooltip: {
