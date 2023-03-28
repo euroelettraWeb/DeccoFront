@@ -1,214 +1,213 @@
 <template>
-  <v-container
-    ><v-row>
-      <v-col>
-        <v-card>
-          <v-row>
-            <v-col>
-              <v-card-title> DECCOWASHER </v-card-title>
+  <v-row no-gutters>
+    <v-col>
+      <v-card>
+        <v-row no-gutters>
+          <v-col>
+            <v-card-title> DECCOWASHER </v-card-title>
+          </v-col>
+        </v-row>
+        <v-row class="pl-8" no-gutters>
+          <v-col
+            ><date-picker
+              class="selectdates"
+              apply-button-label="Use"
+              :date-input="dateInput"
+              :format="'DD MM YYYY HH:mm'"
+              :same-date-format="sameDateFormat"
+              @date-applied="dateApplied"
+              @on-reset="onReset"
+          /></v-col>
+        </v-row>
+        <v-row no-gutters>
+          <v-col>
+            <v-col v-if="cargado7">
+              <v-simple-table dense>
+                <template #default>
+                  <thead>
+                    <tr>
+                      <th class="text-left"></th>
+                      <th
+                        v-for="item in consumos"
+                        :key="item.id"
+                        class="text-left"
+                      >
+                        {{ item.nombre }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Total</td>
+                      <td v-for="item in consumos" :key="item.id">
+                        {{ item.total }}
+                      </td>
+                    </tr>
+                    <tr v-if="consumosFruta">
+                      <td>Total l/T</td>
+                      <td v-for="item in consumosFruta" :key="item.id">
+                        {{ item.name }}
+                      </td>
+                    </tr>
+                    <tr v-else>
+                      <td>
+                        Fruta no disponible: Maquina Deccodos no disponible
+                      </td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
             </v-col>
-          </v-row>
-          <v-row class="pl-8">
-            <v-col
-              ><date-picker
-                class="selectdates"
-                apply-button-label="Use"
-                :date-input="dateInput"
-                :format="'DD MM YYYY HH:mm'"
-                :same-date-format="sameDateFormat"
-                @date-applied="dateApplied"
-                @on-reset="onReset"
+            <v-col v-else class="d-flex justify-center align-center">
+              <v-progress-circular
+                :size="100"
+                :width="7"
+                color="purple"
+                indeterminate
+              ></v-progress-circular>
+            </v-col>
+            <v-col v-if="cargado8">
+              <v-simple-table dense>
+                <template #default>
+                  <thead>
+                    <tr>
+                      <th class="text-left"></th>
+                      <th
+                        v-for="item in alarmas"
+                        :key="item.id"
+                        class="text-left"
+                      >
+                        {{ item.nombre }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Total</td>
+                      <td v-for="item in alarmas" :key="item.id">
+                        {{ item.total }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-col>
+            <v-col v-else class="d-flex justify-center align-center">
+              <v-progress-circular
+                :size="100"
+                :width="7"
+                color="purple"
+                indeterminate
+              ></v-progress-circular>
+            </v-col>
+            <v-col v-if="cargado1">
+              <ApexChart
+                ref="chartRef"
+                type="rangeBar"
+                height="300"
+                :options="rangeOptions"
+                :series="series"
             /></v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-col v-if="cargado7">
-                <v-simple-table dense>
-                  <template #default>
-                    <thead>
-                      <tr>
-                        <th class="text-left"></th>
-                        <th
-                          v-for="item in consumos"
-                          :key="item.id"
-                          class="text-left"
-                        >
-                          {{ item.nombre }}
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Total</td>
-                        <td v-for="item in consumos" :key="item.id">
-                          {{ item.total }}
-                        </td>
-                      </tr>
-                      <tr v-if="consumosFruta">
-                        <td>Total l/T</td>
-                        <td v-for="item in consumosFruta" :key="item.id">
-                          {{ item.name }}
-                        </td>
-                      </tr>
-                      <tr v-else>
-                        <td>
-                          Fruta no disponible: Maquina Deccodos no disponible
-                        </td>
-                      </tr>
-                    </tbody>
-                  </template>
-                </v-simple-table>
-              </v-col>
-              <v-col v-else class="d-flex justify-center align-center">
-                <v-progress-circular
-                  :size="100"
-                  :width="7"
-                  color="purple"
-                  indeterminate
-                ></v-progress-circular>
-              </v-col>
-              <v-col v-if="cargado8">
-                <v-simple-table dense>
-                  <template #default>
-                    <thead>
-                      <tr>
-                        <th class="text-left"></th>
-                        <th
-                          v-for="item in alarmas"
-                          :key="item.id"
-                          class="text-left"
-                        >
-                          {{ item.nombre }}
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Total</td>
-                        <td v-for="item in alarmas" :key="item.id">
-                          {{ item.total }}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </template>
-                </v-simple-table>
-              </v-col>
-              <v-col v-else class="d-flex justify-center align-center">
-                <v-progress-circular
-                  :size="100"
-                  :width="7"
-                  color="purple"
-                  indeterminate
-                ></v-progress-circular>
-              </v-col>
-              <v-col v-if="cargado1">
-                <ApexChart
-                  ref="chartRef"
-                  type="rangeBar"
-                  height="300"
-                  :options="rangeOptions"
-                  :series="series"
-              /></v-col>
-              <v-col v-else class="d-flex justify-center align-center">
-                <v-progress-circular
-                  :size="100"
-                  :width="7"
-                  color="purple"
-                  indeterminate
-                ></v-progress-circular>
-              </v-col>
-              <v-col v-if="cargado2">
-                <ApexChart
-                  ref="chartRef2"
-                  type="rangeBar"
-                  height="300"
-                  :options="rangeOptions"
-                  :series="series2"
-              /></v-col>
-              <v-col v-else class="d-flex justify-center align-center">
-                <v-progress-circular
-                  :size="100"
-                  :width="7"
-                  color="purple"
-                  indeterminate
-                ></v-progress-circular>
-              </v-col>
-              <!-- <ApexChart
+            <v-col v-else class="d-flex justify-center align-center">
+              <v-progress-circular
+                :size="100"
+                :width="7"
+                color="purple"
+                indeterminate
+              ></v-progress-circular>
+            </v-col>
+            <v-col v-if="cargado2">
+              <ApexChart
+                ref="chartRef2"
+                type="rangeBar"
+                height="300"
+                :options="rangeOptions"
+                :series="series2"
+            /></v-col>
+            <v-col v-else class="d-flex justify-center align-center">
+              <v-progress-circular
+                :size="100"
+                :width="7"
+                color="purple"
+                indeterminate
+              ></v-progress-circular>
+            </v-col>
+            <!-- <ApexChart
                   ref="chartRef3"
                   type="rangeBar"
                   height="300"
                   :options="rangeOptions"
                   :series="series3"
                 /> -->
-              <v-col v-if="cargado3">
-                <ApexChart
-                  ref="chartRef4"
-                  type="line"
-                  height="300"
-                  :options="chartOptions"
-                  :series="seriesL"
-              /></v-col>
-              <v-col v-else class="d-flex justify-center align-center">
-                <v-progress-circular
-                  :size="100"
-                  :width="7"
-                  color="purple"
-                  indeterminate
-                ></v-progress-circular>
-              </v-col>
-              <v-col v-if="cargado4">
-                <ApexChart
-                  ref="chartRef5"
-                  type="line"
-                  height="300"
-                  :options="chartOptions"
-                  :series="seriesL2"
-              /></v-col>
-              <v-col v-else class="d-flex justify-center align-center">
-                <v-progress-circular
-                  :size="100"
-                  :width="7"
-                  color="purple"
-                  indeterminate
-                ></v-progress-circular>
-              </v-col>
-              <v-col v-if="cargado5">
-                <ApexChart
-                  ref="chartRef6"
-                  type="line"
-                  height="300"
-                  :options="chartOptions"
-                  :series="seriesL3"
-              /></v-col>
-              <v-col v-else class="d-flex justify-center align-center">
-                <v-progress-circular
-                  :size="100"
-                  :width="7"
-                  color="purple"
-                  indeterminate
-                ></v-progress-circular>
-              </v-col>
-              <v-col v-if="cargado6">
-                <ApexChart
-                  ref="chartRef7"
-                  type="line"
-                  height="300"
-                  :options="chartOptions"
-                  :series="seriesL4"
-              /></v-col>
-              <v-col v-else class="d-flex justify-center align-center">
-                <v-progress-circular
-                  :size="100"
-                  :width="7"
-                  color="purple"
-                  indeterminate
-                ></v-progress-circular>
-              </v-col>
+            <v-col v-if="cargado3">
+              <ApexChart
+                ref="chartRef4"
+                type="line"
+                height="300"
+                :options="chartOptions"
+                :series="seriesL"
+            /></v-col>
+            <v-col v-else class="d-flex justify-center align-center">
+              <v-progress-circular
+                :size="100"
+                :width="7"
+                color="purple"
+                indeterminate
+              ></v-progress-circular>
             </v-col>
-          </v-row>
-        </v-card>
-      </v-col> </v-row
-  ></v-container>
+            <v-col v-if="cargado4">
+              <ApexChart
+                ref="chartRef5"
+                type="line"
+                height="300"
+                :options="chartOptions"
+                :series="seriesL2"
+            /></v-col>
+            <v-col v-else class="d-flex justify-center align-center">
+              <v-progress-circular
+                :size="100"
+                :width="7"
+                color="purple"
+                indeterminate
+              ></v-progress-circular>
+            </v-col>
+            <v-col v-if="cargado5">
+              <ApexChart
+                ref="chartRef6"
+                type="line"
+                height="300"
+                :options="chartOptions"
+                :series="seriesL3"
+            /></v-col>
+            <v-col v-else class="d-flex justify-center align-center">
+              <v-progress-circular
+                :size="100"
+                :width="7"
+                color="purple"
+                indeterminate
+              ></v-progress-circular>
+            </v-col>
+            <v-col v-if="cargado6">
+              <ApexChart
+                ref="chartRef7"
+                type="line"
+                height="300"
+                :options="chartOptions"
+                :series="seriesL4"
+            /></v-col>
+            <v-col v-else class="d-flex justify-center align-center">
+              <v-progress-circular
+                :size="100"
+                :width="7"
+                color="purple"
+                indeterminate
+              ></v-progress-circular>
+            </v-col>
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 <script>
 export default {
@@ -538,7 +537,7 @@ let chartOptions = computed(() => {
       tickAmount: 25,
       labels: {
         minHeight: 125,
-        rotate: -70,
+        rotate: -45,
         minHeight: 125,
         rotateAlways: true,
         formatter: function (value) {
@@ -591,7 +590,7 @@ let rangeOptions = computed(() => {
       tickAmount: 25,
       labels: {
         minHeight: 125,
-        rotate: -70,
+        rotate: -45,
         rotateAlways: true,
         formatter: function (value) {
           return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property

@@ -1,6 +1,6 @@
 <template>
   <v-container
-    ><v-row>
+    ><v-row no-gutters>
       <v-col>
         <v-card>
           <v-row>
@@ -8,7 +8,7 @@
               <v-card-title> DECCODOS </v-card-title>
             </v-col>
           </v-row>
-          <v-row class="pl-8">
+          <v-row class="pl-8" no-gutters>
             <v-col
               ><date-picker
                 apply-button-label="Use"
@@ -19,7 +19,7 @@
                 @on-reset="onReset"
             /></v-col>
           </v-row>
-          <v-row>
+          <v-row no-gutters>
             <v-col v-if="cargado">
               <v-col v-if="cargado7">
                 <v-simple-table dense>
@@ -507,7 +507,7 @@ let chartOptions = computed(() => {
       tickAmount: 25,
       labels: {
         minHeight: 125,
-        rotate: -70,
+        rotate: -45,
         minHeight: 125,
         rotateAlways: true,
         formatter: function (value, timestamp) {
@@ -560,7 +560,7 @@ let rangeOptions = computed(() => {
       tickAmount: 25,
       labels: {
         minHeight: 125,
-        rotate: -70,
+        rotate: -45,
         rotateAlways: true,
         formatter: function (value, timestamp) {
           return moment.utc(value).format("DD/mmm/yyyy HH:mm:ss"); // The formatter function overrides format property

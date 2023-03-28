@@ -1,12 +1,12 @@
 <template>
-  <v-container
-    ><v-row>
+  <v-container fluid
+    ><v-row no-gutters>
       <v-col>
-        <v-card class="pa-8">
-          <v-row
+        <v-card>
+          <v-row no-gutters
             ><v-col><v-card-title>Historico</v-card-title></v-col>
           </v-row>
-          <v-row
+          <v-row no-gutters
             ><v-col cols="6"
               ><v-card-subtitle>Linea</v-card-subtitle>
               <v-select
@@ -36,7 +36,7 @@
               ></v-select
             ></v-col>
           </v-row>
-          <v-row>
+          <v-row no-gutters>
             <v-col v-if="cargado">
               <DECCODAFHistoricoCard
                 v-if="select2.grupoID === 1"
