@@ -1,33 +1,32 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col>
-        <v-card>
-          <v-card-title> Fruta procesada </v-card-title>
-          <v-card-subtitle> Total Kilos </v-card-subtitle>
-          <v-row>
-            <v-col v-if="cargado">
-              <ApexChart
-                ref="chartRef3"
-                height="350"
-                type="line"
-                :options="chartOptions"
-                :series="kilos"
-              />
-            </v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+  <v-row>
+    <v-col>
+      <v-switch v-model="mostrar" color="info" label="Fruta procesada">
+        Kg Fruta procesada
+      </v-switch>
+      <v-card v-if="mostrar">
+        <v-row>
+          <v-col v-if="cargado">
+            <ApexChart
+              ref="chartRef3"
+              height="350"
+              type="line"
+              :options="chartOptions"
+              :series="kilos"
+            />
+          </v-col>
+          <v-col v-else class="d-flex justify-center align-center">
+            <v-progress-circular
+              :size="100"
+              :width="7"
+              color="purple"
+              indeterminate
+            ></v-progress-circular>
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 <script>
 export default {
@@ -48,13 +47,14 @@ import { routerStore } from "../../../stores/index";
 const socket = io("http://localhost:3000");
 
 let cargado = ref(false);
+let mostrar = ref(true);
 let tKg = {};
+let kilosM = {};
 
 const props = defineProps({
   fruta: { type: Number, default: 1 },
   tipo: { type: Number, default: 1 },
 });
-
 const chartRef3 = ref(null);
 let kilos = ref([]);
 var lastZoom = null;
@@ -75,13 +75,32 @@ let chartOptions = computed(() => {
       tickAmount: 25,
       labels: {
         minHeight: 125,
-        rotate: -70,
+        rotate: -45,
         rotateAlways: true,
         formatter: function (value, timestamp) {
           return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
         },
       },
     },
+    yaxis: [
+      {
+        axisTicks: {
+          show: true,
+        },
+        axisBorder: {
+          show: true,
+        },
+      },
+      {
+        opposite: true,
+        axisTicks: {
+          show: true,
+        },
+        axisBorder: {
+          show: true,
+        },
+      },
+    ],
     stroke: {
       width: 1.9,
     },
@@ -106,14 +125,23 @@ onMounted(async () => {
     maquinaID,
     routerStore().clienteID
   );
+  kilosM = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "individual",
+    "unidadTiempo",
+    [props.fruta],
+    maquinaID,
+    routerStore().clienteID,
+    null,
+    null,
+    "Kg/min"
+  );
+  tKg.push(...kilosM);
   kilos.value = tKg;
   socket.on(
     `variable_${maquinaID}_${props.fruta}_actualizada`,
     async (data) => {
-      // kilos.value[0].data.push({
-      //   x: new Date(moment(data.x).toISOString()).getTime(),
-      //   y: data.y,
-      // });
       let acc = await obtenerDatosVariableGeneral(
         "24H",
         "registros",
@@ -123,6 +151,16 @@ onMounted(async () => {
         maquinaID,
         routerStore().clienteID
       );
+      kilosM = await obtenerDatosVariableGeneral(
+        "24H",
+        "registros",
+        "individual",
+        "unidadTiempo",
+        [props.total],
+        maquinaID,
+        routerStore().clienteID
+      );
+      tKg.push(...kilosM);
       if (chartRef3.value) {
         chartRef3.value.updateSeries(acc);
         // if (lastZoom) chartRef2.value.zoomX(lastZoom[0], lastZoom[1]);
