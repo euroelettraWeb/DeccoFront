@@ -1,71 +1,70 @@
 <template>
-  <v-container fluid
-    ><v-row no-gutters>
-      <v-col>
-        <v-card>
-          <v-row no-gutters
-            ><v-col><v-card-title>Historico</v-card-title></v-col>
-          </v-row>
-          <v-row no-gutters
-            ><v-col cols="6"
-              ><v-card-subtitle>Linea</v-card-subtitle>
-              <v-select
-                v-model="select"
-                :items="nombres"
-                label="Linea"
-                item-text="nombre"
-                item-value="id"
-                :hide-selected="true"
-                return-object
-                dense
-                solo
-                @change="changeItem"
-              ></v-select></v-col
-            ><v-col cols="6"
-              ><v-card-subtitle>Sistema</v-card-subtitle>
-              <v-select
-                v-model="select2"
-                :items="nombres2"
-                label="Sistema"
-                item-text="nombre"
-                item-value="id"
-                :hide-selected="true"
-                return-object
-                dense
-                solo
-              ></v-select
-            ></v-col>
-          </v-row>
-          <v-row no-gutters>
-            <v-col v-if="cargado">
-              <DECCODAFHistoricoCard
-                v-if="select2.grupoID === 1"
-                :linea="select.id"
-                :maquina="select2.id"
-              /><!-- :linea="select.id" :sistema="select2.id" -->
-              <DECCODOSHistorico
-                v-if="select2.grupoID === 2"
-                :linea="select.id"
-                :maquina="select2.id"
-              />
-              <DECCOWSHistorico
-                v-if="select2.grupoID === 3"
-                :linea="select.id"
-                :maquina="select2.id"
-              />
-            </v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-col> </v-row
-  ></v-container>
+  <v-row no-gutters>
+    <v-col>
+      <v-card>
+        <v-row no-gutters
+          ><v-col><v-card-title>Historico</v-card-title></v-col>
+        </v-row>
+        <v-row no-gutters
+          ><v-col cols="6"
+            ><v-card-subtitle>Linea</v-card-subtitle>
+            <v-select
+              v-model="select"
+              :items="nombres"
+              label="Linea"
+              item-text="nombre"
+              item-value="id"
+              :hide-selected="true"
+              return-object
+              dense
+              solo
+              @change="changeItem"
+            ></v-select></v-col
+          ><v-col cols="6"
+            ><v-card-subtitle>Sistema</v-card-subtitle>
+            <v-select
+              v-model="select2"
+              :items="nombres2"
+              label="Sistema"
+              item-text="nombre"
+              item-value="id"
+              :hide-selected="true"
+              return-object
+              dense
+              solo
+            ></v-select
+          ></v-col>
+        </v-row>
+        <v-row no-gutters>
+          <v-col v-if="cargado">
+            <DECCODAFHistoricoCard
+              v-if="select2.grupoID === 1"
+              :linea="select.id"
+              :maquina="select2.id"
+            /><!-- :linea="select.id" :sistema="select2.id" -->
+            <DECCODOSHistorico
+              v-if="select2.grupoID === 2"
+              :linea="select.id"
+              :maquina="select2.id"
+            />
+            <DECCOWSHistorico
+              v-if="select2.grupoID === 3"
+              :linea="select.id"
+              :maquina="select2.id"
+            />
+          </v-col>
+          <v-col v-else class="d-flex justify-center align-center">
+            <v-progress-circular
+              :size="100"
+              :width="7"
+              color="purple"
+              indeterminate
+            ></v-progress-circular>
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 <script>
 export default {

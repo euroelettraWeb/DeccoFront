@@ -47,13 +47,20 @@ const nav = navStore();
 let nombreLinea = ref("");
 let nombreCliente = ref("");
 let maquina = computed(() => {
-  return (
-    nombreCliente.value +
-    " - " +
-    routerStore().maquina +
-    " - " +
-    nombreLinea.value
-  );
+  switch (routerStore().maquina) {
+    case "Historico":
+      return routerStore().maquina;
+    case "Variables":
+      return routerStore().maquina;
+    default:
+      return (
+        nombreCliente.value +
+        " - " +
+        routerStore().maquina +
+        " - " +
+        nombreLinea.value
+      );
+  }
 });
 
 const logout = () => user.logout();

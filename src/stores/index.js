@@ -119,7 +119,7 @@ export const routerStore = defineStore("router", {
       });
     },
     historico: async function (id) {
-      this.maquina = null;
+      this.maquina = "Historico";
       router.push({
         name: this.routes.historico,
         params: { id },
@@ -195,6 +195,7 @@ export const routerStore = defineStore("router", {
             });
           break;
         case "variables":
+          this.maquina = "Variables";
           router
             .push({ name: this.routes.variables, params: { id, linea } })
             .catch((failure) => {
@@ -205,6 +206,7 @@ export const routerStore = defineStore("router", {
             });
           break;
         case "historico":
+          this.maquina = "Historico";
           router
             .push({ name: this.routes.historico, params: { id, linea } })
             .catch((failure) => {
