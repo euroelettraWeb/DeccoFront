@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
-    <v-row>
+    <v-row no-gutters>
       <TablaTurnos v-if="turnos" :tipo="1" />
       <v-col>
         <TablaTotalTurnos
@@ -32,7 +32,7 @@
         />
       </v-col>
     </v-row>
-    <v-row>
+    <v-row no-gutters>
       <v-col>
         <Estado
           :activo="57"
@@ -47,7 +47,7 @@
             'Manual',
             'Falta de consenso',
             'Alarma',
-            'Presencia de fruta',
+            'Presencia Fruta',
           ]"
         />
         <Dosis
