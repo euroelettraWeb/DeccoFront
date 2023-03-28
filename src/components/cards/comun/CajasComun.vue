@@ -2,7 +2,11 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-switch v-model="mostrar" color="info" label="Fruta procesada">
+        <v-switch
+          v-model="mostrar"
+          color="info"
+          label="Cajas por Ciclo y Peso por Caja"
+        >
           Cajas por Ciclo y Peso por Caja
         </v-switch>
         <v-card v-if="mostrar" class="mb-2">
@@ -19,7 +23,7 @@
             </v-col>
           </v-row>
         </v-card>
-        <v-switch v-model="mostrar2" color="info" label="Fruta procesada">
+        <v-switch v-model="mostrar2" color="info" label="Cajas/min">
           Cajas/min
         </v-switch>
         <v-card v-if="mostrar2">
