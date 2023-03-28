@@ -1,19 +1,19 @@
 <template>
-  <v-container>
-    <v-row>
+  <v-container fluid>
+    <v-row no-gutters>
       <v-col>
         <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
         <TablaTurnos v-if="turnos" :tipo="1" />
         <v-container>
           <v-card>
-            <v-row>
+            <v-row no-gutters>
               <v-col v-if="cargado">
                 <v-row>
                   <v-col>
                     <v-card-title>Productos</v-card-title>
                   </v-col>
                 </v-row>
-                <v-row class="mx-2">
+                <v-row class="mx-2" no-gutters>
                   <v-col>
                     <v-simple-table dense>
                       <template #default>
@@ -64,7 +64,7 @@
                     </v-simple-table>
                   </v-col>
                 </v-row>
-                <v-row>
+                <v-row no-gutters>
                   <v-col
                     ><v-btn color="info" class="mx-4 mb-4" @click="save">
                       <v-icon light> mdi-content-save </v-icon> Guardar

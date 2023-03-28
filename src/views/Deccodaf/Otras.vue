@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row>
+    <v-row fluid>
       <v-col>
         <CajasComun :caja1="45" :caja2="46" :total="47" :tipo="2" />
         <GraficaEstadoCard

@@ -1,52 +1,46 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col>
-        <v-card class="mb-2"
-          ><v-row>
-            <v-col>
-              <v-card-title>Aplicadores</v-card-title>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col
-              ><v-card-subtitle>1 - Bomba 1-2-3</v-card-subtitle>
-              <v-select
-                v-model="bomba1"
-                :items="productos"
-                item-text="nombre"
-                item-value="id"
-                return-object
-                dense
-                solo
-              /> </v-col
-            ><v-col
-              ><v-card-subtitle>2 - Bomba 4-5</v-card-subtitle>
-              <v-select
-                v-model="bomba2"
-                :items="productos"
-                item-text="nombre"
-                item-value="id"
-                return-object
-                dense
-                solo
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col
-              ><v-btn color="info" class="mx-4 mb-4" @click="save">
-                <v-icon light> mdi-content-save </v-icon> Guardar
-              </v-btn></v-col
-            ></v-row
-          >
-        </v-card>
-      </v-col>
-    </v-row>
+  <v-row>
+    <v-col>
+      <v-card class="mb-2">
+        <v-card-title>Aplicadores</v-card-title>
+        <v-row>
+          <v-col
+            ><v-card-subtitle>1 - Bomba 1-2-3</v-card-subtitle>
+            <v-select
+              v-model="bomba1"
+              :items="productos"
+              item-text="nombre"
+              item-value="id"
+              return-object
+              dense
+              solo
+            /> </v-col
+          ><v-col
+            ><v-card-subtitle>2 - Bomba 4-5</v-card-subtitle>
+            <v-select
+              v-model="bomba2"
+              :items="productos"
+              item-text="nombre"
+              item-value="id"
+              return-object
+              dense
+              solo
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col
+            ><v-btn color="info" class="mx-4 mb-4" @click="save">
+              <v-icon light> mdi-content-save </v-icon> Guardar
+            </v-btn></v-col
+          ></v-row
+        >
+      </v-card>
+    </v-col>
     <v-snackbar v-model="guardado" :timeout="5000" color="primary">
       {{ mensaje }}</v-snackbar
     >
-  </v-container>
+  </v-row>
 </template>
 <script>
 export default {

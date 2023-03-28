@@ -1,83 +1,77 @@
 <template>
-  <v-container>
-    <v-row>
+  <v-container fluid>
+    <v-row no-gutters>
       <v-col>
         <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
         <TablaTurnos v-if="turnos" /><!-- :marcha="[31, 40, 42]" -->
-        <v-container>
-          <v-card>
-            <v-row>
-              <v-col v-if="cargado">
-                <v-row>
-                  <v-col>
-                    <v-card-title>Productos</v-card-title>
-                  </v-col>
-                </v-row>
-                <v-row class="mx-2">
-                  <v-col>
-                    <v-simple-table dense>
-                      <template #default>
-                        <thead>
-                          <tr>
-                            <th class="text-left">Tanque 1</th>
-                            <th class="text-left">Tanque 2</th>
-                            <th class="text-left">Tanque 3</th>
-                            <th class="text-left">Tanque 4</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>
-                              <v-text-field
-                                v-model="tanque1"
-                                prepend-icon="mdi-bottle-tonic"
-                              ></v-text-field>
-                            </td>
-                            <td>
-                              <v-text-field
-                                v-model="tanque2"
-                                prepend-icon="mdi-bottle-tonic"
-                              ></v-text-field>
-                            </td>
-                            <td>
-                              <v-text-field
-                                v-model="tanque3"
-                                prepend-icon="mdi-bottle-tonic"
-                              ></v-text-field>
-                            </td>
-                            <td>
-                              <v-text-field
-                                v-model="tanque4"
-                                prepend-icon="mdi-bottle-tonic"
-                              ></v-text-field>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-simple-table>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col
-                    ><v-btn color="info" class="mx-4 mb-4" @click="save">
-                      <v-icon light> mdi-content-save </v-icon> Guardar
-                    </v-btn></v-col
-                  >
-                </v-row>
-              </v-col>
-              <v-col v-else class="d-flex justify-center align-center">
-                <v-progress-circular
-                  :size="100"
-                  :width="7"
-                  color="purple"
-                  indeterminate
-                ></v-progress-circular>
-              </v-col>
-            </v-row>
-          </v-card>
-          <v-snackbar v-model="guardado" :timeout="5000" color="primary">
-            {{ mensaje }}</v-snackbar
-          ></v-container
+        <v-card>
+          <v-row>
+            <v-col v-if="cargado">
+              <v-card-title>Productos</v-card-title>
+              <v-row no-gutters>
+                <v-col>
+                  <v-simple-table dense>
+                    <template #default>
+                      <thead>
+                        <tr>
+                          <th class="text-left">Tanque 1</th>
+                          <th class="text-left">Tanque 2</th>
+                          <th class="text-left">Tanque 3</th>
+                          <th class="text-left">Tanque 4</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <v-text-field
+                              v-model="tanque1"
+                              prepend-icon="mdi-bottle-tonic"
+                            ></v-text-field>
+                          </td>
+                          <td>
+                            <v-text-field
+                              v-model="tanque2"
+                              prepend-icon="mdi-bottle-tonic"
+                            ></v-text-field>
+                          </td>
+                          <td>
+                            <v-text-field
+                              v-model="tanque3"
+                              prepend-icon="mdi-bottle-tonic"
+                            ></v-text-field>
+                          </td>
+                          <td>
+                            <v-text-field
+                              v-model="tanque4"
+                              prepend-icon="mdi-bottle-tonic"
+                            ></v-text-field>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </template>
+                  </v-simple-table>
+                </v-col>
+              </v-row>
+              <v-row no-gutters>
+                <v-col
+                  ><v-btn color="info" class="mx-4 mb-4" @click="save">
+                    <v-icon light> mdi-content-save </v-icon> Guardar
+                  </v-btn></v-col
+                >
+              </v-row>
+            </v-col>
+            <v-col v-else class="d-flex justify-center align-center">
+              <v-progress-circular
+                :size="100"
+                :width="7"
+                color="purple"
+                indeterminate
+              ></v-progress-circular>
+            </v-col>
+          </v-row>
+        </v-card>
+        <v-snackbar v-model="guardado" :timeout="5000" color="primary">
+          {{ mensaje }}</v-snackbar
         >
         <SeleccionarProducto v-if="productos" />
         <TablaTotalTurnos

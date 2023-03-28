@@ -356,7 +356,8 @@ async function dateApplied(date1, date2) {
     props.maquina,
     routerStore().clienteID,
     inicio.value,
-    fin.value
+    fin.value,
+    "Cajas/Min"
   );
   seriesL3.value = cajas;
   cargado5.value = true;
@@ -704,7 +705,8 @@ onMounted(async () => {
     "unidadTiempo",
     [68],
     props.maquina,
-    routerStore().clienteID
+    routerStore().clienteID,
+    "Cajas/Min"
   );
   seriesL3.value = cajas;
   cargado5.value = true;
