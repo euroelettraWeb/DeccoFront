@@ -1,11 +1,11 @@
 <template>
-  <v-row>
+  <v-row no-gutters>
     <v-col>
       <v-switch v-model="mostrar" color="info" label="Fruta procesada">
         Kg Fruta procesada
       </v-switch>
       <v-card v-if="mostrar">
-        <v-row>
+        <v-row no-gutters>
           <v-col v-if="cargado">
             <ApexChart
               ref="chartRef3"
