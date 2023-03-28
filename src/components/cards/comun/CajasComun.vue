@@ -1,47 +1,45 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col>
-        <v-switch
-          v-model="mostrar"
-          color="info"
-          label="Cajas por Ciclo y Peso por Caja"
-        >
-          Cajas por Ciclo y Peso por Caja
-        </v-switch>
-        <v-card v-if="mostrar" class="mb-2">
-          <v-row>
-            <v-col>
-              <ApexChart
-                v-if="cargado"
-                ref="chartRef"
-                height="350"
-                type="line"
-                :options="chartOptions"
-                :series="cajas"
-              />
-            </v-col>
-          </v-row>
-        </v-card>
-        <v-switch v-model="mostrar2" color="info" label="Cajas/min">
-          Cajas/min
-        </v-switch>
-        <v-card v-if="mostrar2">
-          <v-row>
-            <v-col>
-              <ApexChart
-                v-if="cargado"
-                ref="chartRef2"
-                height="350"
-                type="line"
-                :options="chartOptions"
-                :series="totalCajas"
-              />
-            </v-col> </v-row
-        ></v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+  <v-row>
+    <v-col>
+      <v-switch
+        v-model="mostrar"
+        color="info"
+        label="Cajas por Ciclo y Peso por Caja"
+      >
+        Cajas por Ciclo y Peso por Caja
+      </v-switch>
+      <v-card v-if="mostrar" class="mb-2">
+        <v-row>
+          <v-col>
+            <ApexChart
+              v-if="cargado"
+              ref="chartRef"
+              height="350"
+              type="line"
+              :options="chartOptions"
+              :series="cajas"
+            />
+          </v-col>
+        </v-row>
+      </v-card>
+      <v-switch v-model="mostrar2" color="info" label="Cajas/min">
+        Cajas/min
+      </v-switch>
+      <v-card v-if="mostrar2">
+        <v-row>
+          <v-col>
+            <ApexChart
+              v-if="cargado"
+              ref="chartRef2"
+              height="350"
+              type="line"
+              :options="chartOptions"
+              :series="totalCajas"
+            />
+          </v-col> </v-row
+      ></v-card>
+    </v-col>
+  </v-row>
 </template>
 <script>
 export default {
