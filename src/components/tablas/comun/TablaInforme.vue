@@ -60,7 +60,6 @@ import {
   obtenerDatosVariableGeneral,
   obtenerMaquina,
 } from "../../../helpers/bd";
-import bd from "../../../helpers/bd";
 import { onMounted, ref } from "vue";
 
 let consumos = ref([]);
@@ -88,72 +87,6 @@ onMounted(async () => {
       lineas: { idLinea: "L4", valor: element.registros[0].y },
     });
   }
-  // consumos.value = [
-  //   {
-  //     id: 0,
-  //     name: "Total agua",
-  //     lineas: [
-  //       { idLinea: "L4", valor: agua.registros[0].y },
-  //       { idLinea: "L5", valor: agua.registros[0].y },
-  //     ],
-  //   },
-  //   {
-  //     id: 1,
-  //     name: "Total producto 1",
-  //     lineas: [
-  //       { idLinea: "L4", valor: totalP1.registros[0].y },
-  //       { idLinea: "L5", valor: totalP1.registros[0].y },
-  //     ],
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Total producto 2",
-  //     lineas: [
-  //       { idLinea: "L4", valor: totalP2.registros[0].y },
-  //       { idLinea: "L5", valor: totalP2.registros[0].y },
-  //     ],
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Total producto 3",
-  //     lineas: [
-  //       { idLinea: "L4", valor: totalP3.registros[0].y },
-  //       { idLinea: "L5", valor: totalP3.registros[0].y },
-  //     ],
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "Total producto 4",
-  //     lineas: [
-  //       { idLinea: "L4", valor: totalP4.registros[0].y },
-  //       { idLinea: "L5", valor: totalP4.registros[0].y },
-  //     ],
-  //   },
-  //   {
-  //     id: 5,
-  //     name: "Total producto 5",
-  //     lineas: [
-  //       { idLinea: "L4", valor: totalP5.registros[0].y },
-  //       { idLinea: "L5", valor: totalP5.registros[0].y },
-  //     ],
-  //   },
-  //   {
-  //     id: 6,
-  //     name: "Total kilos",
-  //     lineas: [
-  //       { idLinea: "L4", valor: tKg.registros[0].y },
-  //       { idLinea: "L5", valor: tKg.registros[0].y },
-  //     ],
-  //   },
-  //   {
-  //     id: 7,
-  //     name: "Total cajas",
-  //     lineas: [
-  //       { idLinea: "L4", valor: tCajas.registros[0].y },
-  //       { idLinea: "L5", valor: tCajas.registros[0].y },
-  //     ],
-  //   },
-  // ];
   cargado.value = true;
 });
 </script>

@@ -82,11 +82,5 @@ let items = computed(() => [
     route: "deccodos:Principal",
     title: "DECCODOS",
   },
-  // {
-  //   action: "mdi-snowflake",
-  //   estado: props.linea.deccocontrolID ? true : false,
-  //   items: [{ title: "Principal", route: "deccocontrol:Principal" }],
-  //   title: "DECCOCONTROL",
-  // },
 ]);
 </script>
