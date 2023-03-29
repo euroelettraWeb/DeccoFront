@@ -213,10 +213,6 @@ onMounted(async () => {
   cargado.value = false;
   turnosA.value = await obtenerTurnos(routerStore().clienteID);
   turnos.value = turnosA.value.length > 0 ? true : false;
-  // nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
-  // nombreCliente.value = (
-  //   await obtenerCliente(routerStore().clienteID)
-  // )[0].nombre;
   let maquina = await obtenerMaquina("lineaTipo", routerStore().lineasID, 2);
   let t = await obtenerProductos("maquina", maquina[0].id);
   if (t.length > 1) {

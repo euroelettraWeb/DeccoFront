@@ -1,9 +1,9 @@
 <template>
   <v-container fluid>
     <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
-    <v-row no-gutters>
+    <v-row>
       <TablaTurnos v-if="turnos" :tipo="1" />
-      <v-col class="pl-2">
+      <v-col>
         <TablaTotalTurnos
           v-if="turnos && turnosA.length > 1"
           :variables="[70, 71, 72]"
@@ -59,6 +59,7 @@
       </v-col>
     </v-row>
     <v-btn
+      class="mt-2"
       color="info"
       @click="
         routerStore().menu(
@@ -84,22 +85,16 @@ import TablaTurnos from "../../components/tablas/comun/TablaTurnos.vue";
 import TablaTotal from "../../components/tablas/comun/TablaTotal.vue";
 import FrutaProcesadaComun from "../../components/cards/comun/FrutaProcesadaComun.vue";
 import { routerStore } from "../../stores/index";
-import { obtenerLinea, obtenerCliente, obtenerTurnos } from "../../helpers/bd";
+import { obtenerTurnos } from "../../helpers/bd";
 import { onMounted, ref } from "vue";
 import TablaTotalTurnos from "../../components/tablas/comun/TablaTotalTurnos.vue";
 import TablaAlarmas from "../../components/tablas/comun/TablaAlarmas.vue";
 import TablaAlarmasTurnos from "../../components/tablas/comun/TablaAlarmasTurnos.vue";
 
-let nombreLinea = ref("");
-let nombreCliente = ref("");
 let turnos = ref(true);
 let turnosA = ref([]);
 onMounted(async () => {
   turnosA.value = await obtenerTurnos(routerStore().clienteID);
   turnos.value = turnosA.value.length > 0 ? true : false;
-  // nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
-  // nombreCliente.value = (
-  //   await obtenerCliente(routerStore().clienteID)
-  // )[0].nombre;
 });
 </script>

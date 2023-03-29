@@ -25,19 +25,7 @@ export default {
 };
 </script>
 <script setup>
-import { routerStore } from "../../stores/index";
-import { obtenerLinea, obtenerCliente } from "../../helpers/bd";
-import { onMounted, ref } from "vue";
 import CajasComun from "../../components/cards/comun/CajasComun.vue";
 import TablaNivelesGarrafa from "../../components/tablas/deccodaf/TablaNivelesGarrafa.vue";
 import GraficaEstadoCard from "../../components/cards/comun/GraficaEstadoCard.vue";
-
-let nombreLinea = ref("");
-let nombreCliente = ref("");
-onMounted(async () => {
-  nombreLinea.value = (await obtenerLinea(routerStore().lineasID))[0].nombre;
-  nombreCliente.value = (
-    await obtenerCliente(routerStore().clienteID)
-  )[0].nombre;
-});
 </script>
