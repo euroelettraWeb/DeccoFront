@@ -61,6 +61,8 @@ var lastZoom = null;
 let chartOptions = computed(() => {
   return {
     chart: {
+      id: "Kilos",
+      group: "actual",
       locales: [es],
       defaultLocale: "es",
       animations: { enabled: false },

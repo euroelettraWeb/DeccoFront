@@ -33,7 +33,7 @@
               ref="chartRef2"
               height="350"
               type="line"
-              :options="chartOptions"
+              :options="chartOptions2"
               :series="totalCajas"
             />
           </v-col> </v-row
@@ -72,6 +72,47 @@ let totalCajas = ref([]);
 let chartOptions = computed(() => {
   return {
     chart: {
+      id: "cajas",
+      group: "actual",
+      locales: [es],
+      defaultLocale: "es",
+      animations: { enabled: false },
+      zoom: {
+        type: "xy",
+        autoScaleYaxis: true,
+      },
+    },
+    xaxis: {
+      type: "datetime",
+      datetimeUTC: false,
+      tickAmount: 25,
+      labels: {
+        minHeight: 125,
+        rotate: -45,
+        rotateAlways: true,
+        formatter: function (value, timestamp) {
+          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
+        },
+      },
+    },
+    yaxis: {
+      labels: {
+        minWidth: 60,
+      },
+    },
+    stroke: {
+      width: 1.9,
+    },
+    legend: {
+      showForSingleSeries: true,
+    },
+  };
+});
+let chartOptions2 = computed(() => {
+  return {
+    chart: {
+      id: "cajasMin",
+      group: "actual",
       locales: [es],
       defaultLocale: "es",
       animations: { enabled: false },

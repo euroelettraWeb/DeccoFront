@@ -54,6 +54,8 @@ let formatoVariables = [];
 let chartOptions = computed(() => {
   return {
     chart: {
+      id: "grafica estado " + props.title,
+      group: "actual",
       type: "rangeBar",
       locales: [es],
       defaultLocale: "es",

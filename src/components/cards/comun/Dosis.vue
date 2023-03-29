@@ -56,6 +56,8 @@ var lastZoom = null;
 let chartOptions = computed(() => {
   return {
     chart: {
+      id: "dosis",
+      group: "actual",
       locales: [es],
       defaultLocale: "es",
       animations: { enabled: false },

@@ -56,6 +56,8 @@ let funcMaquina = [];
 let chartOptions = computed(() => {
   return {
     chart: {
+      id: "estado",
+      group: "actual",
       type: "rangeBar",
       locales: [es],
       defaultLocale: "es",
