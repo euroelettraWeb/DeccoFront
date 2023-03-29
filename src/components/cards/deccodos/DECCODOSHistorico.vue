@@ -20,72 +20,61 @@
         </v-row>
         <v-row no-gutters>
           <v-col v-if="cargado">
-            <v-col v-if="cargado7">
-              <v-simple-table dense>
-                <template #default>
-                  <thead>
-                    <tr>
-                      <th class="text-left"></th>
-                      <th
-                        v-for="item in consumos"
-                        :key="item.id"
-                        class="text-left"
-                      >
-                        {{ item.nombre }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Total</td>
-                      <td v-for="item in consumos" :key="item.id">
-                        {{ item.total }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Total l/T</td>
-                      <td v-for="item in consumosFruta" :key="item.id">
-                        {{ item.name }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-simple-table>
-            </v-col>
-            <v-col v-if="cargado8">
-              <v-simple-table dense>
-                <template #default>
-                  <thead>
-                    <tr>
-                      <th class="text-left"></th>
-                      <th
-                        v-for="item in alarmas"
-                        :key="item.id"
-                        class="text-left"
-                      >
-                        {{ item.nombre }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Total</td>
-                      <td v-for="item in alarmas" :key="item.id">
-                        {{ item.total }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-simple-table>
-            </v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
+            <v-row>
+              <v-col v-if="cargado7">
+                <v-simple-table dense>
+                  <template #default>
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th>L</th>
+                        <th>Litros/Tonelada</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="item in consumos" :key="item.id">
+                        <td>
+                          {{ item.nombre }}
+                        </td>
+                        <td>
+                          {{ item.total }}
+                        </td>
+                        <td>
+                          {{ item.totalFruta }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-simple-table>
+              </v-col>
+              <v-col v-if="cargado8">
+                <v-simple-table dense>
+                  <template #default>
+                    <thead>
+                      <tr>
+                        <th class="text-left"></th>
+                        <th>Min</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="alarmaItem in alarmas" :key="alarmaItem.id">
+                        <td>{{ alarmaItem.nombre }}</td>
+                        <td>
+                          {{ alarmaItem.name }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-simple-table>
+              </v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular> </v-col
+            ></v-row>
             <v-col v-if="cargado1">
               <ApexChart
                 ref="chartRef"
@@ -102,35 +91,12 @@
                 indeterminate
               ></v-progress-circular>
             </v-col>
-            <v-col v-if="cargado2">
-              <ApexChart
-                ref="chartRef2"
-                type="rangeBar"
-                height="300"
-                :options="rangeOptions"
-                :series="series2"
-            /></v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
-            <!-- <ApexChart
-                ref="chartRef3"
-                type="rangeBar"
-                height="200"
-                :options="rangeOptions"
-                :series="series3"
-              /> -->
             <v-col v-if="cargado3">
               <ApexChart
                 ref="chartRef4"
                 type="line"
                 height="300"
-                :options="chartOptions"
+                :options="chartOptions('dosis' + props.maquina)"
                 :series="seriesL"
             /></v-col>
             <v-col v-else class="d-flex justify-center align-center">
@@ -146,8 +112,16 @@
                 ref="chartRef5"
                 type="line"
                 height="300"
-                :options="chartOptions"
-                :series="seriesL2"
+                :options="chartOptionsKilos"
+                :series="seriesL4"
+            /></v-col>
+            <v-col v-if="cargado2">
+              <ApexChart
+                ref="chartRef2"
+                type="rangeBar"
+                height="200"
+                :options="rangeOptions2"
+                :series="series2"
             /></v-col>
             <v-col v-else class="d-flex justify-center align-center">
               <v-progress-circular
@@ -162,8 +136,8 @@
                 ref="chartRef6"
                 type="line"
                 height="300"
-                :options="chartOptions"
-                :series="seriesL3"
+                :options="chartOptions('pcajas' + props.maquina)"
+                :series="seriesL2"
             /></v-col>
             <v-col v-else class="d-flex justify-center align-center">
               <v-progress-circular
@@ -178,8 +152,8 @@
                 ref="chartRef7"
                 type="line"
                 height="300"
-                :options="chartOptions"
-                :series="seriesL4"
+                :options="chartOptions('tcajas' + props.maquina)"
+                :series="seriesL3"
             /></v-col>
             <v-col v-else class="d-flex justify-center align-center">
               <v-progress-circular
@@ -202,7 +176,7 @@ export default {
 </script>
 <script setup>
 import { obtenerDatosVariableGeneral } from "../../../helpers/bd";
-import { onMounted, ref, computed, reactive, onUnmounted } from "vue";
+import { onMounted, ref, onUnmounted } from "vue";
 import { routerStore } from "../../../stores/index";
 import es from "apexcharts/dist/locales/es.json";
 import moment from "moment";
@@ -271,7 +245,6 @@ async function dateApplied(date1, date2) {
     const element = autoManual[1].data[index];
     estado[1].data.push(element);
   }
-  series.value = estado;
   cargado1.value = true;
   marcha = await obtenerDatosVariableGeneral(
     "historico",
@@ -284,12 +257,20 @@ async function dateApplied(date1, date2) {
     inicio.value,
     fin.value
   );
+  for (let index = 0; index < marcha[0].data.length; index++) {
+    const element = marcha[0].data[index];
+    estado[0].data.push(element);
+  }
+  for (let index = 0; index < marcha[1].data.length; index++) {
+    const element = marcha[1].data[index];
+    estado[1].data.push(element);
+  }
   funcMaquina = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
     "formatoRangos",
-    [40, 42],
+    [40, 42, 81],
     props.maquina,
     routerStore().clienteID,
     inicio.value,
@@ -302,9 +283,22 @@ async function dateApplied(date1, date2) {
     } else {
       element.fillColor = "#3949ab";
     }
-    marcha[1].data.push(element);
+    estado[1].data.push(element);
   }
-  series2.value = marcha;
+  series.value = estado;
+  cargado1.value = true;
+  let cepillos = await obtenerDatosVariableGeneral(
+    "historico",
+    "registros",
+    "individual",
+    "formatoRangos",
+    [44],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
+  );
+  series2.value = cepillos;
   cargado2.value = true;
   dosis = await obtenerDatosVariableGeneral(
     "historico",
@@ -330,6 +324,19 @@ async function dateApplied(date1, date2) {
     inicio.value,
     fin.value
   );
+  let kilosM = await obtenerDatosVariableGeneral(
+    "historico",
+    "registros",
+    "individual",
+    "unidadTiempo",
+    [48],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value,
+    "Kg/min"
+  );
+  kilos.push(...kilosM);
   seriesL4.value = kilos;
   cargado4.value = true;
   cajas = await obtenerDatosVariableGeneral(
@@ -370,8 +377,6 @@ async function dateApplied(date1, date2) {
     inicio.value,
     fin.value
   );
-  series.value = estado;
-  let total = [];
   let totalFruta = await obtenerDatosVariableGeneral(
     "historico",
     "totales",
@@ -383,27 +388,24 @@ async function dateApplied(date1, date2) {
     inicio.value,
     fin.value
   );
-  consumosFruta.value = [];
+  consumos.value = [];
   for (let index = 0; index < totales.length; index++) {
     const element = totales[index];
-    total.push({
-      id: index,
-      nombre: element.nombreCorto + "( " + element.unidadMedida + " )",
-      total: Math.max(0, element.registros[0].total).toFixed(3),
-    });
     let n = Math.max(0, element.registros[0].total);
     let d =
       totalFruta[0].registros[0].total > 0
         ? (n / (totalFruta[0].registros[0].total / 1000)).toFixed(3)
         : 0;
-    consumosFruta.value.push({
+    consumos.value.push({
       id: index,
-      name: d,
+      nombre: element.descripcion,
+      total: Math.max(0, element.registros[0].total).toFixed(3),
+      totalFruta: d,
     });
   }
-  total.push({
-    id: total.length,
-    nombre: totalFruta[0].nombreCorto + "(  T  )",
+  consumos.value.push({
+    id: consumos.value.length,
+    nombre: totalFruta[0].nombreCorto + "( T )",
     total: Math.max(0, totalFruta[0].registros[0].total / 1000).toFixed(3),
   });
   let marchat = await obtenerDatosVariableGeneral(
@@ -417,12 +419,6 @@ async function dateApplied(date1, date2) {
     inicio.value,
     fin.value
   );
-  total.push({
-    id: total.length,
-    nombre: "Marcha ( min )",
-    total: Math.max(0, marchat.total).toFixed(0),
-  });
-  consumos.value = total;
   cargado7.value = true;
   alarma = await obtenerDatosVariableGeneral(
     "historico",
@@ -441,9 +437,14 @@ async function dateApplied(date1, date2) {
     totalA.push({
       id: index,
       nombre: element.nombreCorto + "( min )",
-      total: Math.max(0, Math.round(element.registros.total1 / 60)),
+      name: Math.max(0, Math.round(element.registros.total1 / 60)),
     });
   }
+  totalA.push({
+    id: totalA.length,
+    nombre: "Marcha ( min )",
+    total: Math.max(0, marchat.total).toFixed(0),
+  });
   alarmas.value = totalA;
   cargado8.value = true;
   cargado.value = true;
@@ -491,9 +492,11 @@ let dateInput = {
   placeholder: "Seleccionar fechas",
   inputClass: "selectdates",
 };
-let chartOptions = computed(() => {
+let chartOptions = (id) => {
   return {
     chart: {
+      id: id,
+      group: "historico",
       locales: [es],
       defaultLocale: "es",
       animations: { enabled: false },
@@ -511,7 +514,7 @@ let chartOptions = computed(() => {
         rotate: -45,
         minHeight: 125,
         rotateAlways: true,
-        formatter: function (value, timestamp) {
+        formatter: function (value) {
           return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
         },
       },
@@ -535,59 +538,185 @@ let chartOptions = computed(() => {
       showForSingleSeries: true,
     },
   };
-});
+};
+let chartOptionsKilos = {
+  chart: {
+    id: "Kilos" + props.maquina,
+    group: "historico",
+    locales: [es],
+    defaultLocale: "es",
+    animations: { enabled: false },
+    zoom: {
+      type: "xy",
+      autoScaleYaxis: true,
+    },
+  },
+  xaxis: {
+    type: "datetime",
+    datetimeUTC: false,
+    tickAmount: 25,
+    labels: {
+      minHeight: 125,
+      rotate: -45,
+      rotateAlways: true,
+      formatter: function (value, timestamp) {
+        return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
+      },
+    },
+  },
+  yaxis: [
+    {
+      axisTicks: {
+        show: true,
+      },
+      axisBorder: {
+        show: true,
+      },
 
-let rangeOptions = computed(() => {
-  return {
-    chart: {
-      type: "rangeBar",
-      locales: [es],
-      defaultLocale: "es",
-      animations: { enabled: false },
-    },
-    colors: [
-      function ({ value, seriesIndex, w }) {
-        if (seriesIndex == 0) {
-          return "#d50000";
-        } else {
-          return "#00c853";
-        }
-      },
-    ],
-    plotOptions: {
-      bar: {
-        horizontal: true,
-        rangeBarGroupRows: true,
-      },
-    },
-    xaxis: {
-      type: "datetime",
-      datetimeUTC: false,
-      tickAmount: 25,
-      labels: {
-        minHeight: 125,
-        rotate: -45,
-        rotateAlways: true,
-        formatter: function (value, timestamp) {
-          return moment.utc(value).format("DD/mmm/yyyy HH:mm:ss"); // The formatter function overrides format property
-        },
-      },
-    },
-    yaxis: {
       labels: {
         minWidth: 60,
       },
     },
-    tooltip: {
-      x: {
-        format: "dd/MM/yyyy HH:mm:ss",
+    {
+      opposite: true,
+      axisTicks: {
+        show: true,
+      },
+      axisBorder: {
+        show: true,
       },
     },
-    legend: {
-      showForSingleSeries: true,
+  ],
+  stroke: {
+    width: 1.9,
+  },
+  legend: {
+    showForSingleSeries: true,
+  },
+};
+let rangeOptions = {
+  chart: {
+    id: "estado" + props.maquina,
+    group: "historico",
+    type: "rangeBar",
+    locales: [es],
+    defaultLocale: "es",
+    animations: { enabled: false },
+    group: "historico",
+  },
+  colors: [
+    function ({ seriesIndex }) {
+      if (seriesIndex == 0) {
+        return "#d50000";
+      } else {
+        return "#00c853";
+      }
     },
-  };
-});
+  ],
+  plotOptions: {
+    bar: {
+      horizontal: true,
+      rangeBarGroupRows: true,
+    },
+  },
+  xaxis: {
+    type: "datetime",
+    datetimeUTC: false,
+    tickAmount: 25,
+    categories: [
+      "Activo",
+      "MarchaParo",
+      "Remoto",
+      "Manual",
+      "Falta de consenso",
+      "Alarma",
+      "Presencia Fruta",
+    ],
+    labels: {
+      minHeight: 125,
+      rotate: -45,
+      rotateAlways: true,
+      formatter: function (value) {
+        return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
+      },
+    },
+  },
+  yaxis: {
+    labels: {
+      minWidth: 60,
+    },
+  },
+  tooltip: {
+    x: {
+      format: "dd/MM/yyyy HH:mm:ss",
+    },
+    y: {
+      title: {
+        formatter: (seriesName) => "",
+      },
+    },
+  },
+  legend: {
+    show: false,
+  },
+};
+let rangeOptions2 = {
+  chart: {
+    id: "otrosEstado" + props.maquina,
+    group: "historico",
+    type: "rangeBar",
+    locales: [es],
+    defaultLocale: "es",
+    animations: { enabled: false },
+    group: "historico",
+  },
+  colors: [
+    function ({ seriesIndex }) {
+      if (seriesIndex == 0) {
+        return "#d50000";
+      } else {
+        return "#00c853";
+      }
+    },
+  ],
+  plotOptions: {
+    bar: {
+      horizontal: true,
+      rangeBarGroupRows: true,
+    },
+  },
+  xaxis: {
+    type: "datetime",
+    datetimeUTC: false,
+    tickAmount: 25,
+    labels: {
+      minHeight: 125,
+      rotate: -45,
+      rotateAlways: true,
+      formatter: function (value) {
+        return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
+      },
+    },
+  },
+  yaxis: {
+    labels: {
+      minWidth: 60,
+    },
+  },
+  tooltip: {
+    x: {
+      format: "dd/MM/yyyy HH:mm:ss",
+    },
+    y: {
+      title: {
+        formatter: (seriesName) => "",
+      },
+    },
+  },
+  legend: {
+    show: false,
+  },
+};
 let estado = {};
 let marcha = {};
 let funcMaquina = {};
@@ -633,12 +762,20 @@ onMounted(async () => {
     props.maquina,
     routerStore().clienteID
   );
+  for (let index = 0; index < marcha[0].data.length; index++) {
+    const element = marcha[0].data[index];
+    estado[0].data.push(element);
+  }
+  for (let index = 0; index < marcha[1].data.length; index++) {
+    const element = marcha[1].data[index];
+    estado[1].data.push(element);
+  }
   funcMaquina = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
     "formatoRangos",
-    [40, 42],
+    [40, 42, 81],
     props.maquina,
     routerStore().clienteID
   );
@@ -649,19 +786,18 @@ onMounted(async () => {
     } else {
       element.fillColor = "#3949ab";
     }
-    marcha[1].data.push(element);
+    estado[1].data.push(element);
   }
-  series2.value = marcha;
-  // let cepillos = await obtenerDatosVariableGeneral(
-  //   "24H",
-  //   "registros",
-  //   "formatoRangos",
-  //   [44],
-  //   null,
-  //   null,
-  //   props.maquina
-  // );
-  // series3.value = cepillos;
+  let cepillos = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "individual",
+    "formatoRangos",
+    [44],
+    props.maquina,
+    routerStore().clienteID
+  );
+  series2.value = cepillos;
   cargado2.value = true;
   cargado3.value = false;
   dosis = await obtenerDatosVariableGeneral(
@@ -685,6 +821,19 @@ onMounted(async () => {
     props.maquina,
     routerStore().clienteID
   );
+  let kilosM = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "individual",
+    "unidadTiempo",
+    [48],
+    props.maquina,
+    routerStore().clienteID,
+    null,
+    null,
+    "Kg/min"
+  );
+  kilos.push(...kilosM);
   seriesL4.value = kilos;
   cargado4.value = true;
   cargado5.value = false;
@@ -696,6 +845,8 @@ onMounted(async () => {
     [47],
     props.maquina,
     routerStore().clienteID,
+    null,
+    null,
     "Cajas/Min"
   );
   seriesL3.value = cajas;
@@ -733,24 +884,21 @@ onMounted(async () => {
   );
   for (let index = 0; index < totales.length; index++) {
     const element = totales[index];
-    consumos.value.push({
-      id: index,
-      nombre: element.nombreCorto + "( " + element.unidadMedida + " )",
-      total: Math.max(0, element.registros[0].total).toFixed(3),
-    });
     let n = Math.max(0, element.registros[0].total);
     let d =
       totalFruta[0].registros[0].total > 0
         ? (n / (totalFruta[0].registros[0].total / 1000)).toFixed(3)
         : 0;
-    consumosFruta.value.push({
-      id: index,
-      name: d,
+    consumos.value.push({
+      id: element.descripcion + index,
+      nombre: element.descripcion,
+      total: Math.max(0, element.registros[0].total).toFixed(3),
+      totalFruta: d,
     });
   }
   consumos.value.push({
     id: consumos.value.length,
-    nombre: totalFruta[0].nombreCorto + "(  T  )",
+    nombre: totalFruta[0].nombreCorto,
     total: Math.max(0, totalFruta[0].registros[0].total / 1000).toFixed(3),
   });
   let horasMarcha = await obtenerDatosVariableGeneral(
@@ -762,11 +910,6 @@ onMounted(async () => {
     props.maquina,
     routerStore().clienteID
   );
-  consumos.value.push({
-    id: consumos.value.length,
-    nombre: "Marcha ( min )",
-    total: Math.max(0, Math.round(horasMarcha.total / 60)),
-  });
   cargado7.value = true;
   cargado8.value = false;
   alarma = await obtenerDatosVariableGeneral(
@@ -783,9 +926,14 @@ onMounted(async () => {
     alarmas.value.push({
       id: index,
       nombre: element.nombreCorto + "( min )",
-      total: Math.max(0, Math.round(element.registros.total1 / 60)),
+      name: Math.max(0, Math.round(element.registros.total1 / 60)),
     });
   }
+  alarmas.value.push({
+    id: consumos.value.length,
+    nombre: "Marcha ( min )",
+    name: Math.max(0, Math.round(horasMarcha.total / 60)),
+  });
   cargado8.value = true;
   cargado.value = true;
 });
