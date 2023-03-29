@@ -21,85 +21,69 @@
         </v-row>
         <v-row no-gutters>
           <v-col>
-            <v-col v-if="cargado7">
-              <v-simple-table dense>
-                <template #default>
-                  <thead>
-                    <tr>
-                      <th class="text-left"></th>
-                      <th
-                        v-for="item in consumos"
-                        :key="item.id"
-                        class="text-left"
-                      >
-                        {{ item.nombre }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Total</td>
-                      <td v-for="item in consumos" :key="item.id">
-                        {{ item.total }}
-                      </td>
-                    </tr>
-                    <tr v-if="consumosFruta">
-                      <td>Total l/T</td>
-                      <td v-for="item in consumosFruta" :key="item.id">
-                        {{ item.name }}
-                      </td>
-                    </tr>
-                    <tr v-else>
-                      <td>
-                        Fruta no disponible: Maquina Deccodos no disponible
-                      </td>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-simple-table>
-            </v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
-            <v-col v-if="cargado8">
-              <v-simple-table dense>
-                <template #default>
-                  <thead>
-                    <tr>
-                      <th class="text-left"></th>
-                      <th
-                        v-for="item in alarmas"
-                        :key="item.id"
-                        class="text-left"
-                      >
-                        {{ item.nombre }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Total</td>
-                      <td v-for="item in alarmas" :key="item.id">
-                        {{ item.total }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-simple-table>
-            </v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
+            <v-row>
+              <v-col v-if="cargado8">
+                <v-simple-table dense>
+                  <template #default>
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th>L</th>
+                        <th>Litros/Tonelada</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="item in consumos" :key="item.id">
+                        <td>
+                          {{ item.nombre }}
+                        </td>
+                        <td>
+                          {{ item.total }}
+                        </td>
+                        <td v-if="deccodos">
+                          {{ item.totalFruta }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-simple-table>
+              </v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+              <v-col v-if="cargado7">
+                <v-simple-table dense>
+                  <template #default>
+                    <thead>
+                      <tr>
+                        <th class="text-left"></th>
+                        <th>Min</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="alarmaItem in alarmas" :key="alarmaItem.id">
+                        <td>{{ alarmaItem.nombre }}</td>
+                        <td>
+                          {{ alarmaItem.name }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-simple-table>
+              </v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular> </v-col
+            ></v-row>
             <v-col v-if="cargado1">
               <ApexChart
                 ref="chartRef"
@@ -373,6 +357,7 @@ async function dateApplied(date1, date2) {
     fin.value
   );
   seriesL2.value = cporu;
+  cargado4.value = true;
   cargado6.value = true;
   totales = await obtenerDatosVariableGeneral(
     "historico",
@@ -387,14 +372,6 @@ async function dateApplied(date1, date2) {
   );
   series.value = estado;
   let total = [];
-  for (let index = 0; index < totales.length; index++) {
-    const element = totales[index];
-    total.push({
-      id: index,
-      nombre: element.nombreCorto + "( " + element.unidadMedida + " )",
-      total: Math.max(0, element.registros[0].total).toFixed(3),
-    });
-  }
   if (deccodos.value) {
     let totalFruta = await obtenerDatosVariableGeneral(
       "historico",
@@ -407,11 +384,6 @@ async function dateApplied(date1, date2) {
       inicio.value,
       fin.value
     );
-    total.push({
-      id: total.length,
-      nombre: totalFruta[0].nombreCorto + "( T )",
-      total: Math.max(0, totalFruta[0].registros[0].total / 1000).toFixed(3),
-    });
     kilos = await obtenerDatosVariableGeneral(
       "historico",
       "registros",
@@ -424,7 +396,7 @@ async function dateApplied(date1, date2) {
       fin.value
     );
     seriesL4.value = kilos;
-    consumosFruta.value = [];
+    consumos.value = [];
     for (let index = 0; index < totales.length; index++) {
       const element = totales[index];
       let n = Math.max(0, element.registros[0].total);
@@ -432,9 +404,25 @@ async function dateApplied(date1, date2) {
         totalFruta[0].registros[0].total > 0
           ? (n / (totalFruta[0].registros[0].total / 1000)).toFixed(3)
           : 0;
-      consumosFruta.value.push({
+      consumos.value.push({
         id: index,
-        name: d,
+        nombre: element.descripcion,
+        total: Math.max(0, element.registros[0].total).toFixed(3),
+        totalFruta: d,
+      });
+    }
+    consumos.value.push({
+      id: consumos.value.length,
+      nombre: totalFruta[0].nombreCorto + "( T )",
+      total: Math.max(0, totalFruta[0].registros[0].total / 1000).toFixed(3),
+    });
+  } else {
+    for (let index = 0; index < totales.length; index++) {
+      const element = totales[index];
+      consumos.value.push({
+        id: index,
+        nombre: element.descripcion,
+        total: Math.max(0, element.registros[0].total).toFixed(3),
       });
     }
   }
@@ -471,9 +459,9 @@ async function dateApplied(date1, date2) {
   for (let index = 0; index < alarma.length; index++) {
     const element = alarma[index];
     totalA.push({
-      id: index,
-      nombre: element.nombreCorto + "( min )",
-      total: Math.max(0, Math.round(element.registros.total1 / 60)),
+      id: element.nombreCorto + index,
+      nombre: element.nombreCorto,
+      name: Math.max(0, Math.round(element.registros.total1 / 60)),
     });
   }
   alarmas.value = totalA;
@@ -508,7 +496,6 @@ let consumos = ref([]);
 let alarmas = ref([]);
 let deccodos = ref(null);
 let totales = {};
-let consumosFruta = ref([]);
 
 let sameDateFormat = {
   from: "DD MM YYYY, HH:mm",
@@ -716,10 +703,13 @@ onMounted(async () => {
     [68],
     props.maquina,
     routerStore().clienteID,
+    null,
+    null,
     "Cajas/Min"
   );
   seriesL3.value = cajas;
   cargado5.value = true;
+  cargado4.value = false;
   cporu = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -730,6 +720,7 @@ onMounted(async () => {
     routerStore().clienteID
   );
   seriesL2.value = cporu;
+  cargado4.value = true;
   cargado6.value = true;
   cargado7.value = false;
   totales = await obtenerDatosVariableGeneral(
@@ -741,14 +732,6 @@ onMounted(async () => {
     props.maquina,
     routerStore().clienteID
   );
-  for (let index = 0; index < totales.length; index++) {
-    const element = totales[index];
-    consumos.value.push({
-      id: index,
-      nombre: element.nombreCorto + "( " + element.unidadMedida + " )",
-      total: Math.max(0, element.registros[0].total).toFixed(3),
-    });
-  }
   if (deccodos.value) {
     let totalFruta = await obtenerDatosVariableGeneral(
       "24H",
@@ -759,12 +742,6 @@ onMounted(async () => {
       deccodos.value,
       routerStore().clienteID
     );
-    consumos.value.push({
-      id: consumos.value.length,
-      nombre: totalFruta[0].nombreCorto + "(  T  )",
-      total: Math.max(0, totalFruta[0].registros[0].total / 1000).toFixed(3),
-    });
-    cargado4.value = false;
     kilos = await obtenerDatosVariableGeneral(
       "24H",
       "registros",
@@ -782,12 +759,27 @@ onMounted(async () => {
         totalFruta[0].registros[0].total > 0
           ? (n / (totalFruta[0].registros[0].total / 1000)).toFixed(3)
           : 0;
-      consumosFruta.value.push({
-        id: index,
-        name: d,
+      consumos.value.push({
+        id: element.descripcion + index,
+        nombre: element.descripcion,
+        total: Math.max(0, element.registros[0].total).toFixed(3),
+        totalFruta: d,
       });
     }
-    cargado4.value = true;
+    consumos.value.push({
+      id: consumos.value.length,
+      nombre: totalFruta[0].nombreCorto,
+      total: Math.max(0, totalFruta[0].registros[0].total / 1000).toFixed(3),
+    });
+  } else {
+    for (let index = 0; index < totales.length; index++) {
+      const element = totales[index];
+      consumos.value.push({
+        id: element.descripcion + index,
+        nombre: element.descripcion,
+        total: Math.max(0, element.registros[0].total).toFixed(3),
+      });
+    }
   }
   let horasMarcha = await obtenerDatosVariableGeneral(
     "24H",
@@ -798,11 +790,6 @@ onMounted(async () => {
     props.maquina,
     routerStore().clienteID
   );
-  consumos.value.push({
-    id: consumos.value.length,
-    nombre: "Marcha ( min )",
-    total: Math.max(0, Math.round(horasMarcha.total / 60)),
-  });
   cargado7.value = true;
   cargado8.value = false;
   alarma = await obtenerDatosVariableGeneral(
@@ -817,11 +804,16 @@ onMounted(async () => {
   for (let index = 0; index < alarma.length; index++) {
     const element = alarma[index];
     alarmas.value.push({
-      id: index,
-      nombre: element.nombreCorto + "( min )",
-      total: Math.max(0, Math.round(element.registros.total1 / 60)),
+      id: element.nombreCorto + index,
+      nombre: element.nombreCorto,
+      name: Math.max(0, Math.round(element.registros.total1 / 60)),
     });
   }
+  alarmas.value.push({
+    id: consumos.value.length,
+    nombre: "Marcha ( min )",
+    name: Math.max(0, Math.round(horasMarcha.total / 60)),
+  });
   cargado8.value = true;
   cargado.value = true;
 });

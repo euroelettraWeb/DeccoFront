@@ -104,12 +104,10 @@ onMounted(async () => {
         totalFruta: d,
       });
     }
-    totalesFruta[0].registros[0].total =
-      totalesFruta[0].registros[0].total / 1000;
     consumos.value.push({
       id: totalesBD.length,
       nombre: "T Fruta",
-      total: totalesFruta[0].registros[0].total,
+      total: Math.max(0, totalesFruta[0].registros[0].total / 1000).toFixed(3),
     });
   } else {
     for (let index = 0; index < totalesBD.length; index++) {

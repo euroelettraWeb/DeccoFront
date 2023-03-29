@@ -3,7 +3,7 @@
     <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
     <v-row no-gutters>
       <TablaTurnos v-if="turnos" :tipo="1" />
-      <v-col>
+      <v-col class="pl-2">
         <TablaTotalTurnos
           v-if="turnos && turnosA.length > 1"
           :variables="[70, 71, 72]"

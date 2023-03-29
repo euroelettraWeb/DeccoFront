@@ -311,7 +311,7 @@ async function dateApplied(date1, date2) {
     "registros",
     "individual",
     "formatoLinea",
-    [34, 35, 36, 37, 38],
+    [32, 33, 34, 35, 36, 37, 38, 39],
     props.maquina,
     routerStore().clienteID,
     inicio.value,
@@ -383,6 +383,7 @@ async function dateApplied(date1, date2) {
     inicio.value,
     fin.value
   );
+  consumosFruta.value = [];
   for (let index = 0; index < totales.length; index++) {
     const element = totales[index];
     total.push({
@@ -668,7 +669,7 @@ onMounted(async () => {
     "registros",
     "individual",
     "formatoLinea",
-    [34, 35, 36, 37, 38],
+    [32, 33, 34, 35, 36, 37, 38, 39],
     props.maquina,
     routerStore().clienteID
   );

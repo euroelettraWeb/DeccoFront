@@ -66,45 +66,21 @@ let maquina = computed(() => {
 const logout = () => user.logout();
 onMounted(async () => {
   watchEffect(async () => {
-    if (routerStore().maquina) {
-      nombreLinea.value = (
-        await obtenerLinea(routerStore().lineasID)
-      )[0].nombre;
-      nombreCliente.value = (
-        await obtenerCliente(routerStore().clienteID)
-      )[0].nombre;
+    switch (routerStore().maquina) {
+      case "Historico":
+        return routerStore().maquina;
+      case "Variables":
+        return routerStore().maquina;
+      default:
+        if (routerStore().lineasID != null) {
+          nombreLinea.value = (
+            await obtenerLinea(routerStore().lineasID)
+          )[0].nombre;
+          nombreCliente.value = (
+            await obtenerCliente(routerStore().clienteID)
+          )[0].nombre;
+        }
     }
   });
 });
-// const evento = () => {
-//   let ahora = new Date().toLocaleString();
-//   let partes = ahora.split(", ");
-//   let fecha = partes[0].split("/").reverse();
-//   if (fecha[1] < 10) fecha[1] = "0" + fecha[1];
-//   if (fecha[2] < 10) fecha[2] = "0" + fecha[2];
-//   partes[0] = fecha.join("-");
-//   let horaInicio = partes.join("T");
-//   return {
-//     ruta: this.$route.path,
-//     variableID: null,
-//     usuario: this.usuarioLogeado.username,
-//     descripcion: "Logout",
-//     estado: 1,
-//     horaInicio,
-//   };
-// };
-
-// const vistaOFs = () => {
-//   if (this.$route.path !== this.pathOFs) this.$router.push(this.pathOFs);
-// };
-
-// const vistaMotivosParo = () => {
-//   if (this.$route.path !== this.pathMotivosParo)
-//     this.$router.push(this.pathMotivosParo);
-// };
-
-// const vistaHistorico = () => {
-//   if (this.$route.path !== this.pathHistorico)
-//     this.$router.push(this.pathHistorico);
-// };
 </script>
