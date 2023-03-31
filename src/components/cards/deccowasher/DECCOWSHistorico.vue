@@ -8,7 +8,7 @@
           </v-col>
         </v-row>
         <v-row class="pl-8" no-gutters>
-          <v-col
+          <v-col cols="10"
             ><date-picker
               class="selectdates"
               apply-button-label="Use"
@@ -154,13 +154,13 @@
               </v-col>
             </div>
             <v-switch
-              v-model="mostrarOtros"
+              v-model="mostrarBombas"
               color="info"
-              label="Estado de las bombas, niveles y bidon"
+              label="Estado de las bombas"
             >
-              Estado de las bombas, niveles y bidon
+              Estado de las bombas
             </v-switch>
-            <div v-if="mostrarOtros">
+            <div v-if="mostrarBombas">
               <v-col v-if="cargado2">
                 <ApexChart
                   ref="chartRef3"
@@ -168,6 +168,32 @@
                   height="300"
                   :options="rangeOptions2"
                   :series="series2"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+            </div>
+            <v-switch
+              v-model="mostrarOtros"
+              color="info"
+              label="Estado de los niveles y bidon"
+            >
+              Estado de los niveles y bidon
+            </v-switch>
+
+            <div v-if="mostrarOtros">
+              <v-col v-if="cargado9">
+                <ApexChart
+                  ref="chartRef2"
+                  type="rangeBar"
+                  height="300"
+                  :options="rangeOptions3"
+                  :series="series3"
               /></v-col>
               <v-col v-else class="d-flex justify-center align-center">
                 <v-progress-circular
@@ -276,6 +302,7 @@ async function dateApplied(date1, date2) {
   let alarma = {};
   series.value = [];
   series2.value = [];
+  series3.value = [];
   seriesL.value = [];
   seriesL2.value = [];
   seriesL3.value = [];
@@ -289,6 +316,7 @@ async function dateApplied(date1, date2) {
   cargado5.value = false;
   cargado6.value = false;
   cargado7.value = false;
+  cargado8.value = false;
   estado = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -357,19 +385,32 @@ async function dateApplied(date1, date2) {
   }
   series.value = estado;
   cargado1.value = true;
-  let otros = await obtenerDatosVariableGeneral(
+  let bombas = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
     "formatoRangos",
-    [64, 65, 84, 85, 86, 87],
+    [64, 65],
     props.maquina,
     routerStore().clienteID,
     inicio.value,
     fin.value
   );
-  series2.value = otros;
+  series2.value = bombas;
   cargado2.value = true;
+  let otros = await obtenerDatosVariableGeneral(
+    "historico",
+    "registros",
+    "individual",
+    "formatoRangos",
+    [84, 85, 86, 87],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value,
+    ["", "Aviso"]
+  );
+  series3.value = otros;
   dosis = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -464,19 +505,24 @@ async function dateApplied(date1, date2) {
       let n = Math.max(0, element.registros[0].total);
       let d =
         totalFruta[0].registros[0].total > 0
-          ? (n / (totalFruta[0].registros[0].total / 1000)).toFixed(3)
+          ? (n / (totalFruta[0].registros[0].total / 1000)).toLocaleString(
+              "es-ES"
+            )
           : 0;
       consumos.value.push({
         id: element.descripcion + index,
         nombre: element.descripcion,
-        total: Math.max(0, element.registros[0].total).toFixed(3),
+        total: Math.max(0, element.registros[0].total).toLocaleString("es-ES"),
         totalPorToneladaFruta: d,
       });
     }
     consumos.value.push({
       id: totalFruta[0].nombreCorto + consumos.value.length,
       nombre: totalFruta[0].nombreCorto + "( T )",
-      total: Math.max(0, totalFruta[0].registros[0].total / 1000).toFixed(3),
+      total: Math.max(
+        0,
+        totalFruta[0].registros[0].total / 1000
+      ).toLocaleString("es-ES"),
     });
     cargado6.value = true;
   } else {
@@ -486,7 +532,7 @@ async function dateApplied(date1, date2) {
       consumos.value.push({
         id: index,
         nombre: element.descripcion,
-        total: Math.max(0, element.registros[0].total).toFixed(3),
+        total: Math.max(0, element.registros[0].total).toLocaleString("es-ES"),
       });
     }
   }
@@ -541,8 +587,10 @@ let cargado5 = ref(false);
 let cargado6 = ref(false);
 let cargado7 = ref(false);
 let cargado8 = ref(false);
+let cargado9 = ref(false);
 
 let mostrar = ref(true);
+let mostrarBombas = ref(true);
 let mostrarCajas = ref(false);
 let mostrarCpC = ref(false);
 let mostrarOtros = ref(true);
@@ -557,6 +605,7 @@ const chartRef6 = ref(null);
 const chartRef7 = ref(null);
 let series = ref([]);
 let series2 = ref([]);
+let series3 = ref([]);
 let seriesL = ref([]);
 let seriesL2 = ref([]);
 let seriesL3 = ref([]);
@@ -797,8 +846,58 @@ let rangeOptions2 = {
       },
     },
   },
-  legend: {
-    show: false,
+};
+let rangeOptions3 = {
+  chart: {
+    id: "otrosEstado" + props.maquina + props.linea,
+    // group: "historico",
+    type: "rangeBar",
+    locales: [es],
+    defaultLocale: "es",
+    animations: { enabled: false },
+  },
+  colors: [
+    function ({ seriesIndex }) {
+      if (seriesIndex == 1) {
+        return "#d50000";
+      } else {
+        return "#00c853";
+      }
+    },
+  ],
+  plotOptions: {
+    bar: {
+      horizontal: true,
+      rangeBarGroupRows: true,
+    },
+  },
+  xaxis: {
+    type: "datetime",
+    datetimeUTC: false,
+    tickAmount: 25,
+    labels: {
+      minHeight: 125,
+      rotate: -45,
+      rotateAlways: true,
+      formatter: function (value) {
+        return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
+      },
+    },
+  },
+  yaxis: {
+    labels: {
+      minWidth: 60,
+    },
+  },
+  tooltip: {
+    x: {
+      format: "dd/MM/yyyy HH:mm:ss",
+    },
+    y: {
+      title: {
+        formatter: (seriesName) => "",
+      },
+    },
   },
 };
 let estado = {};
@@ -874,17 +973,32 @@ onMounted(async () => {
   series.value = estado;
   cargado1.value = true;
   cargado2.value = false;
+  let bombas = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "individual",
+    "formatoRangos",
+    [64, 65],
+    props.maquina,
+    routerStore().clienteID
+  );
+  series2.value = bombas;
+  cargado2.value = true;
+  cargado9.value = false;
   let otros = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
     "formatoRangos",
-    [64, 65, 84, 85, 86, 87],
+    [84, 85, 86, 87],
     props.maquina,
-    routerStore().clienteID
+    routerStore().clienteID,
+    null,
+    null,
+    ["", "Aviso"]
   );
-  series2.value = otros;
-  cargado2.value = true;
+  series3.value = otros;
+  cargado9.value = true;
   cargado3.value = false;
   dosis = await obtenerDatosVariableGeneral(
     "24H",
@@ -971,19 +1085,24 @@ onMounted(async () => {
       let n = Math.max(0, element.registros[0].total);
       let d =
         totalFruta[0].registros[0].total > 0
-          ? (n / (totalFruta[0].registros[0].total / 1000)).toFixed(3)
+          ? (n / (totalFruta[0].registros[0].total / 1000)).toLocaleString(
+              "es-ES"
+            )
           : 0;
       consumos.value.push({
         id: element.descripcion + index,
         nombre: element.descripcion,
-        total: Math.max(0, element.registros[0].total).toFixed(3),
+        total: Math.max(0, element.registros[0].total).toLocaleString("es-ES"),
         totalPorToneladaFruta: d,
       });
     }
     consumos.value.push({
       id: totalFruta[0].nombreCorto + consumos.value.length,
       nombre: totalFruta[0].nombreCorto,
-      total: Math.max(0, totalFruta[0].registros[0].total / 1000).toFixed(3),
+      total: Math.max(
+        0,
+        totalFruta[0].registros[0].total / 1000
+      ).toLocaleString("es-ES"),
     });
     cargado6.value = true;
   } else {
@@ -992,7 +1111,7 @@ onMounted(async () => {
       consumos.value.push({
         id: element.descripcion + index,
         nombre: element.descripcion,
-        total: Math.max(0, element.registros[0].total).toFixed(3),
+        total: Math.max(0, element.registros[0].total).toLocaleString("es-ES"),
       });
     }
   }
@@ -1035,6 +1154,7 @@ onMounted(async () => {
 onUnmounted(() => {
   series.value = [];
   series2.value = [];
+  series3.value = [];
   seriesL.value = [];
   seriesL2.value = [];
   seriesL3.value = [];

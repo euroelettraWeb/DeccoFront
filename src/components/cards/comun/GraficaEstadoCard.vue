@@ -120,6 +120,7 @@ const props = defineProps({
   height: { type: Number, default: 300 },
   tipo: { type: Number, default: 1 },
   colores: { type: Array, default: () => ["#d50000", "#00c853"] },
+  estados: { type: Array, default: () => ["Paro", "Marcha"] },
 });
 
 onMounted(async () => {
@@ -136,7 +137,10 @@ onMounted(async () => {
     "formatoRangos",
     props.variables,
     maquinaID,
-    routerStore().clienteID
+    routerStore().clienteID,
+    null,
+    null,
+    props.estados
   );
   series.value = formatoVariables;
   for (let index = 0; index < props.variables.length; index++) {
@@ -150,7 +154,10 @@ onMounted(async () => {
           "formatoRangos",
           props.variables,
           maquinaID,
-          routerStore().clienteID
+          routerStore().clienteID,
+          null,
+          null,
+          props.estados
         );
         if (chartRef.value) {
           chartRef.value.updateSeries(formatoVariable);
