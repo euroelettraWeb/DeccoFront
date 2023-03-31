@@ -19,8 +19,7 @@
               @on-reset="onReset"
           /></v-col>
           <v-col
-            ><v-btn @click="window.print()"
-              ><v-icon>mdi-file-pdf-box</v-icon></v-btn
+            ><v-btn @click="print()"><v-icon>mdi-file-pdf-box</v-icon></v-btn
             ><v-btn @click="toExcel()"
               ><v-icon>mdi-microsoft-excel</v-icon></v-btn
             ></v-col
@@ -91,101 +90,144 @@
                   indeterminate
                 ></v-progress-circular> </v-col
             ></v-row>
-            <v-col v-if="cargado1">
-              <ApexChart
-                ref="chartRef"
-                type="rangeBar"
-                height="300"
-                :options="rangeOptions"
-                :series="series"
-            /></v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
-            <v-col v-if="cargado3">
-              <ApexChart
-                ref="chartRef4"
-                type="line"
-                height="300"
-                :options="chartOptions('dosis' + props.maquina + props.linea)"
-                :series="seriesL"
-            /></v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular> </v-col
-            ><v-col v-if="cargado6">
-              <ApexChart
-                ref="chartRef7"
-                type="line"
-                height="300"
-                :options="chartOptionsKilos"
-                :series="seriesL4"
-            /></v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
-            <v-col v-if="cargado2">
-              <ApexChart
-                ref="chartRef3"
-                type="rangeBar"
-                height="300"
-                :options="rangeOptions2"
-                :series="series2"
-            /></v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
-            <v-col v-if="cargado4">
-              <ApexChart
-                ref="chartRef5"
-                type="line"
-                height="300"
-                :options="chartOptions('pcajas' + props.maquina + props.linea)"
-                :series="seriesL2"
-            /></v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
-            <v-col v-if="cargado5">
-              <ApexChart
-                ref="chartRef6"
-                type="line"
-                height="300"
-                :options="chartOptions('tcajas' + props.maquina + props.linea)"
-                :series="seriesL3"
-            /></v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
+            <v-switch v-model="mostrar" color="info" label="Estado">
+              Estado
+            </v-switch>
+            <div v-if="mostrar">
+              <v-col v-if="cargado1">
+                <ApexChart
+                  ref="chartRef"
+                  type="rangeBar"
+                  height="300"
+                  :options="rangeOptions"
+                  :series="series"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+            </div>
+            <v-switch v-model="mostrarDosis" color="info" label="Dosis">
+              Dosis
+            </v-switch>
+            <div v-if="mostrarDosis">
+              <v-col v-if="cargado3">
+                <ApexChart
+                  ref="chartRef4"
+                  type="line"
+                  height="300"
+                  :options="chartOptions('dosis' + props.maquina + props.linea)"
+                  :series="seriesL"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+            </div>
+            <v-switch v-model="mostrarKilos" color="info" label="Kilos">
+              Kilos
+            </v-switch>
+            <div v-if="mostrarKilos">
+              <v-col v-if="cargado6">
+                <ApexChart
+                  ref="chartRef7"
+                  type="line"
+                  height="300"
+                  :options="chartOptionsKilos"
+                  :series="seriesL4"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+            </div>
+            <v-switch
+              v-model="mostrarOtros"
+              color="info"
+              label="Estado de las bombas, niveles y bidon"
+            >
+              Estado de las bombas, niveles y bidon
+            </v-switch>
+            <div v-if="mostrarOtros">
+              <v-col v-if="cargado2">
+                <ApexChart
+                  ref="chartRef3"
+                  type="rangeBar"
+                  height="300"
+                  :options="rangeOptions2"
+                  :series="series2"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+            </div>
+            <v-switch
+              v-model="mostrarCpC"
+              color="info"
+              label="Cajas por Ciclo y Peso por Caja"
+            >
+              Cajas por Ciclo y Peso por Caja
+            </v-switch>
+            <div v-if="mostrarCpC">
+              <v-col v-if="cargado4">
+                <ApexChart
+                  ref="chartRef5"
+                  type="line"
+                  height="300"
+                  :options="
+                    chartOptions('pcajas' + props.maquina + props.linea)
+                  "
+                  :series="seriesL2"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+            </div>
+            <v-switch v-model="mostrarCajas" color="info" label="Cajas/Min">
+              Cajas/Min
+            </v-switch>
+            <div v-if="mostrarCajas">
+              <v-col v-if="cargado5">
+                <ApexChart
+                  ref="chartRef6"
+                  type="line"
+                  height="300"
+                  :options="
+                    chartOptions('tcajas' + props.maquina + props.linea)
+                  "
+                  :series="seriesL3"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+            </div>
           </v-col>
         </v-row>
       </v-card>
@@ -196,6 +238,9 @@
 export default {
   name: "DECCOWSHistorico",
 };
+function print() {
+  window.print();
+}
 </script>
 <script setup>
 import { utils, writeFileXLSX } from "xlsx";
@@ -496,6 +541,13 @@ let cargado5 = ref(false);
 let cargado6 = ref(false);
 let cargado7 = ref(false);
 let cargado8 = ref(false);
+
+let mostrar = ref(true);
+let mostrarCajas = ref(false);
+let mostrarCpC = ref(false);
+let mostrarOtros = ref(true);
+let mostrarKilos = ref(true);
+let mostrarDosis = ref(true);
 
 const chartRef = ref(null);
 const chartRef2 = ref(null);
@@ -973,7 +1025,7 @@ onMounted(async () => {
     });
   }
   alarmas.value.push({
-    id: consumos.value.length,
+    id: "Marcha" + consumos.value.length,
     nombre: "Marcha ( min )",
     name: Math.max(0, Math.round(horasMarcha.total / 60)),
   });
@@ -990,18 +1042,56 @@ onUnmounted(() => {
   consumos.value = [];
   alarmas.value = [];
 });
-function toExcel() {
-  let dosisA = seriesL.value;
-  let kilosA = seriesL4.value;
-  let consumosA = consumos.value;
-  let alarmasA = alarmas.value;
-  const ws = utils.json_to_sheet(dosisA);
+async function toExcel() {
+  let dosisA = [];
   const wb = utils.book_new();
-  utils.book_append_sheet(wb, ws, "Dosis");
+  for (let index = 0; index < seriesL.value.length; index++) {
+    const element = seriesL.value[index];
+    dosisA = element.data.map((e) => {
+      return {
+        fecha: moment(e.x).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"),
+        valor: e.y,
+      };
+    });
+    let ws = utils.json_to_sheet(dosisA);
+    utils.book_append_sheet(wb, ws, "Dosis" + index);
+  }
+  let kilosA = [];
+  kilosA = seriesL4.value[0].data.map((e) => {
+    return {
+      fecha: moment(e.x).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"),
+      valor: e.y,
+    };
+  });
+  let wsk = utils.json_to_sheet(kilosA);
+  utils.book_append_sheet(wb, wsk, "Kilos");
+  kilosA = seriesL4.value[1].data.map((e) => {
+    return {
+      fecha: moment(e.x).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"),
+      valor: e.y,
+    };
+  });
+  let ws = utils.json_to_sheet(kilosA);
+  utils.book_append_sheet(wb, ws, "Kg-min");
+  let alarmasA = alarmas.value;
   const ws2 = utils.json_to_sheet(kilosA);
   utils.book_append_sheet(wb, ws2, "Fruta");
+  let consumosA = [];
+  consumosA = consumos.value.map((e) => {
+    return {
+      nombre: e.nombre,
+      total: e.total,
+      totalPorToneladaFruta: e.totalPorToneladaFruta,
+    };
+  });
   const ws3 = utils.json_to_sheet(consumosA);
   utils.book_append_sheet(wb, ws3, "Consumos");
+  alarmasA = alarmas.value.map((e) => {
+    return {
+      nombre: e.nombre,
+      total: e.name,
+    };
+  });
   const ws4 = utils.json_to_sheet(alarmasA);
   utils.book_append_sheet(wb, ws4, "Alarmas");
   writeFileXLSX(wb, "DECCOWASHER" + inicio.value + "-" + fin.value + ".xlsx");
