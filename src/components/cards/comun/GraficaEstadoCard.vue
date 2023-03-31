@@ -79,9 +79,9 @@ let chartOptions = computed(() => {
     colors: [
       function ({ value, seriesIndex, w }) {
         if (seriesIndex == 0) {
-          return "#d50000";
+          return props.colores[0];
         } else {
-          return "#00c853";
+          return props.colores[1];
         }
       },
     ],
@@ -119,6 +119,7 @@ const props = defineProps({
   title: { type: String, default: "" },
   height: { type: Number, default: 300 },
   tipo: { type: Number, default: 1 },
+  colores: { type: Array, default: () => ["#d50000", "#00c853"] },
 });
 
 onMounted(async () => {

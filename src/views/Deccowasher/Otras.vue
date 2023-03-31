@@ -3,10 +3,17 @@
     <v-row>
       <v-col>
         <GraficaEstadoCard
-          :variables="[64, 65, 84, 85, 86, 87]"
+          :variables="[84, 85, 86, 87]"
           :height="300"
           title="Estado de las bombas, niveles y bidon"
           :tipo="3"
+        />
+        <GraficaEstadoCard
+          :variables="[84, 85, 86, 87]"
+          :height="300"
+          title="Estado de niveles y bidon"
+          :tipo="3"
+          :colores="['#00c853', '#d50000']"
         />
         <CajasComun :caja1="45" :caja2="46" :total="47" :tipo="2" />
       </v-col>
