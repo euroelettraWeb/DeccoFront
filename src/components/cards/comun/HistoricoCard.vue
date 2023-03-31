@@ -5,7 +5,7 @@
         <v-row no-gutters
           ><v-col><v-card-title>Historico</v-card-title></v-col>
         </v-row>
-        <v-row no-gutters
+        <v-row class="mx-2"
           ><v-col cols="6"
             ><v-card-subtitle>Linea</v-card-subtitle>
             <v-select

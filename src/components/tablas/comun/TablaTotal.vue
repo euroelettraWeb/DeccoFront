@@ -51,7 +51,6 @@ import { onMounted, ref } from "vue";
 import { routerStore } from "../../../stores/index";
 
 let consumos = ref([]);
-let unidades = ref([]);
 let deccodos = ref(2);
 let cargado = ref(false);
 
@@ -95,19 +94,24 @@ onMounted(async () => {
       let n = Math.max(0, element.registros[0].total);
       let d =
         totalesFruta[0].registros[0].total > 0
-          ? (n / (totalesFruta[0].registros[0].total / 1000)).toFixed(3)
+          ? (n / (totalesFruta[0].registros[0].total / 1000)).toLocaleString(
+              "es-ES"
+            )
           : 0;
       consumos.value.push({
         id: index,
         nombre: element.descripcion,
-        total: Math.max(0, element.registros[0].total).toFixed(3),
-        totalFruta: d,
+        total: Math.max(0, element.registros[0].total).toLocaleString("es-ES"),
+        totalFruta: d.toLocaleString("es-ES"),
       });
     }
     consumos.value.push({
       id: totalesBD.length,
       nombre: "T Fruta",
-      total: Math.max(0, totalesFruta[0].registros[0].total / 1000).toFixed(3),
+      total: Math.max(
+        0,
+        totalesFruta[0].registros[0].total / 1000
+      ).toLocaleString("es-ES"),
     });
   } else {
     for (let index = 0; index < totalesBD.length; index++) {
@@ -115,7 +119,9 @@ onMounted(async () => {
       consumos.value.push({
         id: index,
         nombre: element.descripcion,
-        total: Math.max(0, element.registros[0].total).toFixed(3),
+        total: Math.max(0, element.registros[0].total)
+          .toFixed(3)
+          .toLocaleString("es-ES"),
       });
     }
   }
@@ -147,13 +153,17 @@ onMounted(async () => {
         let n = Math.max(0, element.registros[0].total);
         let d =
           totalesFruta[0].registros[0].total > 0
-            ? (n / (totalesFruta[0].registros[0].total / 1000)).toFixed(3)
+            ? (n / (totalesFruta[0].registros[0].total / 1000)).toLocaleString(
+                "es-ES"
+              )
             : 0;
         consumos.value[index] = {
           id: index,
           nombre: element.descripcion,
           totalFruta: d,
-          total: Math.max(0, element.registros[0].total).toFixed(3),
+          total: Math.max(0, element.registros[0].total).toLocaleString(
+            "es-ES"
+          ),
         };
       }
       totalesFruta[0].registros[0].total =
@@ -162,7 +172,7 @@ onMounted(async () => {
       consumos.value.push({
         id: totalesBD.length,
         nombre: "T Fruta",
-        total: totalesFruta[0].registros[0].total,
+        total: totalesFruta[0].registros[0].total.toLocaleString("es-ES"),
       });
     } else {
       for (let index = 0; index < totalesBD.length; index++) {
@@ -170,7 +180,9 @@ onMounted(async () => {
         consumos.value[index] = {
           id: index,
           nombre: element.descripcion,
-          total: Math.max(0, element.registros[0].total).toFixed(3),
+          total: Math.max(0, element.registros[0].total).toLocaleString(
+            "es-ES"
+          ),
         };
       }
     }

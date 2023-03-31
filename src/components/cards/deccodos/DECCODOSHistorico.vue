@@ -96,7 +96,7 @@
                 ref="chartRef4"
                 type="line"
                 height="300"
-                :options="chartOptions('dosis' + props.maquina)"
+                :options="chartOptions('dosis' + props.maquina + props.linea)"
                 :series="seriesL"
             /></v-col>
             <v-col v-else class="d-flex justify-center align-center">
@@ -111,7 +111,7 @@
               <ApexChart
                 ref="chartRef5"
                 type="line"
-                height="300"
+                height="350"
                 :options="chartOptionsKilos"
                 :series="seriesL4"
             /></v-col>
@@ -136,7 +136,7 @@
                 ref="chartRef6"
                 type="line"
                 height="300"
-                :options="chartOptions('pcajas' + props.maquina)"
+                :options="chartOptions('pcajas' + props.maquina + props.linea)"
                 :series="seriesL2"
             /></v-col>
             <v-col v-else class="d-flex justify-center align-center">
@@ -152,7 +152,7 @@
                 ref="chartRef7"
                 type="line"
                 height="300"
-                :options="chartOptions('tcajas' + props.maquina)"
+                :options="chartOptions('tcajas' + props.maquina + props.linea)"
                 :series="seriesL3"
             /></v-col>
             <v-col v-else class="d-flex justify-center align-center">
@@ -218,7 +218,6 @@ async function dateApplied(date1, date2) {
   cargado6.value = false;
   cargado7.value = false;
   cargado8.value = false;
-  cargado.value = false;
   estado = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -441,7 +440,7 @@ async function dateApplied(date1, date2) {
     });
   }
   totalA.push({
-    id: totalA.length,
+    id: "Marcha" + totalA.length,
     nombre: "Marcha ( min )",
     total: Math.max(0, marchat.total).toFixed(0),
   });
@@ -496,7 +495,7 @@ let chartOptions = (id) => {
   return {
     chart: {
       id: id,
-      group: "historico",
+      // group: "historico",
       locales: [es],
       defaultLocale: "es",
       animations: { enabled: false },
@@ -541,8 +540,8 @@ let chartOptions = (id) => {
 };
 let chartOptionsKilos = {
   chart: {
-    id: "Kilos" + props.maquina,
-    group: "historico",
+    id: "Kilos" + props.maquina + props.linea,
+    // group: "historico",
     locales: [es],
     defaultLocale: "es",
     animations: { enabled: false },
@@ -596,13 +595,12 @@ let chartOptionsKilos = {
 };
 let rangeOptions = {
   chart: {
-    id: "estado" + props.maquina,
-    group: "historico",
+    id: "estado" + props.maquina + props.linea,
+    // group: "historico",
     type: "rangeBar",
     locales: [es],
     defaultLocale: "es",
     animations: { enabled: false },
-    group: "historico",
   },
   colors: [
     function ({ seriesIndex }) {
@@ -662,13 +660,12 @@ let rangeOptions = {
 };
 let rangeOptions2 = {
   chart: {
-    id: "otrosEstado" + props.maquina,
-    group: "historico",
+    id: "otrosEstado" + props.maquina + props.linea,
+    // group: "historico",
     type: "rangeBar",
     locales: [es],
     defaultLocale: "es",
     animations: { enabled: false },
-    group: "historico",
   },
   colors: [
     function ({ seriesIndex }) {

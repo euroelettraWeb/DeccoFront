@@ -4,7 +4,7 @@
       <v-col>
         <GraficaEstadoCard
           :variables="[64, 65, 84, 85, 86, 87]"
-          :height="400"
+          :height="300"
           title="Estado de las bombas, niveles y bidon"
           :tipo="3"
         />

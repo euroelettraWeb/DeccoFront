@@ -18,6 +18,13 @@
               @date-applied="dateApplied"
               @on-reset="onReset"
           /></v-col>
+          <v-col
+            ><v-btn @click="window.print()"
+              ><v-icon>mdi-file-pdf-box</v-icon></v-btn
+            ><v-btn @click="toExcel()"
+              ><v-icon>mdi-microsoft-excel</v-icon></v-btn
+            ></v-col
+          >
         </v-row>
         <v-row no-gutters>
           <v-col>
@@ -41,7 +48,7 @@
                           {{ item.total }}
                         </td>
                         <td v-if="deccodos">
-                          {{ item.totalFruta }}
+                          {{ item.totalPorToneladaFruta }}
                         </td>
                       </tr>
                     </tbody>
@@ -105,7 +112,7 @@
                 ref="chartRef4"
                 type="line"
                 height="300"
-                :options="chartOptions('dosis')"
+                :options="chartOptions('dosis' + props.maquina + props.linea)"
                 :series="seriesL"
             /></v-col>
             <v-col v-else class="d-flex justify-center align-center">
@@ -152,7 +159,7 @@
                 ref="chartRef5"
                 type="line"
                 height="300"
-                :options="chartOptions('pcajas')"
+                :options="chartOptions('pcajas' + props.maquina + props.linea)"
                 :series="seriesL2"
             /></v-col>
             <v-col v-else class="d-flex justify-center align-center">
@@ -168,7 +175,7 @@
                 ref="chartRef6"
                 type="line"
                 height="300"
-                :options="chartOptions('tcajas')"
+                :options="chartOptions('tcajas' + props.maquina + props.linea)"
                 :series="seriesL3"
             /></v-col>
             <v-col v-else class="d-flex justify-center align-center">
@@ -191,11 +198,12 @@ export default {
 };
 </script>
 <script setup>
+import { utils, writeFileXLSX } from "xlsx";
 import {
   obtenerDatosVariableGeneral,
   obtenerMaquina,
 } from "../../../helpers/bd";
-import { onMounted, ref, computed, onUnmounted } from "vue";
+import { onMounted, ref, onUnmounted } from "vue";
 import { routerStore } from "../../../stores/index";
 import es from "apexcharts/dist/locales/es.json";
 import moment from "moment";
@@ -241,7 +249,7 @@ async function dateApplied(date1, date2) {
     "registros",
     "individual",
     "formatoRangos",
-    [61, 63],
+    [57],
     props.maquina,
     routerStore().clienteID,
     inicio.value,
@@ -253,7 +261,7 @@ async function dateApplied(date1, date2) {
     "registros",
     "individual",
     "formatoRangos",
-    [[61, 63]],
+    [61, 63],
     props.maquina,
     routerStore().clienteID,
     inicio.value,
@@ -287,7 +295,7 @@ async function dateApplied(date1, date2) {
     "registros",
     "individual",
     "formatoRangos",
-    [60, 62, 84, 85, 86, 87, 88],
+    [60, 62, 88],
     props.maquina,
     routerStore().clienteID,
     inicio.value,
@@ -305,13 +313,15 @@ async function dateApplied(date1, date2) {
   series.value = estado;
   cargado1.value = true;
   let otros = await obtenerDatosVariableGeneral(
-    "24H",
+    "historico",
     "registros",
     "individual",
     "formatoRangos",
     [64, 65, 84, 85, 86, 87],
     props.maquina,
-    routerStore().clienteID
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
   );
   series2.value = otros;
   cargado2.value = true;
@@ -355,7 +365,6 @@ async function dateApplied(date1, date2) {
   );
   seriesL2.value = cporu;
   cargado4.value = true;
-  cargado6.value = true;
   totales = await obtenerDatosVariableGeneral(
     "historico",
     "totales",
@@ -367,8 +376,6 @@ async function dateApplied(date1, date2) {
     inicio.value,
     fin.value
   );
-  series.value = estado;
-  let total = [];
   if (deccodos.value) {
     let totalFruta = await obtenerDatosVariableGeneral(
       "historico",
@@ -415,18 +422,20 @@ async function dateApplied(date1, date2) {
           ? (n / (totalFruta[0].registros[0].total / 1000)).toFixed(3)
           : 0;
       consumos.value.push({
-        id: index,
+        id: element.descripcion + index,
         nombre: element.descripcion,
         total: Math.max(0, element.registros[0].total).toFixed(3),
-        totalFruta: d,
+        totalPorToneladaFruta: d,
       });
     }
     consumos.value.push({
-      id: consumos.value.length,
+      id: totalFruta[0].nombreCorto + consumos.value.length,
       nombre: totalFruta[0].nombreCorto + "( T )",
       total: Math.max(0, totalFruta[0].registros[0].total / 1000).toFixed(3),
     });
+    cargado6.value = true;
   } else {
+    consumos.value = [];
     for (let index = 0; index < totales.length; index++) {
       const element = totales[index];
       consumos.value.push({
@@ -447,12 +456,6 @@ async function dateApplied(date1, date2) {
     inicio.value,
     fin.value
   );
-  total.push({
-    id: total.length,
-    nombre: "Marcha ( min )",
-    total: Math.max(0, marchat.total).toFixed(0),
-  });
-  consumos.value = total;
   cargado7.value = true;
   alarma = await obtenerDatosVariableGeneral(
     "historico",
@@ -474,6 +477,11 @@ async function dateApplied(date1, date2) {
       name: Math.max(0, Math.round(element.registros.total1 / 60)),
     });
   }
+  totalA.push({
+    id: "Marcha" + totalA.length,
+    nombre: "Marcha ( min )",
+    total: Math.max(0, marchat.total).toFixed(0),
+  });
   alarmas.value = totalA;
   cargado8.value = true;
   cargado.value = true;
@@ -522,7 +530,7 @@ let chartOptions = (id) => {
   return {
     chart: {
       id: id,
-      group: "historico",
+      // group: "historico",
       locales: [es],
       defaultLocale: "es",
       animations: { enabled: false },
@@ -567,8 +575,8 @@ let chartOptions = (id) => {
 };
 let chartOptionsKilos = {
   chart: {
-    id: "Kilos",
-    group: "historico",
+    id: "Kilos" + props.maquina + props.linea,
+    // group: "historico",
     locales: [es],
     defaultLocale: "es",
     animations: { enabled: false },
@@ -622,13 +630,12 @@ let chartOptionsKilos = {
 };
 let rangeOptions = {
   chart: {
-    id: "estado",
-    group: "historico",
+    id: "estado" + props.maquina + props.linea,
+    // group: "historico",
     type: "rangeBar",
     locales: [es],
     defaultLocale: "es",
     animations: { enabled: false },
-    group: "historico",
   },
   colors: [
     function ({ seriesIndex }) {
@@ -676,20 +683,24 @@ let rangeOptions = {
     x: {
       format: "dd/MM/yyyy HH:mm:ss",
     },
+    y: {
+      title: {
+        formatter: (seriesName) => "",
+      },
+    },
   },
   legend: {
-    showForSingleSeries: true,
+    show: false,
   },
 };
 let rangeOptions2 = {
   chart: {
-    id: "otrosEstado",
-    group: "historico",
+    id: "otrosEstado" + props.maquina + props.linea,
+    // group: "historico",
     type: "rangeBar",
     locales: [es],
     defaultLocale: "es",
     animations: { enabled: false },
-    group: "historico",
   },
   colors: [
     function ({ seriesIndex }) {
@@ -728,9 +739,14 @@ let rangeOptions2 = {
     x: {
       format: "dd/MM/yyyy HH:mm:ss",
     },
+    y: {
+      title: {
+        formatter: (seriesName) => "",
+      },
+    },
   },
   legend: {
-    showForSingleSeries: true,
+    show: false,
   },
 };
 let estado = {};
@@ -803,16 +819,6 @@ onMounted(async () => {
     }
     estado[1].data.push(element);
   }
-  // let bombas = await obtenerDatosVariableGeneral(
-  //   "24H",
-  //   "registros",
-  //   "individual",
-  //   "formatoRangos",
-  //   [64, 65],
-  //   props.maquina,
-  //   routerStore().clienteID
-  // );
-  // series3.value = bombas;
   series.value = estado;
   cargado1.value = true;
   cargado2.value = false;
@@ -839,34 +845,6 @@ onMounted(async () => {
   );
   seriesL.value = dosis;
   cargado3.value = true;
-  cargado5.value = false;
-  cajas = await obtenerDatosVariableGeneral(
-    "24H",
-    "registros",
-    "individual",
-    "unidadTiempo",
-    [68],
-    props.maquina,
-    routerStore().clienteID,
-    null,
-    null,
-    "Cajas/Min"
-  );
-  seriesL3.value = cajas;
-  cargado5.value = true;
-  cargado4.value = false;
-  cporu = await obtenerDatosVariableGeneral(
-    "24H",
-    "registros",
-    "individual",
-    "formatoLinea",
-    [67, 66],
-    props.maquina,
-    routerStore().clienteID
-  );
-  seriesL2.value = cporu;
-  cargado4.value = true;
-  cargado6.value = true;
   cargado7.value = false;
   totales = await obtenerDatosVariableGeneral(
     "24H",
@@ -878,6 +856,32 @@ onMounted(async () => {
     routerStore().clienteID
   );
   if (deccodos.value) {
+    cargado5.value = false;
+    cajas = await obtenerDatosVariableGeneral(
+      "24H",
+      "registros",
+      "individual",
+      "unidadTiempo",
+      [47],
+      deccodos.value,
+      routerStore().clienteID,
+      null,
+      null,
+      "Cajas/Min"
+    );
+    seriesL3.value = cajas;
+    cargado5.value = true;
+    cporu = await obtenerDatosVariableGeneral(
+      "24H",
+      "registros",
+      "individual",
+      "formatoLinea",
+      [45, 46],
+      deccodos.value,
+      routerStore().clienteID
+    );
+    seriesL2.value = cporu;
+    cargado4.value = true;
     let totalFruta = await obtenerDatosVariableGeneral(
       "24H",
       "totales",
@@ -921,14 +925,15 @@ onMounted(async () => {
         id: element.descripcion + index,
         nombre: element.descripcion,
         total: Math.max(0, element.registros[0].total).toFixed(3),
-        totalFruta: d,
+        totalPorToneladaFruta: d,
       });
     }
     consumos.value.push({
-      id: consumos.value.length,
+      id: totalFruta[0].nombreCorto + consumos.value.length,
       nombre: totalFruta[0].nombreCorto,
       total: Math.max(0, totalFruta[0].registros[0].total / 1000).toFixed(3),
     });
+    cargado6.value = true;
   } else {
     for (let index = 0; index < totales.length; index++) {
       const element = totales[index];
@@ -985,10 +990,26 @@ onUnmounted(() => {
   consumos.value = [];
   alarmas.value = [];
 });
+function toExcel() {
+  let dosisA = seriesL.value;
+  let kilosA = seriesL4.value;
+  let consumosA = consumos.value;
+  let alarmasA = alarmas.value;
+  const ws = utils.json_to_sheet(dosisA);
+  const wb = utils.book_new();
+  utils.book_append_sheet(wb, ws, "Dosis");
+  const ws2 = utils.json_to_sheet(kilosA);
+  utils.book_append_sheet(wb, ws2, "Fruta");
+  const ws3 = utils.json_to_sheet(consumosA);
+  utils.book_append_sheet(wb, ws3, "Consumos");
+  const ws4 = utils.json_to_sheet(alarmasA);
+  utils.book_append_sheet(wb, ws4, "Alarmas");
+  writeFileXLSX(wb, "DECCOWASHER" + inicio.value + "-" + fin.value + ".xlsx");
+}
 </script>
 <style>
 .vdpr-datepicker .selectdates {
-  border: 1px solid #000;
+  border: 5px solid #0f1fd1;
   padding: 12px;
   width: 300px;
 }
