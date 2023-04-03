@@ -17,6 +17,12 @@
               @date-applied="dateApplied"
               @on-reset="onReset"
           /></v-col>
+          <v-col
+            ><v-btn @click="print()"><v-icon>mdi-file-pdf-box</v-icon></v-btn
+            ><v-btn @click="toExcel()"
+              ><v-icon>mdi-microsoft-excel</v-icon></v-btn
+            ></v-col
+          >
         </v-row>
         <v-row no-gutters>
           <v-col v-if="cargado">
@@ -224,8 +230,12 @@
 export default {
   name: "DECCODOSHistoricoCard",
 };
+function print() {
+  window.print();
+}
 </script>
 <script setup>
+import { utils, writeFileXLSX } from "xlsx";
 import { obtenerDatosVariableGeneral } from "../../../helpers/bd";
 import { onMounted, ref, onUnmounted } from "vue";
 import { routerStore } from "../../../stores/index";
@@ -1010,6 +1020,61 @@ onUnmounted(() => {
   consumos.value = [];
   alarmas.value = [];
 });
+async function toExcel() {
+  let dosisA = [];
+  const wb = utils.book_new();
+  for (let index = 0; index < seriesL.value.length; index++) {
+    const element = seriesL.value[index];
+    dosisA = element.data.map((e) => {
+      return {
+        fecha: moment(e.x).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"),
+        valor: e.y,
+      };
+    });
+    let ws = utils.json_to_sheet(dosisA);
+    let name = seriesL.value[index].name.replace("/", "-");
+    utils.book_append_sheet(wb, ws, name);
+  }
+  let kilosA = [];
+  kilosA = seriesL4.value[0].data.map((e) => {
+    return {
+      fecha: moment(e.x).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"),
+      valor: e.y,
+    };
+  });
+  let wsk = utils.json_to_sheet(kilosA);
+  utils.book_append_sheet(wb, wsk, "Kilos");
+  kilosA = seriesL4.value[1].data.map((e) => {
+    return {
+      fecha: moment(e.x).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"),
+      valor: e.y,
+    };
+  });
+  let ws = utils.json_to_sheet(kilosA);
+  utils.book_append_sheet(wb, ws, "Kg-min");
+  let alarmasA = alarmas.value;
+  // const ws2 = utils.json_to_sheet(kilosA);
+  // utils.book_append_sheet(wb, ws2, "Fruta");
+  let consumosA = [];
+  consumosA = consumos.value.map((e) => {
+    return {
+      nombre: e.nombre,
+      total: e.total,
+      totalPorToneladaFruta: e.totalPorToneladaFruta,
+    };
+  });
+  const ws3 = utils.json_to_sheet(consumosA);
+  utils.book_append_sheet(wb, ws3, "Consumos");
+  alarmasA = alarmas.value.map((e) => {
+    return {
+      nombre: e.nombre,
+      total: e.name,
+    };
+  });
+  const ws4 = utils.json_to_sheet(alarmasA);
+  utils.book_append_sheet(wb, ws4, "Alarmas");
+  writeFileXLSX(wb, "DECCODOS" + inicio.value + "-" + fin.value + ".xlsx");
+}
 </script>
 <style>
 .vdpr-datepicker .selectdates {

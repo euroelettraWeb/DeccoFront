@@ -18,191 +18,242 @@
               @date-applied="dateApplied"
               @on-reset="onReset"
           /></v-col>
+          <v-col
+            ><v-btn @click="print()"><v-icon>mdi-file-pdf-box</v-icon></v-btn
+            ><v-btn @click="toExcel()"
+              ><v-icon>mdi-microsoft-excel</v-icon></v-btn
+            ></v-col
+          >
         </v-row>
         <v-row no-gutters>
           <v-col>
-            <v-col v-if="cargado7">
-              <v-simple-table dense>
-                <template #default>
-                  <thead>
-                    <tr>
-                      <th class="text-left"></th>
-                      <th
-                        v-for="item in consumos"
-                        :key="item.id"
-                        class="text-left"
-                      >
-                        {{ item.nombre }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Total</td>
-                      <td v-for="item in consumos" :key="item.id">
-                        {{ item.total }}
-                      </td>
-                    </tr>
-                    <tr v-if="consumosFruta">
-                      <td>Total l/T</td>
-                      <td v-for="item in consumosFruta" :key="item.id">
-                        {{ item.name }}
-                      </td>
-                    </tr>
-                    <tr v-else>
-                      <td>
-                        Fruta no disponible: Maquina Deccodos no disponible
-                      </td>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-simple-table>
-            </v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
-            <v-col v-if="cargado8">
-              <v-simple-table dense>
-                <template #default>
-                  <thead>
-                    <tr>
-                      <th class="text-left"></th>
-                      <th
-                        v-for="item in alarmas"
-                        :key="item.id"
-                        class="text-left"
-                      >
-                        {{ item.nombre }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Total</td>
-                      <td v-for="item in alarmas" :key="item.id">
-                        {{ item.total }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-simple-table>
-            </v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
-            <v-col v-if="cargado1">
-              <ApexChart
-                ref="chartRef"
-                type="rangeBar"
-                height="300"
-                :options="rangeOptions"
-                :series="series"
-            /></v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
-            <v-col v-if="cargado2">
-              <ApexChart
-                ref="chartRef2"
-                type="rangeBar"
-                height="300"
-                :options="rangeOptions"
-                :series="series2"
-            /></v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
-            <!-- <ApexChart
-                  ref="chartRef3"
+            <v-row>
+              <v-col v-if="cargado7">
+                <v-simple-table dense>
+                  <template #default>
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th>L</th>
+                        <th>Litros/Tonelada</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="item in consumos" :key="item.id">
+                        <td>
+                          {{ item.nombre }}
+                        </td>
+                        <td>
+                          {{ item.total }}
+                        </td>
+                        <td v-if="deccodos">
+                          {{ item.totalPorToneladaFruta }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-simple-table>
+              </v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+              <v-col v-if="cargado8">
+                <v-simple-table dense>
+                  <template #default>
+                    <thead>
+                      <tr>
+                        <th class="text-left"></th>
+                        <th>Min</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="alarmaItem in alarmas" :key="alarmaItem.id">
+                        <td>{{ alarmaItem.nombre }}</td>
+                        <td>
+                          {{ alarmaItem.name }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-simple-table>
+              </v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular> </v-col
+            ></v-row>
+            <v-switch v-model="mostrar" color="info" label="Estado">
+              Estado
+            </v-switch>
+            <div v-if="mostrar">
+              <v-col v-if="cargado1">
+                <ApexChart
+                  ref="chartRef"
                   type="rangeBar"
                   height="300"
                   :options="rangeOptions"
+                  :series="series"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+            </div>
+            <v-switch v-model="mostrarDosis" color="info" label="Dosis">
+              Dosis
+            </v-switch>
+            <div v-if="mostrarDosis">
+              <v-col v-if="cargado3">
+                <ApexChart
+                  ref="chartRef2"
+                  type="line"
+                  height="300"
+                  :options="chartOptions('dosis' + props.maquina + props.linea)"
+                  :series="seriesL"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+            </div>
+            <v-switch v-model="mostrarKilos" color="info" label="Kilos">
+              Kilos
+            </v-switch>
+            <div v-if="mostrarKilos">
+              <v-col v-if="cargado6">
+                <ApexChart
+                  ref="chartRef7"
+                  type="line"
+                  height="300"
+                  :options="chartOptionsKilos"
+                  :series="seriesL4"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+            </div>
+            <v-switch
+              v-model="mostrarBombas"
+              color="info"
+              label="Estado de los agitadores"
+            >
+              Estado de los agitadores
+            </v-switch>
+            <div v-if="mostrarBombas">
+              <v-col v-if="cargado2">
+                <ApexChart
+                  ref="chartRef3"
+                  type="rangeBar"
+                  height="300"
+                  :options="rangeOptions2"
+                  :series="series2"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+            </div>
+            <v-switch
+              v-model="mostrarOtros"
+              color="info"
+              label="Estado de los niveles y bidon"
+            >
+              Estado de los niveles de las garrafas
+            </v-switch>
+
+            <div v-if="mostrarOtros">
+              <v-col v-if="cargado9">
+                <ApexChart
+                  ref="chartRef2"
+                  type="rangeBar"
+                  height="300"
+                  :options="rangeOptions3"
                   :series="series3"
-                /> -->
-            <v-col v-if="cargado3">
-              <ApexChart
-                ref="chartRef4"
-                type="line"
-                height="300"
-                :options="chartOptions"
-                :series="seriesL"
-            /></v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
-            <v-col v-if="cargado4">
-              <ApexChart
-                ref="chartRef5"
-                type="line"
-                height="300"
-                :options="chartOptions"
-                :series="seriesL2"
-            /></v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
-            <v-col v-if="cargado5">
-              <ApexChart
-                ref="chartRef6"
-                type="line"
-                height="300"
-                :options="chartOptions"
-                :series="seriesL3"
-            /></v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
-            <v-col v-if="cargado6">
-              <ApexChart
-                ref="chartRef7"
-                type="line"
-                height="300"
-                :options="chartOptions"
-                :series="seriesL4"
-            /></v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+            </div>
+            <v-switch
+              v-model="mostrarCpC"
+              color="info"
+              label="Cajas por Ciclo y Peso por Caja"
+            >
+              Cajas por Ciclo y Peso por Caja
+            </v-switch>
+            <div v-if="mostrarCpC">
+              <v-col v-if="cargado4">
+                <ApexChart
+                  ref="chartRef5"
+                  type="line"
+                  height="300"
+                  :options="
+                    chartOptions('pcajas' + props.maquina + props.linea)
+                  "
+                  :series="seriesL2"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+            </div>
+            <v-switch v-model="mostrarCajas" color="info" label="Cajas/Min">
+              Cajas/Min
+            </v-switch>
+            <div v-if="mostrarCajas">
+              <v-col v-if="cargado5">
+                <ApexChart
+                  ref="chartRef6"
+                  type="line"
+                  height="300"
+                  :options="
+                    chartOptions('tcajas' + props.maquina + props.linea)
+                  "
+                  :series="seriesL3"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+            </div>
           </v-col>
         </v-row>
       </v-card>
@@ -213,8 +264,12 @@
 export default {
   name: "DECCODAFHistoricoCard",
 };
+function print() {
+  window.print();
+}
 </script>
 <script setup>
+import { utils, writeFileXLSX } from "xlsx";
 import {
   obtenerDatosVariableGeneral,
   obtenerMaquina,
@@ -287,7 +342,6 @@ async function dateApplied(date1, date2) {
     const element = autoManual[1].data[index];
     estado[1].data.push(element);
   }
-  series.value = estado;
   cargado1.value = true;
   marcha = await obtenerDatosVariableGeneral(
     "historico",
@@ -300,6 +354,14 @@ async function dateApplied(date1, date2) {
     inicio.value,
     fin.value
   );
+  for (let index = 0; index < marcha[0].data.length; index++) {
+    const element = marcha[0].data[index];
+    estado[0].data.push(element);
+  }
+  for (let index = 0; index < marcha[1].data.length; index++) {
+    const element = marcha[1].data[index];
+    estado[1].data.push(element);
+  }
   funcMaquina = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -320,7 +382,33 @@ async function dateApplied(date1, date2) {
     }
     marcha[1].data.push(element);
   }
-  series2.value = marcha;
+  series.value = estado;
+  cargado1.value = true;
+  let agitadores = await obtenerDatosVariableGeneral(
+    "historico",
+    "registros",
+    "individual",
+    "formatoRangos",
+    [2, 3, 4, 5, 6],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
+  );
+  series2.value = agitadores;
+  let otros = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "individual",
+    "formatoRangos",
+    [20, 21, 22, 23, 24],
+    props.maquina,
+    routerStore().clienteID,
+    null,
+    null,
+    ["", "Aviso"]
+  );
+  series3.value = otros;
   cargado2.value = true;
   dosis = await obtenerDatosVariableGeneral(
     "historico",
@@ -374,15 +462,6 @@ async function dateApplied(date1, date2) {
     inicio.value,
     fin.value
   );
-  let total = [];
-  for (let index = 0; index < totales.length; index++) {
-    const element = totales[index];
-    total.push({
-      id: index,
-      nombre: element.nombreCorto + "( " + element.unidadMedida + " )",
-      total: Math.max(0, element.registros[0].total).round(3),
-    });
-  }
   if (deccodos.value) {
     let totalFruta = await obtenerDatosVariableGeneral(
       "historico",
@@ -395,11 +474,6 @@ async function dateApplied(date1, date2) {
       inicio.value,
       fin.value
     );
-    total.push({
-      id: total.length,
-      nombre: totalFruta[0].nombreCorto + "(  T  )",
-      total: Math.max(0, totalFruta[0].registros[0].total / 1000).toFixed(3),
-    });
     kilos = await obtenerDatosVariableGeneral(
       "historico",
       "registros",
@@ -411,21 +485,56 @@ async function dateApplied(date1, date2) {
       inicio.value,
       fin.value
     );
+    let kilosM = await obtenerDatosVariableGeneral(
+      "historico",
+      "registros",
+      "individual",
+      "unidadTiempo",
+      [48],
+      deccodos.value,
+      routerStore().clienteID,
+      inicio.value,
+      fin.value,
+      "Kg/min"
+    );
+    kilos.push(...kilosM);
     seriesL4.value = kilos;
-    consumosFruta.value = [];
+    consumos.value = [];
     for (let index = 0; index < totales.length; index++) {
       const element = totales[index];
       let n = Math.max(0, element.registros[0].total);
       let d =
         totalFruta[0].registros[0].total > 0
-          ? (n / (totalFruta[0].registros[0].total / 1000)).toFixed(3)
+          ? (n / (totalFruta[0].registros[0].total / 1000)).toLocaleString(
+              "es-ES"
+            )
           : 0;
-      consumosFruta.value.push({
-        id: index,
-        name: d,
+      consumos.value.push({
+        id: element.descripcion + index,
+        nombre: element.descripcion,
+        total: Math.max(0, element.registros[0].total).toLocaleString("es-ES"),
+        totalPorToneladaFruta: d,
       });
     }
-    cargado4.value = true;
+    consumos.value.push({
+      id: totalFruta[0].nombreCorto + consumos.value.length,
+      nombre: totalFruta[0].nombreCorto + "( T )",
+      total: Math.max(
+        0,
+        totalFruta[0].registros[0].total / 1000
+      ).toLocaleString("es-ES"),
+    });
+    cargado6.value = true;
+  } else {
+    consumos.value = [];
+    for (let index = 0; index < totales.length; index++) {
+      const element = totales[index];
+      consumos.value.push({
+        id: index,
+        nombre: element.descripcion,
+        total: Math.max(0, element.registros[0].total).toLocaleString("es-ES"),
+      });
+    }
   }
   let marchat = await obtenerDatosVariableGeneral(
     "historico",
@@ -438,12 +547,6 @@ async function dateApplied(date1, date2) {
     inicio.value,
     fin.value
   );
-  total.push({
-    id: total.length,
-    nombre: "Marcha ( min )",
-    total: Math.max(0, marchat.total).toFixed(0),
-  });
-  consumos.value = total;
   cargado7.value = true;
   alarma = await obtenerDatosVariableGeneral(
     "historico",
@@ -460,11 +563,16 @@ async function dateApplied(date1, date2) {
   for (let index = 0; index < alarma.length; index++) {
     const element = alarma[index];
     totalA.push({
-      id: index,
-      nombre: element.nombreCorto + "( min )",
+      id: element.nombreCorto + index,
+      nombre: element.nombreCorto,
       total: Math.max(0, Math.round(element.registros.total1 / 60)),
     });
   }
+  totalA.push({
+    id: "Marcha" + totalA.length,
+    nombre: "Marcha",
+    total: Math.max(0, marchat.total).toFixed(0),
+  });
   alarmas.value = totalA;
   cargado8.value = true;
   cargado.value = true;
@@ -479,6 +587,15 @@ let cargado5 = ref(false);
 let cargado6 = ref(false);
 let cargado7 = ref(false);
 let cargado8 = ref(false);
+let cargado9 = ref(false);
+
+let mostrar = ref(true);
+let mostrarBombas = ref(true);
+let mostrarCajas = ref(false);
+let mostrarCpC = ref(false);
+let mostrarOtros = ref(true);
+let mostrarKilos = ref(true);
+let mostrarDosis = ref(true);
 
 const chartRef = ref(null);
 const chartRef2 = ref(null);
@@ -490,6 +607,7 @@ const chartRef7 = ref(null);
 const chartRef8 = ref(null);
 let series = ref([]);
 let series2 = ref([]);
+let series3 = ref([]);
 let seriesL = ref([]);
 let seriesL2 = ref([]);
 let seriesL3 = ref([]);
@@ -512,9 +630,11 @@ let dateInput = {
   placeholder: "Seleccionar fechas",
   inputClass: "selectdates",
 };
-let chartOptions = computed(() => {
+let chartOptions = (id) => {
   return {
     chart: {
+      id: id,
+      // group: "historico",
       locales: [es],
       defaultLocale: "es",
       animations: { enabled: false },
@@ -532,7 +652,7 @@ let chartOptions = computed(() => {
         rotate: -45,
         minHeight: 125,
         rotateAlways: true,
-        formatter: function (value, timestamp) {
+        formatter: function (value) {
           return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
         },
       },
@@ -556,59 +676,233 @@ let chartOptions = computed(() => {
       showForSingleSeries: true,
     },
   };
-});
+};
+let chartOptionsKilos = {
+  chart: {
+    id: "Kilos" + props.maquina + props.linea,
+    // group: "historico",
+    locales: [es],
+    defaultLocale: "es",
+    animations: { enabled: false },
+    zoom: {
+      type: "xy",
+      autoScaleYaxis: true,
+    },
+  },
+  xaxis: {
+    type: "datetime",
+    datetimeUTC: false,
+    tickAmount: 25,
+    labels: {
+      minHeight: 125,
+      rotate: -45,
+      rotateAlways: true,
+      formatter: function (value, timestamp) {
+        return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
+      },
+    },
+  },
+  yaxis: [
+    {
+      axisTicks: {
+        show: true,
+      },
+      axisBorder: {
+        show: true,
+      },
 
-let rangeOptions = computed(() => {
-  return {
-    chart: {
-      type: "rangeBar",
-      locales: [es],
-      defaultLocale: "es",
-      animations: { enabled: false },
-    },
-    colors: [
-      function ({ value, seriesIndex, w }) {
-        if (seriesIndex == 0) {
-          return "#d50000";
-        } else {
-          return "#00c853";
-        }
-      },
-    ],
-    plotOptions: {
-      bar: {
-        horizontal: true,
-        rangeBarGroupRows: true,
-      },
-    },
-    xaxis: {
-      type: "datetime",
-      datetimeUTC: false,
-      tickAmount: 25,
-      labels: {
-        minHeight: 125,
-        rotate: -45,
-        rotateAlways: true,
-        formatter: function (value, timestamp) {
-          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
-        },
-      },
-    },
-    yaxis: {
       labels: {
         minWidth: 60,
       },
     },
-    tooltip: {
-      x: {
-        format: "dd/MM/yyyy HH:mm:ss",
+    {
+      opposite: true,
+      axisTicks: {
+        show: true,
+      },
+      axisBorder: {
+        show: true,
       },
     },
-    legend: {
-      showForSingleSeries: true,
+  ],
+  stroke: {
+    width: 1.9,
+  },
+  legend: {
+    showForSingleSeries: true,
+  },
+};
+let rangeOptions = {
+  chart: {
+    id: "estado" + props.maquina + props.linea,
+    // group: "historico",
+    type: "rangeBar",
+    locales: [es],
+    defaultLocale: "es",
+    animations: { enabled: false },
+  },
+  colors: [
+    function ({ seriesIndex }) {
+      if (seriesIndex == 0) {
+        return "#d50000";
+      } else {
+        return "#00c853";
+      }
     },
-  };
-});
+  ],
+  plotOptions: {
+    bar: {
+      horizontal: true,
+      rangeBarGroupRows: true,
+    },
+  },
+  xaxis: {
+    type: "datetime",
+    datetimeUTC: false,
+    tickAmount: 25,
+    categories: [
+      "Activo",
+      "MarchaParo",
+      "Remoto",
+      "Manual",
+      "Falta de consenso",
+      "Alarma",
+      "Presencia Fruta",
+    ],
+    labels: {
+      minHeight: 125,
+      rotate: -45,
+      rotateAlways: true,
+      formatter: function (value) {
+        return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
+      },
+    },
+  },
+  yaxis: {
+    labels: {
+      minWidth: 60,
+    },
+  },
+  tooltip: {
+    x: {
+      format: "dd/MM/yyyy HH:mm:ss",
+    },
+    y: {
+      title: {
+        formatter: (seriesName) => "",
+      },
+    },
+  },
+  legend: {
+    show: false,
+  },
+};
+let rangeOptions2 = {
+  chart: {
+    id: "otrosEstado" + props.maquina + props.linea,
+    // group: "historico",
+    type: "rangeBar",
+    locales: [es],
+    defaultLocale: "es",
+    animations: { enabled: false },
+  },
+  colors: [
+    function ({ seriesIndex }) {
+      if (seriesIndex == 0) {
+        return "#d50000";
+      } else {
+        return "#00c853";
+      }
+    },
+  ],
+  plotOptions: {
+    bar: {
+      horizontal: true,
+      rangeBarGroupRows: true,
+    },
+  },
+  xaxis: {
+    type: "datetime",
+    datetimeUTC: false,
+    tickAmount: 25,
+    labels: {
+      minHeight: 125,
+      rotate: -45,
+      rotateAlways: true,
+      formatter: function (value) {
+        return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
+      },
+    },
+  },
+  yaxis: {
+    labels: {
+      minWidth: 60,
+    },
+  },
+  tooltip: {
+    x: {
+      format: "dd/MM/yyyy HH:mm:ss",
+    },
+    y: {
+      title: {
+        formatter: (seriesName) => "",
+      },
+    },
+  },
+};
+let rangeOptions3 = {
+  chart: {
+    id: "otrosEstado" + props.maquina + props.linea,
+    // group: "historico",
+    type: "rangeBar",
+    locales: [es],
+    defaultLocale: "es",
+    animations: { enabled: false },
+  },
+  colors: [
+    function ({ seriesIndex }) {
+      if (seriesIndex == 1) {
+        return "#d50000";
+      } else {
+        return "#00c853";
+      }
+    },
+  ],
+  plotOptions: {
+    bar: {
+      horizontal: true,
+      rangeBarGroupRows: true,
+    },
+  },
+  xaxis: {
+    type: "datetime",
+    datetimeUTC: false,
+    tickAmount: 25,
+    labels: {
+      minHeight: 125,
+      rotate: -45,
+      rotateAlways: true,
+      formatter: function (value) {
+        return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
+      },
+    },
+  },
+  yaxis: {
+    labels: {
+      minWidth: 60,
+    },
+  },
+  tooltip: {
+    x: {
+      format: "dd/MM/yyyy HH:mm:ss",
+    },
+    y: {
+      title: {
+        formatter: (seriesName) => "",
+      },
+    },
+  },
+};
 let estado = {};
 let marcha = {};
 let funcMaquina = {};
@@ -644,9 +938,7 @@ onMounted(async () => {
     const element = autoManual[1].data[index];
     estado[1].data.push(element);
   }
-  series.value = estado;
   cargado1.value = true;
-  cargado2.value = false;
   marcha = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -656,6 +948,14 @@ onMounted(async () => {
     props.maquina,
     routerStore().clienteID
   );
+  for (let index = 0; index < marcha[0].data.length; index++) {
+    const element = marcha[0].data[index];
+    estado[0].data.push(element);
+  }
+  for (let index = 0; index < marcha[1].data.length; index++) {
+    const element = marcha[1].data[index];
+    estado[1].data.push(element);
+  }
   funcMaquina = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -672,10 +972,37 @@ onMounted(async () => {
     } else {
       element.fillColor = "#3949ab";
     }
-    marcha[1].data.push(element);
+    estado[1].data.push(element);
   }
-  series2.value = marcha;
+  series.value = estado;
+  cargado1.value = true;
+  cargado2.value = false;
+  let agitadores = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "individual",
+    "formatoRangos",
+    [2, 3, 4, 5, 6],
+    props.maquina,
+    routerStore().clienteID
+  );
+  series2.value = agitadores;
   cargado2.value = true;
+  cargado9.value = false;
+  let otros = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "individual",
+    "formatoRangos",
+    [20, 21, 22, 23, 24],
+    props.maquina,
+    routerStore().clienteID,
+    null,
+    null,
+    ["", "Aviso"]
+  );
+  series3.value = otros;
+  cargado9.value = true;
   cargado3.value = false;
   dosis = await obtenerDatosVariableGeneral(
     "24H",
@@ -688,32 +1015,6 @@ onMounted(async () => {
   );
   seriesL.value = dosis;
   cargado3.value = true;
-
-  cargado5.value = false;
-  cajas = await obtenerDatosVariableGeneral(
-    "24H",
-    "registros",
-    "individual",
-    "unidadTiempo",
-    [18],
-    props.maquina,
-    routerStore().clienteID,
-    "Cajas/Min"
-  );
-  seriesL3.value = cajas;
-  cargado5.value = true;
-  cargado6.value = false;
-  cporu = await obtenerDatosVariableGeneral(
-    "24H",
-    "registros",
-    "individual",
-    "formatoLinea",
-    [16, 17],
-    props.maquina,
-    routerStore().clienteID
-  );
-  seriesL2.value = cporu;
-  cargado6.value = true;
   cargado7.value = false;
   totales = await obtenerDatosVariableGeneral(
     "24H",
@@ -724,15 +1025,33 @@ onMounted(async () => {
     props.maquina,
     routerStore().clienteID
   );
-  for (let index = 0; index < totales.length; index++) {
-    const element = totales[index];
-    consumos.value.push({
-      id: index,
-      nombre: element.nombreCorto + "( " + element.unidadMedida + " )",
-      total: Math.max(0, element.registros[0].total).toFixed(3),
-    });
-  }
   if (deccodos.value) {
+    cargado5.value = false;
+    cajas = await obtenerDatosVariableGeneral(
+      "24H",
+      "registros",
+      "individual",
+      "unidadTiempo",
+      [47],
+      deccodos.value,
+      routerStore().clienteID,
+      null,
+      null,
+      "Cajas/Min"
+    );
+    seriesL3.value = cajas;
+    cargado5.value = true;
+    cporu = await obtenerDatosVariableGeneral(
+      "24H",
+      "registros",
+      "individual",
+      "formatoLinea",
+      [45, 46],
+      deccodos.value,
+      routerStore().clienteID
+    );
+    seriesL2.value = cporu;
+    cargado4.value = true;
     let totalFruta = await obtenerDatosVariableGeneral(
       "24H",
       "totales",
@@ -742,24 +1061,6 @@ onMounted(async () => {
       deccodos.value,
       routerStore().clienteID
     );
-    for (let index = 0; index < totales.length; index++) {
-      const element = totales[index];
-      let n = Math.max(0, element.registros[0].total);
-      let d =
-        totalFruta[0].registros[0].total > 0
-          ? (n / (totalFruta[0].registros[0].total / 1000)).toFixed(3)
-          : 0;
-      consumosFruta.value.push({
-        id: index,
-        name: d,
-      });
-    }
-    consumos.value.push({
-      id: consumos.value.length,
-      nombre: totalFruta[0].nombreCorto + "(  T  )",
-      total: Math.max(0, totalFruta[0].registros[0].total / 1000).toFixed(3),
-    });
-    cargado4.value = false;
     kilos = await obtenerDatosVariableGeneral(
       "24H",
       "registros",
@@ -769,8 +1070,54 @@ onMounted(async () => {
       deccodos.value,
       routerStore().clienteID
     );
+    let kilosM = await obtenerDatosVariableGeneral(
+      "24H",
+      "registros",
+      "individual",
+      "unidadTiempo",
+      [48],
+      deccodos.value,
+      routerStore().clienteID,
+      null,
+      null,
+      "Kg/min"
+    );
+    kilos.push(...kilosM);
     seriesL4.value = kilos;
-    cargado4.value = true;
+    for (let index = 0; index < totales.length; index++) {
+      const element = totales[index];
+      let n = Math.max(0, element.registros[0].total);
+      let d =
+        totalFruta[0].registros[0].total > 0
+          ? (n / (totalFruta[0].registros[0].total / 1000)).toLocaleString(
+              "es-ES"
+            )
+          : 0;
+      consumos.value.push({
+        id: element.descripcion + index,
+        nombre: element.descripcion,
+        total: Math.max(0, element.registros[0].total).toLocaleString("es-ES"),
+        totalPorToneladaFruta: d,
+      });
+    }
+    consumos.value.push({
+      id: totalFruta[0].nombreCorto + consumos.value.length,
+      nombre: totalFruta[0].nombreCorto,
+      total: Math.max(
+        0,
+        totalFruta[0].registros[0].total / 1000
+      ).toLocaleString("es-ES"),
+    });
+    cargado6.value = true;
+  } else {
+    for (let index = 0; index < totales.length; index++) {
+      const element = totales[index];
+      consumos.value.push({
+        id: element.descripcion + index,
+        nombre: element.descripcion,
+        total: Math.max(0, element.registros[0].total).toLocaleString("es-ES"),
+      });
+    }
   }
   let horasMarcha = await obtenerDatosVariableGeneral(
     "24H",
@@ -800,11 +1147,16 @@ onMounted(async () => {
   for (let index = 0; index < alarma.length; index++) {
     const element = alarma[index];
     alarmas.value.push({
-      id: index,
-      nombre: element.nombreCorto + "( min )",
+      id: element.nombreCorto + index,
+      nombre: element.nombreCorto,
       total: Math.max(0, Math.round(element.registros.total1 / 60)),
     });
   }
+  alarmas.value.push({
+    id: "Marcha" + consumos.value.length,
+    nombre: "Marcha",
+    name: Math.max(0, Math.round(horasMarcha.total / 60)),
+  });
   cargado8.value = true;
 
   cargado.value = true;
@@ -819,6 +1171,60 @@ onUnmounted(() => {
   consumos.value = [];
   alarmas.value = [];
 });
+async function toExcel() {
+  let dosisA = [];
+  const wb = utils.book_new();
+  for (let index = 0; index < seriesL.value.length; index++) {
+    const element = seriesL.value[index];
+    dosisA = element.data.map((e) => {
+      return {
+        fecha: moment(e.x).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"),
+        valor: e.y,
+      };
+    });
+    let ws = utils.json_to_sheet(dosisA);
+    utils.book_append_sheet(wb, ws, "Dosis" + index);
+  }
+  let kilosA = [];
+  kilosA = seriesL4.value[0].data.map((e) => {
+    return {
+      fecha: moment(e.x).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"),
+      valor: e.y,
+    };
+  });
+  let wsk = utils.json_to_sheet(kilosA);
+  utils.book_append_sheet(wb, wsk, "Kilos");
+  kilosA = seriesL4.value[1].data.map((e) => {
+    return {
+      fecha: moment(e.x).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"),
+      valor: e.y,
+    };
+  });
+  let ws = utils.json_to_sheet(kilosA);
+  utils.book_append_sheet(wb, ws, "Kg-min");
+  let alarmasA = alarmas.value;
+  // const ws2 = utils.json_to_sheet(kilosA);
+  // utils.book_append_sheet(wb, ws2, "Fruta");
+  let consumosA = [];
+  consumosA = consumos.value.map((e) => {
+    return {
+      nombre: e.nombre,
+      total: e.total,
+      totalPorToneladaFruta: e.totalPorToneladaFruta,
+    };
+  });
+  const ws3 = utils.json_to_sheet(consumosA);
+  utils.book_append_sheet(wb, ws3, "Consumos");
+  alarmasA = alarmas.value.map((e) => {
+    return {
+      nombre: e.nombre,
+      total: e.name,
+    };
+  });
+  const ws4 = utils.json_to_sheet(alarmasA);
+  utils.book_append_sheet(wb, ws4, "Alarmas");
+  writeFileXLSX(wb, "DECCODAF" + inicio.value + "-" + fin.value + ".xlsx");
+}
 </script>
 <style>
 .vdpr-datepicker .selectdates {

@@ -1174,7 +1174,8 @@ async function toExcel() {
       };
     });
     let ws = utils.json_to_sheet(dosisA);
-    utils.book_append_sheet(wb, ws, "Dosis" + index);
+    let name = seriesL.value[index].name.replace("/", "-");
+    utils.book_append_sheet(wb, ws, name);
   }
   let kilosA = [];
   kilosA = seriesL4.value[0].data.map((e) => {
