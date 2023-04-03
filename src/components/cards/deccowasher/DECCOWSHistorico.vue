@@ -570,7 +570,7 @@ async function dateApplied(date1, date2) {
   }
   totalA.push({
     id: "Marcha" + totalA.length,
-    nombre: "Marcha ( min )",
+    nombre: "Marcha",
     total: Math.max(0, marchat.total).toFixed(0),
   });
   alarmas.value = totalA;
@@ -1145,7 +1145,7 @@ onMounted(async () => {
   }
   alarmas.value.push({
     id: "Marcha" + consumos.value.length,
-    nombre: "Marcha ( min )",
+    nombre: "Marcha",
     name: Math.max(0, Math.round(horasMarcha.total / 60)),
   });
   cargado8.value = true;
@@ -1194,8 +1194,8 @@ async function toExcel() {
   let ws = utils.json_to_sheet(kilosA);
   utils.book_append_sheet(wb, ws, "Kg-min");
   let alarmasA = alarmas.value;
-  const ws2 = utils.json_to_sheet(kilosA);
-  utils.book_append_sheet(wb, ws2, "Fruta");
+  // const ws2 = utils.json_to_sheet(kilosA);
+  // utils.book_append_sheet(wb, ws2, "Fruta");
   let consumosA = [];
   consumosA = consumos.value.map((e) => {
     return {
