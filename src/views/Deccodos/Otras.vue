@@ -3,9 +3,9 @@
     <v-row>
       <v-col>
         <GraficaEstadoCard
-          :variables="[44, 81]"
-          :height="300"
-          title="Activacion limpieza cepillos y presencia de fruta"
+          :variables="[44]"
+          :height="200"
+          title="Activacion limpieza cepillos"
           :tipo="2"
         />
         <CajasComun :caja1="45" :caja2="46" :total="47" :tipo="2" />

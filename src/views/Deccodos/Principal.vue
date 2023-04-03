@@ -74,37 +74,46 @@
           {{ mensaje }}</v-snackbar
         >
         <SeleccionarProducto v-if="productos" />
-        <TablaTotalTurnos
-          v-if="turnos && turnosA.length > 1"
-          :variables="[49, 50, 51, 52, 53, 54, 55]"
-          :modo="[13, 15]"
-          :tipo="2"
-        />
-        <TablaTotal
-          v-else
-          :variables="[49, 50, 51, 52, 53, 54, 55]"
-          :marcha="[31, 40, 42]"
-          :tipo="2"
-        />
-        <TablaAlarmasTurnos
-          v-if="turnos && turnosA.length > 1"
-          :variables="[40, 42]"
-          :marcha="[31, 40, 42]"
-          :tipo="2"
-        />
-        <TablaAlarmas
-          v-else
-          :variables="[40, 42]"
-          :marcha="[31, 40, 42]"
-          :tipo="2"
-        />
-
+        <v-row
+          ><v-col>
+            <TablaTotalTurnos
+              v-if="turnos && turnosA.length > 1"
+              :variables="[49, 50, 51, 52, 53, 54, 55]"
+              :modo="[13, 15]"
+              :tipo="2" />
+            <TablaTotal
+              v-else
+              :variables="[49, 50, 51, 52, 53, 54, 55]"
+              :marcha="[31, 40, 42]"
+              :tipo="2" /></v-col
+          ><v-col>
+            <TablaAlarmasTurnos
+              v-if="turnos && turnosA.length > 1"
+              :variables="[40, 42]"
+              :marcha="[31, 40, 42]"
+              :tipo="2" />
+            <TablaAlarmas
+              v-else
+              :variables="[40, 42]"
+              :marcha="[31, 40, 42]"
+              :tipo="2"
+          /></v-col>
+        </v-row>
         <Estado
           :activo="31"
           :auto-manual="[41, 43]"
           :marcha="[31, 40, 42]"
           :alarma="[40, 42, 81]"
           :tipo="2"
+          :categories="[
+            'Activo',
+            'MarchaParo',
+            'Remoto',
+            'Manual',
+            'Falta de consenso',
+            'Alarma',
+            'Presencia Fruta',
+          ]"
         />
         <Dosis
           :variables="[32, 33, 34, 35, 36, 37, 38, 39]"

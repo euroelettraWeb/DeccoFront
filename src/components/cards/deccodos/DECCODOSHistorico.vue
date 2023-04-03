@@ -75,94 +75,145 @@
                   indeterminate
                 ></v-progress-circular> </v-col
             ></v-row>
-            <v-col v-if="cargado1">
-              <ApexChart
-                ref="chartRef"
-                type="rangeBar"
-                height="300"
-                :options="rangeOptions"
-                :series="series"
-            /></v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
-            <v-col v-if="cargado3">
-              <ApexChart
-                ref="chartRef4"
-                type="line"
-                height="300"
-                :options="chartOptions('dosis' + props.maquina + props.linea)"
-                :series="seriesL"
-            /></v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
-            <v-col v-if="cargado4">
-              <ApexChart
-                ref="chartRef5"
-                type="line"
-                height="350"
-                :options="chartOptionsKilos"
-                :series="seriesL4"
-            /></v-col>
-            <v-col v-if="cargado2">
-              <ApexChart
-                ref="chartRef2"
-                type="rangeBar"
-                height="200"
-                :options="rangeOptions2"
-                :series="series2"
-            /></v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
-            <v-col v-if="cargado5">
-              <ApexChart
-                ref="chartRef6"
-                type="line"
-                height="300"
-                :options="chartOptions('pcajas' + props.maquina + props.linea)"
-                :series="seriesL2"
-            /></v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
-            <v-col v-if="cargado6">
-              <ApexChart
-                ref="chartRef7"
-                type="line"
-                height="300"
-                :options="chartOptions('tcajas' + props.maquina + props.linea)"
-                :series="seriesL3"
-            /></v-col>
-            <v-col v-else class="d-flex justify-center align-center">
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </v-col>
+            <v-switch v-model="mostrar" color="info" label="Estado">
+              Estado
+            </v-switch>
+            <div v-if="mostrar">
+              <v-col v-if="cargado1">
+                <ApexChart
+                  ref="chartRef"
+                  type="rangeBar"
+                  height="300"
+                  :options="rangeOptions"
+                  :series="series"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+            </div>
+            <v-switch v-model="mostrarDosis" color="info" label="Dosis">
+              Dosis
+            </v-switch>
+            <div v-if="mostrarDosis">
+              <v-col v-if="cargado3">
+                <ApexChart
+                  ref="chartRef4"
+                  type="line"
+                  height="300"
+                  :options="chartOptions('dosis' + props.maquina + props.linea)"
+                  :series="seriesL"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+            </div>
+            <v-switch v-model="mostrarKilos" color="info" label="Kilos">
+              Kilos
+            </v-switch>
+            <div v-if="mostrarKilos">
+              <v-col v-if="cargado4">
+                <ApexChart
+                  ref="chartRef5"
+                  type="line"
+                  height="350"
+                  :options="chartOptionsKilos"
+                  :series="seriesL4"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+            </div>
+            <v-switch
+              v-model="mostrarOtros"
+              color="info"
+              label="Limpieza de cepillos"
+            >
+              Limpieza de cepillos
+            </v-switch>
+
+            <div v-if="mostrarOtros">
+              <v-col v-if="cargado2">
+                <ApexChart
+                  ref="chartRef2"
+                  type="rangeBar"
+                  height="200"
+                  :options="rangeOptions2"
+                  :series="series2"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+            </div>
+            <v-switch
+              v-model="mostrarCpC"
+              color="info"
+              label="Cajas por Ciclo y Peso por Caja"
+            >
+              Cajas por Ciclo y Peso por Caja
+            </v-switch>
+            <div v-if="mostrarCpC">
+              <v-col v-if="cargado5">
+                <ApexChart
+                  ref="chartRef6"
+                  type="line"
+                  height="300"
+                  :options="
+                    chartOptions('pcajas' + props.maquina + props.linea)
+                  "
+                  :series="seriesL2"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+            </div>
+            <v-switch v-model="mostrarCajas" color="info" label="Cajas/Min">
+              Cajas/Min
+            </v-switch>
+            <div v-if="mostrarCajas">
+              <v-col v-if="cargado6">
+                <ApexChart
+                  ref="chartRef7"
+                  type="line"
+                  height="300"
+                  :options="
+                    chartOptions('tcajas' + props.maquina + props.linea)
+                  "
+                  :series="seriesL3"
+              /></v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular>
+              </v-col>
+            </div>
           </v-col>
         </v-row>
       </v-card>
@@ -393,19 +444,23 @@ async function dateApplied(date1, date2) {
     let n = Math.max(0, element.registros[0].total);
     let d =
       totalFruta[0].registros[0].total > 0
-        ? (n / (totalFruta[0].registros[0].total / 1000)).toFixed(3)
+        ? (n / (totalFruta[0].registros[0].total / 1000)).toLocaleString(
+            "es-ES"
+          )
         : 0;
     consumos.value.push({
       id: index,
       nombre: element.descripcion,
-      total: Math.max(0, element.registros[0].total).toFixed(3),
+      total: Math.max(0, element.registros[0].total).toLocaleString("es-ES"),
       totalFruta: d,
     });
   }
   consumos.value.push({
     id: consumos.value.length,
     nombre: totalFruta[0].nombreCorto + "( T )",
-    total: Math.max(0, totalFruta[0].registros[0].total / 1000).toFixed(3),
+    total: Math.max(0, totalFruta[0].registros[0].total / 1000).toLocaleString(
+      "es-ES"
+    ),
   });
   let marchat = await obtenerDatosVariableGeneral(
     "historico",
@@ -435,13 +490,13 @@ async function dateApplied(date1, date2) {
     const element = alarma[index];
     totalA.push({
       id: index,
-      nombre: element.nombreCorto + "( min )",
+      nombre: element.nombreCorto,
       name: Math.max(0, Math.round(element.registros.total1 / 60)),
     });
   }
   totalA.push({
     id: "Marcha" + totalA.length,
-    nombre: "Marcha ( min )",
+    nombre: "Marcha",
     total: Math.max(0, marchat.total).toFixed(0),
   });
   alarmas.value = totalA;
@@ -458,6 +513,13 @@ let cargado5 = ref(false);
 let cargado6 = ref(false);
 let cargado7 = ref(false);
 let cargado8 = ref(false);
+
+let mostrar = ref(true);
+let mostrarCajas = ref(false);
+let mostrarCpC = ref(false);
+let mostrarOtros = ref(true);
+let mostrarKilos = ref(true);
+let mostrarDosis = ref(true);
 
 const chartRef = ref(null);
 const chartRef2 = ref(null);
@@ -884,19 +946,23 @@ onMounted(async () => {
     let n = Math.max(0, element.registros[0].total);
     let d =
       totalFruta[0].registros[0].total > 0
-        ? (n / (totalFruta[0].registros[0].total / 1000)).toFixed(3)
+        ? (n / (totalFruta[0].registros[0].total / 1000)).toLocaleString(
+            "es-ES"
+          )
         : 0;
     consumos.value.push({
       id: element.descripcion + index,
       nombre: element.descripcion,
-      total: Math.max(0, element.registros[0].total).toFixed(3),
+      total: Math.max(0, element.registros[0].total).toLocaleString("es-ES"),
       totalFruta: d,
     });
   }
   consumos.value.push({
     id: consumos.value.length,
     nombre: totalFruta[0].nombreCorto,
-    total: Math.max(0, totalFruta[0].registros[0].total / 1000).toFixed(3),
+    total: Math.max(0, totalFruta[0].registros[0].total / 1000).toLocaleString(
+      "es-ES"
+    ),
   });
   let horasMarcha = await obtenerDatosVariableGeneral(
     "24H",
@@ -922,13 +988,13 @@ onMounted(async () => {
     const element = alarma[index];
     alarmas.value.push({
       id: index,
-      nombre: element.nombreCorto + "( min )",
+      nombre: element.nombreCorto,
       name: Math.max(0, Math.round(element.registros.total1 / 60)),
     });
   }
   alarmas.value.push({
     id: consumos.value.length,
-    nombre: "Marcha ( min )",
+    nombre: "Marcha",
     name: Math.max(0, Math.round(horasMarcha.total / 60)),
   });
   cargado8.value = true;
