@@ -7,6 +7,7 @@
           :height="200"
           title="Activacion limpieza cepillos"
           :tipo="2"
+          :categories="['Limpieza Cepillos']"
         />
         <CajasComun :caja1="45" :caja2="46" :total="47" :tipo="2" />
       </v-col>

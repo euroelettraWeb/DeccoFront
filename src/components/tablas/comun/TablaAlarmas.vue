@@ -2,7 +2,7 @@
   <v-card>
     <v-row>
       <v-col v-if="cargado">
-        <v-card-title>Alarmas Hoy</v-card-title>
+        <v-card-title>Motivos de paro</v-card-title>
         <v-row>
           <v-col>
             <v-simple-table dense>

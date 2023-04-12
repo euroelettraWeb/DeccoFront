@@ -1,120 +1,135 @@
 <template>
   <v-container fluid>
-    <v-row no-gutters>
+    <v-row>
       <v-col>
         <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
         <TablaTurnos v-if="turnos" :tipo="1" />
-        <v-container>
-          <v-card>
-            <v-row no-gutters>
-              <v-col v-if="cargado">
-                <v-row>
-                  <v-col>
-                    <v-card-title>Productos</v-card-title>
-                  </v-col>
-                </v-row>
-                <v-row class="mx-2" no-gutters>
-                  <v-col>
-                    <v-simple-table dense>
-                      <template #default>
-                        <thead>
-                          <tr>
-                            <th class="text-left">Producto 1</th>
-                            <th class="text-left">Producto 2</th>
-                            <th class="text-left">Producto 3</th>
-                            <th class="text-left">Producto 4</th>
-                            <th class="text-left">Producto 5</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>
-                              <v-text-field
-                                v-model="producto1"
-                                prepend-icon="mdi-bottle-tonic"
-                              ></v-text-field>
-                            </td>
-                            <td>
-                              <v-text-field
-                                v-model="producto2"
-                                prepend-icon="mdi-bottle-tonic"
-                              ></v-text-field>
-                            </td>
-                            <td>
-                              <v-text-field
-                                v-model="producto3"
-                                prepend-icon="mdi-bottle-tonic"
-                              ></v-text-field>
-                            </td>
-                            <td>
-                              <v-text-field
-                                v-model="producto4"
-                                prepend-icon="mdi-bottle-tonic"
-                              ></v-text-field>
-                            </td>
-                            <td>
-                              <v-text-field
-                                v-model="producto5"
-                                prepend-icon="mdi-bottle-tonic"
-                              ></v-text-field>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-simple-table>
-                  </v-col>
-                </v-row>
-                <v-row no-gutters>
-                  <v-col
-                    ><v-btn color="info" class="mx-4 mb-4" @click="save">
-                      <v-icon light> mdi-content-save </v-icon> Guardar
-                    </v-btn></v-col
-                  >
-                </v-row>
-              </v-col>
-              <v-col v-else class="d-flex justify-center align-center">
-                <v-progress-circular
-                  :size="100"
-                  :width="7"
-                  color="purple"
-                  indeterminate
-                ></v-progress-circular>
-              </v-col>
-            </v-row>
-          </v-card>
-          <v-snackbar v-model="guardado" :timeout="5000" color="primary">
-            {{ mensaje }}</v-snackbar
-          >
-        </v-container>
-        <TablaTotalTurnos
-          v-if="turnos && turnosA.length > 1"
-          :variables="[25, 26, 27, 28, 29, 30]"
-          :marcha="[1, 12, 14]"
-          :tipo="1"
-        />
-        <TablaTotal
-          v-else
-          :variables="[25, 26, 27, 28, 29, 30]"
-          :marcha="[1, 12, 14]"
-        />
-        <TablaAlarmasTurnos
-          v-if="turnos && turnosA.length > 1"
-          :variables="[12, 14, 73, 74, 75]"
-          :marcha="[1, 12, 14, 73, 74, 75]"
-          :tipo="1"
-        />
-        <TablaAlarmas
-          v-else
-          :variables="[12, 14, 73, 74, 75]"
-          :marcha="[1, 12, 14, 73, 74, 75]"
-          :tipo="1"
-        />
+        <v-card class="mb-4">
+          <v-row>
+            <v-col v-if="cargado">
+              <v-row>
+                <v-col>
+                  <v-card-title>Productos</v-card-title>
+                </v-col>
+              </v-row>
+              <v-row class="mx-2" no-gutters>
+                <v-col>
+                  <v-simple-table dense>
+                    <template #default>
+                      <thead>
+                        <tr>
+                          <th class="text-left">Producto 1</th>
+                          <th class="text-left">Producto 2</th>
+                          <th class="text-left">Producto 3</th>
+                          <th class="text-left">Producto 4</th>
+                          <th class="text-left">Producto 5</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <v-text-field
+                              v-model="producto1"
+                              prepend-icon="mdi-bottle-tonic"
+                            ></v-text-field>
+                          </td>
+                          <td>
+                            <v-text-field
+                              v-model="producto2"
+                              prepend-icon="mdi-bottle-tonic"
+                            ></v-text-field>
+                          </td>
+                          <td>
+                            <v-text-field
+                              v-model="producto3"
+                              prepend-icon="mdi-bottle-tonic"
+                            ></v-text-field>
+                          </td>
+                          <td>
+                            <v-text-field
+                              v-model="producto4"
+                              prepend-icon="mdi-bottle-tonic"
+                            ></v-text-field>
+                          </td>
+                          <td>
+                            <v-text-field
+                              v-model="producto5"
+                              prepend-icon="mdi-bottle-tonic"
+                            ></v-text-field>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </template>
+                  </v-simple-table>
+                </v-col>
+              </v-row>
+              <v-row no-gutters>
+                <v-col
+                  ><v-btn color="info" class="mx-4 mb-4" @click="save">
+                    <v-icon light> mdi-content-save </v-icon> Guardar
+                  </v-btn></v-col
+                >
+              </v-row>
+            </v-col>
+            <v-col v-else class="d-flex justify-center align-center">
+              <v-progress-circular
+                :size="100"
+                :width="7"
+                color="purple"
+                indeterminate
+              ></v-progress-circular>
+            </v-col>
+          </v-row>
+        </v-card>
+        <v-snackbar v-model="guardado" :timeout="5000" color="primary">
+          {{ mensaje }}</v-snackbar
+        >
+        <v-row>
+          <v-col>
+            <TablaTotalTurnos
+              v-if="turnos && turnosA.length > 1"
+              :variables="[25, 26, 27, 28, 29, 30]"
+              :marcha="[1, 12, 14]"
+              :tipo="1"
+            />
+            <TablaTotal
+              v-else
+              :variables="[25, 26, 27, 28, 29, 30]"
+              :marcha="[1, 12, 14]"
+            />
+          </v-col>
+          <v-col>
+            <TablaAlarmasTurnos
+              v-if="turnos && turnosA.length > 1"
+              :variables="[12, 14, 73, 74, 75]"
+              :marcha="[1, 12, 14, 73, 74, 75]"
+              :tipo="1"
+            />
+            <TablaAlarmas
+              v-else
+              :variables="[12, 14, 73, 74, 75]"
+              :marcha="[1, 12, 14, 73, 74, 75]"
+              :tipo="1"
+            />
+          </v-col>
+        </v-row>
         <Estado
           :activo="1"
           :auto-manual="[13, 15]"
           :marcha="[1, 12, 14, 73, 74, 75]"
           :alarma="[12, 14, 73, 74, 75]"
           :tipo="1"
+          :categories="[
+            'Activo',
+            'MarchaParo',
+            'Remoto',
+            'Manual',
+            'Falta de consenso',
+            'Falta Inicio Ciclo',
+            'Tope Palets Alcanzado',
+            'Termico Agitador',
+            'Fallo Agua	',
+          ]"
         />
         <Dosis
           title="Dosis de fungicida"
@@ -124,6 +139,7 @@
         <FrutaProcesadaComun :fruta="48" :tipo="2" />
         <v-btn
           color="info"
+          class="mt-2"
           @click="
             routerStore().menu(
               'deccodaf:Otras',

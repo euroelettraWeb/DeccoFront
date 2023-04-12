@@ -192,7 +192,7 @@
                   ref="chartRef2"
                   type="rangeBar"
                   height="300"
-                  :options="rangeOptions3"
+                  :options="rangeOptions2"
                   :series="series3"
               /></v-col>
               <v-col v-else class="d-flex justify-center align-center">
@@ -204,7 +204,7 @@
                 ></v-progress-circular>
               </v-col>
             </div>
-            <v-switch
+            <!-- <v-switch
               v-model="mostrarCpC"
               color="info"
               label="Cajas por Ciclo y Peso por Caja"
@@ -253,7 +253,7 @@
                   indeterminate
                 ></v-progress-circular>
               </v-col>
-            </div>
+            </div> -->
           </v-col>
         </v-row>
       </v-card>
@@ -374,13 +374,13 @@ async function dateApplied(date1, date2) {
     fin.value
   );
   for (let index = 0; index < funcMaquina[1].data.length; index++) {
-    let element = funcMaquina[1].data[index];
-    if (element.x == "Alarma") {
-      element.fillColor = "#fdd835";
-    } else {
+    const element = funcMaquina[1].data[index];
+    if (element.x == "Falta de consenso") {
       element.fillColor = "#3949ab";
+    } else {
+      element.fillColor = "#fdd835";
     }
-    marcha[1].data.push(element);
+    estado[1].data.push(element);
   }
   series.value = estado;
   cargado1.value = true;
@@ -406,7 +406,7 @@ async function dateApplied(date1, date2) {
     routerStore().clienteID,
     null,
     null,
-    ["", "Aviso"]
+    ["Aviso", ""]
   );
   series3.value = otros;
   cargado2.value = true;
@@ -424,33 +424,33 @@ async function dateApplied(date1, date2) {
   seriesL.value = dosis;
   cargado3.value = true;
 
-  cajas = await obtenerDatosVariableGeneral(
-    "historico",
-    "registros",
-    "individual",
-    "unidadTiempo",
-    [18],
-    props.maquina,
-    routerStore().clienteID,
-    inicio.value,
-    fin.value,
-    "Cajas/Min"
-  );
-  seriesL3.value = cajas;
-  cargado5.value = true;
-  cporu = await obtenerDatosVariableGeneral(
-    "historico",
-    "registros",
-    "individual",
-    "formatoLinea",
-    [16, 17],
-    props.maquina,
-    routerStore().clienteID,
-    inicio.value,
-    fin.value
-  );
-  seriesL2.value = cporu;
-  cargado6.value = true;
+  // cajas = await obtenerDatosVariableGeneral(
+  //   "historico",
+  //   "registros",
+  //   "individual",
+  //   "unidadTiempo",
+  //   [18],
+  //   props.maquina,
+  //   routerStore().clienteID,
+  //   inicio.value,
+  //   fin.value,
+  //   "Cajas/Min"
+  // );
+  // seriesL3.value = cajas;
+  // cargado5.value = true;
+  // cporu = await obtenerDatosVariableGeneral(
+  //   "historico",
+  //   "registros",
+  //   "individual",
+  //   "formatoLinea",
+  //   [16, 17],
+  //   props.maquina,
+  //   routerStore().clienteID,
+  //   inicio.value,
+  //   fin.value
+  // );
+  // seriesL2.value = cporu;
+  // cargado6.value = true;
   totales = await obtenerDatosVariableGeneral(
     "historico",
     "totales",
@@ -565,13 +565,13 @@ async function dateApplied(date1, date2) {
     totalA.push({
       id: element.nombreCorto + index,
       nombre: element.nombreCorto,
-      total: Math.max(0, Math.round(element.registros.total1 / 60)),
+      name: Math.max(0, Math.round(element.registros.total1 / 60)),
     });
   }
   totalA.push({
     id: "Marcha" + totalA.length,
     nombre: "Marcha",
-    total: Math.max(0, marchat.total).toFixed(0),
+    name: Math.max(0, marchat.total).toFixed(0),
   });
   alarmas.value = totalA;
   cargado8.value = true;
@@ -766,8 +766,10 @@ let rangeOptions = {
       "Remoto",
       "Manual",
       "Falta de consenso",
-      "Alarma",
-      "Presencia Fruta",
+      "Falta Inicio Ciclo",
+      "Tope Palets Alcanzado",
+      "Termico Agitador",
+      "Fallo Agua",
     ],
     labels: {
       minHeight: 125,
@@ -999,7 +1001,7 @@ onMounted(async () => {
     routerStore().clienteID,
     null,
     null,
-    ["", "Aviso"]
+    ["Aviso", ""]
   );
   series3.value = otros;
   cargado9.value = true;
@@ -1026,32 +1028,32 @@ onMounted(async () => {
     routerStore().clienteID
   );
   if (deccodos.value) {
-    cargado5.value = false;
-    cajas = await obtenerDatosVariableGeneral(
-      "24H",
-      "registros",
-      "individual",
-      "unidadTiempo",
-      [47],
-      deccodos.value,
-      routerStore().clienteID,
-      null,
-      null,
-      "Cajas/Min"
-    );
-    seriesL3.value = cajas;
-    cargado5.value = true;
-    cporu = await obtenerDatosVariableGeneral(
-      "24H",
-      "registros",
-      "individual",
-      "formatoLinea",
-      [45, 46],
-      deccodos.value,
-      routerStore().clienteID
-    );
-    seriesL2.value = cporu;
-    cargado4.value = true;
+    // cargado5.value = false;
+    // cajas = await obtenerDatosVariableGeneral(
+    //   "24H",
+    //   "registros",
+    //   "individual",
+    //   "unidadTiempo",
+    //   [47],
+    //   deccodos.value,
+    //   routerStore().clienteID,
+    //   null,
+    //   null,
+    //   "Cajas/Min"
+    // );
+    // seriesL3.value = cajas;
+    // cargado5.value = true;
+    // cporu = await obtenerDatosVariableGeneral(
+    //   "24H",
+    //   "registros",
+    //   "individual",
+    //   "formatoLinea",
+    //   [45, 46],
+    //   deccodos.value,
+    //   routerStore().clienteID
+    // );
+    // seriesL2.value = cporu;
+    // cargado4.value = true;
     let totalFruta = await obtenerDatosVariableGeneral(
       "24H",
       "totales",
@@ -1130,7 +1132,7 @@ onMounted(async () => {
   );
   consumos.value.push({
     id: consumos.value.length,
-    nombre: "Marcha ( min )",
+    nombre: "Marcha",
     total: Math.max(0, Math.round(horasMarcha.total / 60)),
   });
   cargado7.value = true;
@@ -1149,7 +1151,7 @@ onMounted(async () => {
     alarmas.value.push({
       id: element.nombreCorto + index,
       nombre: element.nombreCorto,
-      total: Math.max(0, Math.round(element.registros.total1 / 60)),
+      name: Math.max(0, Math.round(element.registros.total1 / 60)),
     });
   }
   alarmas.value.push({

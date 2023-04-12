@@ -123,6 +123,7 @@
         <FrutaProcesadaComun :fruta="48" :tipo="2" />
         <v-btn
           color="info"
+          class="mt-2"
           @click="
             routerStore().menu(
               'deccodos:Otras',

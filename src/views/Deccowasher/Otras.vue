@@ -8,6 +8,7 @@
           title="Estado de las bombas"
           :tipo="3"
           :estados="['Paro', 'Marcha']"
+          :categories="['Bomba Desinfectante', 'Bomba Jabon']"
         />
         <GraficaEstadoCard
           :variables="[84, 85, 86, 87]"
@@ -16,6 +17,12 @@
           :tipo="3"
           :colores="['#00c853', '#d50000']"
           :estados="['', 'Aviso']"
+          :categories="[
+            'Aviso Nivel Desinfectante',
+            'Aviso Nivel Jabon',
+            'Bidon Desinfectante Vacio',
+            'Bidon Jabon Vacio',
+          ]"
         />
         <CajasComun :caja1="45" :caja2="46" :total="47" :tipo="2" />
       </v-col>
