@@ -81,145 +81,51 @@
                   indeterminate
                 ></v-progress-circular> </v-col
             ></v-row>
-            <v-switch v-model="mostrar" color="info" label="Estado">
-              Estado
-            </v-switch>
-            <div v-if="mostrar">
-              <v-col v-if="cargado1">
-                <ApexChart
-                  ref="chartRef"
-                  type="rangeBar"
-                  height="300"
-                  :options="rangeOptions"
-                  :series="series"
-              /></v-col>
-              <v-col v-else class="d-flex justify-center align-center">
-                <v-progress-circular
-                  :size="100"
-                  :width="7"
-                  color="purple"
-                  indeterminate
-                ></v-progress-circular>
-              </v-col>
-            </div>
-            <v-switch v-model="mostrarDosis" color="info" label="Dosis">
-              Dosis
-            </v-switch>
-            <div v-if="mostrarDosis">
-              <v-col v-if="cargado3">
-                <ApexChart
-                  ref="chartRef4"
-                  type="line"
-                  height="300"
-                  :options="chartOptions('dosis' + props.maquina + props.linea)"
-                  :series="seriesL"
-              /></v-col>
-              <v-col v-else class="d-flex justify-center align-center">
-                <v-progress-circular
-                  :size="100"
-                  :width="7"
-                  color="purple"
-                  indeterminate
-                ></v-progress-circular>
-              </v-col>
-            </div>
-            <v-switch v-model="mostrarKilos" color="info" label="Kilos">
-              Kilos
-            </v-switch>
-            <div v-if="mostrarKilos">
-              <v-col v-if="cargado4">
-                <ApexChart
-                  ref="chartRef5"
-                  type="line"
-                  height="350"
-                  :options="chartOptionsKilos"
-                  :series="seriesL4"
-              /></v-col>
-              <v-col v-else class="d-flex justify-center align-center">
-                <v-progress-circular
-                  :size="100"
-                  :width="7"
-                  color="purple"
-                  indeterminate
-                ></v-progress-circular>
-              </v-col>
-            </div>
-            <v-switch
-              v-model="mostrarOtros"
-              color="info"
-              label="Limpieza de cepillos"
-            >
-              Limpieza de cepillos
-            </v-switch>
-
-            <div v-if="mostrarOtros">
-              <v-col v-if="cargado2">
-                <ApexChart
-                  ref="chartRef2"
-                  type="rangeBar"
-                  height="200"
-                  :options="rangeOptions2"
-                  :series="series2"
-              /></v-col>
-              <v-col v-else class="d-flex justify-center align-center">
-                <v-progress-circular
-                  :size="100"
-                  :width="7"
-                  color="purple"
-                  indeterminate
-                ></v-progress-circular>
-              </v-col>
-            </div>
-            <v-switch
-              v-model="mostrarCpC"
-              color="info"
-              label="Cajas por Ciclo y Peso por Caja"
-            >
-              Cajas por Ciclo y Peso por Caja
-            </v-switch>
-            <div v-if="mostrarCpC">
-              <v-col v-if="cargado5">
-                <ApexChart
-                  ref="chartRef6"
-                  type="line"
-                  height="300"
-                  :options="
-                    chartOptions('pcajas' + props.maquina + props.linea)
-                  "
-                  :series="seriesL2"
-              /></v-col>
-              <v-col v-else class="d-flex justify-center align-center">
-                <v-progress-circular
-                  :size="100"
-                  :width="7"
-                  color="purple"
-                  indeterminate
-                ></v-progress-circular>
-              </v-col>
-            </div>
-            <v-switch v-model="mostrarCajas" color="info" label="Cajas/Min">
-              Cajas/Min
-            </v-switch>
-            <div v-if="mostrarCajas">
-              <v-col v-if="cargado6">
-                <ApexChart
-                  ref="chartRef7"
-                  type="line"
-                  height="300"
-                  :options="
-                    chartOptions('tcajas' + props.maquina + props.linea)
-                  "
-                  :series="seriesL3"
-              /></v-col>
-              <v-col v-else class="d-flex justify-center align-center">
-                <v-progress-circular
-                  :size="100"
-                  :width="7"
-                  color="purple"
-                  indeterminate
-                ></v-progress-circular>
-              </v-col>
-            </div>
+            <GraficoEstadoCardGen
+              :serie="series"
+              title="Estado"
+              :categories="[
+                'Activo',
+                'MarchaParo',
+                'Remoto',
+                'Manual',
+                'Falta de consenso',
+                'Alarma',
+                'Presencia Fruta',
+              ]"
+              :tooltipy="false"
+              :legend="false"
+              :cargado="cargado1"
+            />
+            <GraficoLineaCardGen
+              :serie="seriesL"
+              title="Dosis"
+              :cargado="cargado3"
+            />
+            <FrutaProcesadaHistorico
+              :serie="seriesL4"
+              title="Kilos"
+              :cargado="cargado4"
+            />
+            <GraficoEstadoCardGen
+              :serie="series2"
+              title="Limpieza de cepillos"
+              :height="200"
+              :tooltipy="true"
+              :legend="true"
+              :categories="['Limpieza Cepillos']"
+              :cargado="cargado2"
+            />
+            <GraficoLineaCardGen
+              :serie="seriesL2"
+              title="Cajas por Ciclo y Peso por Caja"
+              :cargado="cargado5"
+            />
+            <GraficoLineaCardGen
+              :serie="seriesL3"
+              title="Cajas/Min"
+              :cargado="cargado6"
+            />
           </v-col>
         </v-row>
       </v-card>
@@ -242,6 +148,9 @@ import { routerStore } from "../../../stores/index";
 import es from "apexcharts/dist/locales/es.json";
 import moment from "moment";
 import DatePicker from "vue-time-date-range-picker/dist/vdprDatePicker";
+import GraficoEstadoCardGen from "../comun/GraficoEstadoCardGen.vue";
+import GraficoLineaCardGen from "../comun/GraficoLineaCardGen.vue";
+import FrutaProcesadaHistorico from "../comun/FrutaProcesadaHistorico.vue";
 
 const props = defineProps({
   linea: { type: Number, default: 1 },
@@ -524,24 +433,8 @@ let cargado6 = ref(false);
 let cargado7 = ref(false);
 let cargado8 = ref(false);
 
-let mostrar = ref(true);
-let mostrarCajas = ref(false);
-let mostrarCpC = ref(false);
-let mostrarOtros = ref(true);
-let mostrarKilos = ref(true);
-let mostrarDosis = ref(true);
-
-const chartRef = ref(null);
-const chartRef2 = ref(null);
-const chartRef3 = ref(null);
-const chartRef4 = ref(null);
-const chartRef5 = ref(null);
-const chartRef6 = ref(null);
-const chartRef7 = ref(null);
-const chartRef8 = ref(null);
 let series = ref([]);
 let series2 = ref([]);
-let series3 = ref([]);
 let seriesL = ref([]);
 let seriesL2 = ref([]);
 let seriesL3 = ref([]);
@@ -550,7 +443,6 @@ let seriesL4 = ref([]);
 let consumos = ref([]);
 let alarmas = ref([]);
 let totales = {};
-let consumosFruta = ref([]);
 
 let sameDateFormat = {
   from: "DD MM YYYY, HH:mm",
@@ -562,229 +454,6 @@ let fin = ref("");
 let dateInput = {
   placeholder: "Seleccionar fechas",
   inputClass: "selectdates",
-};
-let chartOptions = (id) => {
-  return {
-    chart: {
-      id: id,
-      // group: "historico",
-      locales: [es],
-      defaultLocale: "es",
-      animations: { enabled: false },
-      zoom: {
-        type: "xy",
-        autoScaleYaxis: true,
-      },
-    },
-    xaxis: {
-      type: "datetime",
-      datetimeUTC: false,
-      tickAmount: 25,
-      labels: {
-        minHeight: 125,
-        rotate: -45,
-        minHeight: 125,
-        rotateAlways: true,
-        formatter: function (value) {
-          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
-        },
-      },
-    },
-    yaxis: {
-      labels: {
-        minWidth: 60,
-      },
-    },
-    stroke: {
-      width: 1.9,
-      height: 60,
-      showForSingleSeries: true,
-    },
-    tooltip: {
-      x: {
-        format: "dd/MM/yyyy HH:mm:ss",
-      },
-    },
-    legend: {
-      showForSingleSeries: true,
-    },
-  };
-};
-let chartOptionsKilos = {
-  chart: {
-    id: "Kilos" + props.maquina + props.linea,
-    // group: "historico",
-    locales: [es],
-    defaultLocale: "es",
-    animations: { enabled: false },
-    zoom: {
-      type: "xy",
-      autoScaleYaxis: true,
-    },
-  },
-  xaxis: {
-    type: "datetime",
-    datetimeUTC: false,
-    tickAmount: 25,
-    labels: {
-      minHeight: 125,
-      rotate: -45,
-      rotateAlways: true,
-      formatter: function (value, timestamp) {
-        return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
-      },
-    },
-  },
-  yaxis: [
-    {
-      axisTicks: {
-        show: true,
-      },
-      axisBorder: {
-        show: true,
-      },
-
-      labels: {
-        minWidth: 60,
-      },
-    },
-    {
-      opposite: true,
-      axisTicks: {
-        show: true,
-      },
-      axisBorder: {
-        show: true,
-      },
-    },
-  ],
-  stroke: {
-    width: 1.9,
-  },
-  legend: {
-    showForSingleSeries: true,
-  },
-};
-let rangeOptions = {
-  chart: {
-    id: "estado" + props.maquina + props.linea,
-    // group: "historico",
-    type: "rangeBar",
-    locales: [es],
-    defaultLocale: "es",
-    animations: { enabled: false },
-  },
-  colors: [
-    function ({ seriesIndex }) {
-      if (seriesIndex == 0) {
-        return "#d50000";
-      } else {
-        return "#00c853";
-      }
-    },
-  ],
-  plotOptions: {
-    bar: {
-      horizontal: true,
-      rangeBarGroupRows: true,
-    },
-  },
-  xaxis: {
-    type: "datetime",
-    datetimeUTC: false,
-    tickAmount: 25,
-    categories: [
-      "Activo",
-      "MarchaParo",
-      "Remoto",
-      "Manual",
-      "Falta de consenso",
-      "Alarma",
-      "Presencia Fruta",
-    ],
-    labels: {
-      minHeight: 125,
-      rotate: -45,
-      rotateAlways: true,
-      formatter: function (value) {
-        return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
-      },
-    },
-  },
-  yaxis: {
-    labels: {
-      minWidth: 60,
-    },
-  },
-  tooltip: {
-    x: {
-      format: "dd/MM/yyyy HH:mm:ss",
-    },
-    y: {
-      title: {
-        formatter: (seriesName) => "",
-      },
-    },
-  },
-  legend: {
-    show: false,
-  },
-};
-let rangeOptions2 = {
-  chart: {
-    id: "otrosEstado" + props.maquina + props.linea,
-    // group: "historico",
-    type: "rangeBar",
-    locales: [es],
-    defaultLocale: "es",
-    animations: { enabled: false },
-  },
-  colors: [
-    function ({ seriesIndex }) {
-      if (seriesIndex == 0) {
-        return "#d50000";
-      } else {
-        return "#00c853";
-      }
-    },
-  ],
-  plotOptions: {
-    bar: {
-      horizontal: true,
-      rangeBarGroupRows: true,
-    },
-  },
-  xaxis: {
-    type: "datetime",
-    datetimeUTC: false,
-    tickAmount: 25,
-    labels: {
-      minHeight: 125,
-      rotate: -45,
-      rotateAlways: true,
-      formatter: function (value) {
-        return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
-      },
-    },
-  },
-  yaxis: {
-    labels: {
-      minWidth: 60,
-    },
-  },
-  tooltip: {
-    x: {
-      format: "dd/MM/yyyy HH:mm:ss",
-    },
-    y: {
-      title: {
-        formatter: (seriesName) => "",
-      },
-    },
-  },
-  legend: {
-    show: false,
-  },
 };
 let estado = {};
 let marcha = {};

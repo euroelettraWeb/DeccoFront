@@ -8,7 +8,7 @@
         <v-row no-gutters>
           <v-col v-if="props.cargado">
             <ApexChart
-              type="rangeBar"
+              type="line"
               :height="props.height"
               :options="chartOptions"
               :series="props.serie"
@@ -38,84 +38,73 @@ import es from "apexcharts/dist/locales/es.json";
 import moment from "moment";
 
 let mostrar = ref(true);
-let chartOptions = () => {
-  return {
-    chart: {
-      id: "Kilos",
-      locales: [es],
-      defaultLocale: "es",
-      animations: { enabled: false },
-      zoom: {
-        type: "xy",
-        autoScaleYaxis: true,
+let chartOptions = {
+  chart: {
+    id: "Kilos",
+    locales: [es],
+    defaultLocale: "es",
+    animations: { enabled: false },
+    zoom: {
+      type: "xy",
+      autoScaleYaxis: true,
+    },
+  },
+  xaxis: {
+    type: "datetime",
+    datetimeUTC: false,
+    tickAmount: 20,
+    labels: {
+      minHeight: 125,
+      rotate: -45,
+      rotateAlways: true,
+      formatter: function (value, timestamp) {
+        return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
       },
     },
-    colors: [
-      function ({ value, seriesIndex, w }) {
-        if (seriesIndex == 0) {
-          return props.colores[0];
-        } else {
-          return props.colores[1];
-        }
+  },
+  yaxis: [
+    {
+      axisTicks: {
+        show: true,
       },
-    ],
-    xaxis: {
-      type: "datetime",
-      datetimeUTC: false,
-      tickAmount: 20,
-      labels: {
-        minHeight: 125,
-        rotate: -45,
-        rotateAlways: true,
-        formatter: function (value, timestamp) {
-          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
-        },
+      axisBorder: {
+        show: true,
       },
-    },
-    yaxis: [
-      {
-        axisTicks: {
-          show: true,
-        },
-        axisBorder: {
-          show: true,
-        },
 
-        labels: {
-          minWidth: 60,
-        },
-      },
-      {
-        opposite: true,
-        axisTicks: {
-          show: true,
-        },
-        axisBorder: {
-          show: true,
-        },
-      },
-    ],
-    stroke: {
-      width: 1.9,
-      height: 60,
-      showForSingleSeries: true,
-    },
-    tooltip: {
-      x: {
-        format: "dd/MM/yyyy HH:mm:ss",
-      },
-      y: {
-        title: {
-          formatter: (seriesName) => (props.tooltipy ? seriesName : ""),
-        },
+      labels: {
+        minWidth: 60,
       },
     },
-    legend: {
-      height: 20,
-      show: props.legend,
-      showForSingleSeries: true,
+    {
+      opposite: true,
+      axisTicks: {
+        show: true,
+      },
+      axisBorder: {
+        show: true,
+      },
     },
-  };
+  ],
+  stroke: {
+    width: 1.9,
+    height: 60,
+    showForSingleSeries: true,
+  },
+  tooltip: {
+    x: {
+      format: "dd/MM/yyyy HH:mm:ss",
+    },
+    y: {
+      title: {
+        formatter: (seriesName) => (props.tooltipy ? seriesName : ""),
+      },
+    },
+  },
+  legend: {
+    height: 20,
+    show: props.legend,
+    showForSingleSeries: true,
+  },
 };
 
 const props = defineProps({
