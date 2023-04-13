@@ -89,6 +89,7 @@ let chartOptions = computed(() => {
       type: "datetime",
       datetimeUTC: false,
       tickAmount: 20,
+      categories: props.categories,
       labels: {
         minHeight: 125,
         rotate: -45,
@@ -121,6 +122,7 @@ const props = defineProps({
   tipo: { type: Number, default: 1 },
   colores: { type: Array, default: () => ["#d50000", "#00c853"] },
   estados: { type: Array, default: () => ["Paro", "Marcha"] },
+  categories: { type: Array, default: () => [] },
 });
 
 onMounted(async () => {
