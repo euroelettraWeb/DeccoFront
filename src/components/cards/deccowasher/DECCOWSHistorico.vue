@@ -173,7 +173,6 @@ import {
 } from "../../../helpers/bd";
 import { onMounted, ref, onUnmounted } from "vue";
 import { routerStore } from "../../../stores/index";
-import es from "apexcharts/dist/locales/es.json";
 import moment from "moment";
 import DatePicker from "vue-time-date-range-picker/dist/vdprDatePicker";
 import GraficoEstadoCardGen from "../comun/GraficoEstadoCardGen.vue";
