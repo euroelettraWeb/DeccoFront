@@ -1,38 +1,33 @@
 <template>
-  <v-container fluid class="fill-height">
-    <v-card>
-      <v-row>
-        <v-col>
-          <v-card-title>{{ props.linea.nombre }}</v-card-title>
-        </v-col>
-        <v-col v-for="item in items" :key="item.title">
-          <v-card>
-            <v-card-title
-              @click="
-                if (item.estado)
-                  router.menu(
-                    item.route,
-                    props.linea.clienteID,
-                    props.linea.id
-                  );
-              "
-              >{{ item.title }}</v-card-title
-            >
-            <v-card-text>
-              <div v-for="val in item.values" :key="val.id">
-                {{ item.label }}{{ item.value }}
-              </div>
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-card>
-  </v-container>
+  <v-card class="back">
+    <v-row>
+      <v-col align-self="center">
+        <v-card-title>{{ props.linea.nombre }}</v-card-title>
+      </v-col>
+      <v-col v-for="item in items" :key="item.title">
+        <v-card class="ele" height="350">
+          <v-card-title
+            @click="
+              if (item.estado)
+                router.menu(item.route, props.linea.clienteID, props.linea.id);
+            "
+            >{{ item.title }}</v-card-title
+          >
+          <v-card-text>
+            <v-row v-for="val in item.values" :key="val.id" no-gutters>
+              <v-col>{{ val.label }}</v-col>
+              <v-col>{{ val.value }}</v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-card>
 </template>
 
 <script>
 export default {
-  name: "CardLineas",
+  name: "CardLinea",
 };
 </script>
 
@@ -42,7 +37,7 @@ import {
   obtenerDatosVariableGeneral,
   obtenerMaquina,
 } from "../../../helpers/bd";
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 const router = routerStore();
 const props = defineProps({
   id: { type: Number, default: 1 },
@@ -65,9 +60,10 @@ let deccowasher = ref([]);
 let deccodos = ref([]);
 let deccodaf = ref([]);
 onMounted(async () => {
-  let deccowasherID = (await obtenerMaquina("lineaTipo", props.linea, 3))[0].id;
-  let deccodosID = (await obtenerMaquina("lineaTipo", props.linea, 2))[0].id;
-  let deccodafID = (await obtenerMaquina("lineaTipo", props.linea, 1))[0].id;
+  let deccowasherID = (await obtenerMaquina("lineaTipo", props.linea.id, 3))[0]
+    .id;
+  let deccodosID = (await obtenerMaquina("lineaTipo", props.linea.id, 2))[0].id;
+  let deccodafID = (await obtenerMaquina("lineaTipo", props.linea.id, 1))[0].id;
   let dosisDECCOWASHER = await obtenerDatosVariableGeneral(
     "24H",
     "ultimo",
@@ -81,7 +77,7 @@ onMounted(async () => {
     const element = dosisDECCOWASHER[index];
     deccowasher.value.push({
       label: element.descripcion,
-      value: element.registros[0].y,
+      value: element.registros[0] ? element.registros[0].y : "",
     });
   }
   let totalesDECCOWASHER = await obtenerDatosVariableGeneral(
@@ -159,7 +155,6 @@ onMounted(async () => {
     deccodaf.value.push({ label: element.descripcion, value: n });
   }
 });
-
 let items = computed(() => [
   {
     action: "mdi-hand-water",
@@ -184,3 +179,14 @@ let items = computed(() => [
   },
 ]);
 </script>
+<style scoped>
+* {
+  color: #fff;
+}
+.ele {
+  background-color: black !important;
+}
+.back {
+  background-color: gray !important;
+}
+</style>
