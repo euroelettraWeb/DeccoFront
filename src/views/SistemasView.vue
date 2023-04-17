@@ -2,7 +2,7 @@
   <v-container fluid class="fill-height">
     <v-row justify="center">
       <v-col v-for="item in nombres" :key="item.id">
-        <CardLineas :linea="item" />
+        <CardLinea :linea="item" />
       </v-col>
     </v-row>
     <v-row>
@@ -30,7 +30,7 @@ import { obtenerMaquina, obtenerLineas } from "../helpers/bd";
 import { onMounted, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { routerStore } from "../stores/index";
-import CardLineas from "../components/cards/comun/CardLineas.vue";
+import CardLinea from "../components/cards/comun/CardLinea.vue";
 const { clienteID } = storeToRefs(routerStore());
 
 let lineas = [];
