@@ -135,7 +135,7 @@
             'Fallo Agua	',
           ]"
         />
-        <Dosis
+        <GraficaLineaCard
           title="Dosis de fungicida"
           :variables="[7, 8, 9, 10, 11]"
           :tipo="1"
@@ -174,7 +174,7 @@ import {
   obtenerTurnos,
 } from "../../helpers/bd";
 import Estado from "../../components/cards/comun/Estado.vue";
-import Dosis from "../../components/cards/comun/Dosis.vue";
+import GraficaLineaCard from "../../components/cards/comun/GraficaLineaCard.vue";
 import TablaTotal from "../../components/tablas/comun/TablaTotal.vue";
 import { onMounted, ref } from "vue";
 import TablaTurnos from "../../components/tablas/comun/TablaTurnos.vue";

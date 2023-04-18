@@ -119,7 +119,7 @@
             'Presencia Fruta',
           ]"
         />
-        <Dosis
+        <GraficaLineaCard
           :variables="[32, 33, 34, 35, 36, 37, 38, 39]"
           title="Dosis"
           :tipo="2"
@@ -163,7 +163,7 @@ import {
 import { onMounted, ref } from "vue";
 import TablaTotalTurnos from "../../components/tablas/deccodos/TablaTotalTurnos.vue";
 // import TablaTotalTurnos from "../../components/tablas/comun/TablaTotalTurnos.vue";
-import Dosis from "../../components/cards/comun/Dosis.vue";
+import GraficaLineaCard from "../../components/cards/comun/GraficaLineaCard.vue";
 import FrutaProcesadaComun from "../../components/cards/comun/FrutaProcesadaComun.vue";
 import GraficaEstadoCard from "../../components/cards/comun/GraficaEstadoCard.vue";
 import SeleccionarProducto from "../../components/cards/deccodos/SeleccionarProducto.vue";

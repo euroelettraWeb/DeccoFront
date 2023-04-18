@@ -9,10 +9,10 @@
           <v-col v-if="cargado">
             <ApexChart
               ref="chartRef"
-              height="350"
-              type="line"
+              type="rangeBar"
+              :height="props.height"
               :options="chartOptions"
-              :series="registrosT"
+              :series="series"
             />
           </v-col>
           <v-col v-else class="d-flex justify-center align-center">
@@ -30,7 +30,7 @@
 </template>
 <script>
 export default {
-  name: "DosisCard",
+  name: "GraficasLinea",
 };
 </script>
 <script setup>
@@ -38,25 +38,23 @@ import {
   obtenerMaquina,
   obtenerDatosVariableGeneral,
 } from "../../../helpers/bd";
-import { onMounted, ref, computed, reactive } from "vue";
+import { onMounted, ref, computed } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
 import { routerStore } from "../../../stores/index";
 
 const socket = io("http://localhost:3000");
-
+const chartRef = ref(null);
+var lastZoom = null;
 let cargado = ref(false);
 let mostrar = ref(true);
-let dosis = {};
-
-const chartRef = ref(null);
-let registrosT = ref([]);
-var lastZoom = null;
+let series = ref([]);
+let formatoVariables = [];
 let chartOptions = computed(() => {
   return {
     chart: {
-      id: "dosis",
+      id: "grafica linea " + props.title,
       group: "actual",
       locales: [es],
       defaultLocale: "es",
@@ -68,15 +66,14 @@ let chartOptions = computed(() => {
     },
     xaxis: {
       type: "datetime",
-      // datetimeUTC: false,
+      datetimeUTC: false,
       tickAmount: 25,
       labels: {
         minHeight: 125,
         rotate: -45,
-        minHeight: 125,
         rotateAlways: true,
         formatter: function (value, timestamp) {
-          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
+          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
         },
       },
     },
@@ -88,42 +85,56 @@ let chartOptions = computed(() => {
     stroke: {
       width: 1.9,
     },
+    legend: {
+      showForSingleSeries: true,
+    },
   };
 });
 
 const props = defineProps({
-  title: { type: String, default: "Dosis" },
   variables: { type: Array, default: () => [] },
+  title: { type: String, default: "" },
+  height: { type: Number, default: 300 },
   tipo: { type: Number, default: 1 },
+  tipoDatos: { type: String, default: "formatoLinea" },
 });
 
 onMounted(async () => {
   cargado.value = false;
+
   let maquinaID = (
     await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
-  dosis = await obtenerDatosVariableGeneral(
+
+  formatoVariables = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
-    "formatoLinea",
+    props.tipoDatos,
     props.variables,
     maquinaID,
     routerStore().clienteID
   );
-  registrosT.value = dosis;
+  series.value = formatoVariables;
   for (let index = 0; index < props.variables.length; index++) {
-    const element = props.variables[index];
-    socket.on(`variable_${maquinaID}_${element}_actualizada`, (data) => {
-      registrosT.value[index].data.push({
-        x: new Date(moment(data.x).toISOString()).getTime(),
-        y: data.y,
-      });
-      if (chartRef.value) {
-        chartRef.value.updateSeries(registrosT.value);
-        // if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+    socket.on(
+      `variable_${maquinaID}_${props.variables[index]}_actualizada`,
+      async (data) => {
+        let formatoVariable = await obtenerDatosVariableGeneral(
+          "24H",
+          "registros",
+          "individual",
+          props.tipoDatos,
+          props.variables,
+          maquinaID,
+          routerStore().clienteID
+        );
+        if (chartRef.value) {
+          chartRef.value.updateSeries(formatoVariable);
+          if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+        }
       }
-    });
+    );
   }
   cargado.value = true;
 });

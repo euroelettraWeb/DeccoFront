@@ -24,7 +24,12 @@
             'Bidon Jabon Vacio',
           ]"
         />
-        <CajasComun :caja1="45" :caja2="46" :total="47" :tipo="2" />
+        <GraficaLineaCard :variables="[45, 46]" :total="47" :tipo="2" />
+        <GraficaLineaCard
+          :variables="[47]"
+          :tipo="2"
+          tipo-datos="unidadTiempo"
+        />
       </v-col>
     </v-row>
   </v-container>
@@ -36,6 +41,6 @@ export default {
 };
 </script>
 <script setup>
-import CajasComun from "../../components/cards/comun/CajasComun.vue";
+import GraficaLineaCard from "../../components/cards/comun/GraficaLineaCard.vue";
 import GraficaEstadoCard from "../../components/cards/comun/GraficaEstadoCard.vue";
 </script>

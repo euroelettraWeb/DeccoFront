@@ -54,7 +54,7 @@
             'Presencia Fruta',
           ]"
         />
-        <Dosis
+        <GraficaLineaCard
           title="Dosis de Desinfectante y Jabon"
           :variables="[58, 59]"
           :tipo="3"
@@ -84,7 +84,7 @@ export default {
 </script>
 <script setup>
 import Estado from "../../components/cards/comun/Estado.vue";
-import Dosis from "../../components/cards/comun/Dosis.vue";
+import GraficaLineaCard from "../../components/cards/comun/GraficaLineaCard.vue";
 import TablaTurnos from "../../components/tablas/comun/TablaTurnos.vue";
 import TablaTotal from "../../components/tablas/comun/TablaTotal.vue";
 import FrutaProcesadaComun from "../../components/cards/comun/FrutaProcesadaComun.vue";
