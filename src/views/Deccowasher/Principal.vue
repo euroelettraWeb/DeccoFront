@@ -1,8 +1,12 @@
 <template>
   <v-container fluid>
-    <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
     <v-row>
-      <TablaTurnos v-if="turnos" :tipo="1" />
+      <v-col>
+        <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
+        <TablaTurnos v-if="turnos" />
+      </v-col>
+    </v-row>
+    <v-row>
       <v-col>
         <TablaTotalTurnos
           v-if="turnos && turnosA.length > 1"

@@ -14,12 +14,17 @@
             />
           </v-col>
           <v-col v-else class="d-flex justify-center align-center">
-            <v-progress-circular
-              :size="100"
-              :width="7"
-              color="purple"
-              indeterminate
-            ></v-progress-circular>
+            <div v-if="noData">
+              <h1>Maquina desconectada</h1>
+            </div>
+            <div v-else>
+              <v-progress-circular
+                :size="100"
+                :width="7"
+                color="purple"
+                indeterminate
+              ></v-progress-circular>
+            </div>
           </v-col>
         </v-row>
       </v-card>
@@ -45,8 +50,8 @@ import { routerStore } from "../../../stores/index";
 const socket = io("http://localhost:3000");
 const chartRef = ref(null);
 
-let lastZoom = null;
 let cargado = ref(false);
+let noData = ref(false);
 let mostrar = ref(true);
 let marcha = [];
 let series = ref([]);
@@ -138,7 +143,10 @@ async function dataGrafica(maquinaID) {
     "formatoRangos",
     [props.activo],
     maquinaID,
-    routerStore().clienteID
+    routerStore().clienteID,
+    null,
+    null,
+    ["Paro", "Marcha"]
   );
   autoManual = await obtenerDatosVariableGeneral(
     "24H",
@@ -149,9 +157,11 @@ async function dataGrafica(maquinaID) {
     maquinaID,
     routerStore().clienteID
   );
-  for (let index = 0; index < autoManual[1].data.length; index++) {
-    const element = autoManual[1].data[index];
-    modoMaquina[1].data.push(element);
+  if (autoManual[1]) {
+    for (let index = 0; index < autoManual[1].data.length; index++) {
+      const element = autoManual[1].data[index];
+      modoMaquina[1].data.push(element);
+    }
   }
 
   marcha = await obtenerDatosVariableGeneral(
@@ -163,14 +173,19 @@ async function dataGrafica(maquinaID) {
     maquinaID,
     routerStore().clienteID
   );
-  for (let index = 0; index < marcha[0].data.length; index++) {
-    const element = marcha[0].data[index];
-    modoMaquina[0].data.push(element);
+  if (marcha[0] && modoMaquina[0]) {
+    for (let index = 0; index < marcha[0].data.length; index++) {
+      const element = marcha[0].data[index];
+      modoMaquina[0].data.push(element);
+    }
   }
-  for (let index = 0; index < marcha[1].data.length; index++) {
-    const element = marcha[1].data[index];
-    modoMaquina[1].data.push(element);
+  if (marcha[1] && modoMaquina[1]) {
+    for (let index = 0; index < marcha[1].data.length; index++) {
+      const element = marcha[1].data[index];
+      modoMaquina[1].data.push(element);
+    }
   }
+
   funcMaquina = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -180,23 +195,28 @@ async function dataGrafica(maquinaID) {
     maquinaID,
     routerStore().clienteID
   );
-  for (let index = 0; index < funcMaquina[1].data.length; index++) {
-    let element = funcMaquina[1].data[index];
-    if (element.x == "Alarma") {
-      element.fillColor = "#fdd835";
-    } else {
-      element.fillColor = "#3949ab";
+  if (funcMaquina[1]) {
+    for (let index = 0; index < funcMaquina[1].data.length; index++) {
+      let element = funcMaquina[1].data[index];
+      if (element.x == "Alarma") {
+        element.fillColor = "#fdd835";
+      } else {
+        element.fillColor = "#3949ab";
+      }
+      modoMaquina[1].data.push(element);
     }
-    modoMaquina[1].data.push(element);
   }
-  series.value = modoMaquina;
+  if (!modoMaquina) {
+    cargado.value = false;
+    noData.value = true;
+  } else series.value = modoMaquina;
 }
 onMounted(async () => {
   cargado.value = false;
   let maquinaID = (
     await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
-  dataGrafica(maquinaID);
+  await dataGrafica(maquinaID);
 
   for (let index = 0; index < props.autoManual.length; index++) {
     const element = props.autoManual[index];

@@ -3,7 +3,11 @@
     <v-row>
       <v-col>
         <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
-        <TablaTurnos v-if="turnos" :tipo="1" />
+        <TablaTurnos v-if="turnos" />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
         <v-card class="mb-4">
           <v-row>
             <v-col v-if="cargado">
@@ -231,14 +235,6 @@ async function save() {
         productos: update,
       }
     );
-    // .then(
-    //   (response) => {
-    //     mensaje.value = "Guardado";
-    //   },
-    //   (error) => {
-    //     mensaje.value = "Error";
-    //   }
-    // );
     mensaje.value = "Guardado";
     guardado.value = true;
   }

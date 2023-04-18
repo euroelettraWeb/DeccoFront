@@ -1,9 +1,13 @@
 <template>
   <v-container fluid>
-    <v-row no-gutters>
+    <v-row>
       <v-col>
         <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
-        <TablaTurnos v-if="turnos" /><!-- :marcha="[31, 40, 42]" -->
+        <TablaTurnos v-if="turnos" />
+      </v-col>
+    </v-row>
+    <v-row no-gutters>
+      <v-col>
         <v-card class="mb-4">
           <v-row>
             <v-col v-if="cargado">

@@ -1,235 +1,234 @@
 <template>
-  <v-container>
-    <v-card>
-      <v-row>
-        <v-col v-if="cargado">
-          <v-row>
-            <v-col>
-              <v-card-title>Turnos</v-card-title>
-            </v-col>
-          </v-row>
-          <v-row class="mx-2">
-            <v-col>
-              <v-simple-table dense>
-                <template #default>
-                  <thead>
-                    <tr>
-                      <th class="text-left">Fecha</th>
-                      <th class="text-left">Mañana Inicio</th>
-                      <th class="text-left">Mañana Fin</th>
-                      <th class="text-left">Tarde Inicio</th>
-                      <th class="text-left">Tarde Fin</th>
-                      <th class="text-left">Noche Inicio</th>
-                      <th class="text-left">Noche Fin</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>{{ new Date().toLocaleDateString() }}</td>
-                      <td>
-                        <v-menu
-                          ref="menu"
-                          v-model="menu2"
-                          :close-on-content-click="false"
-                          :nudge-right="40"
-                          :return-value.sync="time"
-                          transition="scale-transition"
-                          offset-y
-                          max-width="290px"
-                          min-width="290px"
-                        >
-                          <template #activator="{ on, attrs }">
-                            <v-text-field
-                              v-model="time"
-                              prepend-icon="mdi-clock-time-four-outline"
-                              readonly
-                              v-bind="attrs"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-time-picker
-                            v-if="menu2"
+  <v-card>
+    <v-row>
+      <v-col v-if="cargado">
+        <v-row>
+          <v-col>
+            <v-card-title>Turnos</v-card-title>
+          </v-col>
+        </v-row>
+        <v-row class="mx-2">
+          <v-col>
+            <v-simple-table dense>
+              <template #default>
+                <thead>
+                  <tr>
+                    <th class="text-left">Fecha</th>
+                    <th class="text-left">Mañana Inicio</th>
+                    <th class="text-left">Mañana Fin</th>
+                    <th class="text-left">Tarde Inicio</th>
+                    <th class="text-left">Tarde Fin</th>
+                    <th class="text-left">Noche Inicio</th>
+                    <th class="text-left">Noche Fin</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>{{ new Date().toLocaleDateString() }}</td>
+                    <td>
+                      <v-menu
+                        ref="menu"
+                        v-model="menu2"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        :return-value.sync="time"
+                        transition="scale-transition"
+                        offset-y
+                        max-width="290px"
+                        min-width="290px"
+                      >
+                        <template #activator="{ on, attrs }">
+                          <v-text-field
                             v-model="time"
-                            format="24hr"
-                            full-width
-                            @click:minute="$refs.menu.save(time)"
-                          ></v-time-picker>
-                        </v-menu>
-                      </td>
-                      <td>
-                        <v-menu
-                          ref="menu3"
-                          v-model="menu4"
-                          :close-on-content-click="false"
-                          :nudge-right="40"
-                          :return-value.sync="time2"
-                          transition="scale-transition"
-                          offset-y
-                          max-width="290px"
-                          min-width="290px"
-                        >
-                          <template #activator="{ on, attrs }">
-                            <v-text-field
-                              v-model="time2"
-                              prepend-icon="mdi-clock-time-four-outline"
-                              readonly
-                              v-bind="attrs"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-time-picker
-                            v-if="menu4"
+                            prepend-icon="mdi-clock-time-four-outline"
+                            readonly
+                            v-bind="attrs"
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-time-picker
+                          v-if="menu2"
+                          v-model="time"
+                          format="24hr"
+                          full-width
+                          @click:minute="$refs.menu.save(time)"
+                        ></v-time-picker>
+                      </v-menu>
+                    </td>
+                    <td>
+                      <v-menu
+                        ref="menu3"
+                        v-model="menu4"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        :return-value.sync="time2"
+                        transition="scale-transition"
+                        offset-y
+                        max-width="290px"
+                        min-width="290px"
+                      >
+                        <template #activator="{ on, attrs }">
+                          <v-text-field
                             v-model="time2"
-                            format="24hr"
-                            full-width
-                            @click:minute="$refs.menu3.save(time2)"
-                          ></v-time-picker>
-                        </v-menu>
-                      </td>
-                      <td>
-                        <v-menu
-                          ref="menu5"
-                          v-model="menu6"
-                          :close-on-content-click="false"
-                          :nudge-right="40"
-                          :return-value.sync="time3"
-                          transition="scale-transition"
-                          offset-y
-                          max-width="290px"
-                          min-width="290px"
-                        >
-                          <template #activator="{ on, attrs }">
-                            <v-text-field
-                              v-model="time3"
-                              prepend-icon="mdi-clock-time-four-outline"
-                              readonly
-                              v-bind="attrs"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-time-picker
-                            v-if="menu6"
+                            prepend-icon="mdi-clock-time-four-outline"
+                            readonly
+                            v-bind="attrs"
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-time-picker
+                          v-if="menu4"
+                          v-model="time2"
+                          format="24hr"
+                          full-width
+                          @click:minute="$refs.menu3.save(time2)"
+                        ></v-time-picker>
+                      </v-menu>
+                    </td>
+                    <td>
+                      <v-menu
+                        ref="menu5"
+                        v-model="menu6"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        :return-value.sync="time3"
+                        transition="scale-transition"
+                        offset-y
+                        max-width="290px"
+                        min-width="290px"
+                      >
+                        <template #activator="{ on, attrs }">
+                          <v-text-field
                             v-model="time3"
-                            format="24hr"
-                            full-width
-                            @click:minute="$refs.menu5.save(time3)"
-                          ></v-time-picker>
-                        </v-menu>
-                      </td>
-                      <td>
-                        <v-menu
-                          ref="menu7"
-                          v-model="menu8"
-                          :close-on-content-click="false"
-                          :nudge-right="40"
-                          :return-value.sync="time4"
-                          transition="scale-transition"
-                          offset-y
-                          max-width="290px"
-                          min-width="290px"
-                        >
-                          <template #activator="{ on, attrs }">
-                            <v-text-field
-                              v-model="time4"
-                              prepend-icon="mdi-clock-time-four-outline"
-                              readonly
-                              v-bind="attrs"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-time-picker
-                            v-if="menu8"
+                            prepend-icon="mdi-clock-time-four-outline"
+                            readonly
+                            v-bind="attrs"
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-time-picker
+                          v-if="menu6"
+                          v-model="time3"
+                          format="24hr"
+                          full-width
+                          @click:minute="$refs.menu5.save(time3)"
+                        ></v-time-picker>
+                      </v-menu>
+                    </td>
+                    <td>
+                      <v-menu
+                        ref="menu7"
+                        v-model="menu8"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        :return-value.sync="time4"
+                        transition="scale-transition"
+                        offset-y
+                        max-width="290px"
+                        min-width="290px"
+                      >
+                        <template #activator="{ on, attrs }">
+                          <v-text-field
                             v-model="time4"
-                            format="24hr"
-                            full-width
-                            @click:minute="$refs.menu7.save(time4)"
-                          ></v-time-picker>
-                        </v-menu>
-                      </td>
-                      <td>
-                        <v-menu
-                          ref="menu9"
-                          v-model="menu10"
-                          :close-on-content-click="false"
-                          :nudge-right="40"
-                          :return-value.sync="time5"
-                          transition="scale-transition"
-                          offset-y
-                          max-width="290px"
-                          min-width="290px"
-                        >
-                          <template #activator="{ on, attrs }">
-                            <v-text-field
-                              v-model="time5"
-                              prepend-icon="mdi-clock-time-four-outline"
-                              readonly
-                              v-bind="attrs"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-time-picker
-                            v-if="menu10"
+                            prepend-icon="mdi-clock-time-four-outline"
+                            readonly
+                            v-bind="attrs"
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-time-picker
+                          v-if="menu8"
+                          v-model="time4"
+                          format="24hr"
+                          full-width
+                          @click:minute="$refs.menu7.save(time4)"
+                        ></v-time-picker>
+                      </v-menu>
+                    </td>
+                    <td>
+                      <v-menu
+                        ref="menu9"
+                        v-model="menu10"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        :return-value.sync="time5"
+                        transition="scale-transition"
+                        offset-y
+                        max-width="290px"
+                        min-width="290px"
+                      >
+                        <template #activator="{ on, attrs }">
+                          <v-text-field
                             v-model="time5"
-                            format="24hr"
-                            full-width
-                            @click:minute="$refs.menu9.save(time5)"
-                          ></v-time-picker>
-                        </v-menu>
-                      </td>
-                      <td>
-                        <v-menu
-                          ref="menu11"
-                          v-model="menu12"
-                          :close-on-content-click="false"
-                          :nudge-right="40"
-                          :return-value.sync="time6"
-                          transition="scale-transition"
-                          offset-y
-                          max-width="290px"
-                          min-width="290px"
-                        >
-                          <template #activator="{ on, attrs }">
-                            <v-text-field
-                              v-model="time6"
-                              prepend-icon="mdi-clock-time-four-outline"
-                              readonly
-                              v-bind="attrs"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-time-picker
-                            v-if="menu12"
+                            prepend-icon="mdi-clock-time-four-outline"
+                            readonly
+                            v-bind="attrs"
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-time-picker
+                          v-if="menu10"
+                          v-model="time5"
+                          format="24hr"
+                          full-width
+                          @click:minute="$refs.menu9.save(time5)"
+                        ></v-time-picker>
+                      </v-menu>
+                    </td>
+                    <td>
+                      <v-menu
+                        ref="menu11"
+                        v-model="menu12"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        :return-value.sync="time6"
+                        transition="scale-transition"
+                        offset-y
+                        max-width="290px"
+                        min-width="290px"
+                      >
+                        <template #activator="{ on, attrs }">
+                          <v-text-field
                             v-model="time6"
-                            format="24hr"
-                            full-width
-                            @click:minute="$refs.menu11.save(time6)"
-                          ></v-time-picker>
-                        </v-menu>
-                      </td>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-simple-table>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col
-              ><v-btn color="info" class="mx-4 mb-4" @click="save">
-                <v-icon light> mdi-content-save </v-icon> Guardar
-              </v-btn></v-col
-            >
-          </v-row>
-        </v-col>
-        <v-col v-else class="d-flex justify-center align-center">
-          <v-progress-circular
-            :size="100"
-            :width="7"
-            color="purple"
-            indeterminate
-          ></v-progress-circular>
-        </v-col>
-      </v-row> </v-card
-  ></v-container>
+                            prepend-icon="mdi-clock-time-four-outline"
+                            readonly
+                            v-bind="attrs"
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-time-picker
+                          v-if="menu12"
+                          v-model="time6"
+                          format="24hr"
+                          full-width
+                          @click:minute="$refs.menu11.save(time6)"
+                        ></v-time-picker>
+                      </v-menu>
+                    </td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col
+            ><v-btn color="info" class="mx-4 mb-4" @click="save">
+              <v-icon light> mdi-content-save </v-icon> Guardar
+            </v-btn></v-col
+          >
+        </v-row>
+      </v-col>
+      <v-col v-else class="d-flex justify-center align-center">
+        <v-progress-circular
+          :size="100"
+          :width="7"
+          color="purple"
+          indeterminate
+        ></v-progress-circular>
+      </v-col>
+    </v-row>
+  </v-card>
 </template>
 <script>
 export default {
