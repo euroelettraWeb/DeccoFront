@@ -94,13 +94,11 @@ import {
   obtenerLineas,
   obtenerMaquina,
   obtenerVariables,
+  obtenerDatosVariableGeneral,
 } from "../../../helpers/bd";
-import { onMounted, ref, computed, reactive } from "vue";
+import { onMounted, ref, computed } from "vue";
 import es from "apexcharts/dist/locales/es.json";
-import io from "socket.io-client";
-import moment from "moment";
 import { routerStore } from "../../../stores/index";
-const socket = io("http://localhost:3000");
 
 let cargado = ref(false);
 let lineas = ref(true);
@@ -217,7 +215,7 @@ async function changeItem3(value) {
 
     if (element.maquinaID == value.id) {
       selectItems.value.push({
-        id: element.id,
+        id: element.modelo,
         name: element.nombreCorto,
         unidadMedida: element.unidadMedida,
       });
