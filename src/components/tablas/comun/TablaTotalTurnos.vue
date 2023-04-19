@@ -1,71 +1,69 @@
 <template>
-  <v-container>
-    <v-card>
-      <v-row>
-        <v-col v-if="cargado">
-          <v-row>
-            <v-col>
-              <v-card-title>Consumo en este periodo</v-card-title>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-simple-table dense>
-                <template #default>
-                  <thead>
-                    <tr>
-                      <th class="text-left"></th>
-                      <th
-                        v-for="item in unidades"
-                        :key="item.id"
-                        class="text-left"
-                      >
-                        {{ item.nombre }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>T. mañana</td>
-                      <td v-for="item in consumosM" :key="item.id">
-                        {{ item.name }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>T. tarde</td>
-                      <td v-for="item in consumosT" :key="item.id">
-                        {{ item.name }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>T. noche</td>
-                      <td v-for="item in consumosN" :key="item.id">
-                        {{ item.name }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Total Hoy</td>
-                      <td v-for="item in consumos" :key="item.id">
-                        {{ item.name }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-simple-table>
-            </v-col>
-          </v-row>
-        </v-col>
-        <v-col v-else class="d-flex justify-center align-center">
-          <v-progress-circular
-            :size="100"
-            :width="7"
-            color="purple"
-            indeterminate
-          ></v-progress-circular>
-        </v-col>
-      </v-row>
-    </v-card>
-  </v-container>
+  <v-card>
+    <v-row>
+      <v-col v-if="cargado">
+        <v-row>
+          <v-col>
+            <v-card-title>Consumo en este periodo</v-card-title>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-simple-table dense>
+              <template #default>
+                <thead>
+                  <tr>
+                    <th class="text-left"></th>
+                    <th
+                      v-for="item in unidades"
+                      :key="item.id"
+                      class="text-left"
+                    >
+                      {{ item.nombre }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>T. mañana</td>
+                    <td v-for="item in consumosM" :key="item.id">
+                      {{ item.name }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>T. tarde</td>
+                    <td v-for="item in consumosT" :key="item.id">
+                      {{ item.name }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>T. noche</td>
+                    <td v-for="item in consumosN" :key="item.id">
+                      {{ item.name }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Total Hoy</td>
+                    <td v-for="item in consumos" :key="item.id">
+                      {{ item.name }}
+                    </td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+          </v-col>
+        </v-row>
+      </v-col>
+      <v-col v-else class="d-flex justify-center align-center">
+        <v-progress-circular
+          :size="100"
+          :width="7"
+          color="purple"
+          indeterminate
+        ></v-progress-circular>
+      </v-col>
+    </v-row>
+  </v-card>
 </template>
 <script>
 export default {

@@ -218,19 +218,19 @@ onMounted(async () => {
   )[0].id;
   await dataGrafica(maquinaID);
 
-  for (let index = 0; index < props.autoManual.length; index++) {
-    const element = props.autoManual[index];
-    socket.on(`variable_${maquinaID}_${element}_actualizada`, async (data) => {
-      dataGrafica(maquinaID);
-    });
-  }
+  // for (let index = 0; index < props.autoManual.length; index++) {
+  //   const element = props.autoManual[index];
+  //   socket.on(`variable_${maquinaID}_${element}_actualizada`, async (data) => {
+  //     dataGrafica(maquinaID);
+  //   });
+  // }
 
-  for (let index = 0; index < props.alarma.length; index++) {
-    const element = props.alarma[index];
-    socket.on(`variable_${maquinaID}_${element}_actualizada`, async (data) => {
-      dataGrafica(maquinaID);
-    });
-  }
+  // for (let index = 0; index < props.alarma.length; index++) {
+  //   const element = props.alarma[index];
+  //   socket.on(`variable_${maquinaID}_${element}_actualizada`, async (data) => {
+  //     dataGrafica(maquinaID);
+  //   });
+  // }
 
   socket.on(
     `variable_${maquinaID}_${props.activo}_actualizada`,

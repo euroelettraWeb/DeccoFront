@@ -1,155 +1,153 @@
 <template>
-  <v-container>
-    <v-card>
-      <v-row>
-        <v-col v-if="cargado">
-          <v-row>
-            <v-col>
-              <v-card-title>Consumo en este periodo en Litros</v-card-title>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col class="mx-4 mb-4">
-              <v-simple-table dense>
-                <template #default>
-                  <thead>
-                    <tr>
-                      <th class="text-left" colspan="2"></th>
-                      <th
-                        v-for="item in unidades"
-                        :key="item.id"
-                        class="text-left"
-                      >
-                        {{ item.nombre }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th rowspan="2">T. mañana</th>
-                      <td>Auto</td>
-                      <td
-                        v-for="item in consumosMA"
-                        :key="item.id"
-                        class="text-center"
-                      >
-                        {{ item.name }}
-                      </td>
-                      <td>
-                        {{ Math.round(consumosMarchaAuto[0] / 60) }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Manual</td>
-                      <td
-                        v-for="item in consumosMM"
-                        :key="item.id"
-                        class="text-center"
-                      >
-                        {{ item.name }}
-                      </td>
-                      <td>
-                        {{ Math.round(consumosMarchaManual[0] / 60) }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th rowspan="2">T. tarde</th>
-                      <td>Auto</td>
-                      <td
-                        v-for="item in consumosTA"
-                        :key="item.id"
-                        class="text-center"
-                      >
-                        {{ item.name }}
-                      </td>
-                      <td>
-                        {{ Math.round(consumosMarchaAuto[1] / 60) }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Manual</td>
-                      <td
-                        v-for="item in consumosTM"
-                        :key="item.id"
-                        class="text-center"
-                      >
-                        {{ item.name }}
-                      </td>
-                      <td>
-                        {{ Math.round(consumosMarchaManual[1] / 60) }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th rowspan="2">T. noche</th>
-                      <td>Auto</td>
-                      <td
-                        v-for="item in consumosNA"
-                        :key="item.id"
-                        class="text-center"
-                      >
-                        {{ item.name }}
-                      </td>
-                      <td>
-                        {{ Math.round(consumosMarchaAuto[2] / 60) }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Manual</td>
-                      <td
-                        v-for="item in consumosNM"
-                        :key="item.id"
-                        class="text-center"
-                      >
-                        {{ item.name }}
-                      </td>
-                      <td>
-                        {{ Math.round(consumosMarchaManual[2] / 60) }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th rowspan="2">Total Hoy</th>
-                      <td>Auto</td>
-                      <td
-                        v-for="item in consumosA"
-                        :key="item.id"
-                        class="text-center"
-                      >
-                        {{ item.name }}
-                      </td>
-                      <td>
-                        {{ Math.round(consumosMarchaAuto[3] / 60) }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Manual</td>
-                      <td
-                        v-for="item in consumosM"
-                        :key="item.id"
-                        class="text-center"
-                      >
-                        {{ item.name }}
-                      </td>
-                      <td>
-                        {{ Math.round(consumosMarchaManual[3] / 60) }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-simple-table>
-            </v-col>
-          </v-row>
-        </v-col>
-        <v-col v-else class="d-flex justify-center align-center">
-          <v-progress-circular
-            :size="100"
-            :width="7"
-            color="purple"
-            indeterminate
-          ></v-progress-circular>
-        </v-col>
-      </v-row>
-    </v-card>
-  </v-container>
+  <v-card>
+    <v-row>
+      <v-col v-if="cargado">
+        <v-row>
+          <v-col>
+            <v-card-title>Consumo en este periodo en Litros</v-card-title>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col class="mx-4 mb-4">
+            <v-simple-table dense>
+              <template #default>
+                <thead>
+                  <tr>
+                    <th class="text-left" colspan="2"></th>
+                    <th
+                      v-for="item in unidades"
+                      :key="item.id"
+                      class="text-left"
+                    >
+                      {{ item.nombre }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th rowspan="2">T. mañana</th>
+                    <td>Auto</td>
+                    <td
+                      v-for="item in consumosMA"
+                      :key="item.id"
+                      class="text-center"
+                    >
+                      {{ item.name }}
+                    </td>
+                    <td>
+                      {{ Math.round(consumosMarchaAuto[0] / 60) }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Manual</td>
+                    <td
+                      v-for="item in consumosMM"
+                      :key="item.id"
+                      class="text-center"
+                    >
+                      {{ item.name }}
+                    </td>
+                    <td>
+                      {{ Math.round(consumosMarchaManual[0] / 60) }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th rowspan="2">T. tarde</th>
+                    <td>Auto</td>
+                    <td
+                      v-for="item in consumosTA"
+                      :key="item.id"
+                      class="text-center"
+                    >
+                      {{ item.name }}
+                    </td>
+                    <td>
+                      {{ Math.round(consumosMarchaAuto[1] / 60) }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Manual</td>
+                    <td
+                      v-for="item in consumosTM"
+                      :key="item.id"
+                      class="text-center"
+                    >
+                      {{ item.name }}
+                    </td>
+                    <td>
+                      {{ Math.round(consumosMarchaManual[1] / 60) }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th rowspan="2">T. noche</th>
+                    <td>Auto</td>
+                    <td
+                      v-for="item in consumosNA"
+                      :key="item.id"
+                      class="text-center"
+                    >
+                      {{ item.name }}
+                    </td>
+                    <td>
+                      {{ Math.round(consumosMarchaAuto[2] / 60) }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Manual</td>
+                    <td
+                      v-for="item in consumosNM"
+                      :key="item.id"
+                      class="text-center"
+                    >
+                      {{ item.name }}
+                    </td>
+                    <td>
+                      {{ Math.round(consumosMarchaManual[2] / 60) }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th rowspan="2">Total Hoy</th>
+                    <td>Auto</td>
+                    <td
+                      v-for="item in consumosA"
+                      :key="item.id"
+                      class="text-center"
+                    >
+                      {{ item.name }}
+                    </td>
+                    <td>
+                      {{ Math.round(consumosMarchaAuto[3] / 60) }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Manual</td>
+                    <td
+                      v-for="item in consumosM"
+                      :key="item.id"
+                      class="text-center"
+                    >
+                      {{ item.name }}
+                    </td>
+                    <td>
+                      {{ Math.round(consumosMarchaManual[3] / 60) }}
+                    </td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+          </v-col>
+        </v-row>
+      </v-col>
+      <v-col v-else class="d-flex justify-center align-center">
+        <v-progress-circular
+          :size="100"
+          :width="7"
+          color="purple"
+          indeterminate
+        ></v-progress-circular>
+      </v-col>
+    </v-row>
+  </v-card>
 </template>
 <script>
 export default {

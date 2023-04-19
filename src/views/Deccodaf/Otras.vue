@@ -1,6 +1,6 @@
 <template>
-  <v-container>
-    <v-row fluid>
+  <v-container fluid>
+    <v-row>
       <v-col>
         <GraficaEstadoCard
           :variables="[2, 3, 4, 5, 6]"

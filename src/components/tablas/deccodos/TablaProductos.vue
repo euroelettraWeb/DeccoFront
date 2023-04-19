@@ -1,64 +1,63 @@
 <template>
-  <v-container>
-    <v-card>
-      <v-row>
-        <v-col v-if="cargado">
-          <v-card-title>Productos</v-card-title>
-          <v-simple-table dense>
-            <template #default>
-              <thead>
-                <tr>
-                  <th class="text-left">Tanque 1</th>
-                  <th class="text-left">Tanque 2</th>
-                  <th class="text-left">Tanque 3</th>
-                  <th class="text-left">Tanque 4</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <v-text-field
-                      v-model="tanque1"
-                      prepend-icon="mdi-bottle-tonic"
-                    ></v-text-field>
-                  </td>
-                  <td>
-                    <v-text-field
-                      v-model="tanque2"
-                      prepend-icon="mdi-bottle-tonic"
-                    ></v-text-field>
-                  </td>
-                  <td>
-                    <v-text-field
-                      v-model="tanque3"
-                      prepend-icon="mdi-bottle-tonic"
-                    ></v-text-field>
-                  </td>
-                  <td>
-                    <v-text-field
-                      v-model="tanque4"
-                      prepend-icon="mdi-bottle-tonic"
-                    ></v-text-field>
-                  </td>
-                </tr>
-              </tbody>
-            </template>
-          </v-simple-table>
+  <v-card>
+    <v-row>
+      <v-col v-if="cargado">
+        <v-card-title>Productos</v-card-title>
+        <v-simple-table dense>
+          <template #default>
+            <thead>
+              <tr>
+                <th class="text-left">Tanque 1</th>
+                <th class="text-left">Tanque 2</th>
+                <th class="text-left">Tanque 3</th>
+                <th class="text-left">Tanque 4</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <v-text-field
+                    v-model="tanque1"
+                    prepend-icon="mdi-bottle-tonic"
+                  ></v-text-field>
+                </td>
+                <td>
+                  <v-text-field
+                    v-model="tanque2"
+                    prepend-icon="mdi-bottle-tonic"
+                  ></v-text-field>
+                </td>
+                <td>
+                  <v-text-field
+                    v-model="tanque3"
+                    prepend-icon="mdi-bottle-tonic"
+                  ></v-text-field>
+                </td>
+                <td>
+                  <v-text-field
+                    v-model="tanque4"
+                    prepend-icon="mdi-bottle-tonic"
+                  ></v-text-field>
+                </td>
+              </tr>
+            </tbody>
+          </template>
+        </v-simple-table>
 
-          <v-btn color="info" class="mx-4 mb-4" @click="save">
-            <v-icon light> mdi-content-save </v-icon> Guardar
-          </v-btn>
-        </v-col>
-        <v-col v-else class="d-flex justify-center align-center">
-          <v-progress-circular
-            :size="100"
-            :width="7"
-            color="purple"
-            indeterminate
-          ></v-progress-circular>
-        </v-col>
-      </v-row> </v-card
-  ></v-container>
+        <v-btn color="info" class="mx-4 mb-4" @click="save">
+          <v-icon light> mdi-content-save </v-icon> Guardar
+        </v-btn>
+      </v-col>
+      <v-col v-else class="d-flex justify-center align-center">
+        <v-progress-circular
+          :size="100"
+          :width="7"
+          color="purple"
+          indeterminate
+        ></v-progress-circular>
+      </v-col>
+    </v-row>
+  </v-card>
 </template>
 <script>
 export default {
