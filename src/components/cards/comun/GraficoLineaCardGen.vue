@@ -8,7 +8,7 @@
         <v-row no-gutters>
           <v-col v-if="props.cargado">
             <ApexChart
-              type="rangeBar"
+              type="line"
               :height="props.height"
               :options="chartOptions"
               :series="props.serie"
