@@ -18,7 +18,8 @@
           :variables="[47]"
           :tipo="2"
           title="Cajas/min"
-          tipo-datos="unidadTiempo"
+          tipodatos="unidadTiempo"
+          labelvar="Cajas/Min"
         />
       </v-col>
     </v-row>

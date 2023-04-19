@@ -24,11 +24,17 @@
             'Bidon Jabon Vacio',
           ]"
         />
-        <GraficaLineaCard :variables="[45, 46]" :total="47" :tipo="2" />
         <GraficaLineaCard
+          :variables="[45, 46]"
+          :tipo="2"
+          title="Cajas por Ciclo y Peso por Caja"
+        />
+        <GraficaLineaCard
+          title="Cajas/Min"
           :variables="[47]"
           :tipo="2"
-          tipo-datos="unidadTiempo"
+          tipodatos="unidadTiempo"
+          labelvar="Cajas/Min"
         />
       </v-col>
     </v-row>

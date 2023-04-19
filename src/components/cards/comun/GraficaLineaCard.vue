@@ -9,7 +9,7 @@
           <v-col v-if="cargado">
             <ApexChart
               ref="chartRef"
-              type="rangeBar"
+              type="line"
               :height="props.height"
               :options="chartOptions"
               :series="series"
@@ -51,52 +51,59 @@ let cargado = ref(false);
 let mostrar = ref(true);
 let series = ref([]);
 let formatoVariables = [];
-let chartOptions = computed(() => {
-  return {
-    chart: {
-      id: "grafica linea " + props.title,
-      group: "actual",
-      locales: [es],
-      defaultLocale: "es",
-      animations: { enabled: false },
-      zoom: {
-        type: "xy",
-        autoScaleYaxis: true,
+let chartOptions = {
+  chart: {
+    id: "grafica linea " + props.title,
+    group: "actual",
+    locales: [es],
+    defaultLocale: "es",
+    animations: { enabled: false },
+    zoom: {
+      type: "xy",
+      autoScaleYaxis: true,
+    },
+  },
+  xaxis: {
+    type: "datetime",
+    datetimeUTC: false,
+    tickAmount: 25,
+    labels: {
+      minHeight: 125,
+      rotate: -45,
+      rotateAlways: true,
+      formatter: function (value, timestamp) {
+        return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
       },
     },
-    xaxis: {
-      type: "datetime",
-      datetimeUTC: false,
-      tickAmount: 25,
-      labels: {
-        minHeight: 125,
-        rotate: -45,
-        rotateAlways: true,
-        formatter: function (value, timestamp) {
-          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
-        },
-      },
+  },
+  yaxis: {
+    labels: {
+      minWidth: 60,
     },
-    yaxis: {
-      labels: {
-        minWidth: 60,
-      },
+  },
+  stroke: {
+    width: 1.9,
+    height: 60,
+    showForSingleSeries: true,
+  },
+  tooltip: {
+    x: {
+      format: "dd/MM/yyyy HH:mm:ss",
     },
-    stroke: {
-      width: 1.9,
-    },
-    legend: {
-      showForSingleSeries: true,
-    },
-  };
-});
+  },
+  legend: {
+    height: 20,
+    showForSingleSeries: true,
+  },
+};
 
 const props = defineProps({
   variables: { type: Array, default: () => [] },
   title: { type: String, default: "" },
   height: { type: Number, default: 300 },
   tipo: { type: Number, default: 1 },
-  tipoDatos: { type: String, default: "formatoLinea" },
+  tipodatos: { type: String, default: "formatoLinea" },
+  labelvar: { type: String, default: "" },
 });
 
 onMounted(async () => {
@@ -110,10 +117,13 @@ onMounted(async () => {
     "24H",
     "registros",
     "individual",
-    props.tipoDatos,
+    props.tipodatos,
     props.variables,
     maquinaID,
-    routerStore().clienteID
+    routerStore().clienteID,
+    null,
+    null,
+    props.labelvar
   );
   series.value = formatoVariables;
   for (let index = 0; index < props.variables.length; index++) {
@@ -124,10 +134,13 @@ onMounted(async () => {
           "24H",
           "registros",
           "individual",
-          props.tipoDatos,
+          props.tipodatos,
           props.variables,
           maquinaID,
-          routerStore().clienteID
+          routerStore().clienteID,
+          null,
+          null,
+          props.labelvar
         );
         if (chartRef.value) {
           chartRef.value.updateSeries(formatoVariable);
