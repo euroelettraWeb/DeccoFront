@@ -13,7 +13,10 @@ export const userStore = defineStore("user", {
     usuarioValido: ref(false),
     mensajeError: ref(""),
   }),
-  getters: {},
+  getters: {
+    rol: (state) => state.usuario.rol,
+    clienteUsuario: (state) => state.usuario.clienteID,
+  },
 
   actions: {
     login: async function ({ datosLogin, evento }) {

@@ -23,7 +23,7 @@
 
     <v-divider></v-divider>
     <v-select
-      v-if="usuarioLogeado"
+      v-if="usuarioLogeado && administrador"
       v-model="select"
       :items="nombres"
       label="Cliente"
@@ -208,13 +208,11 @@ let nombres = ref([]);
 let select = ref(0);
 let stateLineas = ref(false);
 let refLineas = ref([]);
-// let clienteActivo = ref(false);
 
-let clienteActivo = computed(() => {
-  if (clienteID.value) {
-    return true;
-  } else return false;
-});
+let administrador = computed(() =>
+  userStore().rol == "ADMINISTRADOR" ? true : false
+);
+let clienteActivo = computed(() => (clienteID.value ? true : false));
 
 onMounted(async () => {
   if (clienteID.value != 0) select.value = clienteID;

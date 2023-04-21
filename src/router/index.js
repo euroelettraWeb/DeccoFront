@@ -17,7 +17,7 @@ import DECCOCONTROLPrincipal from "../views/Deccocontrol/Principal.vue";
 import DECCODAFOtras from "../views/Deccodaf/Otras.vue";
 import DECCODOSOtras from "../views/Deccodos/Otras.vue";
 import DECCOWSOtras from "../views/Deccowasher/Otras.vue";
-import { userStore } from "../stores/index";
+import { routerStore, userStore } from "../stores/index";
 
 function checkLogin(to, from, next) {
   if (to.meta.rutaProtegida) {
@@ -28,6 +28,11 @@ function checkLogin(to, from, next) {
     // }
     if (!storeToRefs(userStore()).usuarioValido.value) {
       next("/login");
+      return;
+    }
+    if (to.meta.administrador && !(userStore().rol == "ADMINISTRADOR")) {
+      routerStore().clienteID = userStore().clienteUsuario;
+      next("/cliente/" + userStore().clienteUsuario + "/sistemas");
       return;
     }
   }
@@ -52,28 +57,44 @@ const routes = [
     path: "/cliente",
     name: "Cliente",
     component: ClienteView,
-    meta: { title: "DECCO - Cliente", rutaProtegida: true },
+    meta: {
+      title: "DECCO - Cliente",
+      rutaProtegida: true,
+      administrador: true,
+    },
     beforeEnter: checkLogin,
   },
   {
     path: "/cliente/nuevo",
     name: "NuevoCliente",
     component: NuevoClienteView,
-    meta: { title: "DECCO - Cliente", rutaProtegida: true },
+    meta: {
+      title: "DECCO - Cliente",
+      rutaProtegida: true,
+      administrador: true,
+    },
     beforeEnter: checkLogin,
   },
   {
     path: "/cliente/nuevo/lineas",
     name: "AsignadorNuevoCliente",
     component: AsignadorNuevoClienteView,
-    meta: { title: "DECCO - Cliente", rutaProtegida: false },
+    meta: {
+      title: "DECCO - Cliente",
+      rutaProtegida: true,
+      administrador: true,
+    },
     beforeEnter: checkLogin,
   },
   {
     path: "/cliente/:id/editar",
     name: "EditarCliente",
     component: EditarClienteView,
-    meta: { title: "DECCO - Cliente", rutaProtegida: true },
+    meta: {
+      title: "DECCO - Cliente",
+      rutaProtegida: true,
+      administrador: true,
+    },
     beforeEnter: checkLogin,
   },
   {
