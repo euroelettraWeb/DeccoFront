@@ -28,10 +28,8 @@ export default {
 <script setup>
 import { obtenerMaquina, obtenerLineas } from "../helpers/bd";
 import { onMounted, ref, watch } from "vue";
-import { storeToRefs } from "pinia";
 import { routerStore } from "../stores/index";
 import CardLineas from "../components/cards/comun/CardLineas.vue";
-const { clienteID } = storeToRefs(routerStore());
 
 let lineas = [];
 let nombres = ref([]);
@@ -39,7 +37,7 @@ let cargado = ref(false);
 let deccodocontrol = ref(false);
 onMounted(async () => {
   cargado.value = false;
-  lineas = await obtenerLineas(clienteID.value);
+  lineas = await obtenerLineas(routerStore().clienteID);
 
   for (let index = 0; index < lineas.length; index++) {
     let element = lineas[index];

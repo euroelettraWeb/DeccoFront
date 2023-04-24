@@ -35,7 +35,7 @@ export default {
 <script setup>
 import { obtenerClientes } from "../helpers/bd";
 import CardCliente from "../components/cards/comun/CardCliente.vue";
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref } from "vue";
 
 let clientes = [];
 let nombres = ref([]);

@@ -46,10 +46,9 @@ export default {
 </script>
 <script setup>
 import { routerStore, userStore } from "../stores/index";
-import { storeToRefs } from "pinia";
 
 function log() {
-  if (storeToRefs(userStore()).usuarioValido.value) {
+  if (userStore().usuarioValido) {
     routerStore().cliente();
   } else {
     routerStore().login();

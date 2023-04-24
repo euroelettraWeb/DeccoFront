@@ -1,4 +1,3 @@
-import { storeToRefs } from "pinia";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
@@ -26,7 +25,7 @@ function checkLogin(to, from, next) {
     //   next("/");
     //   return;
     // }
-    if (!storeToRefs(userStore()).usuarioValido.value) {
+    if (!userStore().usuarioValido) {
       next("/login");
       return;
     }

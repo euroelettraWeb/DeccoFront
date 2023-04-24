@@ -43,7 +43,7 @@ export default {
 
 <script setup>
 import { routerStore } from "../../../stores/index";
-import { watch, computed, ref, nextTick } from "vue";
+import { computed } from "vue";
 const router = routerStore();
 const props = defineProps({
   id: { type: Number, default: 1 },

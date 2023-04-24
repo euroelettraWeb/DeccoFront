@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer
-    v-model="estadoPanelLateral"
+    v-model="navStore().estadoPanelLateral"
     app
     left
     temporary
@@ -23,14 +23,14 @@
 
     <v-divider></v-divider>
     <v-select
-      v-if="usuarioLogeado && administrador"
+      v-if="userStore().usuarioValido && administrador"
       v-model="select"
       :items="nombres"
       label="Cliente"
       item-text="nombre"
       item-value="id"
       :hide-selected="true"
-      :disabled="!usuarioLogeado"
+      :disabled="!userStore().usuarioValido"
       return-object
       dense
       solo
@@ -38,7 +38,12 @@
     ></v-select>
     <v-divider></v-divider>
 
-    <v-list-item link @click="router.menu('home', router.clienteID, 0)">
+    <v-list-item
+      link
+      @click="
+        routerStore().menu('home', routerStore().routerStore().clienteID, 0)
+      "
+    >
       <v-list-item-icon>
         <v-icon>mdi-home</v-icon>
       </v-list-item-icon>
@@ -46,7 +51,7 @@
     </v-list-item>
     <v-list nav>
       <v-list-item-group active-class="red--text text--accent-4">
-        <v-list-group v-if="usuarioLogeado && stateLineas">
+        <v-list-group v-if="userStore().usuarioValido && stateLineas">
           <template #activator>
             <v-list-item-icon>
               <v-icon>mdi-factory</v-icon>
@@ -54,7 +59,11 @@
             <v-list-item>
               <v-list-item-content
                 @click="
-                  router.menu('sistemas', router.clienteID, router.lineasID)
+                  routerStore().menu(
+                    'sistemas',
+                    routerStore().routerStore().clienteID,
+                    routerStore().lineasID
+                  )
                 "
               >
                 <v-list-item-title> Lineas </v-list-item-title>
@@ -89,7 +98,11 @@
                 <v-list-item-content
                   @click="
                     if (child.estado)
-                      router.menu(child.route, router.clienteID, item.id);
+                      routerStore().menu(
+                        child.route,
+                        routerStore().routerStore().clienteID,
+                        item.id
+                      );
                   "
                 >
                   <v-list-item-title> {{ child.title }} </v-list-item-title>
@@ -99,9 +112,14 @@
           </v-list-group>
         </v-list-group>
         <v-list-item
-          v-if="usuarioLogeado && clienteActivo"
+          v-if="userStore().usuarioValido && clienteActivo"
           link
-          @click="router.menu('historico', router.clienteID)"
+          @click="
+            routerStore().menu(
+              'historico',
+              routerStore().routerStore().clienteID
+            )
+          "
         >
           <v-list-item-icon>
             <v-icon>mdi-archive</v-icon>
@@ -109,9 +127,9 @@
           <v-list-item-title>Historico</v-list-item-title>
         </v-list-item>
         <!-- <v-list-item
-          v-if="usuarioLogeado && clienteActivo"
+          v-if="userStore().usuarioValido && clienteActivo"
           link
-          @click="router.menu('informe', router.clienteID)"
+          @click="routerStore().menu('informe', routerStore().routerStore().clienteID)"
         >
           <v-list-item-icon>
             <v-icon>mdi-table</v-icon>
@@ -119,9 +137,14 @@
           <v-list-item-title>Informe</v-list-item-title>
         </v-list-item> -->
         <v-list-item
-          v-if="usuarioLogeado && clienteActivo"
+          v-if="userStore().usuarioValido && clienteActivo"
           link
-          @click="router.menu('variables', router.clienteID)"
+          @click="
+            routerStore().menu(
+              'variables',
+              routerStore().routerStore().clienteID
+            )
+          "
         >
           <v-list-item-icon>
             <v-icon>mdi-account</v-icon>
@@ -129,9 +152,9 @@
           <v-list-item-title>Variables</v-list-item-title>
         </v-list-item>
         <v-list-item
-          v-if="!usuarioLogeado"
+          v-if="!userStore().usuarioValido"
           link
-          @click="router.menu('login', 0, 0)"
+          @click="routerStore().menu('login', 0, 0)"
         >
           <v-list-item-icon>
             <v-icon>mdi-account</v-icon>
@@ -155,14 +178,7 @@ import {
   obtenerMaquina,
 } from "../../helpers/bd";
 import { userStore, routerStore, navStore } from "../../stores/index";
-import { storeToRefs } from "pinia";
-import { onMounted, ref, computed, reactive, watch } from "vue";
-const { usuarioValido } = storeToRefs(userStore());
-const usuarioLogeado = usuarioValido;
-const { estadoPanelLateral } = storeToRefs(navStore());
-const router = routerStore();
-const { clienteID } = storeToRefs(routerStore());
-
+import { onMounted, ref, computed, watch } from "vue";
 const items = (array) => {
   let list = [];
   if (array) {
@@ -212,10 +228,10 @@ let refLineas = ref([]);
 let administrador = computed(() =>
   userStore().rol == "ADMINISTRADOR" ? true : false
 );
-let clienteActivo = computed(() => (clienteID.value ? true : false));
+let clienteActivo = computed(() => (routerStore().clienteID ? true : false));
 
 onMounted(async () => {
-  if (clienteID.value != 0) select.value = clienteID;
+  if (routerStore().clienteID != 0) select.value = routerStore().clienteID;
   clientes = await obtenerClientes();
   if (select.value) {
     lineas = await obtenerLineas(select.value);
@@ -255,6 +271,6 @@ onMounted(async () => {
 });
 
 function changeItem(value) {
-  router.sistemas(value.id, 0);
+  routerStore().sistemas(value.id, 0);
 }
 </script>
