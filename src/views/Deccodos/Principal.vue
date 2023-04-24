@@ -154,8 +154,6 @@ import TablaTurnos from "../../components/tablas/comun/TablaTurnos.vue";
 import TablaTotal from "../../components/tablas/comun/TablaTotal.vue";
 import { routerStore } from "../../stores/index";
 import {
-  obtenerLinea,
-  obtenerCliente,
   obtenerMaquina,
   obtenerProductos,
   obtenerTurnos,
@@ -165,13 +163,10 @@ import TablaTotalTurnos from "../../components/tablas/deccodos/TablaTotalTurnos.
 // import TablaTotalTurnos from "../../components/tablas/comun/TablaTotalTurnos.vue";
 import GraficaLineaCard from "../../components/cards/comun/GraficaLineaCard.vue";
 import FrutaProcesadaComun from "../../components/cards/comun/FrutaProcesadaComun.vue";
-import GraficaEstadoCard from "../../components/cards/comun/GraficaEstadoCard.vue";
 import SeleccionarProducto from "../../components/cards/deccodos/SeleccionarProducto.vue";
 import TablaAlarmas from "../../components/tablas/comun/TablaAlarmas.vue";
 import TablaAlarmasTurnos from "../../components/tablas/comun/TablaAlarmasTurnos.vue";
 
-let nombreLinea = ref("");
-let nombreCliente = ref("");
 let turnos = ref(true);
 
 let tanque1 = ref(null);

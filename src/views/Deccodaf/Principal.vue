@@ -167,8 +167,6 @@ export default {
 import axios from "axios";
 import { routerStore } from "../../stores/index";
 import {
-  obtenerLinea,
-  obtenerCliente,
   obtenerMaquina,
   obtenerProductos,
   obtenerTurnos,
@@ -183,8 +181,6 @@ import FrutaProcesadaComun from "../../components/cards/comun/FrutaProcesadaComu
 import TablaAlarmas from "../../components/tablas/comun/TablaAlarmas.vue";
 import TablaAlarmasTurnos from "../../components/tablas/comun/TablaAlarmasTurnos.vue";
 
-let nombreLinea = ref("");
-let nombreCliente = ref("");
 let turnos = ref(true);
 
 let producto1 = ref(null);

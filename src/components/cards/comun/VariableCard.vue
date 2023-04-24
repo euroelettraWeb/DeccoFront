@@ -48,6 +48,7 @@
                 persistent-hint
                 return-object
                 single-line
+                multiple
                 @change="changeItem"
               ></v-select
             ></v-col>
@@ -179,26 +180,37 @@ onMounted(async () => {
   cargado.value = true;
 });
 async function changeItem(value) {
-  if (value.unidadMedida == "I/0") {
+  let IOs = value.map((x) => {
+    if (value.unidadMedida == "I/0") {
+      return x.id;
+    }
+  });
+  let line = value.map((x) => {
+    if (value.unidadMedida != "I/0") {
+      return x.id;
+    }
+  });
+  if (IOs.length > 0) {
     lineas.value = false;
     variable = await obtenerDatosVariableGeneral(
       "24H",
       "registros",
       "individual",
       "formatoRangos",
-      [value.id],
+      IOs,
       select2.value.id,
       routerStore().clienteID
     );
     series2.value = variable;
-  } else {
+  }
+  if (line.length > 0) {
     lineas.value = true;
     variable = await obtenerDatosVariableGeneral(
       "24H",
       "registros",
       "individual",
       "formatoLinea",
-      [value.id],
+      line,
       select2.value.id,
       routerStore().clienteID
     );

@@ -51,15 +51,14 @@ export default {
 </script>
 <script setup>
 import moment from "moment";
-import { storeToRefs } from "pinia";
 import { userStore } from "../stores/index";
-import { ref, reactive, computed } from "vue";
+import { reactive, computed } from "vue";
 const datosLogin = reactive({
   usuario: "",
   password: "",
 });
 let avisoLoginInvalido = computed(() =>
-  storeToRefs(userStore()).mensajeError.value != "" ? true : false
+  userStore().mensajeError != "" ? true : false
 );
 
 const loginSnackbar = (datos) => {

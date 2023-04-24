@@ -60,9 +60,6 @@ import {
 import { onMounted, ref } from "vue";
 
 let consumos = ref([]);
-let agua = [];
-let tDes = [];
-let tJabon = [];
 
 let cargado = ref(false);
 
