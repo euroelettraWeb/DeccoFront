@@ -9,6 +9,7 @@ import SistemasView from "../views/SistemasView.vue";
 import VariablesView from "../views/VariablesView.vue";
 import HistoricoView from "../views/HistoricoView.vue";
 import InformeView from "../views/InformeView.vue";
+import UsuarioView from "../views/UsuarioView.vue";
 import DECCODAFPrincipal from "../views/Deccodaf/Principal.vue";
 import DECCODOSPrincipal from "../views/Deccodos/Principal.vue";
 import DECCOWASHERPrincipal from "../views/Deccowasher/Principal.vue";
@@ -122,6 +123,13 @@ const routes = [
     name: "Informe",
     component: InformeView,
     meta: { title: "DECCO - Informe", rutaProtegida: true },
+    beforeEnter: checkLogin,
+  },
+  {
+    path: "/cliente/:id/usuario",
+    name: "Usuario",
+    component: UsuarioView,
+    meta: { title: "DECCO - Usuario", rutaProtegida: true },
     beforeEnter: checkLogin,
   },
   {
