@@ -40,9 +40,7 @@
 
     <v-list-item
       link
-      @click="
-        routerStore().menu('home', routerStore().routerStore().clienteID, 0)
-      "
+      @click="routerStore().menu('home', routerStore().clienteID, 0)"
     >
       <v-list-item-icon>
         <v-icon>mdi-home</v-icon>
@@ -61,7 +59,7 @@
                 @click="
                   routerStore().menu(
                     'sistemas',
-                    routerStore().routerStore().clienteID,
+                    routerStore().clienteID,
                     routerStore().lineasID
                   )
                 "
@@ -100,7 +98,7 @@
                     if (child.estado)
                       routerStore().menu(
                         child.route,
-                        routerStore().routerStore().clienteID,
+                        routerStore().clienteID,
                         item.id
                       );
                   "
@@ -114,37 +112,17 @@
         <v-list-item
           v-if="userStore().usuarioValido && clienteActivo"
           link
-          @click="
-            routerStore().menu(
-              'historico',
-              routerStore().routerStore().clienteID
-            )
-          "
+          @click="routerStore().menu('historico', routerStore().clienteID)"
         >
           <v-list-item-icon>
             <v-icon>mdi-archive</v-icon>
           </v-list-item-icon>
           <v-list-item-title>Historico</v-list-item-title>
         </v-list-item>
-        <!-- <v-list-item
-          v-if="userStore().usuarioValido && clienteActivo"
-          link
-          @click="routerStore().menu('informe', routerStore().routerStore().clienteID)"
-        >
-          <v-list-item-icon>
-            <v-icon>mdi-table</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>Informe</v-list-item-title>
-        </v-list-item> -->
         <v-list-item
           v-if="userStore().usuarioValido && clienteActivo"
           link
-          @click="
-            routerStore().menu(
-              'variables',
-              routerStore().routerStore().clienteID
-            )
-          "
+          @click="routerStore().menu('variables', routerStore().clienteID)"
         >
           <v-list-item-icon>
             <v-icon>mdi-account</v-icon>
@@ -178,7 +156,9 @@ import {
   obtenerMaquina,
 } from "../../helpers/bd";
 import { userStore, routerStore, navStore } from "../../stores/index";
+import { storeToRefs } from "pinia";
 import { onMounted, ref, computed, watch } from "vue";
+const { clienteID } = storeToRefs(routerStore());
 const items = (array) => {
   let list = [];
   if (array) {
@@ -224,14 +204,12 @@ let nombres = ref([]);
 let select = ref(0);
 let stateLineas = ref(false);
 let refLineas = ref([]);
-
 let administrador = computed(() =>
   userStore().rol == "ADMINISTRADOR" ? true : false
 );
-let clienteActivo = computed(() => (routerStore().clienteID ? true : false));
-
+let clienteActivo = computed(() => (clienteID.value ? true : false));
 onMounted(async () => {
-  if (routerStore().clienteID != 0) select.value = routerStore().clienteID;
+  if (clienteID.value != 0) select.value = clienteID;
   clientes = await obtenerClientes();
   if (select.value) {
     lineas = await obtenerLineas(select.value);
@@ -249,7 +227,6 @@ onMounted(async () => {
         let deccowsID = maq.find((maquina) => maquina.grupoID == 3);
         let deccodosID = maq.find((maquina) => maquina.grupoID == 2);
         let deccodafID = maq.find((maquina) => maquina.grupoID == 1);
-
         if (deccowsID) lineas[index].deccowsID = deccowsID.activa;
         if (deccodosID) lineas[index].deccodosID = deccodosID.activa;
         if (deccodafID) lineas[index].deccodafID = deccodafID.activa;
@@ -260,16 +237,12 @@ onMounted(async () => {
       stateLineas.value = false;
     }
   });
-  // computed(() => {
-  //   return ;
-  // });
   let lista = [];
   for (const iterator of clientes) {
     lista.push({ id: iterator.id, nombre: iterator.nombre });
   }
   nombres.value = lista;
 });
-
 function changeItem(value) {
   routerStore().sistemas(value.id, 0);
 }
