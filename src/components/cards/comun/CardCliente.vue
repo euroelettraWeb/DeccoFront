@@ -18,6 +18,7 @@
     <v-card-actions>
       <v-btn color="white" text link @click="updatePinia"> Acceder </v-btn>
       <v-btn color="white" text link @click="editar"> Editar </v-btn>
+      <v-btn color="white" text link @click="user"> Usuario </v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -49,5 +50,8 @@ function updatePinia() {
 }
 function editar() {
   routerStore().clienteEditar(props.id);
+}
+function user() {
+  routerStore().usuario(props.id);
 }
 </script>

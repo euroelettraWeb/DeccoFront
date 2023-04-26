@@ -40,6 +40,9 @@ const obtenerTurnos = async (clienteID) =>
     )
   ).data;
 
+const obtenerUsuario = async (id) =>
+  (await axios.get(`${process.env.VUE_APP_RUTA_API}/usuarios/${id}`)).data;
+
 const obtenerDatosVariableGeneral = async (
   modo,
   operacion,
@@ -70,4 +73,5 @@ export {
   obtenerTurnos,
   obtenerClientePLC,
   obtenerClientes,
+  obtenerUsuario,
 };

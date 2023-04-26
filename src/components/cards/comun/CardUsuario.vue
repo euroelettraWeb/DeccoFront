@@ -1,14 +1,14 @@
 <template>
-  <v-row>
-    <v-col>
+  <v-row justify="center">
+    <v-col cols="10">
       <!-- <v-switch v-model="activar" color="info" label="Usuario">
-        Usuario
-      </v-switch> -->
+          Usuario
+        </v-switch> -->
       <v-card
         ><!-- v-if="activar" -->
-        <v-form ref="form">
+        <v-form ref="formUsuario">
           <v-row>
-            <v-col>
+            <v-col class="ma-2">
               <v-text-field
                 v-model="nombre"
                 label="Nombre"
@@ -17,7 +17,7 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col>
+            <v-col class="ma-2">
               <v-text-field
                 v-model="usuario"
                 label="Usuario"
@@ -26,7 +26,7 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col>
+            <v-col class="ma-2">
               <v-text-field
                 v-model="password"
                 :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
@@ -61,7 +61,10 @@ export default {
 import axios from "axios";
 import { onMounted, ref } from "vue";
 import { routerStore } from "../../../stores";
+import { obtenerUsuario } from "../../../helpers/bd";
+import CryptoJS from "crypto-js";
 
+let formUsuario = ref(null);
 let usuario = ref("");
 let password = ref("");
 let nombre = ref("");
@@ -72,13 +75,13 @@ let rules = ref({
   min: (v) => v.length >= 6 || "Min 6 characters",
 });
 async function validate() {
-  if (form.value.validate()) {
+  if (formUsuario.value.validate()) {
     await axios.post(
       `${process.env.VUE_APP_RUTA_API}/usuarios/nuevoOactualizar`,
       {
-        nombre: username.value,
+        nombre: nombre.value,
         usuario: usuario.value,
-        password: password.value,
+        password: CryptoJS.MD5(password.value).toString(),
         rol: "Cliente",
         clienteID: routerStore().clienteID,
       }
@@ -86,5 +89,9 @@ async function validate() {
     routerStore().sistemas(routerStore().clienteID);
   }
 }
-onMounted(() => {});
+onMounted(async () => {
+  let user = await obtenerUsuario(routerStore().clienteID);
+  nombre.value = user.nombre;
+  usuario.value = user.usuario;
+});
 </script>

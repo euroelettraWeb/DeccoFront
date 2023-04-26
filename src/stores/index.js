@@ -73,6 +73,7 @@ export const routerStore = defineStore("router", {
       deccowasher: "DECCOWASHER",
       deccowasherOtras: "DECCOWASHER - Otras",
       deccocontrol: "DECCOCONTROL",
+      usuario: "Usuario",
     },
     clienteID: ref(null),
     lineasID: ref(null),
@@ -110,6 +111,13 @@ export const routerStore = defineStore("router", {
       this.clienteID = id;
       router.push({
         name: this.routes.clienteEditar,
+        params: { id },
+      });
+    },
+    usuario: async function (id) {
+      this.clienteID = id;
+      router.push({
+        name: this.routes.usuario,
         params: { id },
       });
     },
