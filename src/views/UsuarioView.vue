@@ -1,7 +1,7 @@
 <template>
-  <v-container>
+  <v-container fluid class="fill-height">
     <v-row>
-      <v-col> </v-col>
+      <v-col><CardUsuario /> </v-col>
     </v-row>
   </v-container>
 </template>
@@ -10,4 +10,6 @@ export default {
   name: "UsuarioView",
 };
 </script>
-<script setup></script>
+<script setup>
+import CardUsuario from "../components/cards/comun/CardUsuario.vue";
+</script>
