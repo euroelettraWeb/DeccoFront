@@ -38,7 +38,7 @@ import {
   obtenerMaquina,
   obtenerDatosVariableGeneral,
 } from "../../../helpers/bd";
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
@@ -51,6 +51,7 @@ let cargado = ref(false);
 let mostrar = ref(true);
 let series = ref([]);
 let formatoVariables = [];
+let maquinaID = ref(-1);
 let chartOptions = {
   chart: {
     id: "grafica linea " + props.title,
@@ -150,5 +151,8 @@ onMounted(async () => {
     );
   }
   cargado.value = true;
+});
+onUnmounted(() => {
+  socket.removeAllListeners();
 });
 </script>

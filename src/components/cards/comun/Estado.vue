@@ -41,7 +41,7 @@ import {
   obtenerMaquina,
   obtenerDatosVariableGeneral,
 } from "../../../helpers/bd";
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, onUnmounted } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
@@ -195,7 +195,7 @@ async function dataGrafica(maquinaID) {
     maquinaID,
     routerStore().clienteID
   );
-  if (funcMaquina[1]) {
+  if (funcMaquina[1].data.length > 0) {
     for (let index = 0; index < funcMaquina[1].data.length; index++) {
       let element = funcMaquina[1].data[index];
       if (element.x == "Alarma") {
@@ -206,10 +206,13 @@ async function dataGrafica(maquinaID) {
       modoMaquina[1].data.push(element);
     }
   }
-  if (!modoMaquina) {
+  if (modoMaquina[1].data.length == 0) {
     cargado.value = false;
     noData.value = true;
-  } else series.value = modoMaquina;
+  } else {
+    series.value = modoMaquina;
+    cargado.value = true;
+  }
 }
 onMounted(async () => {
   cargado.value = false;
@@ -238,6 +241,8 @@ onMounted(async () => {
       dataGrafica(maquinaID);
     }
   );
-  cargado.value = true;
+});
+onUnmounted(() => {
+  socket.removeAllListeners();
 });
 </script>

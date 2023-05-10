@@ -47,13 +47,13 @@ import {
   obtenerDatosVariableGeneral,
   obtenerMaquina,
 } from "../../../helpers/bd";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, onUnmounted } from "vue";
 import { routerStore } from "../../../stores/index";
 
 let consumos = ref([]);
 let deccodos = ref(2);
 let cargado = ref(false);
-
+let interval = null;
 const props = defineProps({
   variables: { type: Array, default: () => [] },
   marcha: { type: Array, default: () => [] },
@@ -127,7 +127,7 @@ onMounted(async () => {
   }
 
   cargado.value = true;
-  setInterval(async () => {
+  interval = setInterval(async () => {
     let totalesBD = await obtenerDatosVariableGeneral(
       "24H",
       "totales",
@@ -202,5 +202,8 @@ onMounted(async () => {
     //   name: Math.max(0, Math.round(horasMarcha.total / 60)),
     // });
   }, 3000);
+});
+onUnmounted(() => {
+  clearInterval(interval);
 });
 </script>

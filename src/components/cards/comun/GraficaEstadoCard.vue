@@ -38,7 +38,7 @@ import {
   obtenerMaquina,
   obtenerDatosVariableGeneral,
 } from "../../../helpers/bd";
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, onUnmounted } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
@@ -169,5 +169,8 @@ onMounted(async () => {
     );
   }
   cargado.value = true;
+});
+onUnmounted(() => {
+  socket.removeAllListeners();
 });
 </script>
