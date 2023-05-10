@@ -52,6 +52,10 @@ let maquina = computed(() => {
       return routerStore().maquina;
     case "Variables":
       return routerStore().maquina;
+    case "Lineas":
+      return routerStore().maquina;
+    case "Home":
+      return "";
     default:
       return (
         nombreCliente.value +
@@ -71,6 +75,10 @@ onMounted(async () => {
         return routerStore().maquina;
       case "Variables":
         return routerStore().maquina;
+      case "Lineas":
+        return routerStore().maquina;
+      case "Home":
+        return "";
       default:
         if (routerStore().lineasID != null) {
           nombreLinea.value = (

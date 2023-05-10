@@ -73,6 +73,7 @@ export const routerStore = defineStore("router", {
       deccowasher: "DECCOWASHER",
       deccowasherOtras: "DECCOWASHER - Otras",
       deccocontrol: "DECCOCONTROL",
+      usuario: "Usuario",
     },
     clienteID: ref(null),
     lineasID: ref(null),
@@ -88,6 +89,7 @@ export const routerStore = defineStore("router", {
   },
   actions: {
     homeRoute: async function ({}) {
+      this.maquina = "Home";
       router.push({ name: this.routes.home });
     },
     login: async function () {
@@ -113,9 +115,16 @@ export const routerStore = defineStore("router", {
         params: { id },
       });
     },
+    usuario: async function (id) {
+      this.clienteID = id;
+      router.push({
+        name: this.routes.usuario,
+        params: { id },
+      });
+    },
     sistemas: async function (id, linea) {
       this.clienteID = id;
-      this.maquina = null;
+      this.maquina = "Lineas";
       router.push({
         name: this.routes.sistemas,
         params: { id, linea },
@@ -169,6 +178,7 @@ export const routerStore = defineStore("router", {
       this.maquina = maquina;
       switch (route) {
         case "home":
+          this.maquina = "Home";
           router.push({ name: this.routes.home }).catch((failure) => {
             if (
               isNavigationFailure(failure, NavigationFailureType.duplicated)
@@ -185,6 +195,7 @@ export const routerStore = defineStore("router", {
           });
           break;
         case "sistemas":
+          this.maquina = "Lineas";
           router
             .push({
               name: this.routes.sistemas,
