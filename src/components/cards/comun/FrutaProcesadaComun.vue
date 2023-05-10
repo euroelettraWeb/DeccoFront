@@ -176,6 +176,6 @@ onMounted(async () => {
   cargado.value = true;
 });
 onUnmounted(() => {
-  socket.disconnect();
+  socket.removeAllListeners();
 });
 </script>

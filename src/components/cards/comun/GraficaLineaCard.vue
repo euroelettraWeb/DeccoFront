@@ -51,6 +51,7 @@ let cargado = ref(false);
 let mostrar = ref(true);
 let series = ref([]);
 let formatoVariables = [];
+let maquinaID = ref(-1);
 let chartOptions = {
   chart: {
     id: "grafica linea " + props.title,
@@ -152,6 +153,6 @@ onMounted(async () => {
   cargado.value = true;
 });
 onUnmounted(() => {
-  socket.disconnect();
+  socket.removeAllListeners();
 });
 </script>

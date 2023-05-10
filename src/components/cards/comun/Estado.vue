@@ -243,6 +243,6 @@ onMounted(async () => {
   );
 });
 onUnmounted(() => {
-  socket.disconnect();
+  socket.removeAllListeners();
 });
 </script>
