@@ -125,7 +125,26 @@
           :tipo="2"
         />
         <FrutaProcesadaComun :fruta="48" :tipo="2" />
-        <v-btn
+        <GraficaEstadoCard
+          :variables="[44]"
+          :height="200"
+          title="Activacion limpieza cepillos"
+          :tipo="2"
+          :categories="['Limpieza Cepillos']"
+        />
+        <GraficaLineaCard
+          :variables="[45, 46]"
+          :tipo="2"
+          title="Cajas por Ciclo y Peso por Caja"
+        />
+        <GraficaLineaCard
+          :variables="[47]"
+          :tipo="2"
+          title="Cajas/min"
+          tipodatos="unidadTiempo"
+          labelvar="Cajas/Min"
+        />
+        <!-- <v-btn
           color="info"
           class="mt-2"
           @click="
@@ -136,7 +155,7 @@
             )
           "
           >Otras Variables</v-btn
-        >
+        > -->
       </v-col>
     </v-row>
   </v-container>
@@ -162,6 +181,7 @@ import { onMounted, ref } from "vue";
 import TablaTotalTurnos from "../../components/tablas/deccodos/TablaTotalTurnos.vue";
 // import TablaTotalTurnos from "../../components/tablas/comun/TablaTotalTurnos.vue";
 import GraficaLineaCard from "../../components/cards/comun/GraficaLineaCard.vue";
+import GraficaEstadoCard from "../../components/cards/comun/GraficaEstadoCard.vue";
 import FrutaProcesadaComun from "../../components/cards/comun/FrutaProcesadaComun.vue";
 import SeleccionarProducto from "../../components/cards/deccodos/SeleccionarProducto.vue";
 import TablaAlarmas from "../../components/tablas/comun/TablaAlarmas.vue";
