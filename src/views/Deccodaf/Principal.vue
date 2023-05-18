@@ -129,10 +129,19 @@
             'Remoto',
             'Manual',
             'Falta de consenso',
+          ]"
+        />
+        <GraficaEstadoCard
+          :variables="[12, 73, 74, 75]"
+          :height="300"
+          title="Alarmas"
+          :tipo="1"
+          :categories="[
             'Falta Inicio Ciclo',
             'Tope Palets Alcanzado',
             'Termico Agitador',
-            'Fallo Agua	',
+            'Fallo Agua ',
+            'Fallo Aire',
           ]"
         />
         <GraficaLineaCard
@@ -141,7 +150,34 @@
           :tipo="1"
         />
         <FrutaProcesadaComun :fruta="48" :tipo="2" />
-        <v-btn
+        <GraficaEstadoCard
+          :variables="[2, 3, 4, 5, 6]"
+          :height="300"
+          title="Estado de los agitadores"
+          :tipo="1"
+          :categories="[
+            'Agitador Producto 1',
+            'Agitador Producto 2',
+            'Agitador Producto 3',
+            'Agitador Producto 4',
+            'Agitador Producto 5',
+          ]"
+        />
+        <GraficaEstadoCard
+          :variables="[20, 21, 22, 23, 24]"
+          :height="300"
+          title="Estado de los niveles de las garrafas"
+          :tipo="1"
+          :estados="['Aviso', '']"
+          :categories="[
+            'Nivel Garrafa P1',
+            'Nivel Garrafa P2',
+            'Nivel Garrafa P3',
+            'Nivel Garrafa P4',
+            'Nivel Garrafa P5',
+          ]"
+        />
+        <!-- <v-btn
           color="info"
           class="mt-2"
           @click="
@@ -152,7 +188,7 @@
             )
           "
           >Otras Variables</v-btn
-        >
+        > -->
       </v-col>
     </v-row>
   </v-container>
@@ -180,6 +216,8 @@ import TablaTotalTurnos from "../../components/tablas/comun/TablaTotalTurnos.vue
 import FrutaProcesadaComun from "../../components/cards/comun/FrutaProcesadaComun.vue";
 import TablaAlarmas from "../../components/tablas/comun/TablaAlarmas.vue";
 import TablaAlarmasTurnos from "../../components/tablas/comun/TablaAlarmasTurnos.vue";
+import TablaNivelesGarrafa from "../../components/tablas/deccodaf/TablaNivelesGarrafa.vue";
+import GraficaEstadoCard from "../../components/cards/comun/GraficaEstadoCard.vue";
 
 let turnos = ref(true);
 
