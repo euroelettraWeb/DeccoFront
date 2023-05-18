@@ -99,12 +99,26 @@
                 'Remoto',
                 'Manual',
                 'Falta de consenso',
-                'Alarma',
                 'Presencia Fruta',
               ]"
               :tooltipy="false"
               :legend="false"
               :cargado="cargado1"
+            />
+            <GraficoEstadoCardGen
+              :serie="series3"
+              title="Alarmas"
+              :colores="['#00c853', '#d50000']"
+              :tooltipy="true"
+              :legend="true"
+              :categories="[
+                'Alarma',
+                'Aviso Nivel Desinfectante',
+                'Aviso Nivel Jabon',
+                'Bidon Desinfectante Vacio',
+                'Bidon Jabon Vacio',
+              ]"
+              :cargado="cargado9"
             />
             <GraficoLineaCardGen
               :serie="seriesL"
@@ -124,20 +138,6 @@
               :legend="true"
               :categories="['Bomba Desinfectante', 'Bomba Jabon']"
               :cargado="cargado2"
-            />
-            <GraficoEstadoCardGen
-              :serie="series3"
-              title="Estado de los niveles y bidon"
-              :colores="['#00c853', '#d50000']"
-              :tooltipy="true"
-              :legend="true"
-              :categories="[
-                'Aviso Nivel Desinfectante',
-                'Aviso Nivel Jabon',
-                'Bidon Desinfectante Vacio',
-                'Bidon Jabon Vacio',
-              ]"
-              :cargado="cargado9"
             />
             <GraficoLineaCardGen
               v-if="deccodos"
@@ -268,7 +268,7 @@ async function dateApplied(date1, date2) {
     "registros",
     "individual",
     "formatoRangos",
-    [60, 62, 88],
+    [62, 88],
     props.maquina,
     routerStore().clienteID,
     inicio.value,
@@ -303,7 +303,7 @@ async function dateApplied(date1, date2) {
     "registros",
     "individual",
     "formatoRangos",
-    [84, 85, 86, 87],
+    [60, 84, 85, 86, 87],
     props.maquina,
     routerStore().clienteID,
     inicio.value,
@@ -352,7 +352,7 @@ async function dateApplied(date1, date2) {
   );
   seriesL2.value = cporu;
   cargado4.value = true;
-  totales = await obtenerDatosVariableGeneral(
+  let totales = await obtenerDatosVariableGeneral(
     "historico",
     "totales",
     "individual",
@@ -501,7 +501,6 @@ let seriesL4 = ref([]);
 let consumos = ref([]);
 let alarmas = ref([]);
 let deccodos = ref(null);
-let totales = {};
 
 let sameDateFormat = {
   from: "DD MM YYYY, HH:mm",
@@ -514,20 +513,12 @@ let dateInput = {
   placeholder: "Seleccionar fechas",
   inputClass: "selectdates",
 };
-let estado = {};
-let marcha = {};
-let funcMaquina = {};
-let dosis = {};
-let cporu = {};
-let cajas = {};
-let kilos = {};
-let alarma = {};
 onMounted(async () => {
   cargado.value = false;
   cargado1.value = false;
   let maquina = await obtenerMaquina("lineaTipo", props.linea, 2);
   deccodos.value = maquina[0].id;
-  estado = await obtenerDatosVariableGeneral(
+  let estado = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
@@ -549,7 +540,7 @@ onMounted(async () => {
     const element = autoManual[1].data[index];
     estado[1].data.push(element);
   }
-  marcha = await obtenerDatosVariableGeneral(
+  let marcha = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "multiple",
@@ -566,12 +557,12 @@ onMounted(async () => {
     const element = marcha[1].data[index];
     estado[1].data.push(element);
   }
-  funcMaquina = await obtenerDatosVariableGeneral(
+  let funcMaquina = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
     "formatoRangos",
-    [60, 62, 88],
+    [62, 88],
     props.maquina,
     routerStore().clienteID
   );
@@ -604,7 +595,7 @@ onMounted(async () => {
     "registros",
     "individual",
     "formatoRangos",
-    [84, 85, 86, 87],
+    [60, 84, 85, 86, 87],
     props.maquina,
     routerStore().clienteID,
     null,
@@ -614,7 +605,7 @@ onMounted(async () => {
   series3.value = otros;
   cargado9.value = true;
   cargado3.value = false;
-  dosis = await obtenerDatosVariableGeneral(
+  let dosis = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
@@ -626,7 +617,7 @@ onMounted(async () => {
   seriesL.value = dosis;
   cargado3.value = true;
   cargado7.value = false;
-  totales = await obtenerDatosVariableGeneral(
+  let totales = await obtenerDatosVariableGeneral(
     "24H",
     "totales",
     "individual",
@@ -637,7 +628,7 @@ onMounted(async () => {
   );
   if (deccodos.value) {
     cargado5.value = false;
-    cajas = await obtenerDatosVariableGeneral(
+    let cajas = await obtenerDatosVariableGeneral(
       "24H",
       "registros",
       "individual",
@@ -651,7 +642,7 @@ onMounted(async () => {
     );
     seriesL3.value = cajas;
     cargado5.value = true;
-    cporu = await obtenerDatosVariableGeneral(
+    let cporu = await obtenerDatosVariableGeneral(
       "24H",
       "registros",
       "individual",
@@ -671,7 +662,7 @@ onMounted(async () => {
       deccodos.value,
       routerStore().clienteID
     );
-    kilos = await obtenerDatosVariableGeneral(
+    let kilos = await obtenerDatosVariableGeneral(
       "24H",
       "registros",
       "individual",
@@ -740,7 +731,7 @@ onMounted(async () => {
   );
   cargado7.value = true;
   cargado8.value = false;
-  alarma = await obtenerDatosVariableGeneral(
+  let alarma = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
@@ -809,8 +800,6 @@ async function toExcel() {
   let ws = utils.json_to_sheet(kilosA);
   utils.book_append_sheet(wb, ws, "Kg-min");
   let alarmasA = alarmas.value;
-  // const ws2 = utils.json_to_sheet(kilosA);
-  // utils.book_append_sheet(wb, ws2, "Fruta");
   let consumosA = [];
   consumosA = consumos.value.map((e) => {
     return {
