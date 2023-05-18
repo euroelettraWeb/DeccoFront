@@ -59,7 +59,7 @@
           :variables="[58, 59]"
           :tipo="3"
         />
-        <FrutaProcesadaComun :fruta="48" :tipo="2" />
+        <FrutaProcesadaComun :variables="48" :tipo="2" />
       </v-col>
     </v-row>
     <v-btn

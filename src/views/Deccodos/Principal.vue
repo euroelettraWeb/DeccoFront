@@ -124,7 +124,7 @@
           title="Dosis"
           :tipo="2"
         />
-        <FrutaProcesadaComun :fruta="48" :tipo="2" />
+        <FrutaProcesadaComun :variables="48" :tipo="2" />
         <v-btn
           color="info"
           class="mt-2"

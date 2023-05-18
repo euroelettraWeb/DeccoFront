@@ -38,7 +38,7 @@ import {
   obtenerMaquina,
   obtenerDatosVariableGeneral,
 } from "../../../helpers/bd";
-import { onMounted, ref, computed, reactive, onUnmounted } from "vue";
+import { onMounted, ref, computed, onUnmounted } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
@@ -52,12 +52,11 @@ let tKg = {};
 let kilosM = {};
 
 const props = defineProps({
-  fruta: { type: Number, default: 1 },
+  variables: { type: Number, default: 1 },
   tipo: { type: Number, default: 1 },
 });
 const chartRef3 = ref(null);
 let kilos = ref([]);
-var lastZoom = null;
 let chartOptions = computed(() => {
   return {
     chart: {
@@ -79,7 +78,7 @@ let chartOptions = computed(() => {
         minHeight: 125,
         rotate: -45,
         rotateAlways: true,
-        formatter: function (value, timestamp) {
+        formatter: function (value) {
           return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
         },
       },
@@ -127,7 +126,7 @@ onMounted(async () => {
     "registros",
     "individual",
     "formatoAcumuladores",
-    [props.fruta],
+    [props.variables],
     maquinaID,
     routerStore().clienteID
   );
@@ -136,7 +135,7 @@ onMounted(async () => {
     "registros",
     "individual",
     "unidadTiempo",
-    [props.fruta],
+    [props.variables],
     maquinaID,
     routerStore().clienteID,
     null,
@@ -146,14 +145,14 @@ onMounted(async () => {
   tKg.push(...kilosM);
   kilos.value = tKg;
   socket.on(
-    `variable_${maquinaID}_${props.fruta}_actualizada`,
-    async (data) => {
+    `variable_${maquinaID}_${props.variables}_actualizada`,
+    async () => {
       let acc = await obtenerDatosVariableGeneral(
         "24H",
         "registros",
         "individual",
         "formatoAcumuladores",
-        [props.fruta],
+        [props.variables],
         maquinaID,
         routerStore().clienteID
       );
@@ -169,7 +168,6 @@ onMounted(async () => {
       tKg.push(...kilosM);
       if (chartRef3.value) {
         chartRef3.value.updateSeries(acc);
-        // if (lastZoom) chartRef2.value.zoomX(lastZoom[0], lastZoom[1]);
       }
     }
   );

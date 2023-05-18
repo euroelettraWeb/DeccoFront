@@ -140,7 +140,7 @@
           :variables="[7, 8, 9, 10, 11]"
           :tipo="1"
         />
-        <FrutaProcesadaComun :fruta="48" :tipo="2" />
+        <FrutaProcesadaComun :variables="48" :tipo="2" />
         <v-btn
           color="info"
           class="mt-2"
