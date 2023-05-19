@@ -149,6 +149,9 @@
           :variables="[7, 8, 9, 10, 11]"
           :tipo="1"
         />
+        <!-- <div>
+           Tabla Reposiciones y grafica 
+        </div> -->
         <FrutaProcesadaComun :fruta="48" :tipo="2" />
         <GraficaEstadoCard
           :variables="[2, 3, 4, 5, 6]"
@@ -219,18 +222,18 @@ import TablaAlarmasTurnos from "../../components/tablas/comun/TablaAlarmasTurnos
 import TablaNivelesGarrafa from "../../components/tablas/deccodaf/TablaNivelesGarrafa.vue";
 import GraficaEstadoCard from "../../components/cards/comun/GraficaEstadoCard.vue";
 
-let turnos = ref(true);
+const turnos = ref(true);
 
-let producto1 = ref(null);
-let producto2 = ref(null);
-let producto3 = ref(null);
-let producto4 = ref(null);
-let producto5 = ref(null);
+const producto1 = ref(null);
+const producto2 = ref(null);
+const producto3 = ref(null);
+const producto4 = ref(null);
+const producto5 = ref(null);
 
-let productos = ref(null);
-let cargado = ref(false);
-let guardado = ref(false);
-let mensaje = ref("");
+const productos = ref(null);
+const cargado = ref(false);
+const guardado = ref(false);
+const mensaje = ref("");
 
 async function save() {
   let array = [
@@ -273,7 +276,7 @@ async function save() {
     guardado.value = true;
   }
 }
-let turnosA = ref([]);
+const turnosA = ref([]);
 onMounted(async () => {
   cargado.value = false;
   turnosA.value = await obtenerTurnos(routerStore().clienteID);
