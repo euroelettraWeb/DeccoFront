@@ -44,7 +44,7 @@ import io from "socket.io-client";
 import moment from "moment";
 import { routerStore } from "../../../stores/index";
 
-const socket = io("http://localhost:3000");
+const socket = io(process.env.VUE_APP_RUTA_API);
 
 let cargado = ref(false);
 let mostrar = ref(true);

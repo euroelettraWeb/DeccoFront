@@ -42,6 +42,8 @@ export default {
 import { ref, onMounted, computed, watchEffect } from "vue";
 import { obtenerCliente, obtenerLinea } from "../../helpers/bd";
 import { userStore, navStore, routerStore } from "../../stores/index";
+import io from "socket.io-client";
+
 const user = userStore();
 const nav = navStore();
 let nombreLinea = ref("");
@@ -67,7 +69,10 @@ let maquina = computed(() => {
   }
 });
 
-const logout = () => user.logout();
+const logout = () => {
+  io(process.env.VUE_APP_RUTA_API).emit("logoutCliente");
+  user.logout();
+};
 onMounted(async () => {
   watchEffect(async () => {
     switch (routerStore().maquina) {
