@@ -63,7 +63,7 @@ const props = defineProps({
   },
 });
 
-let items = computed(() => [
+const items = computed(() => [
   {
     action: "mdi-hand-water",
     estado: props.linea.deccowsID ? true : false,

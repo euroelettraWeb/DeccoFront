@@ -47,11 +47,10 @@ import { routerStore } from "../../../stores/index";
 const socket = io(process.env.VUE_APP_RUTA_API);
 const chartRef = ref(null);
 var lastZoom = null;
-let cargado = ref(false);
-let mostrar = ref(true);
-let series = ref([]);
-let formatoVariables = [];
-let chartOptions = computed(() => {
+const cargado = ref(false);
+const mostrar = ref(true);
+const series = ref([]);
+const chartOptions = computed(() => {
   return {
     chart: {
       id: "grafica estado " + props.title,
@@ -132,7 +131,7 @@ onMounted(async () => {
     await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
 
-  formatoVariables = await obtenerDatosVariableGeneral(
+  let formatoVariables = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",

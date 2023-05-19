@@ -241,32 +241,32 @@ import { obtenerTurnos } from "../../../helpers/bd";
 import { onMounted, ref } from "vue";
 import { routerStore } from "../../../stores";
 
-let cargado = ref(false);
-let menu = ref(null);
-let menu2 = ref(null);
-let time = ref(null);
+const cargado = ref(false);
+const menu = ref(null);
+const menu2 = ref(null);
+const time = ref(null);
 
-let menu3 = ref(null);
-let menu4 = ref(null);
-let time2 = ref(null);
+const menu3 = ref(null);
+const menu4 = ref(null);
+const time2 = ref(null);
 
-let menu5 = ref(null);
-let menu6 = ref(null);
-let time3 = ref(null);
+const menu5 = ref(null);
+const menu6 = ref(null);
+const time3 = ref(null);
 
-let menu7 = ref(null);
-let menu8 = ref(null);
-let time4 = ref(null);
+const menu7 = ref(null);
+const menu8 = ref(null);
+const time4 = ref(null);
 
-let menu9 = ref(null);
-let menu10 = ref(null);
-let time5 = ref(null);
+const menu9 = ref(null);
+const menu10 = ref(null);
+const time5 = ref(null);
 
-let menu11 = ref(null);
-let menu12 = ref(null);
-let time6 = ref(null);
+const menu11 = ref(null);
+const menu12 = ref(null);
+const time6 = ref(null);
 
-let times = ref(null);
+const times = ref(null);
 
 async function save() {
   if (

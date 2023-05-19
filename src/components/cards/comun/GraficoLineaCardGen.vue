@@ -37,8 +37,8 @@ import { ref } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import moment from "moment";
 
-let mostrar = ref(true);
-let chartOptions = {
+const mostrar = ref(true);
+const chartOptions = {
   chart: {
     locales: [es],
     defaultLocale: "es",

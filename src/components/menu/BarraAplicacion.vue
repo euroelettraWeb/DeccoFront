@@ -47,9 +47,9 @@ import io from "socket.io-client";
 const user = userStore();
 const nav = navStore();
 const socket = io(process.env.VUE_APP_RUTA_API);
-let nombreLinea = ref("");
-let nombreCliente = ref("");
-let maquina = computed(() => {
+const nombreLinea = ref("");
+const nombreCliente = ref("");
+const maquina = computed(() => {
   switch (routerStore().maquina) {
     case "Historico":
       return routerStore().maquina;

@@ -50,9 +50,9 @@ import {
 import { onMounted, ref, onUnmounted } from "vue";
 import { routerStore } from "../../../stores/index";
 
-let consumos = ref([]);
-let deccodos = ref(2);
-let cargado = ref(false);
+const consumos = ref([]);
+const deccodos = ref(2);
+const cargado = ref(false);
 let interval = null;
 const props = defineProps({
   variables: { type: Array, default: () => [] },

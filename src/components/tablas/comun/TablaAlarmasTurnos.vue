@@ -80,13 +80,13 @@ import {
 import { onMounted, ref } from "vue";
 import { routerStore } from "../../../stores/index";
 
-let alarmasM = ref([]);
-let alarmasT = ref([]);
-let alarmasN = ref([]);
-let alarmas = ref([]);
-let unidades = ref([]);
+const alarmasM = ref([]);
+const alarmasT = ref([]);
+const alarmasN = ref([]);
+const alarmas = ref([]);
+const unidades = ref([]);
 
-let cargado = ref(false);
+const cargado = ref(false);
 
 const props = defineProps({
   variables: { type: Array, default: () => [] },

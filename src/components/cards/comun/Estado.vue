@@ -50,15 +50,11 @@ import { routerStore } from "../../../stores/index";
 const socket = io(process.env.VUE_APP_RUTA_API);
 const chartRef = ref(null);
 
-let cargado = ref(false);
-let noData = ref(false);
-let mostrar = ref(true);
-let marcha = [];
-let series = ref([]);
-let modoMaquina = [];
-let autoManual = [];
-let funcMaquina = [];
-let chartOptions = computed(() => {
+const cargado = ref(false);
+const noData = ref(false);
+const mostrar = ref(true);
+const series = ref([]);
+const chartOptions = computed(() => {
   return {
     chart: {
       id: "estado",
@@ -136,7 +132,7 @@ const props = defineProps({
 });
 
 async function dataGrafica(maquinaID) {
-  modoMaquina = await obtenerDatosVariableGeneral(
+  let modoMaquina = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
@@ -148,7 +144,7 @@ async function dataGrafica(maquinaID) {
     null,
     ["Paro", "Marcha"]
   );
-  autoManual = await obtenerDatosVariableGeneral(
+  let autoManual = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
@@ -164,7 +160,7 @@ async function dataGrafica(maquinaID) {
     }
   }
 
-  marcha = await obtenerDatosVariableGeneral(
+  let marcha = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "multiple",
@@ -186,7 +182,7 @@ async function dataGrafica(maquinaID) {
     }
   }
 
-  funcMaquina = await obtenerDatosVariableGeneral(
+  let funcMaquina = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
@@ -220,20 +216,6 @@ onMounted(async () => {
     await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
   await dataGrafica(maquinaID);
-
-  // for (let index = 0; index < props.autoManual.length; index++) {
-  //   const element = props.autoManual[index];
-  //   socket.on(`variable_${maquinaID}_${element}_actualizada`, async (data) => {
-  //     dataGrafica(maquinaID);
-  //   });
-  // }
-
-  // for (let index = 0; index < props.alarma.length; index++) {
-  //   const element = props.alarma[index];
-  //   socket.on(`variable_${maquinaID}_${element}_actualizada`, async (data) => {
-  //     dataGrafica(maquinaID);
-  //   });
-  // }
 
   socket.on(
     `variable_${maquinaID}_${props.activo}_actualizada`,

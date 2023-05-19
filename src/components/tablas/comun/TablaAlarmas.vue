@@ -52,10 +52,10 @@ import {
 import { onMounted, ref, onUnmounted } from "vue";
 import { routerStore } from "../../../stores/index";
 
-let consumos = ref([]);
-let unidades = ref([]);
+const consumos = ref([]);
+const unidades = ref([]);
 let interval = null;
-let cargado = ref(false);
+const cargado = ref(false);
 
 const props = defineProps({
   variables: { type: Array, default: () => [] },

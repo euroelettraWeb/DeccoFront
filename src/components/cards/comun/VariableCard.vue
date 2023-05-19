@@ -101,22 +101,21 @@ import { onMounted, ref, computed } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import { routerStore } from "../../../stores/index";
 
-let cargado = ref(false);
-let lineas = ref(true);
-let variables = {};
+const cargado = ref(false);
+const lineas = ref(true);
 let variable = {};
-let selectItems = ref([]);
-let lineaList = ref({});
-let nombres = ref([]);
-let select = ref(null);
-let nombres2 = ref([]);
-let select2 = ref({ id: 0, nombre: "" });
+const selectItems = ref([]);
+const lineaList = ref({});
+const nombres = ref([]);
+const select = ref(null);
+const nombres2 = ref([]);
+const select2 = ref({ id: 0, nombre: "" });
 
 const chartRef = ref(null);
 const chartRef2 = ref(null);
-let series = ref([]);
-let series2 = ref([]);
-let chartOptions = computed(() => {
+const series = ref([]);
+const series2 = ref([]);
+const chartOptions = computed(() => {
   return {
     chart: {
       locales: [es],
@@ -137,7 +136,7 @@ let chartOptions = computed(() => {
   };
 });
 
-let chartOptions2 = computed(() => {
+const chartOptions2 = computed(() => {
   return {
     chart: {
       height: 100,
@@ -221,7 +220,7 @@ function changeItem2() {
   nombres2.value = select.value.sistemas;
 }
 async function changeItem3(value) {
-  variables = await obtenerVariables();
+  let variables = await obtenerVariables();
   for (let index = 0; index < variables.length; index++) {
     const element = variables[index];
 

@@ -141,13 +141,13 @@ import {
 
 import { watch, computed, ref, nextTick, onMounted } from "vue";
 import { routerStore } from "../../../stores/index";
-let dialog = ref(false);
-let form = ref(null);
-let dialogDelete = ref(false);
-let editedIndex = ref(-1);
-let lineas = ref([]);
-let deccocontrol = ref(false);
-let headers = [
+const dialog = ref(false);
+const form = ref(null);
+const dialogDelete = ref(false);
+const editedIndex = ref(-1);
+const lineas = ref([]);
+const deccocontrol = ref(false);
+const headers = [
   {
     text: "Nombre",
     align: "start",
@@ -159,21 +159,21 @@ let headers = [
   { text: "DECCOWS", value: "deccows" },
   { text: "Actions", value: "actions", sortable: false },
 ];
-let editedItem = ref({
+const editedItem = ref({
   id: 0,
   nombre: "",
   deccodaf: false,
   deccodos: false,
   deccows: false,
 });
-let defaultItem = ref({
+const defaultItem = ref({
   id: 0,
   nombre: "",
   deccodaf: false,
   deccodos: false,
   deccows: false,
 });
-let formTitle = computed(() => {
+const formTitle = computed(() => {
   return editedIndex.value === -1 ? "Nueva Linea" : "Editar linea";
 });
 let lineasV = [];

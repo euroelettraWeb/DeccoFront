@@ -62,8 +62,8 @@ import {
 } from "../../../helpers/bd";
 import { onMounted, ref } from "vue";
 
-let consumos = ref([]);
-let cargado = ref(false);
+const consumos = ref([]);
+const cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;

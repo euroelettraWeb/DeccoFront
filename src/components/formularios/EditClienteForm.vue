@@ -88,14 +88,14 @@ import { obtenerCliente, obtenerClientePLC } from "../../helpers/bd";
 import axios from "axios";
 import { routerStore } from "../../stores/index";
 import { ref, onMounted } from "vue";
-let nombre = ref("");
-let src = ref("");
-let form = ref(null);
-let ip = ref("");
-let puerto = ref("");
-let usuario = ref("");
-let contraseña = ref("");
-let descripcion = ref("");
+const nombre = ref("");
+const src = ref("");
+const form = ref(null);
+const ip = ref("");
+const puerto = ref("");
+const usuario = ref("");
+const contraseña = ref("");
+const descripcion = ref("");
 let rules = [
   (v) => {
     if (v) return v.length <= 500 || "maximum 500 characters";
@@ -104,7 +104,7 @@ let rules = [
 ];
 let cliente = [];
 let plc = [];
-let plcId = ref(0);
+const plcId = ref(0);
 
 onMounted(async () => {
   cliente = await obtenerCliente(routerStore().clienteID);

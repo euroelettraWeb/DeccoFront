@@ -200,14 +200,14 @@ const items = (array) => {
 };
 let clientes = [];
 let lineas = [];
-let nombres = ref([]);
-let select = ref(0);
-let stateLineas = ref(false);
-let refLineas = ref([]);
-let administrador = computed(() =>
+const nombres = ref([]);
+const select = ref(0);
+const stateLineas = ref(false);
+const refLineas = ref([]);
+const administrador = computed(() =>
   userStore().rol == "ADMINISTRADOR" ? true : false
 );
-let clienteActivo = computed(() => (clienteID.value ? true : false));
+const clienteActivo = computed(() => (clienteID.value ? true : false));
 onMounted(async () => {
   if (clienteID.value != 0) select.value = clienteID;
   clientes = await obtenerClientes();

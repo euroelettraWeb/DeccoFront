@@ -46,18 +46,16 @@ import { routerStore } from "../../../stores/index";
 
 const socket = io(process.env.VUE_APP_RUTA_API);
 
-let cargado = ref(false);
-let mostrar = ref(true);
-let tKg = {};
-let kilosM = {};
+const cargado = ref(false);
+const mostrar = ref(true);
+const kilos = ref([]);
 
 const props = defineProps({
   variables: { type: Number, default: 1 },
   tipo: { type: Number, default: 1 },
 });
 const chartRef3 = ref(null);
-let kilos = ref([]);
-let chartOptions = computed(() => {
+const chartOptions = computed(() => {
   return {
     chart: {
       id: "Kilos",
@@ -121,7 +119,7 @@ onMounted(async () => {
     await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
 
-  tKg = await obtenerDatosVariableGeneral(
+  let tKg = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
@@ -130,7 +128,7 @@ onMounted(async () => {
     maquinaID,
     routerStore().clienteID
   );
-  kilosM = await obtenerDatosVariableGeneral(
+  let kilosM = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",

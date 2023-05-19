@@ -78,12 +78,12 @@ import { routerStore } from "../../../stores/index";
 import DECCODAFHistoricoCard from "../deccodaf/DECCODAFHistorico.vue";
 import DECCODOSHistorico from "../deccodos/DECCODOSHistorico.vue";
 import DECCOWSHistorico from "../deccowasher/DECCOWSHistorico.vue";
-let cargado = ref(false);
-let lineaList = ref({});
-let nombres = ref([]);
-let select = ref(null);
-let nombres2 = ref([]);
-let select2 = ref({ id: 0, nombre: "" });
+const cargado = ref(false);
+const lineaList = ref({});
+const nombres = ref([]);
+const select = ref(null);
+const nombres2 = ref([]);
+const select2 = ref({ id: 0, nombre: "" });
 
 onMounted(async () => {
   cargado.value = false;
