@@ -46,6 +46,7 @@ import io from "socket.io-client";
 
 const user = userStore();
 const nav = navStore();
+const socket = io(process.env.VUE_APP_RUTA_API);
 let nombreLinea = ref("");
 let nombreCliente = ref("");
 let maquina = computed(() => {
@@ -70,7 +71,7 @@ let maquina = computed(() => {
 });
 
 const logout = () => {
-  io(process.env.VUE_APP_RUTA_API).emit("logoutCliente");
+  socket.emit("logoutCliente");
   user.logout();
 };
 onMounted(async () => {
