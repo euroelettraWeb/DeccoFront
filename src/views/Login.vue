@@ -57,7 +57,7 @@ const datosLogin = reactive({
   usuario: "",
   password: "",
 });
-let avisoLoginInvalido = computed(() =>
+const avisoLoginInvalido = computed(() =>
   userStore().mensajeError != "" ? true : false
 );
 

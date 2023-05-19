@@ -32,10 +32,10 @@ import { routerStore } from "../stores/index";
 import CardLineas from "../components/cards/comun/CardLineas.vue";
 
 let lineas = [];
-let nombres = ref([]);
-let cargado = ref(false);
-let deccodocontrol = ref(false);
-let clienteID = ref(routerStore().clienteID);
+const nombres = ref([]);
+const cargado = ref(false);
+const deccodocontrol = ref(false);
+const clienteID = ref(routerStore().clienteID);
 onMounted(async () => {
   cargado.value = false;
   lineas = await obtenerLineas(routerStore().clienteID);

@@ -38,8 +38,8 @@ import CardCliente from "../components/cards/comun/CardCliente.vue";
 import { onMounted, ref } from "vue";
 
 let clientes = [];
-let nombres = ref([]);
-let cargado = ref(false);
+const nombres = ref([]);
+const cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;

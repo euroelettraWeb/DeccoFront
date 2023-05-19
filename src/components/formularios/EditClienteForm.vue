@@ -102,13 +102,11 @@ let rules = [
     else return true;
   },
 ];
-let cliente = [];
-let plc = [];
 const plcId = ref(0);
 
 onMounted(async () => {
-  cliente = await obtenerCliente(routerStore().clienteID);
-  plc = await obtenerClientePLC(routerStore().clienteID);
+  let cliente = await obtenerCliente(routerStore().clienteID);
+  let plc = await obtenerClientePLC(routerStore().clienteID);
   nombre.value = cliente[0].nombre;
   src.value = cliente[0].img;
   ip.value = plc[0].ip;
