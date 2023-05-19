@@ -132,6 +132,13 @@
           :tipo="2"
           :categories="['Limpieza Cepillos']"
         />
+        <!-- <GraficaEstadoCard
+          :variables="[100]"
+          :height="200"
+          title="Modos de trabajo"
+          :tipo="2"
+          :categories="['Modo 1']"
+        /> -->
         <GraficaLineaCard
           :variables="[45, 46]"
           :tipo="2"
