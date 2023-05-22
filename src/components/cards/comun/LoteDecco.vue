@@ -1,16 +1,16 @@
 <template>
   <v-row>
     <v-col>
-      <v-switch v-model="mostrar" color="info" label="Fruta procesada">
+      <v-switch v-model="mostrar" color="info" label="Lote Jabon">
         Lote Jabon
       </v-switch>
       <v-card v-if="mostrar">
         <v-row>
           <v-col v-if="cargado">
-            <ApexCharts
+            <ApexChart
               ref="chartRef"
               type="rangeBar"
-              height="300"
+              :height="300"
               :options="chartOptions"
               :series="series"
             />
@@ -23,14 +23,14 @@
               indeterminate
             ></v-progress-circular> </v-col></v-row
       ></v-card>
-      <v-switch v-model="mostrar2" color="info" label="Fruta procesada">
+      <v-switch v-model="mostrar2" color="info" label="Lote Desinfectante">
         Lote Jabon
       </v-switch>
       <v-card v-if="mostrar2">
         <v-row>
           <v-col v-if="cargado2">
-            <ApexCharts
-              ref="chartRef"
+            <ApexChart
+              ref="chartRef2"
               type="rangeBar"
               height="300"
               :options="chartOptions2"
@@ -45,8 +45,12 @@
             ></v-progress-circular> </v-col></v-row></v-card></v-col
   ></v-row>
 </template>
+<script>
+export default {
+  name: "LoteDecco",
+};
+</script>
 <script setup>
-import ApexCharts from "apexcharts";
 import {
   obtenerMaquina,
   obtenerDatosVariableGeneral,
@@ -72,7 +76,7 @@ let chartOptions = computed(() => {
   return {
     chart: {
       id: "jabon",
-      group: "actual",
+      // group: "actual",
       type: "rangeBar",
       locales: [es],
       defaultLocale: "es",
@@ -96,7 +100,7 @@ let chartOptions = computed(() => {
     colors: [
       function ({ value, seriesIndex, w }) {
         if (seriesIndex == 0) {
-          return "#d50000";
+          return "#f0ec07";
         } else {
           return "#00c853";
         }
@@ -106,7 +110,7 @@ let chartOptions = computed(() => {
       type: "datetime",
       datetimeUTC: false,
       tickAmount: 20,
-      categories: props.categories,
+      // categories: props.categories,
       labels: {
         minHeight: 125,
         rotate: -45,
@@ -140,7 +144,7 @@ let chartOptions2 = computed(() => {
   return {
     chart: {
       id: "desinfectante",
-      group: "actual",
+      // group: "actual",
       type: "rangeBar",
       locales: [es],
       defaultLocale: "es",
@@ -164,7 +168,7 @@ let chartOptions2 = computed(() => {
     colors: [
       function ({ value, seriesIndex, w }) {
         if (seriesIndex == 0) {
-          return "#d50000";
+          return "#f0ec07";
         } else {
           return "#00c853";
         }
@@ -174,7 +178,7 @@ let chartOptions2 = computed(() => {
       type: "datetime",
       datetimeUTC: false,
       tickAmount: 20,
-      categories: props.categories,
+      // categories: props.categories,
       labels: {
         minHeight: 125,
         rotate: -45,
@@ -214,55 +218,35 @@ onMounted(async () => {
   //TODO asignar valores de prueba
   let serie = [
     {
-      name: "Jabon 1",
+      name: "Producto",
       data: [
         {
-          x: "Producto",
+          x: "Jabon 1",
           y: [1694353200000, 1694373200000],
+          fillColor: "#ff8000",
         },
-      ],
-    },
-    {
-      name: "JAB1",
-      data: [
+
         {
-          x: "Producto",
+          x: "JAB1",
           y: [1694364800000, 1694378000000],
         },
-      ],
-    },
-    {
-      name: "Jabon 2",
-      data: [
+
         {
-          x: "Producto",
+          x: "Jabon 2",
           y: [1694356800000, 1694375000000],
+          fillColor: "#ff8000",
         },
-      ],
-    },
-    {
-      name: "JAB2",
-      data: [
         {
-          x: "Producto",
+          x: "JAB2",
           y: [1694358000000, 1694376800000],
         },
-      ],
-    },
-    {
-      name: "Producto 3",
-      data: [
         {
-          x: "Producto",
+          x: "Jabon 3",
           y: [1694360400000, 1694375600000],
+          fillColor: "#ff8000",
         },
-      ],
-    },
-    {
-      name: "JAB3",
-      data: [
         {
-          x: "Producto",
+          x: "JAB3",
           y: [1694360400000, 1694375600000],
         },
       ],
@@ -271,55 +255,33 @@ onMounted(async () => {
   series.value = serie;
   let serie2 = [
     {
-      name: "Jabon 1",
+      name: "Producto",
       data: [
         {
-          x: "Producto",
+          x: "Desinfectante 1",
           y: [1694353200000, 1694373200000],
+          fillColor: "#ff8000",
         },
-      ],
-    },
-    {
-      name: "JAB1",
-      data: [
         {
-          x: "Producto",
+          x: "JAB1",
           y: [1694364800000, 1694378000000],
         },
-      ],
-    },
-    {
-      name: "Jabon 2",
-      data: [
         {
-          x: "Producto",
+          x: "Desinfectante 2",
           y: [1694356800000, 1694375000000],
+          fillColor: "#ff8000",
         },
-      ],
-    },
-    {
-      name: "JAB2",
-      data: [
         {
-          x: "Producto",
+          x: "JAB2",
           y: [1694358000000, 1694376800000],
         },
-      ],
-    },
-    {
-      name: "Producto 3",
-      data: [
         {
-          x: "Producto",
+          x: "Desinfectante 3",
           y: [1694360400000, 1694375600000],
+          fillColor: "#ff8000",
         },
-      ],
-    },
-    {
-      name: "JAB3",
-      data: [
         {
-          x: "Producto",
+          x: "JAB3",
           y: [1694360400000, 1694375600000],
         },
       ],
