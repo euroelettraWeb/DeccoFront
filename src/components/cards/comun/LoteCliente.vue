@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col><v-subheader>Lote Cliente XXX</v-subheader></v-col>
+    <v-col><h1>Lote Cliente XXX</h1></v-col>
   </v-row>
 </template>
 <script setup>

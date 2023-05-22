@@ -132,7 +132,7 @@ import TablaTotalTurnos from "../../components/tablas/comun/TablaTotalTurnos.vue
 import TablaAlarmas from "../../components/tablas/comun/TablaAlarmas.vue";
 import TablaAlarmasTurnos from "../../components/tablas/comun/TablaAlarmasTurnos.vue";
 import LoteCliente from "../../components/cards/comun/LoteCliente.vue";
-import LoteDecco from "../../components/cards/comun/LoteDecco.vue";
+import LoteDecco from "../../components/cards/deccowasher/LoteDecco.vue";
 
 let turnos = ref(true);
 let turnosA = ref([]);
