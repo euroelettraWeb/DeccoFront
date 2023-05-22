@@ -39,6 +39,7 @@
     </v-row>
     <v-row no-gutters>
       <v-col>
+        <LoteDecco :tipo="3" />
         <Estado
           :activo="57"
           :auto-manual="[61, 63]"
@@ -131,6 +132,7 @@ import TablaTotalTurnos from "../../components/tablas/comun/TablaTotalTurnos.vue
 import TablaAlarmas from "../../components/tablas/comun/TablaAlarmas.vue";
 import TablaAlarmasTurnos from "../../components/tablas/comun/TablaAlarmasTurnos.vue";
 import LoteCliente from "../../components/cards/comun/LoteCliente.vue";
+import LoteDecco from "../../components/cards/comun/LoteDecco.vue";
 
 let turnos = ref(true);
 let turnosA = ref([]);
