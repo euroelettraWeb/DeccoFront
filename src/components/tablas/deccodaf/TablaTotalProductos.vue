@@ -55,36 +55,39 @@ export default {
 };
 </script>
 <script setup>
-import bd from "../../../helpers/bd";
-import { computed, onMounted, ref } from "vue";
+import {
+  obtenerDatosVariableGeneral,
+  obtenerMaquina,
+  obtenerProductos,
+} from "../../../helpers/bd";
+import { onMounted, ref } from "vue";
 import { routerStore } from "../../../stores";
 
 let consumos = ref([]);
-let totaltB1 = [];
-let totaltB2 = [];
-let totaltB3 = [];
-let totaltB4 = [];
-let totaltB5 = [];
 
 let cargado = ref(false);
 
 onMounted(async () => {
-  let maquina = await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, 1);
-  let t = await bd.obtenerProductos("maquina", maquina[0].id);
+  let maquina = await obtenerMaquina("lineaTipo", routerStore().lineasID, 1);
+  let t = await obtenerProductos("maquina", maquina[0].id);
   cargado.value = false;
-  totaltB1 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 51);
-  totaltB2 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 52);
-  totaltB3 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 53);
-  totaltB4 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 54);
-  totaltB5 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 55);
 
-  consumos.value = [
-    { id: 0, name: totaltB1.registros[0].y },
-    { id: 1, name: totaltB2.registros[0].y },
-    { id: 2, name: totaltB3.registros[0].y },
-    { id: 3, name: totaltB4.registros[0].y },
-    { id: 4, name: totaltB5.registros[0].y },
-  ];
+  let ultimos = await obtenerDatosVariableGeneral(
+    "24H",
+    "ultimo",
+    "individual",
+    "sinfiltro",
+    [51, 52, 53, 54, 55],
+    maquina[0].id,
+    routerStore().clienteID
+  );
+  for (let index = 0; index < ultimos.length; index++) {
+    const ultimo = ultimos[index];
+    consumos.value.push({
+      id: index,
+      name: ultimo.registros[0].y,
+    });
+  }
   cargado.value = true;
 });
 </script>

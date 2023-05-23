@@ -56,98 +56,37 @@ export default {
 };
 </script>
 <script setup>
-import bd from "../../../helpers/bd";
+import {
+  obtenerDatosVariableGeneral,
+  obtenerMaquina,
+} from "../../../helpers/bd";
 import { onMounted, ref } from "vue";
 
-let consumos = ref([]);
-let agua = [];
-let totalP1 = [];
-let totalP2 = [];
-let totalP3 = [];
-let totalP4 = [];
-let totalP5 = [];
-let tCajas = {};
-let tKg = {};
-
-let cargado = ref(false);
+const consumos = ref([]);
+const cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-  agua = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 25);
-  totalP1 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 26);
-  totalP2 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 27);
-  totalP3 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 28);
-  totalP4 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 29);
-  totalP5 = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 30);
-  tCajas = await bd.obtenerDatosVariable("8H", "registros", "sinfiltro", 18);
-  tKg = await bd.obtenerDatosVariable("8H", "registros", "sinfiltro", 19);
+  let maquinaID = (await obtenerMaquina("lineaTipo", 1, 1))[0].id;
+  let ultimos = await obtenerDatosVariableGeneral(
+    "24H",
+    "ultimo",
+    "individual",
+    "sinfiltro",
+    [25, 26, 27, 28, 29, 30, 18, 19],
+    maquinaID,
+    routerStore().clienteID
+  );
 
-  consumos.value = [
-    {
-      id: 0,
-      name: "Total agua",
-      lineas: [
-        { idLinea: "L4", valor: agua.registros[0].y },
-        { idLinea: "L5", valor: agua.registros[0].y },
-      ],
-    },
-    {
-      id: 1,
-      name: "Total producto 1",
-      lineas: [
-        { idLinea: "L4", valor: totalP1.registros[0].y },
-        { idLinea: "L5", valor: totalP1.registros[0].y },
-      ],
-    },
-    {
-      id: 2,
-      name: "Total producto 2",
-      lineas: [
-        { idLinea: "L4", valor: totalP2.registros[0].y },
-        { idLinea: "L5", valor: totalP2.registros[0].y },
-      ],
-    },
-    {
-      id: 3,
-      name: "Total producto 3",
-      lineas: [
-        { idLinea: "L4", valor: totalP3.registros[0].y },
-        { idLinea: "L5", valor: totalP3.registros[0].y },
-      ],
-    },
-    {
-      id: 4,
-      name: "Total producto 4",
-      lineas: [
-        { idLinea: "L4", valor: totalP4.registros[0].y },
-        { idLinea: "L5", valor: totalP4.registros[0].y },
-      ],
-    },
-    {
-      id: 5,
-      name: "Total producto 5",
-      lineas: [
-        { idLinea: "L4", valor: totalP5.registros[0].y },
-        { idLinea: "L5", valor: totalP5.registros[0].y },
-      ],
-    },
-    {
-      id: 6,
-      name: "Total kilos",
-      lineas: [
-        { idLinea: "L4", valor: tKg.registros[0].y },
-        { idLinea: "L5", valor: tKg.registros[0].y },
-      ],
-    },
-    {
-      id: 7,
-      name: "Total cajas",
-      lineas: [
-        { idLinea: "L4", valor: tCajas.registros[0].y },
-        { idLinea: "L5", valor: tCajas.registros[0].y },
-      ],
-    },
-  ];
+  consumos.value = [];
+  for (let index = 0; index < ultimos.length; index++) {
+    const element = ultimos[index];
+    consumos.value.push({
+      id: index,
+      name: element.nombreCorto,
+      lineas: { idLinea: "L4", valor: element.registros[0].y },
+    });
+  }
   cargado.value = true;
 });
 </script>

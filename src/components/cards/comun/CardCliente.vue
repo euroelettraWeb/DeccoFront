@@ -4,7 +4,7 @@
     height="250"
     max-width="250"
     max-height="350"
-    color="red"
+    color="primary"
   >
     <v-card-title class="font-weight-bold"> {{ props.cliente }}</v-card-title>
     <v-img

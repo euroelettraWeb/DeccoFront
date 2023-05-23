@@ -128,22 +128,26 @@
 
 <script>
 export default {
-  name: "TablaLineas",
+  name: "TablaLineasEditar",
 };
 </script>
 <script setup>
 import axios from "axios";
-import bd from "../../../helpers/bd";
+import {
+  obtenerLinea,
+  obtenerLineas,
+  obtenerMaquina,
+} from "../../../helpers/bd";
 
 import { watch, computed, ref, nextTick, onMounted } from "vue";
 import { routerStore } from "../../../stores/index";
-let dialog = ref(false);
-let form = ref(null);
-let dialogDelete = ref(false);
-let editedIndex = ref(-1);
-let lineas = ref([]);
-let deccocontrol = ref(false);
-let headers = [
+const dialog = ref(false);
+const form = ref(null);
+const dialogDelete = ref(false);
+const editedIndex = ref(-1);
+const lineas = ref([]);
+const deccocontrol = ref(false);
+const headers = [
   {
     text: "Nombre",
     align: "start",
@@ -155,30 +159,30 @@ let headers = [
   { text: "DECCOWS", value: "deccows" },
   { text: "Actions", value: "actions", sortable: false },
 ];
-let editedItem = ref({
+const editedItem = ref({
   id: 0,
   nombre: "",
   deccodaf: false,
   deccodos: false,
   deccows: false,
 });
-let defaultItem = ref({
+const defaultItem = ref({
   id: 0,
   nombre: "",
   deccodaf: false,
   deccodos: false,
   deccows: false,
 });
-let formTitle = computed(() => {
+const formTitle = computed(() => {
   return editedIndex.value === -1 ? "Nueva Linea" : "Editar linea";
 });
 let lineasV = [];
 let maquinas = [];
 onMounted(async () => {
-  lineasV = await bd.obtenerLineas(routerStore().clienteID);
+  lineasV = await obtenerLineas(routerStore().clienteID);
   for (let index = 0; index < lineasV.length; index++) {
     const element = lineasV[index];
-    maquinas = await bd.obtenerMaquina("linea", element.id, 0);
+    maquinas = await obtenerMaquina("linea", element.id, 0);
     let next = {};
     next.id = element.id;
     next.nombre = element.nombre;
@@ -200,7 +204,7 @@ onMounted(async () => {
           break;
       }
     }
-    let deccoc = await bd.obtenerMaquina(
+    let deccoc = await obtenerMaquina(
       "clienteTipo",
       routerStore().clienteID,
       4
@@ -255,7 +259,6 @@ function save() {
   } else {
     lineas.value.push(editedItem.value);
   }
-  console.log(lineas);
   close();
 }
 
@@ -263,9 +266,9 @@ async function guardarLineas() {
   if (lineas.value) {
     for (let index = 0; index < lineas.value.length; index++) {
       let element = lineas.value[index];
-      let linea = await bd.obtenerLinea(element.id);
-      if (linea) {
-        let maquinas = await bd.obtenerMaquina("linea", element.id, 0);
+      let linea = await obtenerLinea(element.id);
+      if (linea.length != 0) {
+        let maquinas = await obtenerMaquina("linea", element.id, 0);
         let deccowsID = maquinas.find((maquina) => maquina.grupoID == 3);
         let deccodosID = maquinas.find((maquina) => maquina.grupoID == 2);
         let deccodafID = maquinas.find((maquina) => maquina.grupoID == 1);
@@ -278,7 +281,7 @@ async function guardarLineas() {
           if (element.deccodaf)
             axios
               .post(`${process.env.VUE_APP_RUTA_API}/maquinas/nuevo`, {
-                nombre: "DECCODAF",
+                nombre: "Deccodaf",
                 nombreLinea: element.nombre,
                 clienteID: routerStore().clienteID,
                 grupoID: 1,
@@ -295,7 +298,7 @@ async function guardarLineas() {
           if (element.deccodos)
             axios
               .post(`${process.env.VUE_APP_RUTA_API}/maquinas/nuevo`, {
-                nombre: "DECCODOS",
+                nombre: "Deccodos",
                 nombreLinea: element.nombre,
                 clienteID: routerStore().clienteID,
                 grupoID: 2,
@@ -312,7 +315,7 @@ async function guardarLineas() {
           if (element.deccows)
             axios
               .post(`${process.env.VUE_APP_RUTA_API}/maquinas/nuevo`, {
-                nombre: "DECCODWASHER",
+                nombre: "Deccowasher",
                 nombreLinea: element.nombre,
                 clienteID: routerStore().clienteID,
                 grupoID: 3,
@@ -331,9 +334,9 @@ async function guardarLineas() {
           .then((res) => {});
       } else {
         let maquinas = [];
-        if (element.deccodaf) maquinas.push({ nombre: "DECCODAF", tipo: 1 });
-        if (element.deccodos) maquinas.push({ nombre: "DECCODOS", tipo: 2 });
-        if (element.deccows) maquinas.push({ nombre: "DECCOWASHER", tipo: 3 });
+        if (element.deccodaf) maquinas.push({ nombre: "Deccodaf", tipo: 1 });
+        if (element.deccodos) maquinas.push({ nombre: "Deccodos", tipo: 2 });
+        if (element.deccows) maquinas.push({ nombre: "Deccowasher", tipo: 3 });
         // maquinas.push({ nombre: "DECCOCONTROL", tipo: 4 });
         axios
           .post(`${process.env.VUE_APP_RUTA_API}/lineas/nuevo`, {
@@ -345,7 +348,7 @@ async function guardarLineas() {
       }
     }
   }
-  // let deccoc = await bd.obtenerMaquina("clienteTipo", routerStore().clienteID, 4)
+  // let deccoc = await obtenerMaquina("clienteTipo", routerStore().clienteID, 4)
   //   .id;
   // if (deccoc)
   //   axios
@@ -363,17 +366,17 @@ async function guardarLineas() {
   //     lineaID: null,
   //   });
 }
-// async function bd.obtenerLinea(id) {
+// async function obtenerLinea(id) {
 //   return (await axios.get(`${process.env.VUE_APP_RUTA_API}/lineas/${id}`)).data;
 // }
-// async function bd.obtenerMaquina(modo, clienteID, grupoID) {
+// async function obtenerMaquina(modo, clienteID, grupoID) {
 //   return (
 //     await axios.get(
 //       `${process.env.VUE_APP_RUTA_API}/maquinas/${modo}/${clienteID}/${grupoID}`
 //     )
 //   ).data;
 // }
-// async function bd.obtenerVariable(clienteID) {
+// async function obtenerVariable(clienteID) {
 //   return (
 //     await axios.get(`${process.env.VUE_APP_RUTA_API}/${clienteID}/lineas/all`)
 //   ).data;

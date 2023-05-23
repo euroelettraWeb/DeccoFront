@@ -1,12 +1,33 @@
 <template>
-  <v-container>
-    <h1 class="transition-swing text-h2">
-      {{ nombreCliente }} - DECCOWASHER - {{ nombreLinea }}
-    </h1>
+  <v-container fluid>
     <v-row>
       <v-col>
-        <CajasComun :caja1="16" :caja2="17" :total="18" /> <EstadoAgitadores />
-        <EstadoNivelGarrafas /> <TablaNivelesGarrafa
+        <GraficaEstadoCard
+          :variables="[2, 3, 4, 5, 6]"
+          :height="300"
+          title="Estado de los agitadores"
+          :tipo="1"
+          :categories="[
+            'Agitador Producto 1',
+            'Agitador Producto 2',
+            'Agitador Producto 3',
+            'Agitador Producto 4',
+            'Agitador Producto 5',
+          ]" />
+        <GraficaEstadoCard
+          :variables="[20, 21, 22, 23, 24]"
+          :height="300"
+          title="Estado de los niveles de las garrafas"
+          :tipo="1"
+          :estados="['Aviso', '']"
+          :categories="[
+            'Nivel Garrafa P1',
+            'Nivel Garrafa P2',
+            'Nivel Garrafa P3',
+            'Nivel Garrafa P4',
+            'Nivel Garrafa P5',
+          ]" />
+        <TablaNivelesGarrafa
       /></v-col>
     </v-row>
   </v-container>
@@ -14,24 +35,10 @@
 
 <script>
 export default {
-  name: "DECCOWASHERPrincipal",
+  name: "DECCODAFOtras",
 };
 </script>
 <script setup>
-import { routerStore } from "../../stores/index";
-import bd from "../../helpers/bd";
-import { onMounted, ref } from "vue";
-import EstadoNivelGarrafas from "../../components/cards/deccodaf/EstadoNivelGarrafas.vue";
-import EstadoAgitadores from "../../components/cards/deccodaf/EstadoAgitadores.vue";
-import CajasComun from "../../components/cards/comun/CajasComun.vue";
 import TablaNivelesGarrafa from "../../components/tablas/deccodaf/TablaNivelesGarrafa.vue";
-
-let nombreLinea = ref("");
-let nombreCliente = ref("");
-onMounted(async () => {
-  nombreLinea.value = (await bd.obtenerLinea(routerStore().lineasID))[0].nombre;
-  nombreCliente.value = (
-    await bd.obtenerCliente(routerStore().clienteID)
-  )[0].nombre;
-});
+import GraficaEstadoCard from "../../components/cards/comun/GraficaEstadoCard.vue";
 </script>

@@ -1,42 +1,35 @@
 <template>
-  <v-container
-    ><v-row>
-      <v-col>
-        <v-card>
-          <v-row
-            ><v-col><v-card-title>Estado</v-card-title></v-col>
-          </v-row>
-          <v-row>
-            <v-col v-if="cargado">
-              <v-row>
-                <v-col>
-                  <ApexChart
-                    ref="chartRef"
-                    type="rangeBar"
-                    height="300"
-                    :options="chartOptions"
-                    :series="series" />
-                  <ApexChart
-                    ref="chartRef3"
-                    type="rangeBar"
-                    height="300"
-                    :options="chartOptions"
-                    :series="series3"
-                /></v-col>
-              </v-row>
-            </v-col>
-            <v-col v-else class="d-flex justify-center align-center">
+  <v-row no-gutters>
+    <v-col>
+      <v-switch v-model="mostrar" color="info" label="Estado">Estado</v-switch>
+      <v-card v-if="mostrar">
+        <v-row no-gutters>
+          <v-col v-if="cargado">
+            <ApexChart
+              ref="chartRef"
+              type="rangeBar"
+              height="300"
+              :options="chartOptions"
+              :series="series"
+            />
+          </v-col>
+          <v-col v-else class="d-flex justify-center align-center">
+            <div v-if="noData">
+              <h1>Maquina desconectada</h1>
+            </div>
+            <div v-else>
               <v-progress-circular
                 :size="100"
                 :width="7"
                 color="purple"
                 indeterminate
               ></v-progress-circular>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-col> </v-row
-  ></v-container>
+            </div>
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 <script>
 export default {
@@ -44,147 +37,35 @@ export default {
 };
 </script>
 <script setup>
-import bd from "../../../helpers/bd";
-import { onMounted, ref, computed } from "vue";
+import {
+  obtenerMaquina,
+  obtenerDatosVariableGeneral,
+} from "../../../helpers/bd";
+import { onMounted, ref, computed, onUnmounted } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
 import { routerStore } from "../../../stores/index";
 
-// function newValue(newArray, value, nameI) {
-//   let elemento0 = newArray[0].data.findLast((node) => node.x == nameI);
-//   let elemento1 = newArray[1].data.findLast((node) => node.x == nameI);
-//   let last = moment(elemento0.y[1]).isAfter(elemento1.y[1]) ? 0 : 1;
-//   let index = newArray[last].data.findLastIndex(
-//     (node) => node.x == nameI
-//   );
-//   // console.log("last", last);
-//   // console.log(index);
-//   // console.log(newArray[value.y].data);
-//   // console.log(newArray[value.y].data[index].y[1]);
-//   if (value.y == last) {
-//     // console.log(newArray[value.y].data[index].y[1]);
-//     newArray[value.y].data[index].y[1] = new Date(value.x).getTime();
-//     // console.log(newArray[value.y].data[index]);
-//   } else {
-//     // console.log(newArray[value.y].data[index].y[1]);
-//     let obj = {
-//       x: nameI,
-//       y: [
-//         new Date(newArray[value.y].data[index].y[1]).getTime(),
-//         new Date(value.x).getTime(),
-//       ],
-//     };
-//     // newArray[value.y].data.push(obj);
-//     // console.log(newArray[value.y].data.push(obj));
-//   }
-//   return newArray;
-// }
-
-function newValue(series, value, chartRef, lastZoom, nameI) {
-  let elemento0 = series.value[0].data.findLast((node) => node.x == nameI);
-  let elemento1 = series.value[1].data.findLast((node) => node.x == nameI);
-  if (elemento0 && elemento1) {
-    let last = moment(elemento0.y[1]).isBefore(moment(elemento1.y[1])) ? 0 : 1;
-
-    if (value.y == last) {
-      let index = series.value[value.y].data.findLastIndex(
-        (node) => node.x == nameI
-      );
-      series.value[value.y].data[index].y[1] = new Date(value.x).getTime();
-    } else {
-      let index = series.value[1].data.findLastIndex((node) => node.x == nameI);
-      series.value[value.y].data.push({
-        x: nameI,
-        y: [
-          new Date(series.value[value.y].data[index].y[1]).getTime(),
-          new Date(value.x).getTime(),
-        ],
-      });
-    }
-  } else {
-    if (elemento0) {
-      let index = series.value[0].data.findLastIndex((node) => node.x == nameI);
-      series.value[0].data.push({
-        x: nameI,
-        y: [
-          new Date(series.value[0].data[index].y[1]).getTime(),
-          new Date(value.x).getTime(),
-        ],
-      });
-    } else {
-      if (elemento1) {
-        let index = series.value[1].data.findLastIndex(
-          (node) => node.x == nameI
-        );
-        series.value[1].data.push({
-          x: nameI,
-          y: [
-            new Date(series.value[1].data[index].y[1]).getTime(),
-            new Date(value.x).getTime(),
-          ],
-        });
-      } else {
-        series.value[value.y].data.push({
-          x: nameI,
-          y: [new Date(value.x).getTime(), new Date(value.x).getTime() + 500],
-        });
-      }
-    }
-    if (chartRef.value) {
-      chartRef.value.updateSeries(series.value);
-      if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-    }
-  }
-}
-
-const socket = io("http://localhost:3000");
+const socket = io(process.env.VUE_APP_RUTA_API);
 const chartRef = ref(null);
-const chartRef2 = ref(null);
-const chartRef3 = ref(null);
-var lastZoom = null;
-let cargado = ref(false);
-let marcha = [];
-let series = ref([]);
-let series2 = ref([]);
-let series3 = ref([]);
-let modoMaquina = [];
-let autoManual = [];
-let funcMaquina = [];
-let chartOptions = computed(() => {
+
+const cargado = ref(false);
+const noData = ref(false);
+const mostrar = ref(true);
+const series = ref([]);
+const chartOptions = computed(() => {
   return {
     chart: {
+      id: "estado",
+      group: "actual",
       type: "rangeBar",
       locales: [es],
       defaultLocale: "es",
       animations: { enabled: false },
       events: {
-        beforeZoom: (e, { xaxis }) => {
-          if (moment(xaxis.min).isBefore(moment().subtract(8, "hours"))) {
-            return {
-              xaxis: {
-                min: new Date(moment().subtract(8, "hours")).getTime(),
-                max: xaxis.max,
-              },
-            };
-          }
-          if (moment(xaxis.max).isAfter(moment())) {
-            return {
-              xaxis: {
-                min: xaxis.min,
-                max: moment(),
-              },
-            };
-          }
-        },
         beforeResetZoom: function () {
           lastZoom = null;
-          return {
-            xaxis: {
-              min: new Date(moment().subtract(8, "hours")).getTime(),
-              max: moment(),
-            },
-          };
         },
         zoomed: function (_, value) {
           lastZoom = [value.xaxis.min, value.xaxis.max];
@@ -210,98 +91,140 @@ let chartOptions = computed(() => {
     xaxis: {
       type: "datetime",
       datetimeUTC: false,
-      min: new Date(moment().subtract(8, "hours")).getTime(),
-      max: moment(),
       tickAmount: 20,
+      categories: props.categories,
       labels: {
         minHeight: 125,
-        rotate: -70,
+        rotate: -45,
         rotateAlways: true,
         formatter: function (value, timestamp) {
           return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
         },
       },
     },
+    yaxis: {
+      labels: {
+        minWidth: 60,
+      },
+    },
     tooltip: {
       x: {
         format: "dd/MM/yyyy HH:mm:ss",
       },
+      y: {
+        title: {
+          formatter: (seriesName) => "",
+        },
+      },
     },
     legend: {
-      height: 60,
+      show: false,
     },
   };
 });
 const props = defineProps({
   activo: { type: Number, default: 1 },
-  auto: { type: Number, default: 1 },
-  manual: { type: Number, default: 1 },
-  alarma: { type: Number, default: 1 },
-  fc: { type: Number, default: 1 },
+  autoManual: { type: Array, default: () => [] },
+  alarma: { type: Array, default: () => [] },
+  marcha: { type: Array, default: () => [] },
+  tipo: { type: Number, default: 1 },
+  categories: { type: Array, default: () => [] },
 });
 
-onMounted(async () => {
-  cargado.value = false;
-
-  modoMaquina = await bd.obtenerDatosVariables(
-    "8H",
+async function dataGrafica(maquinaID) {
+  let modoMaquina = await obtenerDatosVariableGeneral(
+    "24H",
     "registros",
+    "individual",
     "formatoRangos",
     [props.activo],
-    routerStore().lineasID
-  );
-  autoManual = await bd.obtenerDatosVariables(
-    "8H",
-    "registros",
-    "formatoRangos",
-    [props.auto, props.manual],
-    routerStore().lineasID
-  );
-  for (let index = 0; index < autoManual[1].data.length; index++) {
-    const element = autoManual[1].data[index];
-    modoMaquina[1].data.push(element);
-  }
-  marcha = await bd.obtenerVariablesMarcha(
+    maquinaID,
     routerStore().clienteID,
-    "8H",
-    [props.activo, props.alarma, props.fc],
-    "registros",
-    routerStore().lineasID
+    null,
+    null,
+    ["Paro", "Marcha"]
   );
-  funcMaquina = await bd.obtenerDatosVariables(
-    "8H",
+  let autoManual = await obtenerDatosVariableGeneral(
+    "24H",
     "registros",
+    "individual",
     "formatoRangos",
-    [props.alarma, props.fc],
-    routerStore().lineasID
+    props.autoManual,
+    maquinaID,
+    routerStore().clienteID
   );
-  series.value = modoMaquina;
-  for (let index = 0; index < funcMaquina[1].data.length; index++) {
-    let element = funcMaquina[1].data[index];
-    if (element.x == "Alarma") {
-      element.fillColor = "#fdd835";
-    } else {
-      element.fillColor = "#3949ab";
+  if (autoManual[1]) {
+    for (let index = 0; index < autoManual[1].data.length; index++) {
+      const element = autoManual[1].data[index];
+      modoMaquina[1].data.push(element);
     }
-    marcha[1].data.push(element);
   }
-  series2.value = funcMaquina;
-  series3.value = marcha;
-  // socket.on("variable_1_actualizada", (data) => {
-  //   newValue(series, data, chartRef, lastZoom, names[0]);
-  // });
-  // socket.on("variable_12_actualizada", (data) => {
-  //   newValue(series2, data, chartRef2, lastZoom, names2[0]);
-  // });
-  // socket.on("variable_13_actualizada", (data) => {
-  //   newValue(series, data, chartRef, lastZoom, names[1]);
-  // });
-  // socket.on("variable_14_actualizada", (data) => {
-  //   newValue(series2, data, chartRef2, lastZoom, names2[1]);
-  // });
-  // socket.on("variable_15_actualizada", (data) => {
-  //   newValue(series, data, chartRef, lastZoom, names[2]);
-  // });
-  cargado.value = true;
+
+  let marcha = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "multiple",
+    "marchaFormatoRangos",
+    props.marcha,
+    maquinaID,
+    routerStore().clienteID
+  );
+  if (marcha[0] && modoMaquina[0]) {
+    for (let index = 0; index < marcha[0].data.length; index++) {
+      const element = marcha[0].data[index];
+      modoMaquina[0].data.push(element);
+    }
+  }
+  if (marcha[1] && modoMaquina[1]) {
+    for (let index = 0; index < marcha[1].data.length; index++) {
+      const element = marcha[1].data[index];
+      modoMaquina[1].data.push(element);
+    }
+  }
+
+  let funcMaquina = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "individual",
+    "formatoRangos",
+    props.alarma,
+    maquinaID,
+    routerStore().clienteID
+  );
+  if (funcMaquina[1].data.length > 0) {
+    for (let index = 0; index < funcMaquina[1].data.length; index++) {
+      let element = funcMaquina[1].data[index];
+      if (element.x == "Alarma") {
+        element.fillColor = "#fdd835";
+      } else {
+        element.fillColor = "#3949ab";
+      }
+      modoMaquina[1].data.push(element);
+    }
+  }
+  if (modoMaquina[1].data.length == 0) {
+    cargado.value = false;
+    noData.value = true;
+  } else {
+    series.value = modoMaquina;
+    cargado.value = true;
+  }
+}
+onMounted(async () => {
+  cargado.value = false;
+  let maquinaID = (
+    await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
+  )[0].id;
+  await dataGrafica(maquinaID);
+
+  socket.on(
+    `variable_${maquinaID}_${props.activo}_actualizada`,
+    async (data) => {
+      dataGrafica(maquinaID);
+    }
+  );
+});
+onUnmounted(() => {
+  socket.removeAllListeners();
 });
 </script>

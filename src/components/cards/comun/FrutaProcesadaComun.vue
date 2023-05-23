@@ -1,30 +1,32 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col>
-        <v-card>
-          <v-row>
-            <v-col>
-              <v-card-title> Fruta procesada </v-card-title>
-              <v-card-subtitle> Total Kilos </v-card-subtitle>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <ApexChart
-                v-if="cargado"
-                ref="chartRef3"
-                height="350"
-                type="line"
-                :options="chartOptions"
-                :series="kilos"
-              />
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+  <v-row no-gutters>
+    <v-col>
+      <v-switch v-model="mostrar" color="info" label="Fruta procesada">
+        T Fruta procesada
+      </v-switch>
+      <v-card v-if="mostrar">
+        <v-row no-gutters>
+          <v-col v-if="cargado">
+            <ApexChart
+              ref="chartRef3"
+              height="350"
+              type="line"
+              :options="chartOptions"
+              :series="kilos"
+            />
+          </v-col>
+          <v-col v-else class="d-flex justify-center align-center">
+            <v-progress-circular
+              :size="100"
+              :width="7"
+              color="purple"
+              indeterminate
+            ></v-progress-circular>
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 <script>
 export default {
@@ -32,79 +34,76 @@ export default {
 };
 </script>
 <script setup>
-import bd from "../../../helpers/bd";
-import { onMounted, ref, computed, reactive } from "vue";
+import {
+  obtenerMaquina,
+  obtenerDatosVariableGeneral,
+} from "../../../helpers/bd";
+import { onMounted, ref, computed, onUnmounted } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import io from "socket.io-client";
 import moment from "moment";
 import { routerStore } from "../../../stores/index";
 
-const socket = io("http://localhost:3000");
+const socket = io(process.env.VUE_APP_RUTA_API);
 
-let cargado = ref(false);
-let tKg = {};
+const cargado = ref(false);
+const mostrar = ref(true);
+const kilos = ref([]);
 
 const props = defineProps({
-  fruta: { type: Number, default: 1 },
+  variables: { type: Number, default: 1 },
+  tipo: { type: Number, default: 1 },
 });
-
 const chartRef3 = ref(null);
-let kilos = ref([]);
-var lastZoom = null;
-let chartOptions = computed(() => {
+const chartOptions = computed(() => {
   return {
     chart: {
+      id: "Kilos",
+      group: "actual",
       locales: [es],
       defaultLocale: "es",
       animations: { enabled: false },
-      events: {
-        beforeZoom: (e, { xaxis }) => {
-          if (moment(xaxis.min).isBefore(moment().subtract(8, "hours"))) {
-            return {
-              xaxis: {
-                min: new Date(moment().subtract(8, "hours")).getTime(),
-                max: xaxis.max,
-              },
-            };
-          }
-          if (moment(xaxis.max).isAfter(moment())) {
-            return {
-              xaxis: {
-                min: xaxis.min,
-                max: moment(),
-              },
-            };
-          }
-        },
-        beforeResetZoom: function () {
-          lastZoom = null;
-          return {
-            xaxis: {
-              min: new Date(moment().subtract(8, "hours")).getTime(),
-              max: moment(),
-            },
-          };
-        },
-        zoomed: function (_, value) {
-          lastZoom = [value.xaxis.min, value.xaxis.max];
-        },
+      zoom: {
+        type: "xy",
+        autoScaleYaxis: true,
       },
     },
     xaxis: {
       type: "datetime",
       datetimeUTC: false,
-      min: new Date(moment().subtract(8, "hours")).getTime(),
-      max: moment(),
-      tickAmount: 15,
+      tickAmount: 25,
       labels: {
         minHeight: 125,
-        rotate: -70,
+        rotate: -45,
         rotateAlways: true,
-        formatter: function (value, timestamp) {
-          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss"); // The formatter function overrides format property
+        formatter: function (value) {
+          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
         },
       },
     },
+    yaxis: [
+      {
+        axisTicks: {
+          show: true,
+        },
+        axisBorder: {
+          show: true,
+        },
+
+        labels: {
+          minWidth: 60,
+        },
+      },
+      {
+        opposite: true,
+        axisTicks: {
+          show: true,
+        },
+        axisBorder: {
+          show: true,
+        },
+      },
+    ],
     stroke: {
       width: 1.9,
     },
@@ -116,27 +115,63 @@ let chartOptions = computed(() => {
 onMounted(async () => {
   cargado.value = false;
 
-  tKg = await bd.obtenerDatosVariables(
-    "8H",
+  let maquinaID = (
+    await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
+  )[0].id;
+
+  let tKg = await obtenerDatosVariableGeneral(
+    "24H",
     "registros",
-    "formatoLinea",
-    [props.fruta],
-    routerStore().lineasID
+    "individual",
+    "formatoAcumuladores",
+    [props.variables],
+    maquinaID,
+    routerStore().clienteID
   );
+  let kilosM = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "individual",
+    "unidadTiempo",
+    [props.variables],
+    maquinaID,
+    routerStore().clienteID,
+    null,
+    null,
+    "Kg/min"
+  );
+  tKg.push(...kilosM);
   kilos.value = tKg;
   socket.on(
-    `variable_${routerStore().lineasID}_${props.fruta}_actualizada`,
-    (data) => {
-      kilos.value[0].data.push({
-        x: new Date(moment(data.x).toISOString()).getTime(),
-        y: data.y,
-      });
+    `variable_${maquinaID}_${props.variables}_actualizada`,
+    async () => {
+      let acc = await obtenerDatosVariableGeneral(
+        "24H",
+        "registros",
+        "individual",
+        "formatoAcumuladores",
+        [props.variables],
+        maquinaID,
+        routerStore().clienteID
+      );
+      kilosM = await obtenerDatosVariableGeneral(
+        "24H",
+        "registros",
+        "individual",
+        "unidadTiempo",
+        [props.total],
+        maquinaID,
+        routerStore().clienteID
+      );
+      tKg.push(...kilosM);
       if (chartRef3.value) {
-        chartRef3.value.updateSeries(kilos.value);
-        if (lastZoom) chartRef3.value.zoomX(lastZoom[0], lastZoom[1]);
+        chartRef3.value.updateSeries(acc);
       }
     }
   );
   cargado.value = true;
+});
+onUnmounted(() => {
+  socket.removeAllListeners();
 });
 </script>

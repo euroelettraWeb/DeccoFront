@@ -21,7 +21,7 @@
               >
               </v-text-field>
               <v-btn
-                color="primary"
+                color="info"
                 block="block"
                 type="submit"
                 @click.prevent="loginSnackbar(datosLogin)"
@@ -31,11 +31,7 @@
             </v-form>
           </v-card-text>
         </v-card>
-        <v-snackbar
-          v-model="avisoLoginInvalido"
-          :timeout="5000"
-          color="red accent-2"
-        >
+        <v-snackbar v-model="avisoLoginInvalido" :timeout="5000" color="error">
           {{ userStore().mensajeError }}
           <template #action="{ attrs }">
             <v-btn text v-bind="attrs" @click="userStore().vaciarMensaje()">
@@ -55,28 +51,25 @@ export default {
 </script>
 <script setup>
 import moment from "moment";
-import { storeToRefs } from "pinia";
 import { userStore } from "../stores/index";
-import { ref, reactive, computed } from "vue";
+import { reactive, computed } from "vue";
 const datosLogin = reactive({
   usuario: "",
   password: "",
 });
-let avisoLoginInvalido = computed(() =>
-  storeToRefs(userStore()).mensajeError.value != "" ? true : false
+const avisoLoginInvalido = computed(() =>
+  userStore().mensajeError != "" ? true : false
 );
 
-const evento = (datos) => {
-  return {
-    variableID: null,
-    usuario: datos,
-    descripcion: "Login",
-    horaInicio: moment().format("YYYY-MM-DDTHH:mm:ss"),
-  };
-};
 const loginSnackbar = (datos) => {
   userStore().login({
-    datosLogin: datos /* , evento: evento(datos.usuario)  */,
+    datosLogin: datos,
+    evento: {
+      variableID: null,
+      usuario: datos.usuario,
+      descripcion: "Login",
+      horaInicio: moment().format("YYYY-MM-DDTHH:mm:ss"),
+    },
   });
   setTimeout(() => userStore().vaciarMensaje(), 5000);
 };

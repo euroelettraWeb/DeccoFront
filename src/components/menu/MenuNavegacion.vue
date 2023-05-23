@@ -1,21 +1,21 @@
 <template>
   <v-navigation-drawer
-    v-model="estadoPanelLateral"
+    v-model="navStore().estadoPanelLateral"
     app
     left
     temporary
     class="accent-4"
   >
     <v-list>
-      <v-list-item link>
+      <v-list-item>
         <v-list-item-avatar>
-          <v-img src="../../assets/logo_cliente.jpg"></v-img>
+          <v-img src="../../assets/logo_cliente.png"></v-img>
         </v-list-item-avatar>
 
         <v-list-item-content>
           <v-list-item-title><b>Decco</b></v-list-item-title>
           <v-list-item-subtitle
-            ><i>Naturally PostHarvest</i></v-list-item-subtitle
+            ><i>More. Beautiful. Fresh.</i></v-list-item-subtitle
           >
         </v-list-item-content>
       </v-list-item>
@@ -23,13 +23,14 @@
 
     <v-divider></v-divider>
     <v-select
+      v-if="userStore().usuarioValido && administrador"
       v-model="select"
       :items="nombres"
       label="Cliente"
       item-text="nombre"
       item-value="id"
       :hide-selected="true"
-      :disabled="!usuarioLogeado"
+      :disabled="!userStore().usuarioValido"
       return-object
       dense
       solo
@@ -37,7 +38,10 @@
     ></v-select>
     <v-divider></v-divider>
 
-    <v-list-item link @click="router.menu('home', router.clienteID, 0)">
+    <v-list-item
+      link
+      @click="routerStore().menu('home', routerStore().clienteID, 0)"
+    >
       <v-list-item-icon>
         <v-icon>mdi-home</v-icon>
       </v-list-item-icon>
@@ -45,7 +49,7 @@
     </v-list-item>
     <v-list nav>
       <v-list-item-group active-class="red--text text--accent-4">
-        <v-list-group v-if="usuarioLogeado && stateLineas">
+        <v-list-group v-if="userStore().usuarioValido && stateLineas">
           <template #activator>
             <v-list-item-icon>
               <v-icon>mdi-factory</v-icon>
@@ -53,7 +57,11 @@
             <v-list-item>
               <v-list-item-content
                 @click="
-                  router.menu('sistemas', router.clienteID, router.lineasID)
+                  routerStore().menu(
+                    'sistemas',
+                    routerStore().clienteID,
+                    routerStore().lineasID
+                  )
                 "
               >
                 <v-list-item-title> Lineas </v-list-item-title>
@@ -85,28 +93,26 @@
               sub-group
             >
               <template #activator>
-                <v-list-item-content>
+                <v-list-item-content
+                  @click="
+                    if (child.estado)
+                      routerStore().menu(
+                        child.route,
+                        routerStore().clienteID,
+                        item.id
+                      );
+                  "
+                >
                   <v-list-item-title> {{ child.title }} </v-list-item-title>
                 </v-list-item-content>
               </template>
-              <div v-if="child.estado">
-                <v-list-item v-for="child2 in child.items" :key="child2.title">
-                  <v-list-item-content
-                    @click="
-                      router.menu(child2.route, router.clienteID, item.id)
-                    "
-                  >
-                    <v-list-item-title> {{ child2.title }} </v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </div>
             </v-list-group>
           </v-list-group>
         </v-list-group>
         <v-list-item
-          v-if="usuarioLogeado && clienteActivo"
+          v-if="userStore().usuarioValido && clienteActivo"
           link
-          @click="router.menu('historico', router.clienteID)"
+          @click="routerStore().menu('historico', routerStore().clienteID)"
         >
           <v-list-item-icon>
             <v-icon>mdi-archive</v-icon>
@@ -114,19 +120,9 @@
           <v-list-item-title>Historico</v-list-item-title>
         </v-list-item>
         <v-list-item
-          v-if="usuarioLogeado && clienteActivo"
+          v-if="userStore().usuarioValido && clienteActivo"
           link
-          @click="router.menu('informe', router.clienteID)"
-        >
-          <v-list-item-icon>
-            <v-icon>mdi-table</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>Informe</v-list-item-title>
-        </v-list-item>
-        <v-list-item
-          v-if="usuarioLogeado && clienteActivo"
-          link
-          @click="router.menu('variables', router.clienteID)"
+          @click="routerStore().menu('variables', routerStore().clienteID)"
         >
           <v-list-item-icon>
             <v-icon>mdi-account</v-icon>
@@ -134,9 +130,9 @@
           <v-list-item-title>Variables</v-list-item-title>
         </v-list-item>
         <v-list-item
-          v-if="!usuarioLogeado"
+          v-if="!userStore().usuarioValido"
           link
-          @click="router.menu('login', 0, 0)"
+          @click="routerStore().menu('login', 0, 0)"
         >
           <v-list-item-icon>
             <v-icon>mdi-account</v-icon>
@@ -154,17 +150,15 @@ export default {
 };
 </script>
 <script setup>
-import bd from "../../helpers/bd";
+import {
+  obtenerClientes,
+  obtenerLineas,
+  obtenerMaquina,
+} from "../../helpers/bd";
 import { userStore, routerStore, navStore } from "../../stores/index";
 import { storeToRefs } from "pinia";
-import axios from "axios";
-import { onMounted, ref, computed, reactive, watch } from "vue";
-const { usuarioValido } = storeToRefs(userStore());
-const usuarioLogeado = usuarioValido;
-const { estadoPanelLateral } = storeToRefs(navStore());
-const router = routerStore();
+import { onMounted, ref, computed, watch } from "vue";
 const { clienteID } = storeToRefs(routerStore());
-
 const items = (array) => {
   let list = [];
   if (array) {
@@ -177,34 +171,19 @@ const items = (array) => {
           {
             action: "mdi-hand-water",
             estado: element.deccowsID ? true : false,
-            items: [
-              { title: "Principal", route: "deccowasher:Principal" },
-              // { title: "Estado", route: "deccowasher:MarchaParo" },
-              // { title: "Consumo", route: "deccowasher:Consumo" },
-              // { title: "Registros", route: "deccowasher:Registros" },
-            ],
+            route: "deccowasher:Principal",
             title: "DECCOWASHER",
           },
           {
             action: "mdi-flask",
             estado: element.deccodafID ? true : false,
-            items: [
-              { title: "Principal", route: "deccodaf:Principal" },
-              // { title: "Estado", route: "deccodaf:MarchaParo" },
-              // { title: "Consumo", route: "deccodaf:Consumo" },
-              // { title: "Registros", route: "deccodaf:Registros" },
-            ],
+            route: "deccodaf:Principal",
             title: "DECCODAF",
           },
           {
             action: "mdi-numeric-2",
             estado: element.deccodosID ? true : false,
-            items: [
-              { title: "Principal", route: "deccodos:Principal" },
-              // { title: "Estado", route: "deccodos:MarchaParo" },
-              // { title: "Consumo", route: "deccodos:Consumo" },
-              // { title: "Registros", route: "deccodos:Registros" },
-            ],
+            route: "deccodos:Principal",
             title: "DECCODOS",
           },
           // {
@@ -221,23 +200,19 @@ const items = (array) => {
 };
 let clientes = [];
 let lineas = [];
-let nombres = ref([]);
-let select = ref(0);
-let stateLineas = ref(false);
-let refLineas = ref([]);
-// let clienteActivo = ref(false);
-
-let clienteActivo = computed(() => {
-  if (clienteID.value) {
-    return true;
-  } else return false;
-});
-
+const nombres = ref([]);
+const select = ref(0);
+const stateLineas = ref(false);
+const refLineas = ref([]);
+const administrador = computed(() =>
+  userStore().rol == "ADMINISTRADOR" ? true : false
+);
+const clienteActivo = computed(() => (clienteID.value ? true : false));
 onMounted(async () => {
   if (clienteID.value != 0) select.value = clienteID;
-  clientes = await bd.obtenerClientes();
+  clientes = await obtenerClientes();
   if (select.value) {
-    lineas = await bd.obtenerLineas(select.value);
+    lineas = await obtenerLineas(select.value);
     stateLineas.value = true;
   } else {
     stateLineas.value = false;
@@ -245,14 +220,13 @@ onMounted(async () => {
   watch(select, async (val) => {
     if (val) {
       stateLineas.value = false;
-      lineas = await bd.obtenerLineas(val);
+      lineas = await obtenerLineas(val);
       for (let index = 0; index < lineas.length; index++) {
         let element = lineas[index];
-        let maq = await bd.obtenerMaquina("linea", element.id);
+        let maq = await obtenerMaquina("linea", element.id);
         let deccowsID = maq.find((maquina) => maquina.grupoID == 3);
         let deccodosID = maq.find((maquina) => maquina.grupoID == 2);
         let deccodafID = maq.find((maquina) => maquina.grupoID == 1);
-
         if (deccowsID) lineas[index].deccowsID = deccowsID.activa;
         if (deccodosID) lineas[index].deccodosID = deccodosID.activa;
         if (deccodafID) lineas[index].deccodafID = deccodafID.activa;
@@ -263,17 +237,13 @@ onMounted(async () => {
       stateLineas.value = false;
     }
   });
-  // computed(() => {
-  //   return ;
-  // });
   let lista = [];
   for (const iterator of clientes) {
     lista.push({ id: iterator.id, nombre: iterator.nombre });
   }
   nombres.value = lista;
 });
-
 function changeItem(value) {
-  router.sistemas(value.id, 0);
+  routerStore().sistemas(value.id, 0);
 }
 </script>

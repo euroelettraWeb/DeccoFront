@@ -1,49 +1,46 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col>
-        <v-card class="mb-2"
-          ><v-row>
-            <v-col>
-              <v-card-title>Aplicadores</v-card-title>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col
-              ><v-card-subtitle>1 - Bomba 1-2-3</v-card-subtitle>
-              <v-select
-                v-model="bomba1"
-                :items="productos"
-                item-text="nombre"
-                item-value="id"
-                return-object
-                dense
-                solo
-              /> </v-col
-            ><v-col
-              ><v-card-subtitle>2 - Bomba 4-5</v-card-subtitle>
-              <v-select
-                v-model="bomba2"
-                :items="productos"
-                item-text="nombre"
-                item-value="id"
-                return-object
-                dense
-                solo
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col
-              ><v-btn color="info" class="mx-4 mb-4" @click="save">
-                <v-icon light> mdi-content-save </v-icon> Guardar
-              </v-btn></v-col
-            ></v-row
-          >
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+  <v-row>
+    <v-col>
+      <v-card class="mb-2">
+        <v-card-title>Aplicadores</v-card-title>
+        <v-row>
+          <v-col
+            ><v-card-subtitle>1 - Bomba 1-2-3</v-card-subtitle>
+            <v-select
+              v-model="bomba1"
+              :items="productos"
+              item-text="nombre"
+              item-value="id"
+              return-object
+              dense
+              solo
+            /> </v-col
+          ><v-col
+            ><v-card-subtitle>2 - Bomba 4-5</v-card-subtitle>
+            <v-select
+              v-model="bomba2"
+              :items="productos"
+              item-text="nombre"
+              item-value="id"
+              return-object
+              dense
+              solo
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col
+            ><v-btn color="info" class="mx-4 mb-4" @click="save">
+              <v-icon light> mdi-content-save </v-icon> Guardar
+            </v-btn></v-col
+          ></v-row
+        >
+      </v-card>
+    </v-col>
+    <v-snackbar v-model="guardado" :timeout="5000" color="primary">
+      {{ mensaje }}</v-snackbar
+    >
+  </v-row>
 </template>
 <script>
 export default {
@@ -52,7 +49,7 @@ export default {
 </script>
 <script setup>
 import axios from "axios";
-import bd from "../../../helpers/bd";
+import { obtenerMaquina, obtenerProductos } from "../../../helpers/bd";
 import { onMounted, ref } from "vue";
 import { routerStore } from "../../../stores/index";
 
@@ -60,13 +57,16 @@ let cargado = ref(false);
 
 let productos = ref(null);
 
-let bomba1 = ref({});
-let bomba2 = ref({});
+let bomba1 = ref(null);
+let bomba2 = ref(null);
+let guardado = ref(false);
+let mensaje = ref("");
 
 onMounted(async () => {
   cargado.value = false;
-  let maquina = await bd.obtenerMaquina("lineaTipo", routerStore().lineasID, 2);
-  let t = await bd.obtenerProductos("maquina", maquina[0].id);
+  let maquina = await obtenerMaquina("lineaTipo", routerStore().lineasID, 2);
+  let t = await obtenerProductos("maquina", maquina[0].id);
+
   for (let index = 0; index < t.length; index++) {
     if (t[index].activo == 0) {
       bomba1.value = t[index];
@@ -74,7 +74,7 @@ onMounted(async () => {
       bomba2.value = t[index];
     }
   }
-  if (bomba2.value == {}) bomba2.value = bomba1.value;
+  if (bomba2.value == null) bomba2.value = bomba1.value;
   productos.value = t;
   cargado.value = true;
 });
@@ -91,5 +91,7 @@ async function save() {
   axios.post(`${process.env.VUE_APP_RUTA_API}/productos/actualizar/multiple`, {
     productos: productos.value,
   });
+  mensaje.value = "Guardado";
+  guardado.value = true;
 }
 </script>

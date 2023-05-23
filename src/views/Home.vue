@@ -4,7 +4,7 @@
       <v-col
         cols="2"
         style="
-          background-image: url('logo_cliente.jpg');
+          background-image: url('logo_cliente.png');
           background-size: contain;
           background-position: right;
           height: 300px;
@@ -46,10 +46,9 @@ export default {
 </script>
 <script setup>
 import { routerStore, userStore } from "../stores/index";
-import { storeToRefs } from "pinia";
 
 function log() {
-  if (storeToRefs(userStore()).usuarioValido.value) {
+  if (userStore().usuarioValido) {
     routerStore().cliente();
   } else {
     routerStore().login();

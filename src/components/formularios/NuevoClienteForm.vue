@@ -93,14 +93,14 @@ export default {
 import axios from "axios";
 import { routerStore } from "../../stores/index";
 import { ref } from "vue";
-let nombre = ref("");
-let src = ref("");
-let form = ref(null);
-let ip = ref("");
-let puerto = ref("");
-let usuario = ref("");
-let contraseña = ref("");
-let descripcion = ref("");
+const nombre = ref("");
+const src = ref("");
+const form = ref(null);
+const ip = ref("");
+const puerto = ref("");
+const usuario = ref("");
+const contraseña = ref("");
+const descripcion = ref("");
 let rules = [
   (v) => {
     if (v) return v.length <= 500 || "maximum 500 characters";
@@ -115,22 +115,16 @@ async function validate() {
         src: src.value,
       })
     ).data;
-    let dataPlc = (
-      await axios.post(`${process.env.VUE_APP_RUTA_API}/plcs/nuevo`, {
-        ip: ip.value,
-        puerto: puerto.value,
-        usuario: usuario.value,
-        password: contraseña.value,
-        descripcion: descripcion.value,
-        clienteID: dataCliente[0].id,
-      })
-    ).data;
-    if (dataCliente[0].id) {
-      routerStore().clienteID = dataCliente[0].id;
-      routerStore().clienteNuevoLinea(dataCliente[0].id);
-    } else {
-      form.value.reset();
-    }
+    await axios.post(`${process.env.VUE_APP_RUTA_API}/plcs/nuevo`, {
+      ip: ip.value,
+      puerto: puerto.value,
+      usuario: usuario.value != "" ? usuario.value : "NULL",
+      password: contraseña.value != "" ? contraseña.value : "NULL",
+      descripcion: descripcion.value,
+      clienteID: dataCliente[0].id,
+    });
+    routerStore().clienteID = dataCliente[0].id;
+    routerStore().clienteNuevoLinea(dataCliente[0].id);
   }
 }
 function reset() {

@@ -125,12 +125,12 @@ export default {
 import axios from "axios";
 import { watch, computed, ref, nextTick } from "vue";
 import { routerStore } from "../../../stores/index";
-let dialog = ref(false);
-let form = ref(null);
-let dialogDelete = ref(false);
-let editedIndex = ref(-1);
-let lineas = ref([]);
-let headers = [
+const dialog = ref(false);
+const form = ref(null);
+const dialogDelete = ref(false);
+const editedIndex = ref(-1);
+const lineas = ref([]);
+const headers = [
   {
     text: "Nombre",
     align: "start",
@@ -143,21 +143,21 @@ let headers = [
   // { text: "DECCOCONTROL", value: "deccocontrol" },
   { text: "Actions", value: "actions", sortable: false },
 ];
-let editedItem = ref({
+const editedItem = ref({
   nombre: "",
   deccodaf: false,
   deccodos: false,
   deccows: false,
   // deccocontrol: false,
 });
-let defaultItem = ref({
+const defaultItem = ref({
   nombre: "",
   deccodaf: false,
   deccodos: false,
   deccows: false,
   // deccocontrol: false,
 });
-let formTitle = computed(() => {
+const formTitle = computed(() => {
   return editedIndex.value === -1 ? "Nueva Linea" : "Editar linea";
 });
 watch(dialog, (val) => {

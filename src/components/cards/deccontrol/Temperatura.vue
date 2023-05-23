@@ -37,7 +37,7 @@ import io from "socket.io-client";
 import moment from "moment";
 import { routerStore } from "../../../stores/index";
 
-const socket = io("http://localhost:3000");
+const socket = io(process.env.VUE_APP_RUTA_API);
 
 let cargado = ref(false);
 let dosis = {};
@@ -52,32 +52,8 @@ let chartOptions = computed(() => {
       defaultLocale: "es",
       animations: { enabled: false },
       events: {
-        beforeZoom: (e, { xaxis }) => {
-          if (moment(xaxis.min).isBefore(moment().subtract(8, "hours"))) {
-            return {
-              xaxis: {
-                min: new Date(moment().subtract(8, "hours")).getTime(),
-                max: xaxis.max,
-              },
-            };
-          }
-          if (moment(xaxis.max).isAfter(moment())) {
-            return {
-              xaxis: {
-                min: xaxis.min,
-                max: moment(),
-              },
-            };
-          }
-        },
         beforeResetZoom: function () {
           lastZoom = null;
-          return {
-            xaxis: {
-              min: new Date(moment().subtract(8, "hours")).getTime(),
-              max: moment(),
-            },
-          };
         },
         zoomed: function (_, value) {
           lastZoom = [value.xaxis.min, value.xaxis.max];
@@ -87,10 +63,10 @@ let chartOptions = computed(() => {
     xaxis: {
       type: "datetime",
       // datetimeUTC: false,
-      tickAmount: 15,
+      tickAmount: 25,
       labels: {
         minHeight: 125,
-        rotate: -70,
+        rotate: -45,
         minHeight: 125,
         rotateAlways: true,
         formatter: function (value, timestamp) {
@@ -106,12 +82,14 @@ let chartOptions = computed(() => {
 onMounted(async () => {
   cargado.value = false;
 
-  dosis = await bd.obtenerDatosVariables(
-    "8H",
+  dosis = await obtenerDatosVariableGeneral(
+    "24H",
     "registros",
+    "individual",
     "formatoLinea",
     [34, 35, 36, 37, 38],
-    routerStore().lineasID
+    routerStore().lineasID,
+    routerStore().clienteID
   );
   registrosT.value = dosis;
   socket.on(`variable_${routerStore().lineasID}_34_actualizada`, (data) => {

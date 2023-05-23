@@ -2,7 +2,7 @@
   <v-container fluid class="fill-height">
     <v-row justify="center">
       <v-col v-for="item in nombres" :key="item.id">
-        <CardLineas :linea="item" /><!-- :linea="item.linea" -->
+        <CardLineas :linea="item" />
       </v-col>
     </v-row>
     <v-row>
@@ -11,7 +11,7 @@
         <v-btn
           :disabled="!deccodocontrol"
           @click="routerStore().deccocontrol(routerStore().clienteID)"
-          ><v-icon light>mdi-snowflake</v-icon> DECCOCONTROL</v-btn
+          ><v-icon light>mdi-snowflake</v-icon>DECCOCONTROL</v-btn
         >
       </v-col>
       <v-spacer />
@@ -26,24 +26,23 @@ export default {
 </script>
 
 <script setup>
-import bd from "../helpers/bd";
+import { obtenerMaquina, obtenerLineas } from "../helpers/bd";
 import { onMounted, ref, watch } from "vue";
-import { storeToRefs } from "pinia";
 import { routerStore } from "../stores/index";
 import CardLineas from "../components/cards/comun/CardLineas.vue";
-const { clienteID } = storeToRefs(routerStore());
 
 let lineas = [];
-let nombres = ref([]);
-let cargado = ref(false);
-let deccodocontrol = ref(false);
+const nombres = ref([]);
+const cargado = ref(false);
+const deccodocontrol = ref(false);
+const clienteID = ref(routerStore().clienteID);
 onMounted(async () => {
   cargado.value = false;
-  lineas = await bd.obtenerLineas(clienteID.value);
+  lineas = await obtenerLineas(routerStore().clienteID);
 
   for (let index = 0; index < lineas.length; index++) {
     let element = lineas[index];
-    let maq = await bd.obtenerMaquina("linea", element.id, 0);
+    let maq = await obtenerMaquina("linea", element.id, 0);
     let deccowsID = maq.find((maquina) => maquina.grupoID == 3);
     let deccodosID = maq.find((maquina) => maquina.grupoID == 2);
     let deccodafID = maq.find((maquina) => maquina.grupoID == 1);
@@ -51,19 +50,15 @@ onMounted(async () => {
     if (deccodosID) lineas[index].deccodosID = deccodosID.activa;
     if (deccodafID) lineas[index].deccodafID = deccodafID.activa;
   }
-  let deccoc = await bd.obtenerMaquina(
-    "clienteTipo",
-    routerStore().clienteID,
-    4
-  );
+  let deccoc = await obtenerMaquina("clienteTipo", routerStore().clienteID, 4);
   if (deccoc) deccodocontrol.value = deccoc.activa;
   nombres.value = lineas;
   watch(clienteID, async (val) => {
-    lineas = await bd.obtenerClientes(clienteID.value);
+    lineas = await obtenerLineas(clienteID.value);
 
     for (let index = 0; index < lineas.length; index++) {
       let element = lineas[index];
-      let maq = await bd.obtenerMaquina("linea", element.id, 0);
+      let maq = await obtenerMaquina("linea", element.id, 0);
       let deccowsID = maq.find((maquina) => maquina.grupoID == 3);
       let deccodosID = maq.find((maquina) => maquina.grupoID == 2);
       let deccodafID = maq.find((maquina) => maquina.grupoID == 1);
@@ -72,7 +67,7 @@ onMounted(async () => {
       if (deccodafID) lineas[index].deccodafID = deccodafID.activa;
     }
     nombres.value = lineas;
-    let deccoc = await bd.obtenerMaquina(
+    let deccoc = await obtenerMaquina(
       "clienteTipo",
       routerStore().clienteID,
       4

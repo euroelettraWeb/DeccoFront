@@ -1,11 +1,15 @@
 <template>
-  <v-app-bar app color="red accent-4" dark>
+  <v-app-bar app color="primary" dark>
     <v-app-bar-nav-icon @click="nav.displayMensaje"></v-app-bar-nav-icon>
 
     <v-toolbar-title>GestProd</v-toolbar-title>
 
     <v-spacer></v-spacer>
 
+    <v-toolbar-title v-if="routerStore().maquina">
+      {{ maquina }}
+    </v-toolbar-title>
+    <v-spacer></v-spacer>
     <v-btn v-if="!user.usuarioValido" to="/login" outlined>
       <v-icon left>mdi-account-circle</v-icon>
       Iniciar sesion
@@ -26,13 +30,6 @@
         </v-list-item>
       </v-list>
     </v-menu>
-    <!-- <template v-if="existeUsuario && esRutaMaquina" #extension>
-      <v-tabs align-with-title>
-        <v-tab @click="vistaOFs"> OF planificadas </v-tab>
-        <v-tab @click="vistaMotivosParo"> Definir motivos de paro </v-tab>
-        <v-tab @click="vistaHistorico"> Historico OF </v-tab>
-      </v-tabs>
-    </template> -->
   </v-app-bar>
 </template>
 
@@ -42,49 +39,62 @@ export default {
 };
 </script>
 <script setup>
-import { userStore, navStore } from "../../stores/index";
+import { ref, onMounted, computed, watchEffect } from "vue";
+import { obtenerCliente, obtenerLinea } from "../../helpers/bd";
+import { userStore, navStore, routerStore } from "../../stores/index";
+import io from "socket.io-client";
+
 const user = userStore();
 const nav = navStore();
+const socket = io(process.env.VUE_APP_RUTA_API);
+const nombreLinea = ref("");
+const nombreCliente = ref("");
+const maquina = computed(() => {
+  switch (routerStore().maquina) {
+    case "Historico":
+      return routerStore().maquina;
+    case "Variables":
+      return routerStore().maquina;
+    case "Lineas":
+      return routerStore().maquina;
+    case "Home":
+      return "";
+    default:
+      return (
+        nombreCliente.value +
+        " - " +
+        routerStore().maquina +
+        " - " +
+        nombreLinea.value
+      );
+  }
+});
 
-// const esRutaMaquina = () => {
-//   return this.$route.name !== "Login" &&
-//     this.$route.name !== "Maquinas" &&
-//     this.$route.name !== "Home"
-//     ? true
-//     : false;
-// };
-
-const logout = () => user.logout();
-
-// const evento = () => {
-//   let ahora = new Date().toLocaleString();
-//   let partes = ahora.split(", ");
-//   let fecha = partes[0].split("/").reverse();
-//   if (fecha[1] < 10) fecha[1] = "0" + fecha[1];
-//   if (fecha[2] < 10) fecha[2] = "0" + fecha[2];
-//   partes[0] = fecha.join("-");
-//   let horaInicio = partes.join("T");
-//   return {
-//     ruta: this.$route.path,
-//     variableID: null,
-//     usuario: this.usuarioLogeado.username,
-//     descripcion: "Logout",
-//     estado: 1,
-//     horaInicio,
-//   };
-// };
-
-// const vistaOFs = () => {
-//   if (this.$route.path !== this.pathOFs) this.$router.push(this.pathOFs);
-// };
-
-// const vistaMotivosParo = () => {
-//   if (this.$route.path !== this.pathMotivosParo)
-//     this.$router.push(this.pathMotivosParo);
-// };
-
-// const vistaHistorico = () => {
-//   if (this.$route.path !== this.pathHistorico)
-//     this.$router.push(this.pathHistorico);
-// };
+const logout = () => {
+  socket.emit("logoutCliente");
+  user.logout();
+};
+onMounted(async () => {
+  watchEffect(async () => {
+    switch (routerStore().maquina) {
+      case "Historico":
+        return routerStore().maquina;
+      case "Variables":
+        return routerStore().maquina;
+      case "Lineas":
+        return routerStore().maquina;
+      case "Home":
+        return "";
+      default:
+        if (routerStore().lineasID != null) {
+          nombreLinea.value = (
+            await obtenerLinea(routerStore().lineasID)
+          )[0].nombre;
+          nombreCliente.value = (
+            await obtenerCliente(routerStore().clienteID)
+          )[0].nombre;
+        }
+    }
+  });
+});
 </script>

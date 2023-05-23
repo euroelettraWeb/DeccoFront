@@ -33,18 +33,17 @@ export default {
 </script>
 
 <script setup>
-import bd from "../helpers/bd";
-import { routerStore } from "../stores/index";
+import { obtenerClientes } from "../helpers/bd";
 import CardCliente from "../components/cards/comun/CardCliente.vue";
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref } from "vue";
 
 let clientes = [];
-let nombres = ref([]);
-let cargado = ref(false);
+const nombres = ref([]);
+const cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-  clientes = await bd.obtenerClientes();
+  clientes = await obtenerClientes();
   let lista = [];
   for (const iterator of clientes) {
     lista.push({ id: iterator.id, nombre: iterator.nombre, src: iterator.img });

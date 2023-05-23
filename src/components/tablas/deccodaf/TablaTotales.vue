@@ -52,52 +52,41 @@ export default {
 };
 </script>
 <script setup>
-import bd from "../../../helpers/bd";
+import { obtenerDatosVariableGeneral } from "../../../helpers/bd";
 import { onMounted, ref } from "vue";
 
 let consumos = ref([]);
-let agua = [];
-let totalP1 = [];
-let totalP2 = [];
-let totalP3 = [];
-let totalP4 = [];
-let totalP5 = [];
-
-let aguaU = [];
-let totalP1U = [];
-let totalP2U = [];
-let totalP3U = [];
-let totalP4U = [];
-let totalP5U = [];
 
 let cargado = ref(false);
 
 onMounted(async () => {
   cargado.value = false;
-  // agua = await bd.obtenerDatosVariable(clienteID, 70);
-  // totalDesinfectante = await bd.obtenerDatosVariable(clienteID, 71);
-  // totalJabon = await bd.obtenerDatosVariable(clienteID, 72);
-  agua = await bd.obtenerDatosVariable("8H", "primero", "sinfiltro", 25);
-  totalP1 = await bd.obtenerDatosVariable("8H", "primero", "sinfiltro", 26);
-  totalP2 = await bd.obtenerDatosVariable("8H", "primero", "sinfiltro", 27);
-  totalP3 = await bd.obtenerDatosVariable("8H", "primero", "sinfiltro", 28);
-  totalP4 = await bd.obtenerDatosVariable("8H", "primero", "sinfiltro", 29);
-  totalP5 = await bd.obtenerDatosVariable("8H", "primero", "sinfiltro", 30);
-  aguaU = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 25);
-  totalP1U = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 26);
-  totalP2U = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 27);
-  totalP3U = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 28);
-  totalP4U = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 29);
-  totalP5U = await bd.obtenerDatosVariable("8H", "ultimo", "sinfiltro", 30);
-
-  consumos.value = [
-    { id: 0, name: aguaU.registros[0].y - agua.registros[0].y },
-    { id: 1, name: totalP1U.registros[0].y - totalP1.registros[0].y },
-    { id: 2, name: totalP2U.registros[0].y - totalP2.registros[0].y },
-    { id: 3, name: totalP3U.registros[0].y - totalP3.registros[0].y },
-    { id: 4, name: totalP4U.registros[0].y - totalP4.registros[0].y },
-    { id: 5, name: totalP5U.registros[0].y - totalP5.registros[0].y },
-  ];
+  let ultimos = await obtenerDatosVariableGeneral(
+    "24H",
+    "ultimo",
+    "individual",
+    "sinfiltro",
+    [25, 26, 27, 28, 29, 30, 18, 19],
+    maquinaID,
+    routerStore().clienteID
+  );
+  let primeros = await obtenerDatosVariableGeneral(
+    "24H",
+    "primero",
+    "individual",
+    "sinfiltro",
+    [25, 26, 27, 28, 29, 30, 18, 19],
+    maquinaID,
+    routerStore().clienteID
+  );
+  for (let index = 0; index < ultimos.length; index++) {
+    const ultimo = ultimos[index];
+    const primero = primeros[index];
+    consumos.value.push({
+      id: index,
+      name: ultimo.registros[0].y - primero.registros[0].y,
+    });
+  }
   cargado.value = true;
 });
 </script>
