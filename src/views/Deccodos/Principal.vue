@@ -2,6 +2,7 @@
   <v-container fluid>
     <v-row>
       <v-col>
+        <LoteCliente :tipo="2" />
         <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
         <TablaTurnos v-if="turnos" />
       </v-col>
@@ -103,6 +104,7 @@
               :tipo="2"
           /></v-col>
         </v-row>
+        <LoteDecco :tipo="2" />
         <Estado
           :activo="31"
           :auto-manual="[41, 43]"
@@ -193,6 +195,8 @@ import FrutaProcesadaComun from "../../components/cards/comun/FrutaProcesadaComu
 import SeleccionarProducto from "../../components/cards/deccodos/SeleccionarProducto.vue";
 import TablaAlarmas from "../../components/tablas/comun/TablaAlarmas.vue";
 import TablaAlarmasTurnos from "../../components/tablas/comun/TablaAlarmasTurnos.vue";
+import LoteCliente from "../../components/cards/comun/LoteCliente.vue";
+import LoteDecco from "../../components/cards/comun/LoteDecco.vue";
 
 let turnos = ref(true);
 
