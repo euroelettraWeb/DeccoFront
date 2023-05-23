@@ -2,19 +2,30 @@
   <v-card>
     <v-row>
       <v-col v-if="cargado">
-        <v-card-title>Motivos de paro</v-card-title>
         <v-row>
-          <v-col>
+          <v-col
+            ><v-card-title>Motivos de paro (min)</v-card-title>
             <v-simple-table dense>
               <template #default>
-                <thead>
-                  <tr>
-                    <th></th>
-                    <th>Min</th>
-                  </tr>
-                </thead>
+                <thead></thead>
                 <tbody>
                   <tr v-for="item in consumos" :key="item.id">
+                    <td>
+                      {{ item.nombre }}
+                    </td>
+                    <td>
+                      {{ item.name }}
+                    </td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+            <v-card-title>Tiempo de funcionamiento (min)</v-card-title>
+            <v-simple-table dense>
+              <template #default>
+                <thead></thead>
+                <tbody>
+                  <tr v-for="item in totales" :key="item.id">
                     <td>
                       {{ item.nombre }}
                     </td>
@@ -49,11 +60,22 @@ import {
   obtenerDatosVariableGeneral,
   obtenerMaquina,
 } from "../../../helpers/bd";
-import { onMounted, ref, onUnmounted } from "vue";
+import { onMounted, ref, onUnmounted, reactive } from "vue";
 import { routerStore } from "../../../stores/index";
 
 const consumos = ref([]);
-const unidades = ref([]);
+const totales = ref([
+  {
+    id: 0,
+    nombre: "Paro",
+    name: 0,
+  },
+  {
+    id: 1,
+    nombre: "Marcha",
+    name: 0,
+  },
+]);
 let interval = null;
 const cargado = ref(false);
 
@@ -65,11 +87,11 @@ const props = defineProps({
 
 onMounted(async () => {
   cargado.value = false;
-  let maquinaID = (
+  const maquinaID = (
     await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
 
-  let totalesBD = await obtenerDatosVariableGeneral(
+  const totalesBD = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
@@ -85,8 +107,12 @@ onMounted(async () => {
       nombre: element.nombreCorto,
       name: Math.max(0, Math.round(element.registros.total1 / 60)),
     });
+    totales.value[0].name += Math.max(
+      0,
+      Math.round(element.registros.total1 / 60)
+    );
   }
-  let horasMarcha = await obtenerDatosVariableGeneral(
+  const horasMarcha = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "multiple",
@@ -95,14 +121,10 @@ onMounted(async () => {
     maquinaID,
     routerStore().clienteID
   );
-  consumos.value.push({
-    id: unidades.value.length,
-    nombre: "Marcha",
-    name: Math.max(0, Math.round(horasMarcha.total / 60)),
-  });
+  totales.value[1].name = Math.max(0, Math.round(horasMarcha.total / 60));
   cargado.value = true;
   interval = setInterval(async () => {
-    let totalesBD = await obtenerDatosVariableGeneral(
+    const totalesBD = await obtenerDatosVariableGeneral(
       "24H",
       "registros",
       "individual",
@@ -111,6 +133,8 @@ onMounted(async () => {
       maquinaID,
       routerStore().clienteID
     );
+    consumos.value.pop();
+    totales.value[0].name = 0;
     for (let index = 0; index < totalesBD.length; index++) {
       const element = totalesBD[index];
       consumos.value[index] = {
@@ -118,8 +142,12 @@ onMounted(async () => {
         nombre: element.nombreCorto,
         name: Math.max(0, Math.round(element.registros.total1 / 60)),
       };
+      totales.value[0].name += Math.max(
+        0,
+        Math.round(element.registros.total1 / 60)
+      );
     }
-    let horasMarcha = await obtenerDatosVariableGeneral(
+    const horasMarcha = await obtenerDatosVariableGeneral(
       "24H",
       "registros",
       "multiple",
@@ -128,12 +156,7 @@ onMounted(async () => {
       maquinaID,
       routerStore().clienteID
     );
-    consumos.value.pop();
-    consumos.value.push({
-      id: unidades.value.length,
-      nombre: "Marcha",
-      name: Math.max(0, Math.round(horasMarcha.total / 60)),
-    });
+    totales.value[1].name = Math.max(0, Math.round(horasMarcha.total / 60));
   }, 3000);
 });
 onUnmounted(() => {
