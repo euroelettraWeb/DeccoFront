@@ -64,9 +64,9 @@
           :estados="['', 'Aviso']"
           :categories="[
             'Alarma',
-            'Mínimo Nivel Desinfectante',
+            'Minimo Nivel Desinfectante',
             'Bidon Desinfectante Vacio',
-            'Mínimo Nivel Jabon',
+            'Minimo Nivel Jabon',
             'Bidon Jabon Vacio',
           ]"
         />
