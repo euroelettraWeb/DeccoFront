@@ -108,6 +108,20 @@
               :legend="false"
               :cargado="cargado1"
             />
+            <GraficoEstadoCardGen
+              :serie="series"
+              title="Alarmas"
+              :categories="[
+                'Falta Inicio Ciclo',
+                'Tope Palets Alcanzado',
+                'Termico Agitador',
+                'Fallo Agua',
+                'Fallo Aire',
+              ]"
+              :tooltipy="false"
+              :legend="false"
+              :cargado="cargado1"
+            />
             <GraficoLineaCardGen
               :serie="seriesL"
               title="Dosis"
@@ -187,12 +201,6 @@ function onReset() {
 async function dateApplied(date1, date2) {
   inicio.value = moment(date1).format("YYYY-MM-DDTHH:mm:ss");
   fin.value = moment(date2).format("YYYY-MM-DDTHH:mm:ss");
-  let estado = {};
-  let marcha = {};
-  let funcMaquina = {};
-  let dosis = {};
-  let kilos = {};
-  let alarma = {};
   series.value = [];
   series2.value = [];
   seriesL.value = [];
@@ -206,7 +214,10 @@ async function dateApplied(date1, date2) {
   cargado5.value = false;
   cargado6.value = false;
   cargado7.value = false;
-  estado = await obtenerDatosVariableGeneral(
+  cargado8.value = false;
+  cargado9.value = false;
+  cargado10.value = false;
+  let estado = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -234,7 +245,7 @@ async function dateApplied(date1, date2) {
     estado[1].data.push(element);
   }
   cargado1.value = true;
-  marcha = await obtenerDatosVariableGeneral(
+  let marcha = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "multiple",
@@ -253,12 +264,12 @@ async function dateApplied(date1, date2) {
     const element = marcha[1].data[index];
     estado[1].data.push(element);
   }
-  funcMaquina = await obtenerDatosVariableGeneral(
+  let funcMaquina = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
     "formatoRangos",
-    [12, 14, 73, 74, 75],
+    [12],
     props.maquina,
     routerStore().clienteID,
     inicio.value,
@@ -275,6 +286,19 @@ async function dateApplied(date1, date2) {
   }
   series.value = estado;
   cargado1.value = true;
+  let alarmasR = await obtenerDatosVariableGeneral(
+    "historico",
+    "registros",
+    "individual",
+    "formatoRangos",
+    [12, 73, 74, 75],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
+  );
+  series4.value = alarmasR;
+  cargado10.value = true;
   let agitadores = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -301,7 +325,7 @@ async function dateApplied(date1, date2) {
   );
   series3.value = otros;
   cargado2.value = true;
-  dosis = await obtenerDatosVariableGeneral(
+  let dosis = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -314,7 +338,7 @@ async function dateApplied(date1, date2) {
   );
   seriesL.value = dosis;
   cargado3.value = true;
-  totales = await obtenerDatosVariableGeneral(
+  let totales = await obtenerDatosVariableGeneral(
     "historico",
     "totales",
     "individual",
@@ -337,7 +361,7 @@ async function dateApplied(date1, date2) {
       inicio.value,
       fin.value
     );
-    kilos = await obtenerDatosVariableGeneral(
+    let kilos = await obtenerDatosVariableGeneral(
       "historico",
       "registros",
       "individual",
@@ -411,7 +435,7 @@ async function dateApplied(date1, date2) {
     fin.value
   );
   cargado7.value = true;
-  alarma = await obtenerDatosVariableGeneral(
+  let alarma = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -451,17 +475,18 @@ let cargado6 = ref(false);
 let cargado7 = ref(false);
 let cargado8 = ref(false);
 let cargado9 = ref(false);
+let cargado10 = ref(false);
 
 let series = ref([]);
 let series2 = ref([]);
 let series3 = ref([]);
+let series4 = ref([]);
 let seriesL = ref([]);
 let seriesL4 = ref([]);
 
 let consumos = ref([]);
 let alarmas = ref([]);
 let deccodos = ref(null);
-let totales = {};
 
 let sameDateFormat = {
   from: "DD MM YYYY, HH:mm",
@@ -474,18 +499,12 @@ let dateInput = {
   placeholder: "Seleccionar fechas",
   inputClass: "selectdates",
 };
-let estado = {};
-let marcha = {};
-let funcMaquina = {};
-let dosis = {};
-let kilos = {};
-let alarma = {};
 onMounted(async () => {
   cargado.value = false;
   cargado1.value = false;
   let maquina = await obtenerMaquina("lineaTipo", props.linea, 2);
   deccodos.value = maquina[0].id;
-  estado = await obtenerDatosVariableGeneral(
+  let estado = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
@@ -508,7 +527,7 @@ onMounted(async () => {
     estado[1].data.push(element);
   }
   cargado1.value = true;
-  marcha = await obtenerDatosVariableGeneral(
+  let marcha = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "multiple",
@@ -525,7 +544,7 @@ onMounted(async () => {
     const element = marcha[1].data[index];
     estado[1].data.push(element);
   }
-  funcMaquina = await obtenerDatosVariableGeneral(
+  let funcMaquina = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
@@ -545,6 +564,18 @@ onMounted(async () => {
   }
   series.value = estado;
   cargado1.value = true;
+  cargado10.value = false;
+  let alarmasR = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "individual",
+    "formatoRangos",
+    [12, 73, 74, 75],
+    props.maquina,
+    routerStore().clienteID
+  );
+  series4.value = alarmasR;
+  cargado10.value = true;
   cargado2.value = false;
   let agitadores = await obtenerDatosVariableGeneral(
     "24H",
@@ -573,7 +604,7 @@ onMounted(async () => {
   series3.value = otros;
   cargado9.value = true;
   cargado3.value = false;
-  dosis = await obtenerDatosVariableGeneral(
+  let dosis = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
@@ -585,7 +616,7 @@ onMounted(async () => {
   seriesL.value = dosis;
   cargado3.value = true;
   cargado7.value = false;
-  totales = await obtenerDatosVariableGeneral(
+  let totales = await obtenerDatosVariableGeneral(
     "24H",
     "totales",
     "individual",
@@ -604,7 +635,7 @@ onMounted(async () => {
       deccodos.value,
       routerStore().clienteID
     );
-    kilos = await obtenerDatosVariableGeneral(
+    let kilos = await obtenerDatosVariableGeneral(
       "24H",
       "registros",
       "individual",
@@ -678,7 +709,7 @@ onMounted(async () => {
   });
   cargado7.value = true;
   cargado8.value = false;
-  alarma = await obtenerDatosVariableGeneral(
+  let alarma = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",

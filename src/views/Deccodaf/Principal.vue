@@ -2,6 +2,7 @@
   <v-container fluid>
     <v-row>
       <v-col>
+        <LoteCliente />
         <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
         <TablaTurnos v-if="turnos" />
       </v-col>
@@ -117,6 +118,7 @@
             />
           </v-col>
         </v-row>
+        <LoteDecco :tipo="1" title="Lote Fungicida" />
         <Estado
           :activo="1"
           :auto-manual="[13, 15]"
@@ -129,10 +131,19 @@
             'Remoto',
             'Manual',
             'Falta de consenso',
+          ]"
+        />
+        <GraficaEstadoCard
+          :variables="[12, 73, 74, 75]"
+          :height="300"
+          title="Alarmas"
+          :tipo="1"
+          :categories="[
             'Falta Inicio Ciclo',
             'Tope Palets Alcanzado',
             'Termico Agitador',
-            'Fallo Agua	',
+            'Fallo Agua ',
+            'Fallo Aire',
           ]"
         />
         <GraficaLineaCard
@@ -140,8 +151,38 @@
           :variables="[7, 8, 9, 10, 11]"
           :tipo="1"
         />
-        <FrutaProcesadaComun :variables="48" :tipo="2" />
-        <v-btn
+        <!-- <div>
+           Tabla Reposiciones y grafica 
+        </div> -->
+        <FrutaProcesadaComun :fruta="48" :tipo="2" />
+        <GraficaEstadoCard
+          :variables="[2, 3, 4, 5, 6]"
+          :height="300"
+          title="Estado de los agitadores"
+          :tipo="1"
+          :categories="[
+            'Agitador Producto 1',
+            'Agitador Producto 2',
+            'Agitador Producto 3',
+            'Agitador Producto 4',
+            'Agitador Producto 5',
+          ]"
+        />
+        <GraficaEstadoCard
+          :variables="[20, 21, 22, 23, 24]"
+          :height="300"
+          title="Estado de los niveles de las garrafas"
+          :tipo="1"
+          :estados="['Aviso', '']"
+          :categories="[
+            'Nivel Garrafa P1',
+            'Nivel Garrafa P2',
+            'Nivel Garrafa P3',
+            'Nivel Garrafa P4',
+            'Nivel Garrafa P5',
+          ]"
+        />
+        <!-- <v-btn
           color="info"
           class="mt-2"
           @click="
@@ -152,7 +193,7 @@
             )
           "
           >Otras Variables</v-btn
-        >
+        > -->
       </v-col>
     </v-row>
   </v-container>
@@ -180,19 +221,22 @@ import TablaTotalTurnos from "../../components/tablas/comun/TablaTotalTurnos.vue
 import FrutaProcesadaComun from "../../components/cards/comun/FrutaProcesadaComun.vue";
 import TablaAlarmas from "../../components/tablas/comun/TablaAlarmas.vue";
 import TablaAlarmasTurnos from "../../components/tablas/comun/TablaAlarmasTurnos.vue";
+import TablaNivelesGarrafa from "../../components/tablas/deccodaf/TablaNivelesGarrafa.vue";
+import GraficaEstadoCard from "../../components/cards/comun/GraficaEstadoCard.vue";
+import LoteCliente from "../../components/cards/comun/LoteCliente.vue";
 
-let turnos = ref(true);
+const turnos = ref(true);
 
-let producto1 = ref(null);
-let producto2 = ref(null);
-let producto3 = ref(null);
-let producto4 = ref(null);
-let producto5 = ref(null);
+const producto1 = ref(null);
+const producto2 = ref(null);
+const producto3 = ref(null);
+const producto4 = ref(null);
+const producto5 = ref(null);
 
-let productos = ref(null);
-let cargado = ref(false);
-let guardado = ref(false);
-let mensaje = ref("");
+const productos = ref(null);
+const cargado = ref(false);
+const guardado = ref(false);
+const mensaje = ref("");
 
 async function save() {
   let array = [
@@ -235,7 +279,7 @@ async function save() {
     guardado.value = true;
   }
 }
-let turnosA = ref([]);
+const turnosA = ref([]);
 onMounted(async () => {
   cargado.value = false;
   turnosA.value = await obtenerTurnos(routerStore().clienteID);
