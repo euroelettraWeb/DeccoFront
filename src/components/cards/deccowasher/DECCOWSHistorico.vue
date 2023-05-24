@@ -802,6 +802,14 @@ async function toExcel() {
   });
   const ws4 = utils.json_to_sheet(alarmasA);
   utils.book_append_sheet(wb, ws4, "Alarmas");
+  const tiemposA = tiempos.value.map((e) => {
+    return {
+      nombre: e.nombre,
+      total: e.name,
+    };
+  });
+  const ws5 = utils.json_to_sheet(tiemposA);
+  utils.book_append_sheet(wb, ws5, "Funcionamiento");
   writeFileXLSX(wb, "DECCOWASHER" + inicio.value + "-" + fin.value + ".xlsx");
 }
 </script>

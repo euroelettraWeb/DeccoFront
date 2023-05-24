@@ -718,8 +718,6 @@ async function toExcel() {
   });
   const ws = utils.json_to_sheet(kilosA);
   utils.book_append_sheet(wb, ws, "Kg-min");
-  // const ws2 = utils.json_to_sheet(kilosA);
-  // utils.book_append_sheet(wb, ws2, "Fruta");
   const consumosA = consumos.value.map((e) => {
     return {
       nombre: e.nombre,
@@ -737,6 +735,14 @@ async function toExcel() {
   });
   const ws4 = utils.json_to_sheet(alarmasA);
   utils.book_append_sheet(wb, ws4, "Alarmas");
+  const tiemposA = tiempos.value.map((e) => {
+    return {
+      nombre: e.nombre,
+      total: e.name,
+    };
+  });
+  const ws5 = utils.json_to_sheet(tiemposA);
+  utils.book_append_sheet(wb, ws5, "Funcionamiento");
   writeFileXLSX(wb, "DECCODAF" + inicio.value + "-" + fin.value + ".xlsx");
 }
 </script>
