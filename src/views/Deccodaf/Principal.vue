@@ -224,6 +224,7 @@ import TablaAlarmasTurnos from "../../components/tablas/comun/TablaAlarmasTurnos
 import TablaNivelesGarrafa from "../../components/tablas/deccodaf/TablaNivelesGarrafa.vue";
 import GraficaEstadoCard from "../../components/cards/comun/GraficaEstadoCard.vue";
 import LoteCliente from "../../components/cards/comun/LoteCliente.vue";
+import LoteDecco from "../../components/cards/comun/LoteDecco.vue";
 
 const turnos = ref(true);
 

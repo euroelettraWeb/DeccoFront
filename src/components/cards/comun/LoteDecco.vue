@@ -51,7 +51,7 @@ const series = ref([]);
 let chartOptions = computed(() => {
   return {
     chart: {
-      id: "jabon",
+      id: "Product",
       // group: "actual",
       type: "rangeBar",
       locales: [es],
@@ -123,7 +123,6 @@ const props = defineProps({
 });
 onMounted(async () => {
   cargado.value = false;
-  cargado2.value = false;
   let maquinaID = (
     await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
@@ -133,32 +132,32 @@ onMounted(async () => {
       name: "Producto",
       data: [
         {
-          x: "Jabon 1",
+          x: "Product 1",
           y: [1694353200000, 1694373200000],
           fillColor: "#ff8000",
         },
 
         {
-          x: "JAB1",
+          x: "PRD1",
           y: [1694364800000, 1694378000000],
         },
 
         {
-          x: "Jabon 2",
+          x: "Product 2",
           y: [1694356800000, 1694375000000],
           fillColor: "#ff8000",
         },
         {
-          x: "JAB2",
+          x: "PRD2",
           y: [1694358000000, 1694376800000],
         },
         {
-          x: "Jabon 3",
+          x: "Product 3",
           y: [1694360400000, 1694375600000],
           fillColor: "#ff8000",
         },
         {
-          x: "JAB3",
+          x: "PRD3",
           y: [1694360400000, 1694375600000],
         },
       ],
