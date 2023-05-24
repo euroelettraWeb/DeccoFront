@@ -674,18 +674,15 @@ onUnmounted(() => {
 });
 async function toExcel() {
   const wb = utils.book_new();
-  for (let index = 0; index < seriesL.value.length; index++) {
-    const element = seriesL.value[index];
-    const dosisA = element.data.map((e) => {
-      return {
-        fecha: moment(e.x).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"),
-        valor: e.y,
-      };
-    });
+  seriesL.value.forEach((element) => {
+    const dosisA = element.data.map((e) => ({
+      fecha: moment(e.x).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"),
+      valor: e.y,
+    }));
     const ws = utils.json_to_sheet(dosisA);
-    const name = seriesL.value[index].name.replace("/", "-");
+    const name = element.name.replace("/", "-");
     utils.book_append_sheet(wb, ws, name);
-  }
+  });
   const kilosA = seriesL4.value[0].data.map((e) => {
     return {
       fecha: moment(e.x).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"),
