@@ -138,7 +138,6 @@
           :height="300"
           title="Alarmas"
           :tipo="1"
-          :colores="['#00c853', '#d50000']"
           :estados="['', 'Aviso']"
           :categories="[
             'Falta Inicio Ciclo',
@@ -157,8 +156,8 @@
         <!-- <div>
            Tabla Reposiciones y consumo por modo
         </div> -->
-        <ModosReposiciones :tipo="1" title="Modo Reposiciones" />
-        <GraficaLineaCard title="Reposiciones" :variables="[7]" />
+        <!-- <ModosReposiciones :tipo="1" title="Modo Reposiciones" />
+        <GraficaLineaCard title="Reposiciones" :variables="[7]" /> -->
         <FrutaProcesadaComun :variables="48" :tipo="2" />
         <!-- <GraficaEstadoCard
           :variables="[2, 3, 4, 5, 6]"
@@ -185,6 +184,7 @@
             'Nivel Garrafa P3',
             'Nivel Garrafa P4',
             'Nivel Garrafa P5',
+            'Flujo de producto',
           ]"
         />
         <TablaNivelesGarrafa />
