@@ -157,9 +157,9 @@
         <!-- <div>
            Tabla Reposiciones y consumo por modo
         </div> -->
-        <ModosReposiciones :tipo="1" />
+        <ModosReposiciones :tipo="1" title="Modo Reposiciones" />
         <GraficaLineaCard title="Reposiciones" :variables="[7]" />
-        <FrutaProcesadaComun :fruta="48" :tipo="2" />
+        <FrutaProcesadaComun :variables="48" :tipo="2" />
         <!-- <GraficaEstadoCard
           :variables="[2, 3, 4, 5, 6]"
           :height="300"
