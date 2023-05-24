@@ -492,7 +492,18 @@ const seriesL4 = ref([]);
 const consumos = ref([]);
 const alarmas = ref([]);
 const deccodos = ref(null);
-const tiempos = ref([]);
+const tiempos = ref([
+  {
+    id: 0,
+    nombre: "Paro",
+    name: 0,
+  },
+  {
+    id: 1,
+    nombre: "Marcha",
+    name: 0,
+  },
+]);
 
 const sameDateFormat = {
   from: "DD MM YYYY, HH:mm",
@@ -744,11 +755,10 @@ onUnmounted(() => {
   alarmas.value = [];
 });
 async function toExcel() {
-  const dosisA = [];
   const wb = utils.book_new();
   for (let index = 0; index < seriesL.value.length; index++) {
     const element = seriesL.value[index];
-    dosisA = element.data.map((e) => {
+    const dosisA = element.data.map((e) => {
       return {
         fecha: moment(e.x).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"),
         valor: e.y,
