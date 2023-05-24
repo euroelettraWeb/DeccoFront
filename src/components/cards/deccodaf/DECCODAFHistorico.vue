@@ -7,6 +7,10 @@
             <v-card-title> DECCODAF </v-card-title>
           </v-col>
         </v-row>
+        <v-row>
+          <v-col><v-btn>Fechas</v-btn></v-col>
+          <v-col><v-btn>Lotes</v-btn></v-col>
+        </v-row>
         <v-row class="pl-8">
           <v-col
             ><date-picker
@@ -35,7 +39,7 @@
                       <tr>
                         <th></th>
                         <th>L</th>
-                        <th>Litros/Tonelada</th>
+                        <th v-if="deccodos">Litros/Tonelada</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -81,6 +85,24 @@
                     </tbody>
                   </template>
                 </v-simple-table>
+                <v-simple-table dense>
+                  <template #default>
+                    <thead>
+                      <tr>
+                        <th class="text-left"></th>
+                        <th>Min</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="tiempoItem in tiempos" :key="tiempoItem.id">
+                        <td>{{ tiempoItem.nombre }}</td>
+                        <td>
+                          {{ tiempoItem.name }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-simple-table>
               </v-col>
               <v-col v-else class="d-flex justify-center align-center">
                 <v-progress-circular
@@ -99,17 +121,13 @@
                 'Remoto',
                 'Manual',
                 'Falta de consenso',
-                'Falta Inicio Ciclo',
-                'Tope Palets Alcanzado',
-                'Termico Agitador',
-                'Fallo Agua',
               ]"
               :tooltipy="false"
               :legend="false"
               :cargado="cargado1"
             />
             <GraficoEstadoCardGen
-              :serie="series"
+              :serie="series4"
               title="Alarmas"
               :categories="[
                 'Falta Inicio Ciclo',
@@ -117,6 +135,7 @@
                 'Termico Agitador',
                 'Fallo Agua',
                 'Fallo Aire',
+                'Agitador',
               ]"
               :tooltipy="false"
               :legend="false"
@@ -134,20 +153,6 @@
               :cargado="cargado6"
             />
             <GraficoEstadoCardGen
-              :serie="series2"
-              title="Estado de los agitadores"
-              :tooltipy="true"
-              :legend="true"
-              :categories="[
-                'Agitador Producto 1',
-                'Agitador Producto 2',
-                'Agitador Producto 3',
-                'Agitador Producto 4',
-                'Agitador Producto 5',
-              ]"
-              :cargado="cargado2"
-            />
-            <GraficoEstadoCardGen
               :serie="series3"
               title="Estado de los niveles y bidon"
               :tooltipy="true"
@@ -158,6 +163,7 @@
                 'Nivel Garrafa P3',
                 'Nivel Garrafa P4',
                 'Nivel Garrafa P5',
+                'Flujo de producto',
               ]"
               :cargado="cargado9"
             />
@@ -202,13 +208,12 @@ async function dateApplied(date1, date2) {
   inicio.value = moment(date1).format("YYYY-MM-DDTHH:mm:ss");
   fin.value = moment(date2).format("YYYY-MM-DDTHH:mm:ss");
   series.value = [];
-  series2.value = [];
   seriesL.value = [];
   seriesL4.value = [];
+  alarmas.value = [];
 
   cargado.value = false;
   cargado1.value = false;
-  cargado2.value = false;
   cargado3.value = false;
   cargado4.value = false;
   cargado5.value = false;
@@ -229,7 +234,7 @@ async function dateApplied(date1, date2) {
     fin.value
   );
 
-  let autoManual = await obtenerDatosVariableGeneral(
+  const autoManual = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -240,12 +245,9 @@ async function dateApplied(date1, date2) {
     inicio.value,
     fin.value
   );
-  for (let index = 0; index < autoManual[1].data.length; index++) {
-    const element = autoManual[1].data[index];
-    estado[1].data.push(element);
-  }
+  estado[1].data.push(...autoManual[1].data);
   cargado1.value = true;
-  let marcha = await obtenerDatosVariableGeneral(
+  const marcha = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "multiple",
@@ -256,15 +258,9 @@ async function dateApplied(date1, date2) {
     inicio.value,
     fin.value
   );
-  for (let index = 0; index < marcha[0].data.length; index++) {
-    const element = marcha[0].data[index];
-    estado[0].data.push(element);
-  }
-  for (let index = 0; index < marcha[1].data.length; index++) {
-    const element = marcha[1].data[index];
-    estado[1].data.push(element);
-  }
-  let funcMaquina = await obtenerDatosVariableGeneral(
+  estado[0].data.push(...marcha[0].data);
+  estado[1].data.push(...marcha[1].data);
+  const funcMaquina = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -275,18 +271,14 @@ async function dateApplied(date1, date2) {
     inicio.value,
     fin.value
   );
-  for (let index = 0; index < funcMaquina[1].data.length; index++) {
-    const element = funcMaquina[1].data[index];
-    if (element.x == "Falta de consenso") {
-      element.fillColor = "#3949ab";
-    } else {
-      element.fillColor = "#fdd835";
-    }
+  funcMaquina[1].data.forEach((element) => {
+    element.fillColor =
+      element.x === "Falta de consenso" ? "#3949ab" : "#fdd835";
     estado[1].data.push(element);
-  }
+  });
   series.value = estado;
   cargado1.value = true;
-  let alarmasR = await obtenerDatosVariableGeneral(
+  const alarmasR = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -299,19 +291,7 @@ async function dateApplied(date1, date2) {
   );
   series4.value = alarmasR;
   cargado10.value = true;
-  let agitadores = await obtenerDatosVariableGeneral(
-    "historico",
-    "registros",
-    "individual",
-    "formatoRangos",
-    [2, 3, 4, 5, 6],
-    props.maquina,
-    routerStore().clienteID,
-    inicio.value,
-    fin.value
-  );
-  series2.value = agitadores;
-  let otros = await obtenerDatosVariableGeneral(
+  const otros = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
@@ -324,8 +304,8 @@ async function dateApplied(date1, date2) {
     ["Aviso", ""]
   );
   series3.value = otros;
-  cargado2.value = true;
-  let dosis = await obtenerDatosVariableGeneral(
+  cargado9.value = true;
+  const dosis = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -338,7 +318,7 @@ async function dateApplied(date1, date2) {
   );
   seriesL.value = dosis;
   cargado3.value = true;
-  let totales = await obtenerDatosVariableGeneral(
+  const totales = await obtenerDatosVariableGeneral(
     "historico",
     "totales",
     "individual",
@@ -350,7 +330,7 @@ async function dateApplied(date1, date2) {
     fin.value
   );
   if (deccodos.value) {
-    let totalFruta = await obtenerDatosVariableGeneral(
+    const totalFruta = await obtenerDatosVariableGeneral(
       "historico",
       "totales",
       "individual",
@@ -372,7 +352,7 @@ async function dateApplied(date1, date2) {
       inicio.value,
       fin.value
     );
-    let kilosM = await obtenerDatosVariableGeneral(
+    const kilosM = await obtenerDatosVariableGeneral(
       "historico",
       "registros",
       "individual",
@@ -386,44 +366,40 @@ async function dateApplied(date1, date2) {
     );
     kilos.push(...kilosM);
     seriesL4.value = kilos;
-    consumos.value = [];
-    for (let index = 0; index < totales.length; index++) {
-      const element = totales[index];
-      let n = Math.max(0, element.registros[0].total);
-      let d =
-        totalFruta[0].registros[0].total > 0
-          ? (n / (totalFruta[0].registros[0].total / 1000)).toLocaleString(
-              "es-ES"
-            )
-          : 0;
-      consumos.value.push({
-        id: element.descripcion + index,
-        nombre: element.descripcion,
-        total: Math.max(0, element.registros[0].total).toLocaleString("es-ES"),
+    const consumosValue = totales.map((element, index) => {
+      const { registros, descripcion } = element;
+      const n = Math.max(0, registros[0].total);
+      const totalFrutaRegistrosTotal = totalFruta[0].registros[0].total;
+
+      const d =
+        totalFrutaRegistrosTotal > 0
+          ? (n / (totalFrutaRegistrosTotal / 1000)).toFixed(2)
+          : "0";
+
+      return {
+        id: descripcion + index,
+        nombre: descripcion,
+        total: n.toLocaleString("es-ES"),
         totalPorToneladaFruta: d,
-      });
-    }
-    consumos.value.push({
-      id: totalFruta[0].nombreCorto + consumos.value.length,
-      nombre: totalFruta[0].nombreCorto + "( T )",
-      total: Math.max(
-        0,
-        totalFruta[0].registros[0].total / 1000
-      ).toLocaleString("es-ES"),
+      };
     });
+    const totalFrutaConsumo = {
+      id: totalFruta[0].nombreCorto + consumosValue.length,
+      nombre: totalFruta[0].nombreCorto,
+      total: (totalFruta[0].registros[0].total / 1000).toLocaleString("es-ES"),
+    };
+
+    consumos.value = [...consumosValue, totalFrutaConsumo];
     cargado6.value = true;
   } else {
-    consumos.value = [];
-    for (let index = 0; index < totales.length; index++) {
-      const element = totales[index];
-      consumos.value.push({
-        id: index,
-        nombre: element.descripcion,
-        total: Math.max(0, element.registros[0].total).toLocaleString("es-ES"),
-      });
-    }
+    const consumosValue = totales.map((element, index) => ({
+      id: element.descripcion + index,
+      nombre: element.descripcion,
+      total: Math.max(0, element.registros[0].total).toLocaleString("es-ES"),
+    }));
+    consumos.value = [...consumosValue];
   }
-  let marchat = await obtenerDatosVariableGeneral(
+  const marchat = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "multiple",
@@ -435,7 +411,7 @@ async function dateApplied(date1, date2) {
     fin.value
   );
   cargado7.value = true;
-  let alarma = await obtenerDatosVariableGeneral(
+  const alarma = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -446,63 +422,69 @@ async function dateApplied(date1, date2) {
     inicio.value,
     fin.value
   );
-  let totalA = [];
-  for (let index = 0; index < alarma.length; index++) {
-    const element = alarma[index];
-    totalA.push({
+  const acc = alarma.reduce((total, element, index) => {
+    const val = Math.max(0, Math.round(element.registros.total1 / 60));
+    alarmas.value.push({
       id: element.nombreCorto + index,
       nombre: element.nombreCorto,
-      name: Math.max(0, Math.round(element.registros.total1 / 60)),
+      name: val,
     });
-  }
-  totalA.push({
-    id: "Marcha" + totalA.length,
-    nombre: "Marcha",
-    name: Math.max(0, marchat.total).toFixed(0),
-  });
-  alarmas.value = totalA;
+    return total + val;
+  }, 0);
+  tiempos.value[0].name = acc;
+  tiempos.value[1].name = Math.max(0, Math.round(marchat.total / 60));
   cargado8.value = true;
   cargado.value = true;
 }
 
-let cargado = ref(false);
-let cargado1 = ref(false);
-let cargado2 = ref(false);
-let cargado3 = ref(false);
-let cargado4 = ref(false);
-let cargado5 = ref(false);
-let cargado6 = ref(false);
-let cargado7 = ref(false);
-let cargado8 = ref(false);
-let cargado9 = ref(false);
-let cargado10 = ref(false);
+const cargado = ref(false);
+const cargado1 = ref(false);
+const cargado3 = ref(false);
+const cargado4 = ref(false);
+const cargado5 = ref(false);
+const cargado6 = ref(false);
+const cargado7 = ref(false);
+const cargado8 = ref(false);
+const cargado9 = ref(false);
+const cargado10 = ref(false);
 
-let series = ref([]);
-let series2 = ref([]);
-let series3 = ref([]);
-let series4 = ref([]);
-let seriesL = ref([]);
-let seriesL4 = ref([]);
+const series = ref([]);
+const series3 = ref([]);
+const series4 = ref([]);
+const seriesL = ref([]);
+const seriesL4 = ref([]);
 
-let consumos = ref([]);
-let alarmas = ref([]);
-let deccodos = ref(null);
+const consumos = ref([]);
+const tiempos = ref([
+  {
+    id: 0,
+    nombre: "Paro",
+    name: 0,
+  },
+  {
+    id: 1,
+    nombre: "Marcha",
+    name: 0,
+  },
+]);
+const alarmas = ref([]);
+const deccodos = ref(null);
 
-let sameDateFormat = {
+const sameDateFormat = {
   from: "DD MM YYYY, HH:mm",
   to: "HH:mm",
 };
-let inicio = ref("");
-let fin = ref("");
+const inicio = ref("");
+const fin = ref("");
 
-let dateInput = {
+const dateInput = {
   placeholder: "Seleccionar fechas",
   inputClass: "selectdates",
 };
 onMounted(async () => {
   cargado.value = false;
   cargado1.value = false;
-  let maquina = await obtenerMaquina("lineaTipo", props.linea, 2);
+  const maquina = await obtenerMaquina("lineaTipo", props.linea, 2);
   deccodos.value = maquina[0].id;
   let estado = await obtenerDatosVariableGeneral(
     "24H",
@@ -513,7 +495,7 @@ onMounted(async () => {
     props.maquina,
     routerStore().clienteID
   );
-  let autoManual = await obtenerDatosVariableGeneral(
+  const autoManual = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
@@ -522,12 +504,9 @@ onMounted(async () => {
     props.maquina,
     routerStore().clienteID
   );
-  for (let index = 0; index < autoManual[1].data.length; index++) {
-    const element = autoManual[1].data[index];
-    estado[1].data.push(element);
-  }
+  estado[1].data.push(...autoManual[1].data);
   cargado1.value = true;
-  let marcha = await obtenerDatosVariableGeneral(
+  const marcha = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "multiple",
@@ -536,15 +515,9 @@ onMounted(async () => {
     props.maquina,
     routerStore().clienteID
   );
-  for (let index = 0; index < marcha[0].data.length; index++) {
-    const element = marcha[0].data[index];
-    estado[0].data.push(element);
-  }
-  for (let index = 0; index < marcha[1].data.length; index++) {
-    const element = marcha[1].data[index];
-    estado[1].data.push(element);
-  }
-  let funcMaquina = await obtenerDatosVariableGeneral(
+  estado[0].data.push(...marcha[0].data);
+  estado[1].data.push(...marcha[1].data);
+  const funcMaquina = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
@@ -553,19 +526,15 @@ onMounted(async () => {
     props.maquina,
     routerStore().clienteID
   );
-  for (let index = 0; index < funcMaquina[1].data.length; index++) {
-    let element = funcMaquina[1].data[index];
-    if (element.x == "Alarma") {
-      element.fillColor = "#fdd835";
-    } else {
-      element.fillColor = "#3949ab";
-    }
+  funcMaquina[1].data.forEach((element) => {
+    element.fillColor =
+      element.x === "Falta de consenso" ? "#3949ab" : "#fdd835";
     estado[1].data.push(element);
-  }
+  });
   series.value = estado;
   cargado1.value = true;
   cargado10.value = false;
-  let alarmasR = await obtenerDatosVariableGeneral(
+  const alarmasR = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
@@ -576,20 +545,8 @@ onMounted(async () => {
   );
   series4.value = alarmasR;
   cargado10.value = true;
-  cargado2.value = false;
-  let agitadores = await obtenerDatosVariableGeneral(
-    "24H",
-    "registros",
-    "individual",
-    "formatoRangos",
-    [2, 3, 4, 5, 6],
-    props.maquina,
-    routerStore().clienteID
-  );
-  series2.value = agitadores;
-  cargado2.value = true;
   cargado9.value = false;
-  let otros = await obtenerDatosVariableGeneral(
+  const otros = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
@@ -604,7 +561,7 @@ onMounted(async () => {
   series3.value = otros;
   cargado9.value = true;
   cargado3.value = false;
-  let dosis = await obtenerDatosVariableGeneral(
+  const dosis = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
@@ -616,7 +573,7 @@ onMounted(async () => {
   seriesL.value = dosis;
   cargado3.value = true;
   cargado7.value = false;
-  let totales = await obtenerDatosVariableGeneral(
+  const totales = await obtenerDatosVariableGeneral(
     "24H",
     "totales",
     "individual",
@@ -626,7 +583,7 @@ onMounted(async () => {
     routerStore().clienteID
   );
   if (deccodos.value) {
-    let totalFruta = await obtenerDatosVariableGeneral(
+    const totalFruta = await obtenerDatosVariableGeneral(
       "24H",
       "totales",
       "individual",
@@ -644,7 +601,7 @@ onMounted(async () => {
       deccodos.value,
       routerStore().clienteID
     );
-    let kilosM = await obtenerDatosVariableGeneral(
+    const kilosM = await obtenerDatosVariableGeneral(
       "24H",
       "registros",
       "individual",
@@ -658,42 +615,42 @@ onMounted(async () => {
     );
     kilos.push(...kilosM);
     seriesL4.value = kilos;
-    for (let index = 0; index < totales.length; index++) {
-      const element = totales[index];
-      let n = Math.max(0, element.registros[0].total);
-      let d =
-        totalFruta[0].registros[0].total > 0
-          ? (n / (totalFruta[0].registros[0].total / 1000)).toLocaleString(
-              "es-ES"
-            )
-          : 0;
-      consumos.value.push({
-        id: element.descripcion + index,
-        nombre: element.descripcion,
-        total: Math.max(0, element.registros[0].total).toLocaleString("es-ES"),
+    const consumosValue = totales.map((element, index) => {
+      const { registros, descripcion } = element;
+      const n = Math.max(0, registros[0].total);
+      const totalFrutaRegistrosTotal = totalFruta[0].registros[0].total;
+
+      const d =
+        totalFrutaRegistrosTotal > 0
+          ? (n / (totalFrutaRegistrosTotal / 1000)).toFixed(2)
+          : "0";
+
+      return {
+        id: descripcion + index,
+        nombre: descripcion,
+        total: n.toLocaleString("es-ES"),
         totalPorToneladaFruta: d,
-      });
-    }
-    consumos.value.push({
-      id: totalFruta[0].nombreCorto + consumos.value.length,
-      nombre: totalFruta[0].nombreCorto,
-      total: Math.max(
-        0,
-        totalFruta[0].registros[0].total / 1000
-      ).toLocaleString("es-ES"),
+      };
     });
+    const totalFrutaConsumo = {
+      id: totalFruta[0].nombreCorto + consumosValue.length,
+      nombre: totalFruta[0].nombreCorto,
+      total: (totalFruta[0].registros[0].total / 1000).toLocaleString("es-ES"),
+    };
+
+    consumos.value = [...consumosValue, totalFrutaConsumo];
     cargado6.value = true;
   } else {
-    for (let index = 0; index < totales.length; index++) {
-      const element = totales[index];
-      consumos.value.push({
-        id: element.descripcion + index,
-        nombre: element.descripcion,
-        total: Math.max(0, element.registros[0].total).toLocaleString("es-ES"),
-      });
-    }
+    const consumosValue = totales.map((element, index) => ({
+      id: element.descripcion + index,
+      nombre: element.descripcion,
+      total: Math.max(0, element.registros[0].total).toLocaleString("es-ES"),
+    }));
+    consumos.value = [...consumosValue];
   }
-  let horasMarcha = await obtenerDatosVariableGeneral(
+  cargado7.value = true;
+  cargado8.value = false;
+  const horasMarcha = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "multiple",
@@ -702,14 +659,7 @@ onMounted(async () => {
     props.maquina,
     routerStore().clienteID
   );
-  consumos.value.push({
-    id: consumos.value.length,
-    nombre: "Marcha",
-    total: Math.max(0, Math.round(horasMarcha.total / 60)),
-  });
-  cargado7.value = true;
-  cargado8.value = false;
-  let alarma = await obtenerDatosVariableGeneral(
+  const alarma = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
@@ -718,53 +668,47 @@ onMounted(async () => {
     props.maquina,
     routerStore().clienteID
   );
-  for (let index = 0; index < alarma.length; index++) {
-    const element = alarma[index];
+  const acc = alarma.reduce((total, element, index) => {
+    const val = Math.max(0, Math.round(element.registros.total1 / 60));
     alarmas.value.push({
       id: element.nombreCorto + index,
       nombre: element.nombreCorto,
-      name: Math.max(0, Math.round(element.registros.total1 / 60)),
+      name: val,
     });
-  }
-  alarmas.value.push({
-    id: "Marcha" + consumos.value.length,
-    nombre: "Marcha",
-    name: Math.max(0, Math.round(horasMarcha.total / 60)),
-  });
+    return total + val;
+  }, 0);
+  tiempos.value[0].name = acc;
+  tiempos.value[1].name = Math.max(0, Math.round(horasMarcha.total / 60));
   cargado8.value = true;
-
   cargado.value = true;
 });
 onUnmounted(() => {
   series.value = [];
-  series2.value = [];
   seriesL.value = [];
   seriesL4.value = [];
   consumos.value = [];
   alarmas.value = [];
 });
 async function toExcel() {
-  let dosisA = [];
   const wb = utils.book_new();
   for (let index = 0; index < seriesL.value.length; index++) {
     const element = seriesL.value[index];
-    dosisA = element.data.map((e) => {
+    const dosisA = element.data.map((e) => {
       return {
         fecha: moment(e.x).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"),
         valor: e.y,
       };
     });
-    let ws = utils.json_to_sheet(dosisA);
+    const ws = utils.json_to_sheet(dosisA);
     utils.book_append_sheet(wb, ws, "Dosis" + index);
   }
-  let kilosA = [];
-  kilosA = seriesL4.value[0].data.map((e) => {
+  const kilosA = seriesL4.value[0].data.map((e) => {
     return {
       fecha: moment(e.x).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"),
       valor: e.y,
     };
   });
-  let wsk = utils.json_to_sheet(kilosA);
+  const wsk = utils.json_to_sheet(kilosA);
   utils.book_append_sheet(wb, wsk, "Kilos");
   kilosA = seriesL4.value[1].data.map((e) => {
     return {
@@ -772,13 +716,11 @@ async function toExcel() {
       valor: e.y,
     };
   });
-  let ws = utils.json_to_sheet(kilosA);
+  const ws = utils.json_to_sheet(kilosA);
   utils.book_append_sheet(wb, ws, "Kg-min");
-  let alarmasA = alarmas.value;
   // const ws2 = utils.json_to_sheet(kilosA);
   // utils.book_append_sheet(wb, ws2, "Fruta");
-  let consumosA = [];
-  consumosA = consumos.value.map((e) => {
+  const consumosA = consumos.value.map((e) => {
     return {
       nombre: e.nombre,
       total: e.total,
@@ -787,7 +729,7 @@ async function toExcel() {
   });
   const ws3 = utils.json_to_sheet(consumosA);
   utils.book_append_sheet(wb, ws3, "Consumos");
-  alarmasA = alarmas.value.map((e) => {
+  const alarmasA = alarmas.value.map((e) => {
     return {
       nombre: e.nombre,
       total: e.name,
