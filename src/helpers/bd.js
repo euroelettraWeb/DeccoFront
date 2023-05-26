@@ -59,6 +59,14 @@ const obtenerDatosVariableGeneral = async (
     )
   ).data;
 
+const obtenerIncioFin = async (variables, maquinaID, valor) =>
+  (
+    await axios.post(
+      `${process.env.VUE_APP_RUTA_API}/variable/${modo}/${operacion}/${consulta}/${filtrado}/`,
+      { variables, maquinaID, valor }
+    )
+  ).data;
+
 export {
   obtenerDatosVariableGeneral,
   obtenerLinea,
@@ -70,4 +78,5 @@ export {
   obtenerTurnos,
   obtenerClientePLC,
   obtenerClientes,
+  obtenerIncioFin,
 };
