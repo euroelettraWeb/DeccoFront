@@ -7,11 +7,11 @@
             <v-card-title> DECCODOS </v-card-title>
           </v-col>
         </v-row>
-        <v-row>
+        <v-row class="mb-2">
           <v-col><v-btn @click="fechas">Fechas</v-btn></v-col>
           <v-col><v-btn @click="lotesMode">Lotes</v-btn></v-col>
         </v-row>
-        <v-row v-if="cargadoLotesChoose">
+        <v-row v-if="cargadoLotesChoose" class="mb-2">
           <v-col><v-btn @click="select('cliente')">Cliente</v-btn></v-col>
           <v-col><v-btn @click="select('Decco')">Decco</v-btn></v-col>
         </v-row>
@@ -43,7 +43,7 @@
           >
         </v-row>
         <v-row>
-          <v-col v-if="datoslotes">
+          <v-col v-if="datosLote">
             <h2>{{ loteActual }}</h2>
             <h3>{{ inicio }} {{ fin }}</h3>
           </v-col>
