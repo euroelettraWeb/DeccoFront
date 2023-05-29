@@ -16,25 +16,30 @@
           <v-col><v-btn @click="select('Decco')">Decco</v-btn></v-col>
         </v-row>
         <v-row class="pl-8" no-gutters>
-          <v-col v-if="cargadoFechas" cols="10"
-            ><date-picker
-              class="selectdates"
-              apply-button-label="Use"
-              :date-input="dateInput"
-              :format="'DD MM YYYY HH:mm'"
-              :same-date-format="sameDateFormat"
-              @date-applied="historico"
-              @on-reset="onReset"
-          /></v-col>
-          <v-col v-if="cargadoLotesSelect">
-            <v-select :items="lotes" @click="lotesChoose"></v-select>
-            <v-select
-              v-if="mostrarAplicaciones"
-              :items="aplicaciones"
-              @click="lotesAplicaciones"
-            ></v-select>
-            <v-btn v-if="mostrarAplicaciones" @click="mostrarTodo">Todo</v-btn>
-          </v-col>
+          <v-col cols="8"
+            ><div v-if="cargadoFechas">
+              <date-picker
+                class="selectdates"
+                apply-button-label="Use"
+                :date-input="dateInput"
+                :format="'DD MM YYYY HH:mm'"
+                :same-date-format="sameDateFormat"
+                @date-applied="historico"
+                @on-reset="onReset"
+              />
+              <div v-if="cargadoLotesSelect">
+                <v-select :items="lotes" @click="lotesChoose"></v-select>
+                <v-select
+                  v-if="mostrarAplicaciones"
+                  :items="aplicaciones"
+                  @click="lotesAplicaciones"
+                ></v-select>
+                <v-btn v-if="mostrarAplicaciones" @click="mostrarTodo"
+                  >Todo</v-btn
+                >
+              </div>
+            </div></v-col
+          >
           <v-col
             ><v-btn @click="print()"><v-icon>mdi-file-pdf-box</v-icon></v-btn
             ><v-btn @click="toExcel()"
