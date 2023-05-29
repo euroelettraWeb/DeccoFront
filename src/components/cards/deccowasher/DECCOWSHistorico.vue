@@ -561,6 +561,7 @@ async function toDaily() {
     );
     kilos.push(...kilosM);
     seriesFruta.value = kilos;
+    cargadoFruta.value = true;
     const consumosValue = totales.map((element, index) => {
       const { registros, descripcion } = element;
       const n = Math.max(0, registros[0].total);
@@ -585,7 +586,6 @@ async function toDaily() {
     };
 
     consumos.value = [...consumosValue, totalFrutaConsumo];
-    cargadoFruta.value = true;
   } else {
     const consumosValue = totales.map((element, index) => ({
       id: element.descripcion + index,
@@ -895,6 +895,7 @@ async function historico(date1, date2) {
   tiempos.value[0].name = acc;
   tiempos.value[1].name = Math.max(0, Math.round(marchat.total / 60));
   cargadoConsumos.value = true;
+  cargado.value = true;
 }
 
 async function historicoVarios(dates) {
