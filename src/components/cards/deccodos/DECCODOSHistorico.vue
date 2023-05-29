@@ -75,7 +75,7 @@
                           {{ item.total }}
                         </td>
                         <td>
-                          {{ item.totalFruta }}
+                          {{ item.totalPorToneladaFruta }}
                         </td>
                       </tr>
                     </tbody>
