@@ -268,11 +268,7 @@ const dateInput = {
   inputClass: "selectdates",
 };
 
-onMounted(async () => {
-  cargado.value = false;
-  await toDaily();
-  cargado.value = true;
-});
+onMounted(async () => {});
 onUnmounted(() => {
   reset(null);
 });

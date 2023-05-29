@@ -287,9 +287,8 @@ const dateInput = {
   inputClass: "selectdates",
 };
 onMounted(async () => {
-  cargado.value = false;
-  await toDaily();
-  cargado.value = true;
+  const maquina = await obtenerMaquina("lineaTipo", props.linea, 2);
+  deccodos.value = maquina[0].id;
 });
 onUnmounted(() => {
   reset(null);
@@ -380,8 +379,6 @@ async function mostrarTodo() {
 
 async function toDaily() {
   cargadoEstado.value = false;
-  const maquina = await obtenerMaquina("lineaTipo", props.linea, 2);
-  deccodos.value = maquina[0].id;
   // cargadoLotes.value = false;
   // const lote = await obtenerDatosVariableGeneral(
   //   "24H",
