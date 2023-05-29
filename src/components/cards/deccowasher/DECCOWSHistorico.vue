@@ -51,7 +51,7 @@
         <v-row v-if="cargado" no-gutters>
           <v-col>
             <v-row>
-              <v-col v-if="cargado8">
+              <v-col v-if="cargadoConsumos">
                 <v-simple-table dense>
                   <template #default>
                     <thead>
@@ -85,7 +85,7 @@
                   indeterminate
                 ></v-progress-circular>
               </v-col>
-              <v-col v-if="cargado7">
+              <v-col v-if="cargadoAlarmas">
                 <v-simple-table dense>
                   <template #default>
                     <thead>
@@ -133,15 +133,15 @@
             ></v-row>
             <GraficoEstadoCardGen
               v-if="cargado && cargadoFechas"
-              :serie="series4"
+              :serie="seriesLotes"
               title="Lotes"
               :colores="['#00c853', '#d50000']"
               :tooltipy="true"
               :legend="true"
-              :cargado="cargado10"
+              :cargado="cargadoLotes"
             />
             <GraficoEstadoCardGen
-              :serie="series"
+              :serie="seriesEstado"
               title="Estado"
               :categories="[
                 'Activo',
@@ -153,10 +153,10 @@
               ]"
               :tooltipy="false"
               :legend="false"
-              :cargado="cargado1"
+              :cargado="cargadoEstado"
             />
             <GraficoEstadoCardGen
-              :serie="series3"
+              :serie="seriesAlarmas"
               title="Alarmas"
               :colores="['#00c853', '#d50000']"
               :tooltipy="true"
@@ -168,38 +168,38 @@
                 'Bidon Desinfectante Vacio',
                 'Bidon Jabon Vacio',
               ]"
-              :cargado="cargado9"
+              :cargado="cargadoAlarmasG"
             />
             <GraficoLineaCardGen
-              :serie="seriesL"
+              :serie="seriesDosis"
               title="Dosis"
-              :cargado="cargado3"
+              :cargado="cargadoDosis"
             />
             <FrutaProcesadaHistorico
               v-if="deccodos"
-              :serie="seriesL4"
+              :serie="seriesFruta"
               title="Kilos"
-              :cargado="cargado6"
+              :cargado="cargadoFruta"
             />
             <GraficoEstadoCardGen
-              :serie="series2"
+              :serie="seriesBombas"
               title="Estado de las bombas"
               :tooltipy="true"
               :legend="true"
               :categories="['Bomba Desinfectante', 'Bomba Jabon']"
-              :cargado="cargado2"
+              :cargado="cargadoEstadoBomba"
             />
             <GraficoLineaCardGen
               v-if="deccodos"
-              :serie="seriesL2"
+              :serie="seriesCajas"
               title="Cajas por Ciclo y Peso por Caja"
-              :cargado="cargado4"
+              :cargado="cargadoCajas"
             />
             <GraficoLineaCardGen
               v-if="deccodos"
-              :serie="seriesL3"
+              :serie="seriesCajasMin"
               title="Cajas/Min"
-              :cargado="cargado5"
+              :cargado="cargadoCajasMin"
             />
           </v-col>
         </v-row>
@@ -220,6 +220,7 @@ import { utils, writeFileXLSX } from "xlsx";
 import {
   obtenerDatosVariableGeneral,
   obtenerMaquina,
+  obtenerIncioFin,
 } from "../../../helpers/bd";
 import { onMounted, ref, onUnmounted } from "vue";
 import { routerStore } from "../../../stores/index";
@@ -235,30 +236,30 @@ const props = defineProps({
 });
 
 const cargado = ref(false);
-const cargado1 = ref(false);
-const cargado2 = ref(false);
-const cargado3 = ref(false);
-const cargado4 = ref(false);
-const cargado5 = ref(false);
-const cargado6 = ref(false);
-const cargado7 = ref(false);
-const cargado8 = ref(false);
-const cargado9 = ref(false);
-const cargado10 = ref(false);
+const cargadoEstado = ref(false);
+const cargadoEstadoBomba = ref(false);
+const cargadoDosis = ref(false);
+const cargadoCajas = ref(false);
+const cargadoCajasMin = ref(false);
+const cargadoFruta = ref(false);
+const cargadoAlarmas = ref(false);
+const cargadoConsumos = ref(false);
+const cargadoAlarmasG = ref(false);
+const cargadoLotes = ref(false);
 const cargadoFechas = ref(false);
 const cargadoLotesChoose = ref(false);
 const cargadoLotesSelect = ref(false);
 const mostrarAplicaciones = ref(false);
 const datosLote = ref(false);
 
-const series = ref([]);
-const series2 = ref([]);
-const series3 = ref([]);
-const series4 = ref([]);
-const seriesL = ref([]);
-const seriesL2 = ref([]);
-const seriesL3 = ref([]);
-const seriesL4 = ref([]);
+const seriesEstado = ref([]);
+const seriesBombas = ref([]);
+const seriesAlarmas = ref([]);
+const seriesLotes = ref([]);
+const seriesDosis = ref([]);
+const seriesCajas = ref([]);
+const seriesCajasMin = ref([]);
+const seriesFruta = ref([]);
 const lotes = ref([]);
 const aplicaciones = ref([]);
 
@@ -331,7 +332,7 @@ async function select(columna) {
       routerStore().clienteID
     );
     //TODO obtener lista de lotes dependiendo del parametro
-    lotes.value = lot;
+    lotes.value = lot.registros;
   }
   if (columna == "Decco") {
     const lot = await obtenerDatosVariableGeneral(
@@ -344,7 +345,7 @@ async function select(columna) {
       routerStore().clienteID
     );
     //TODO obtener lista de lotes dependiendo del parametro
-    lotes.value = lot;
+    lotes.value = lot.registros;
   }
   cargadoLotesSelect.value = true;
 }
@@ -363,7 +364,7 @@ async function lotesChoose(value) {
       return {
         id: r.x + r.z,
         name: r.x + " - " + r.y,
-        value: { inicio: r.x, fin: r.y },
+        range: { inicio: r.x, fin: r.y },
       };
     });
     mostrarAplicaciones.value = true;
@@ -371,7 +372,7 @@ async function lotesChoose(value) {
 }
 function lotesAplicaciones(aplicacion) {
   cargado.value = false;
-  historico(aplicacion.value.incio, aplicacion.value.fin);
+  historico(aplicacion.range.incio, aplicacion.range.fin);
   datosLote.value = true;
   cargado.value = true;
 }
@@ -385,7 +386,7 @@ async function mostrarTodo() {
 
 async function toDaily() {
   reset([]);
-  // cargado10.value = false;
+  // cargadoLotes.value = false;
   // const lote = await obtenerDatosVariableGeneral(
   //   "24H",
   //   "registros",
@@ -395,9 +396,9 @@ async function toDaily() {
   //   props.maquina,
   //   routerStore().clienteID
   // );
-  // series4.value = lote;
-  // cargado10.value = true;
-  cargado1.value = false;
+  // seriesLotes.value = lote;
+  // cargadoLotes.value = true;
+  cargadoEstado.value = false;
   let estado = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -443,9 +444,9 @@ async function toDaily() {
       element.x === "Falta de consenso" ? "#3949ab" : "#fdd835";
     estado[1].data.push(element);
   });
-  series.value = estado;
-  cargado1.value = true;
-  cargado2.value = false;
+  seriesEstado.value = estado;
+  cargadoEstado.value = true;
+  cargadoEstadoBomba.value = false;
   const bombas = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -455,9 +456,9 @@ async function toDaily() {
     props.maquina,
     routerStore().clienteID
   );
-  series2.value = bombas;
-  cargado2.value = true;
-  cargado9.value = false;
+  seriesBombas.value = bombas;
+  cargadoEstadoBomba.value = true;
+  cargadoAlarmasG.value = false;
   const otros = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -470,9 +471,9 @@ async function toDaily() {
     null,
     [" ", "Aviso"]
   );
-  series3.value = otros;
-  cargado9.value = true;
-  cargado3.value = false;
+  seriesAlarmas.value = otros;
+  cargadoAlarmasG.value = true;
+  cargadoDosis.value = false;
   const dosis = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -482,9 +483,9 @@ async function toDaily() {
     props.maquina,
     routerStore().clienteID
   );
-  seriesL.value = dosis;
-  cargado3.value = true;
-  cargado7.value = false;
+  seriesDosis.value = dosis;
+  cargadoDosis.value = true;
+  cargadoConsumos.value = false;
   const totales = await obtenerDatosVariableGeneral(
     "24H",
     "totales",
@@ -495,7 +496,7 @@ async function toDaily() {
     routerStore().clienteID
   );
   if (deccodos.value) {
-    cargado5.value = false;
+    cargadoCajasMin.value = false;
     const cajas = await obtenerDatosVariableGeneral(
       "24H",
       "registros",
@@ -508,8 +509,9 @@ async function toDaily() {
       null,
       "Cajas/Min"
     );
-    seriesL3.value = cajas;
-    cargado5.value = true;
+    seriesCajasMin.value = cajas;
+    cargadoCajasMin.value = true;
+    cargadoCajas.value = false;
     const cporu = await obtenerDatosVariableGeneral(
       "24H",
       "registros",
@@ -519,8 +521,9 @@ async function toDaily() {
       deccodos.value,
       routerStore().clienteID
     );
-    seriesL2.value = cporu;
-    cargado4.value = true;
+    seriesCajas.value = cporu;
+    cargadoCajas.value = true;
+    cargadoFruta.value = false;
     const totalFruta = await obtenerDatosVariableGeneral(
       "24H",
       "totales",
@@ -552,7 +555,7 @@ async function toDaily() {
       "Kg/min"
     );
     kilos.push(...kilosM);
-    seriesL4.value = kilos;
+    seriesFruta.value = kilos;
     const consumosValue = totales.map((element, index) => {
       const { registros, descripcion } = element;
       const n = Math.max(0, registros[0].total);
@@ -577,7 +580,7 @@ async function toDaily() {
     };
 
     consumos.value = [...consumosValue, totalFrutaConsumo];
-    cargado6.value = true;
+    cargadoFruta.value = true;
   } else {
     const consumosValue = totales.map((element, index) => ({
       id: element.descripcion + index,
@@ -595,8 +598,8 @@ async function toDaily() {
     props.maquina,
     routerStore().clienteID
   );
-  cargado7.value = true;
-  cargado8.value = false;
+  cargadoConsumos.value = true;
+  cargadoAlarmas.value = false;
   const alarma = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -617,7 +620,7 @@ async function toDaily() {
   }, 0);
   tiempos.value[0].name = acc;
   tiempos.value[1].name = Math.max(0, Math.round(horasMarcha.total / 60));
-  cargado8.value = true;
+  cargadoAlarmas.value = true;
 }
 async function historico(date1, date2) {
   inicio.value = moment(date1).format("YYYY-MM-DDTHH:mm:ss");
@@ -625,16 +628,16 @@ async function historico(date1, date2) {
   reset([]);
 
   cargado.value = false;
-  cargado1.value = false;
-  cargado2.value = false;
-  cargado3.value = false;
-  cargado4.value = false;
-  cargado5.value = false;
-  cargado6.value = false;
-  cargado7.value = false;
-  cargado8.value = false;
-  cargado9.value = false;
-  // cargado10.value = false;
+  cargadoEstado.value = false;
+  cargadoEstadoBomba.value = false;
+  cargadoDosis.value = false;
+  cargadoCajas.value = false;
+  cargadoCajasMin.value = false;
+  cargadoFruta.value = false;
+  cargadoAlarmas.value = false;
+  cargadoConsumos.value = false;
+  cargadoAlarmasG.value = false;
+  // cargadoLotes.value = false;
   // const lote = await obtenerDatosVariableGeneral(
   //   "historico",
   //   "registros",
@@ -646,8 +649,8 @@ async function historico(date1, date2) {
   //   inicio.value,
   //   fin.value
   // );
-  // series4.value = lote;
-  // cargado10.value = true;
+  // seriesLotes.value = lote;
+  // cargadoLotes.value = true;
   let estado = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -702,8 +705,8 @@ async function historico(date1, date2) {
       element.x === "Falta de consenso" ? "#3949ab" : "#fdd835";
     estado[1].data.push(element);
   });
-  series.value = estado;
-  cargado1.value = true;
+  seriesEstado.value = estado;
+  cargadoEstado.value = true;
   const bombas = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -715,8 +718,8 @@ async function historico(date1, date2) {
     inicio.value,
     fin.value
   );
-  series2.value = bombas;
-  cargado2.value = true;
+  seriesBombas.value = bombas;
+  cargadoEstadoBomba.value = true;
   const otros = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -729,8 +732,8 @@ async function historico(date1, date2) {
     fin.value,
     ["", "Aviso"]
   );
-  series3.value = otros;
-  cargado9.value = true;
+  seriesAlarmas.value = otros;
+  cargadoAlarmasG.value = true;
   const dosis = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -742,8 +745,8 @@ async function historico(date1, date2) {
     inicio.value,
     fin.value
   );
-  seriesL.value = dosis;
-  cargado3.value = true;
+  seriesDosis.value = dosis;
+  cargadoDosis.value = true;
   const cajas = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -756,8 +759,8 @@ async function historico(date1, date2) {
     fin.value,
     "Cajas/Min"
   );
-  seriesL3.value = cajas;
-  cargado5.value = true;
+  seriesCajasMin.value = cajas;
+  cargadoCajasMin.value = true;
   const cporu = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -769,8 +772,8 @@ async function historico(date1, date2) {
     inicio.value,
     fin.value
   );
-  seriesL2.value = cporu;
-  cargado4.value = true;
+  seriesCajas.value = cporu;
+  cargadoCajas.value = true;
   const totales = await obtenerDatosVariableGeneral(
     "historico",
     "totales",
@@ -818,7 +821,7 @@ async function historico(date1, date2) {
       "Kg/min"
     );
     kilos.push(...kilosM);
-    seriesL4.value = kilos;
+    seriesFruta.value = kilos;
     const consumosValue = totales.map((element, index) => {
       const { registros, descripcion } = element;
       const n = Math.max(0, registros[0].total);
@@ -843,7 +846,7 @@ async function historico(date1, date2) {
     };
 
     consumos.value = [...consumosValue, totalFrutaConsumo];
-    cargado6.value = true;
+    cargadoFruta.value = true;
   } else {
     const consumosValue = totales.map((element, index) => ({
       id: element.descripcion + index,
@@ -863,7 +866,7 @@ async function historico(date1, date2) {
     inicio.value,
     fin.value
   );
-  cargado7.value = true;
+  cargadoAlarmas.value = true;
   const alarma = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -886,32 +889,32 @@ async function historico(date1, date2) {
   }, 0);
   tiempos.value[0].name = acc;
   tiempos.value[1].name = Math.max(0, Math.round(marchat.total / 60));
-  cargado8.value = true;
+  cargadoConsumos.value = true;
 }
 
 async function historicoVarios(dates) {
-  inicio.value = moment(dates[0].value.inicio).format("YYYY-MM-DDTHH:mm:ss");
-  fin.value = moment(dates[dates.length - 1].value.fin).format(
+  inicio.value = moment(dates[0].range.inicio).format("YYYY-MM-DDTHH:mm:ss");
+  fin.value = moment(dates[dates.length - 1].range.fin).format(
     "YYYY-MM-DDTHH:mm:ss"
   );
   reset([]);
   tiempos.value[0].name = 0;
   tiempos.value[1].name = 0;
   cargado.value = false;
-  cargado1.value = false;
-  cargado2.value = false;
-  cargado3.value = false;
-  cargado4.value = false;
-  cargado5.value = false;
-  cargado6.value = false;
-  cargado7.value = false;
-  cargado8.value = false;
-  cargado9.value = false;
-  cargado10.value = false;
+  cargadoEstado.value = false;
+  cargadoEstadoBomba.value = false;
+  cargadoDosis.value = false;
+  cargadoCajas.value = false;
+  cargadoCajasMin.value = false;
+  cargadoFruta.value = false;
+  cargadoAlarmas.value = false;
+  cargadoConsumos.value = false;
+  cargadoAlarmasG.value = false;
+  cargadoLotes.value = false;
 
   for (let index = 0; index < dates.length; index++) {
-    const inicioE = dates[index].value.inicio;
-    const finE = dates[index].value.fin;
+    const inicioE = dates[index].range.inicio;
+    const finE = dates[index].range.fin;
     const lote = await obtenerDatosVariableGeneral(
       "historico",
       "registros",
@@ -923,7 +926,7 @@ async function historicoVarios(dates) {
       inicioE,
       finE
     );
-    series4.value = lote;
+    seriesLotes.value = lote;
     let estado = await obtenerDatosVariableGeneral(
       "historico",
       "registros",
@@ -978,10 +981,10 @@ async function historicoVarios(dates) {
         element.x === "Falta de consenso" ? "#3949ab" : "#fdd835";
       estado[1].data.push(element);
     });
-    if (series.value !== 0) {
-      series.value[0].push(...estado[0].data);
-      series.value[1].push(...estado[1].data);
-    } else series.value = estado;
+    if (seriesEstado.value !== 0) {
+      seriesEstado.value[0].push(...estado[0].data);
+      seriesEstado.value[1].push(...estado[1].data);
+    } else seriesEstado.value = estado;
 
     const bombas = await obtenerDatosVariableGeneral(
       "historico",
@@ -995,10 +998,10 @@ async function historicoVarios(dates) {
       finE
     );
 
-    if (series2.value !== 0) {
-      series2.value[0].data.push(...bombas[0].data);
-      series2.value[1].data.push(...bombas[1].data);
-    } else series2.value = bombas;
+    if (seriesBombas.value !== 0) {
+      seriesBombas.value[0].data.push(...bombas[0].data);
+      seriesBombas.value[1].data.push(...bombas[1].data);
+    } else seriesBombas.value = bombas;
 
     const otros = await obtenerDatosVariableGeneral(
       "historico",
@@ -1012,10 +1015,10 @@ async function historicoVarios(dates) {
       finE,
       ["", "Aviso"]
     );
-    if (series3.value !== 0) {
-      series3.value[0].data.push(...otros[0].data);
-      series3.value[1].data.push(...otros[1].data);
-    } else series3.value = otros;
+    if (seriesAlarmas.value !== 0) {
+      seriesAlarmas.value[0].data.push(...otros[0].data);
+      seriesAlarmas.value[1].data.push(...otros[1].data);
+    } else seriesAlarmas.value = otros;
     const dosis = await obtenerDatosVariableGeneral(
       "historico",
       "registros",
@@ -1027,11 +1030,11 @@ async function historicoVarios(dates) {
       inicioE,
       finE
     );
-    if (seriesL.value !== 0) {
-      for (let i = 0; i < seriesL.value.length; i++) {
-        seriesL.value[i].data.push(null, ...dosis[i].data);
+    if (seriesDosis.value !== 0) {
+      for (let i = 0; i < seriesDosis.value.length; i++) {
+        seriesDosis.value[i].data.push(null, ...dosis[i].data);
       }
-    } else seriesL.value = dosis;
+    } else seriesDosis.value = dosis;
     const cajas = await obtenerDatosVariableGeneral(
       "historico",
       "registros",
@@ -1044,9 +1047,9 @@ async function historicoVarios(dates) {
       finE,
       "Cajas/Min"
     );
-    if (seriesL3.value !== 0)
-      seriesL3.value[0].data.push(null, ...cajas[0].data);
-    else seriesL3.value = cajas;
+    if (seriesCajasMin.value !== 0)
+      seriesCajasMin.value[0].data.push(null, ...cajas[0].data);
+    else seriesCajasMin.value = cajas;
     const cporu = await obtenerDatosVariableGeneral(
       "historico",
       "registros",
@@ -1058,11 +1061,11 @@ async function historicoVarios(dates) {
       inicioE,
       finE
     );
-    if (seriesL2.value !== 0) {
-      for (let i = 0; i < seriesL2.value.length; i++) {
-        seriesL2.value[i].data.push(null, ...cporu[i].data);
+    if (seriesCajas.value !== 0) {
+      for (let i = 0; i < seriesCajas.value.length; i++) {
+        seriesCajas.value[i].data.push(null, ...cporu[i].data);
       }
-    } else seriesL2.value = cporu;
+    } else seriesCajas.value = cporu;
     const totales = await obtenerDatosVariableGeneral(
       "historico",
       "totales",
@@ -1109,12 +1112,12 @@ async function historicoVarios(dates) {
         finE,
         "Kg/min"
       );
-      if (seriesL4.value !== 0) {
-        seriesL4.value[1].data.push(null, ...kilosM[0].data);
-        seriesL4.value[0].data.push(null, ...kilos[0].data);
+      if (seriesFruta.value !== 0) {
+        seriesFruta.value[1].data.push(null, ...kilosM[0].data);
+        seriesFruta.value[0].data.push(null, ...kilos[0].data);
       } else {
         kilos.push(...kilosM);
-        seriesL4.value = kilos;
+        seriesFruta.value = kilos;
       }
       const consumosValue = totales.map((element, index) => {
         const { registros, descripcion } = element;
@@ -1216,26 +1219,26 @@ async function historicoVarios(dates) {
     tiempos.value[1].name += Math.max(0, Math.round(marchat.total / 60));
   }
   cargado.value = true;
-  cargado1.value = true;
-  cargado2.value = true;
-  cargado3.value = true;
-  cargado4.value = true;
-  cargado5.value = true;
-  cargado6.value = true;
-  cargado7.value = true;
-  cargado8.value = true;
-  cargado9.value = true;
-  cargado10.value = true;
+  cargadoEstado.value = true;
+  cargadoEstadoBomba.value = true;
+  cargadoDosis.value = true;
+  cargadoCajas.value = true;
+  cargadoCajasMin.value = true;
+  cargadoFruta.value = true;
+  cargadoAlarmas.value = true;
+  cargadoConsumos.value = true;
+  cargadoAlarmasG.value = true;
+  cargadoLotes.value = true;
 }
 
 function reset(value) {
-  series.value = value;
-  series2.value = value;
-  series3.value = value;
-  seriesL.value = value;
-  seriesL2.value = value;
-  seriesL3.value = value;
-  seriesL4.value = value;
+  seriesEstado.value = value;
+  seriesBombas.value = value;
+  seriesAlarmas.value = value;
+  seriesDosis.value = value;
+  seriesCajas.value = value;
+  seriesCajasMin.value = value;
+  seriesFruta.value = value;
   consumos.value = value;
   alarmas.value = value;
 }
@@ -1247,7 +1250,7 @@ function onReset() {
 
 async function toExcel() {
   const wb = utils.book_new();
-  seriesL.value.forEach((element) => {
+  seriesDosis.value.forEach((element) => {
     const dosisA = element.data.map((e) => ({
       fecha: moment(e.x).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"),
       valor: e.y,
@@ -1256,7 +1259,7 @@ async function toExcel() {
     const name = element.name.replace("/", "-");
     utils.book_append_sheet(wb, ws, name);
   });
-  const kilosA = seriesL4.value[0].data.map((e) => {
+  const kilosA = seriesFruta.value[0].data.map((e) => {
     return {
       fecha: moment(e.x).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"),
       valor: e.y,
@@ -1264,7 +1267,7 @@ async function toExcel() {
   });
   const wsk = utils.json_to_sheet(kilosA);
   utils.book_append_sheet(wb, wsk, "Kilos");
-  kilosA = seriesL4.value[1].data.map((e) => {
+  kilosA = seriesFruta.value[1].data.map((e) => {
     return {
       fecha: moment(e.x).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"),
       valor: e.y,

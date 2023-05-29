@@ -51,7 +51,7 @@
         <v-row v-if="cargado" no-gutters>
           <v-col>
             <v-row>
-              <v-col v-if="cargado7">
+              <v-col v-if="cargadoConsumos">
                 <v-simple-table dense>
                   <template #default>
                     <thead>
@@ -77,7 +77,7 @@
                   </template>
                 </v-simple-table>
               </v-col>
-              <v-col v-if="cargado8">
+              <v-col v-if="cargadoAlarmas">
                 <v-simple-table dense>
                   <template #default>
                     <thead>
@@ -125,15 +125,15 @@
             ></v-row>
             <GraficoEstadoCardGen
               v-if="cargado && cargadoFechas"
-              :serie="series4"
+              :serie="seriesLotes"
               title="Lotes"
               :colores="['#00c853', '#d50000']"
               :tooltipy="true"
               :legend="true"
-              :cargado="cargado10"
+              :cargado="cargadoLotes"
             />
             <GraficoEstadoCardGen
-              :serie="series"
+              :serie="seriesEstado"
               title="Estado"
               :categories="[
                 'Activo',
@@ -146,36 +146,36 @@
               ]"
               :tooltipy="false"
               :legend="false"
-              :cargado="cargado1"
+              :cargado="cargadoEstado"
             />
             <GraficoLineaCardGen
-              :serie="seriesL"
+              :serie="seriesDosis"
               title="Dosis"
-              :cargado="cargado3"
+              :cargado="cargadoDosis"
             />
             <FrutaProcesadaHistorico
-              :serie="seriesL4"
+              :serie="seriesFruta"
               title="Kilos"
-              :cargado="cargado4"
+              :cargado="cargadoFruta"
             />
             <GraficoEstadoCardGen
-              :serie="series2"
+              :serie="seriesCepillos"
               title="Limpieza de cepillos"
               :height="200"
               :tooltipy="true"
               :legend="true"
               :categories="['Limpieza Cepillos']"
-              :cargado="cargado2"
+              :cargado="cargadoCepillos"
             />
             <GraficoLineaCardGen
-              :serie="seriesL2"
+              :serie="seriesCajas"
               title="Cajas por Ciclo y Peso por Caja"
-              :cargado="cargado5"
+              :cargado="cargadoCajas"
             />
             <GraficoLineaCardGen
-              :serie="seriesL3"
+              :serie="seriesCajasMin"
               title="Cajas/Min"
-              :cargado="cargado6"
+              :cargado="cargadoCajasMin"
             />
           </v-col>
         </v-row>
@@ -193,7 +193,10 @@ function print() {
 </script>
 <script setup>
 import { utils, writeFileXLSX } from "xlsx";
-import { obtenerDatosVariableGeneral } from "../../../helpers/bd";
+import {
+  obtenerDatosVariableGeneral,
+  obtenerIncioFin,
+} from "../../../helpers/bd";
 import { onMounted, ref, onUnmounted } from "vue";
 import { routerStore } from "../../../stores/index";
 import moment from "moment";
@@ -208,28 +211,28 @@ const props = defineProps({
 });
 
 const cargado = ref(false);
-const cargado1 = ref(false);
-const cargado2 = ref(false);
-const cargado3 = ref(false);
-const cargado4 = ref(false);
-const cargado5 = ref(false);
-const cargado6 = ref(false);
-const cargado7 = ref(false);
-const cargado8 = ref(false);
-const cargado10 = ref(false);
+const cargadoEstado = ref(false);
+const cargadoCepillos = ref(false);
+const cargadoDosis = ref(false);
+const cargadoFruta = ref(false);
+const cargadoCajas = ref(false);
+const cargadoCajasMin = ref(false);
+const cargadoConsumos = ref(false);
+const cargadoAlarmas = ref(false);
+const cargadoLotes = ref(false);
 const cargadoFechas = ref(false);
 const cargadoLotesChoose = ref(false);
 const cargadoLotesSelect = ref(false);
 const mostrarAplicaciones = ref(false);
 const datosLote = ref(false);
 
-const series = ref([]);
-const series2 = ref([]);
-const series4 = ref([]);
-const seriesL = ref([]);
-const seriesL2 = ref([]);
-const seriesL3 = ref([]);
-const seriesL4 = ref([]);
+const seriesEstado = ref([]);
+const seriesCepillos = ref([]);
+const seriesLotes = ref([]);
+const seriesDosis = ref([]);
+const seriesCajas = ref([]);
+const seriesCajasMin = ref([]);
+const seriesFruta = ref([]);
 const lotes = ref([]);
 const aplicaciones = ref([]);
 
@@ -332,7 +335,7 @@ async function lotesChoose(value) {
       return {
         id: r.x + r.z,
         name: r.x + " - " + r.y,
-        value: { inicio: r.x, fin: r.y },
+        range: { inicio: r.x, fin: r.y },
       };
     });
     mostrarAplicaciones.value = true;
@@ -340,7 +343,7 @@ async function lotesChoose(value) {
 }
 function lotesAplicaciones(aplicacion) {
   cargado.value = false;
-  historico(aplicacion.value.incio, aplicacion.value.fin);
+  historico(aplicacion.range.incio, aplicacion.range.fin);
   datosLote.value = true;
   cargado.value = true;
 }
@@ -353,8 +356,8 @@ async function mostrarTodo() {
 }
 
 async function toDaily() {
-  cargado1.value = false;
-  // cargado10.value = false;
+  cargadoEstado.value = false;
+  // cargadoLotes.value = false;
   // const lote = await obtenerDatosVariableGeneral(
   //   "historico",
   //   "registros",
@@ -366,8 +369,8 @@ async function toDaily() {
   //   inicio.value,
   //   fin.value
   // );
-  // series4.value = lote;
-  // cargado10.value = true;
+  // seriesLotes.value = lote;
+  // cargadoLotes.value = true;
   let estado = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -387,9 +390,9 @@ async function toDaily() {
     routerStore().clienteID
   );
   estado[1].data.push(...autoManual[1].data);
-  series.value = estado;
-  cargado1.value = true;
-  cargado2.value = false;
+  seriesEstado.value = estado;
+  cargadoEstado.value = true;
+  cargadoCepillos.value = false;
   const marcha = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -424,9 +427,9 @@ async function toDaily() {
     props.maquina,
     routerStore().clienteID
   );
-  series2.value = cepillos;
-  cargado2.value = true;
-  cargado3.value = false;
+  seriesCepillos.value = cepillos;
+  cargadoCepillos.value = true;
+  cargadoDosis.value = false;
   const dosis = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -436,9 +439,9 @@ async function toDaily() {
     props.maquina,
     routerStore().clienteID
   );
-  seriesL.value = dosis;
-  cargado3.value = true;
-  cargado4.value = false;
+  seriesDosis.value = dosis;
+  cargadoDosis.value = true;
+  cargadoFruta.value = false;
   let kilos = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -461,9 +464,9 @@ async function toDaily() {
     "Kg/min"
   );
   kilos.push(...kilosM);
-  seriesL4.value = kilos;
-  cargado4.value = true;
-  cargado5.value = false;
+  seriesFruta.value = kilos;
+  cargadoFruta.value = true;
+  cargadoCajas.value = false;
   const cajas = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -476,9 +479,9 @@ async function toDaily() {
     null,
     "Cajas/Min"
   );
-  seriesL3.value = cajas;
-  cargado5.value = true;
-  cargado6.value = false;
+  seriesCajasMin.value = cajas;
+  cargadoCajas.value = true;
+  cargadoCajasMin.value = false;
   const cporu = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -488,9 +491,9 @@ async function toDaily() {
     props.maquina,
     routerStore().clienteID
   );
-  seriesL2.value = cporu;
-  cargado6.value = true;
-  cargado7.value = false;
+  seriesCajas.value = cporu;
+  cargadoCajasMin.value = true;
+  cargadoConsumos.value = false;
   const totales = await obtenerDatosVariableGeneral(
     "24H",
     "totales",
@@ -542,8 +545,8 @@ async function toDaily() {
     props.maquina,
     routerStore().clienteID
   );
-  cargado7.value = true;
-  cargado8.value = false;
+  cargadoConsumos.value = true;
+  cargadoAlarmas.value = false;
   const alarma = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -564,7 +567,7 @@ async function toDaily() {
   }, 0);
   tiempos.value[0].name = acc;
   tiempos.value[1].name = Math.max(0, Math.round(horasMarcha.total / 60));
-  cargado8.value = true;
+  cargadoAlarmas.value = true;
 }
 
 async function historico(date1, date2) {
@@ -573,15 +576,15 @@ async function historico(date1, date2) {
   reset([]);
 
   cargado.value = false;
-  cargado1.value = false;
-  cargado2.value = false;
-  cargado3.value = false;
-  cargado4.value = false;
-  cargado5.value = false;
-  cargado6.value = false;
-  cargado7.value = false;
-  cargado8.value = false;
-  // cargado10.value = false;
+  cargadoEstado.value = false;
+  cargadoCepillos.value = false;
+  cargadoDosis.value = false;
+  cargadoFruta.value = false;
+  cargadoCajas.value = false;
+  cargadoCajasMin.value = false;
+  cargadoConsumos.value = false;
+  cargadoAlarmas.value = false;
+  // cargadoLotes.value = false;
   // const lote = await obtenerDatosVariableGeneral(
   //   "historico",
   //   "registros",
@@ -593,8 +596,8 @@ async function historico(date1, date2) {
   //   inicio.value,
   //   fin.value
   // );
-  // series4.value = lote;
-  // cargado10.value = true;
+  // seriesLotes.value = lote;
+  // cargadoLotes.value = true;
   let estado = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -647,8 +650,8 @@ async function historico(date1, date2) {
       element.x === "Falta de consenso" ? "#3949ab" : "#fdd835";
     estado[1].data.push(element);
   });
-  series.value = estado;
-  cargado1.value = true;
+  seriesEstado.value = estado;
+  cargadoEstado.value = true;
   const cepillos = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -660,8 +663,8 @@ async function historico(date1, date2) {
     inicio.value,
     fin.value
   );
-  series2.value = cepillos;
-  cargado2.value = true;
+  seriesCepillos.value = cepillos;
+  cargadoCepillos.value = true;
   const dosis = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -673,8 +676,8 @@ async function historico(date1, date2) {
     inicio.value,
     fin.value
   );
-  seriesL.value = dosis;
-  cargado3.value = true;
+  seriesDosis.value = dosis;
+  cargadoDosis.value = true;
   let kilos = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -699,8 +702,8 @@ async function historico(date1, date2) {
     "Kg/min"
   );
   kilos.push(...kilosM);
-  seriesL4.value = kilos;
-  cargado4.value = true;
+  seriesFruta.value = kilos;
+  cargadoFruta.value = true;
   cajas = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -713,8 +716,8 @@ async function historico(date1, date2) {
     fin.value,
     "Cajas/Min"
   );
-  seriesL3.value = cajas;
-  cargado5.value = true;
+  seriesCajasMin.value = cajas;
+  cargadoCajas.value = true;
   cporu = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -726,8 +729,8 @@ async function historico(date1, date2) {
     inicio.value,
     fin.value
   );
-  seriesL2.value = cporu;
-  cargado6.value = true;
+  seriesCajas.value = cporu;
+  cargadoCajasMin.value = true;
   totales = await obtenerDatosVariableGeneral(
     "historico",
     "totales",
@@ -785,7 +788,7 @@ async function historico(date1, date2) {
     inicio.value,
     fin.value
   );
-  cargado7.value = true;
+  cargadoConsumos.value = true;
   const alarma = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -808,13 +811,13 @@ async function historico(date1, date2) {
   }, 0);
   tiempos.value[0].name = acc;
   tiempos.value[1].name = Math.max(0, Math.round(marchat.total / 60));
-  cargado8.value = true;
+  cargadoAlarmas.value = true;
   cargado.value = true;
 }
 
 async function historicoVarios(dates) {
-  inicio.value = moment(dates[0].value.inicio).format("YYYY-MM-DDTHH:mm:ss");
-  fin.value = moment(dates[dates.length - 1].value.fin).format(
+  inicio.value = moment(dates[0].range.inicio).format("YYYY-MM-DDTHH:mm:ss");
+  fin.value = moment(dates[dates.length - 1].range.fin).format(
     "YYYY-MM-DDTHH:mm:ss"
   );
   reset([]);
@@ -822,18 +825,18 @@ async function historicoVarios(dates) {
   tiempos.value[1].name = 0;
 
   cargado.value = false;
-  cargado1.value = false;
-  cargado2.value = false;
-  cargado3.value = false;
-  cargado4.value = false;
-  cargado5.value = false;
-  cargado6.value = false;
-  cargado7.value = false;
-  cargado8.value = false;
-  cargado10.value = false;
+  cargadoEstado.value = false;
+  cargadoCepillos.value = false;
+  cargadoDosis.value = false;
+  cargadoFruta.value = false;
+  cargadoCajas.value = false;
+  cargadoCajasMin.value = false;
+  cargadoConsumos.value = false;
+  cargadoAlarmas.value = false;
+  cargadoLotes.value = false;
   for (let index = 0; index < dates.length; index++) {
-    const inicioE = dates[index].value.inicio;
-    const finE = dates[index].value.fin;
+    const inicioE = dates[index].range.inicio;
+    const finE = dates[index].range.fin;
     const lote = await obtenerDatosVariableGeneral(
       "historico",
       "registros",
@@ -845,7 +848,7 @@ async function historicoVarios(dates) {
       inicioE,
       finE
     );
-    series4.value = lote;
+    seriesLotes.value = lote;
 
     let estado = await obtenerDatosVariableGeneral(
       "historico",
@@ -899,10 +902,10 @@ async function historicoVarios(dates) {
         element.x === "Falta de consenso" ? "#3949ab" : "#fdd835";
       estado[1].data.push(element);
     });
-    if (series.value !== 0) {
-      series.value[0].push(...estado[0].data);
-      series.value[1].push(...estado[1].data);
-    } else series.value = estado;
+    if (seriesEstado.value !== 0) {
+      seriesEstado.value[0].push(...estado[0].data);
+      seriesEstado.value[1].push(...estado[1].data);
+    } else seriesEstado.value = estado;
     const cepillos = await obtenerDatosVariableGeneral(
       "historico",
       "registros",
@@ -914,10 +917,10 @@ async function historicoVarios(dates) {
       inicioE,
       finE
     );
-    if (series2.value !== 0) {
-      series2.value[0].data.push(...cepillos[0].data);
-      series2.value[1].data.push(...cepillos[1].data);
-    } else series2.value = cepillos;
+    if (seriesCepillos.value !== 0) {
+      seriesCepillos.value[0].data.push(...cepillos[0].data);
+      seriesCepillos.value[1].data.push(...cepillos[1].data);
+    } else seriesCepillos.value = cepillos;
     const dosis = await obtenerDatosVariableGeneral(
       "historico",
       "registros",
@@ -929,11 +932,11 @@ async function historicoVarios(dates) {
       inicioE,
       finE
     );
-    if (seriesL.value !== 0) {
-      for (let i = 0; i < seriesL.value.length; i++) {
-        seriesL.value[i].data.push(null, ...dosis[i].data);
+    if (seriesDosis.value !== 0) {
+      for (let i = 0; i < seriesDosis.value.length; i++) {
+        seriesDosis.value[i].data.push(null, ...dosis[i].data);
       }
-    } else seriesL.value = dosis;
+    } else seriesDosis.value = dosis;
     let kilos = await obtenerDatosVariableGeneral(
       "historico",
       "registros",
@@ -957,12 +960,12 @@ async function historicoVarios(dates) {
       finE,
       "Kg/min"
     );
-    if (seriesL4.value !== 0) {
-      seriesL4.value[1].data.push(null, ...kilosM[0].data);
-      seriesL4.value[0].data.push(null, ...kilos[0].data);
+    if (seriesFruta.value !== 0) {
+      seriesFruta.value[1].data.push(null, ...kilosM[0].data);
+      seriesFruta.value[0].data.push(null, ...kilos[0].data);
     } else {
       kilos.push(...kilosM);
-      seriesL4.value = kilos;
+      seriesFruta.value = kilos;
     }
     const cajas = await obtenerDatosVariableGeneral(
       "historico",
@@ -976,9 +979,9 @@ async function historicoVarios(dates) {
       finE,
       "Cajas/Min"
     );
-    if (seriesL3.value !== 0)
-      seriesL3.value[0].data.push(null, ...cajas[0].data);
-    else seriesL3.value = cajas;
+    if (seriesCajasMin.value !== 0)
+      seriesCajasMin.value[0].data.push(null, ...cajas[0].data);
+    else seriesCajasMin.value = cajas;
     const cporu = await obtenerDatosVariableGeneral(
       "historico",
       "registros",
@@ -990,11 +993,11 @@ async function historicoVarios(dates) {
       inicioE,
       finE
     );
-    if (seriesL2.value !== 0) {
-      for (let i = 0; i < seriesL2.value.length; i++) {
-        seriesL2.value[i].data.push(null, ...cporu[i].data);
+    if (seriesCajas.value !== 0) {
+      for (let i = 0; i < seriesCajas.value.length; i++) {
+        seriesCajas.value[i].data.push(null, ...cporu[i].data);
       }
-    } else seriesL2.value = cporu;
+    } else seriesCajas.value = cporu;
     const totales = await obtenerDatosVariableGeneral(
       "historico",
       "totales",
@@ -1100,24 +1103,24 @@ async function historicoVarios(dates) {
     tiempos.value[1].name += Math.max(0, Math.round(marchat.total / 60));
   }
   cargado.value = true;
-  cargado1.value = true;
-  cargado2.value = true;
-  cargado3.value = true;
-  cargado4.value = true;
-  cargado5.value = true;
-  cargado6.value = true;
-  cargado7.value = true;
-  cargado8.value = true;
-  cargado10.value = true;
+  cargadoEstado.value = true;
+  cargadoCepillos.value = true;
+  cargadoDosis.value = true;
+  cargadoFruta.value = true;
+  cargadoCajas.value = true;
+  cargadoCajasMin.value = true;
+  cargadoConsumos.value = true;
+  cargadoAlarmas.value = true;
+  cargadoLotes.value = true;
 }
 
 function reset(value) {
-  series.value = value;
-  series2.value = value;
-  seriesL.value = value;
-  seriesL2.value = value;
-  seriesL3.value = value;
-  seriesL4.value = value;
+  seriesEstado.value = value;
+  seriesCepillos.value = value;
+  seriesDosis.value = value;
+  seriesCajas.value = value;
+  seriesCajasMin.value = value;
+  seriesFruta.value = value;
   consumos.value = value;
   alarmas.value = value;
 }
@@ -1129,7 +1132,7 @@ function onReset() {
 
 async function toExcel() {
   const wb = utils.book_new();
-  seriesL.value.forEach((element) => {
+  seriesDosis.value.forEach((element) => {
     const dosisA = element.data.map((e) => ({
       fecha: moment(e.x).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"),
       valor: e.y,
@@ -1138,7 +1141,7 @@ async function toExcel() {
     const name = element.name.replace("/", "-");
     utils.book_append_sheet(wb, ws, name);
   });
-  const kilosA = seriesL4.value[0].data.map((e) => {
+  const kilosA = seriesFruta.value[0].data.map((e) => {
     return {
       fecha: moment(e.x).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"),
       valor: e.y,
@@ -1146,7 +1149,7 @@ async function toExcel() {
   });
   const wsk = utils.json_to_sheet(kilosA);
   utils.book_append_sheet(wb, wsk, "Kilos");
-  kilosA = seriesL4.value[1].data.map((e) => {
+  kilosA = seriesFruta.value[1].data.map((e) => {
     return {
       fecha: moment(e.x).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"),
       valor: e.y,
