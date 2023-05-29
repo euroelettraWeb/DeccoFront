@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-row>
       <v-col>
-        <LoteCliente />
+        <LoteCliente :tipo="1" />
         <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
         <TablaTurnos v-if="turnos" />
       </v-col>

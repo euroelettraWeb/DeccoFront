@@ -154,10 +154,7 @@ async function dataGrafica(maquinaID) {
     routerStore().clienteID
   );
   if (autoManual[1]) {
-    for (let index = 0; index < autoManual[1].data.length; index++) {
-      const element = autoManual[1].data[index];
-      modoMaquina[1].data.push(element);
-    }
+    modoMaquina[1].data.push(...autoManual[1].data);
   }
 
   let marcha = await obtenerDatosVariableGeneral(
@@ -170,16 +167,10 @@ async function dataGrafica(maquinaID) {
     routerStore().clienteID
   );
   if (marcha[0] && modoMaquina[0]) {
-    for (let index = 0; index < marcha[0].data.length; index++) {
-      const element = marcha[0].data[index];
-      modoMaquina[0].data.push(element);
-    }
+    modoMaquina[0].data.push(...marcha[0].data);
   }
   if (marcha[1] && modoMaquina[1]) {
-    for (let index = 0; index < marcha[1].data.length; index++) {
-      const element = marcha[1].data[index];
-      modoMaquina[1].data.push(element);
-    }
+    modoMaquina[1].data.push(...marcha[1].data);
   }
 
   let funcMaquina = await obtenerDatosVariableGeneral(

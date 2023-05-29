@@ -34,7 +34,7 @@
               :tipo="2"
           /></v-col>
         </v-row>
-        <LoteDecco :tipo="2" />
+        <LoteDecco :tipo="2" title="Lote Cera" />
         <Estado
           :activo="31"
           :auto-manual="[41, 43]"
