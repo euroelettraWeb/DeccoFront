@@ -75,7 +75,7 @@
           :variables="[58, 59]"
           :tipo="3"
         />
-        <FrutaProcesadaComun :fruta="48" :tipo="2" />
+        <FrutaProcesadaComun :variables="48" :tipo="2" />
         <GraficaEstadoCard
           :variables="[64, 65]"
           :height="250"
