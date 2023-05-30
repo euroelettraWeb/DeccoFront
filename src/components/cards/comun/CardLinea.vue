@@ -1,11 +1,11 @@
 <template>
-  <v-card class="back">
+  <v-card class="grey">
     <v-row>
       <v-col align-self="center">
         <div class="text-h1">{{ props.linea.nombre }}</div>
       </v-col>
       <v-col v-for="item in items" :key="item.title">
-        <v-card class="ele" height="350">
+        <v-card class="black" height="350">
           <v-card-title
             @click="
               if (item.estado)
@@ -17,6 +17,10 @@
             <v-row v-for="val in item.values" :key="val.id" no-gutters>
               <v-col>{{ val.label }}</v-col>
               <v-col>{{ val.value }}</v-col>
+            </v-row>
+            <v-card-subtitle class="red--text">Alarmas Activas</v-card-subtitle>
+            <v-row v-for="val in item.alarmas" :key="val.id" no-gutters>
+              <v-col>{{ val.label }}</v-col>
             </v-row>
           </v-card-text>
         </v-card>
@@ -59,6 +63,9 @@ const props = defineProps({
 const deccowasher = ref([]);
 const deccodos = ref([]);
 const deccodaf = ref([]);
+const deccowasherAlarmas = ref([]);
+const deccodosAlarmas = ref([]);
+const deccodafAlarmas = ref([]);
 onMounted(async () => {
   const deccowasherID = (
     await obtenerMaquina("lineaTipo", props.linea.id, 3)
@@ -107,14 +114,14 @@ onMounted(async () => {
       label: element.descripcion + " ( " + element.unidadMedida + " )",
       value: Math.max(0, element.registros[0]?.total || 0),
     })),
+  ];
+  deccowasherAlarmas.value = [
     ...alarmaDECCOWS
       .filter((element) => element.registros[0]?.y === 1)
       .map((element) => ({
         label: element.descripcion,
-        value: "Activa",
       })),
   ];
-
   const [dosisDECCODOS, totalesDECCODOS, alarmaDECCODOS] = await Promise.all([
     obtenerDatosVariableGeneral(
       "24H",
@@ -154,11 +161,12 @@ onMounted(async () => {
       label: `${element.descripcion} ( ${element.unidadMedida} )`,
       value: Math.max(0, element.registros[0]?.total || 0),
     })),
+  ];
+  deccodosAlarmas.value = [
     ...alarmaDECCODOS
       .filter((element) => element.registros[0]?.y === 1)
       .map((element) => ({
         label: element.descripcion,
-        value: "Activa",
       })),
   ];
 
@@ -201,11 +209,12 @@ onMounted(async () => {
       label: element.descripcion + " ( " + element.unidadMedida + " )",
       value: Math.max(0, element.registros[0]?.total || 0),
     })),
+  ];
+  deccodafAlarmas.value = [
     ...alarmaDECCODAF
       .filter((element) => element.registros[0]?.y === 1)
       .map((element) => ({
         label: element.descripcion,
-        value: "Activa",
       })),
   ];
 });
@@ -216,6 +225,7 @@ const items = computed(() => [
     route: "deccowasher:Principal",
     title: "DECCOWASHER",
     values: deccowasher.value,
+    alarmas: deccowasherAlarmas.value,
   },
   {
     action: "mdi-flask",
@@ -223,6 +233,7 @@ const items = computed(() => [
     route: "deccodaf:Principal",
     title: "DECCODAF",
     values: deccodaf.value,
+    alarmas: deccodafAlarmas.value,
   },
   {
     action: "mdi-numeric-2",
@@ -230,17 +241,12 @@ const items = computed(() => [
     route: "deccodos:Principal",
     title: "DECCODOS",
     values: deccodos.value,
+    alarmas: deccodosAlarmas.value,
   },
 ]);
 </script>
 <style scoped>
 * {
   color: #fff;
-}
-.ele {
-  background-color: black !important;
-}
-.back {
-  background-color: gray !important;
 }
 </style>
