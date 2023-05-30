@@ -57,6 +57,7 @@
           <v-col>
             <v-row>
               <v-col v-if="cargadoConsumos">
+                <v-card-title>Consumos</v-card-title>
                 <v-simple-table dense>
                   <template #default>
                     <thead>
@@ -91,14 +92,9 @@
                 ></v-progress-circular>
               </v-col>
               <v-col v-if="cargadoAlarmas">
+                <v-card-title>Alarmas (min)</v-card-title>
                 <v-simple-table dense>
                   <template #default>
-                    <thead>
-                      <tr>
-                        <th class="text-left"></th>
-                        <th>Min</th>
-                      </tr>
-                    </thead>
                     <tbody>
                       <tr v-for="alarmaItem in alarmas" :key="alarmaItem.id">
                         <td>{{ alarmaItem.nombre }}</td>
@@ -109,14 +105,9 @@
                     </tbody>
                   </template>
                 </v-simple-table>
+                <v-card-title>Tiempo de funcionamiento (min)</v-card-title>
                 <v-simple-table dense>
                   <template #default>
-                    <thead>
-                      <tr>
-                        <th class="text-left"></th>
-                        <th>Min</th>
-                      </tr>
-                    </thead>
                     <tbody>
                       <tr v-for="tiempoItem in tiempos" :key="tiempoItem.id">
                         <td>{{ tiempoItem.nombre }}</td>
