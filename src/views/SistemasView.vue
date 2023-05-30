@@ -29,7 +29,7 @@ export default {
 import { obtenerMaquina, obtenerLineas } from "../helpers/bd";
 import { onMounted, ref, watch } from "vue";
 import { routerStore } from "../stores/index";
-import CardLineas from "../components/cards/comun/CardLineas.vue";
+import CardLinea from "../components/cards/comun/CardLinea.vue";
 
 let lineas = [];
 const nombres = ref([]);
