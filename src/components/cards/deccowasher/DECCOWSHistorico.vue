@@ -179,6 +179,7 @@
             />
             <GraficoEstadoCardGen
               :serie="seriesBombas"
+              :height="250"
               title="Estado de las bombas"
               :tooltipy="true"
               :legend="true"
