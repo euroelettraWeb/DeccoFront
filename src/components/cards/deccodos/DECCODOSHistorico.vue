@@ -500,7 +500,7 @@ async function toDaily() {
     "totales",
     "individual",
     "sinfiltro",
-    [51, 52, 53, 54, 54, 56],
+    [51, 52, 53, 54, 55, 56],
     props.maquina,
     routerStore().clienteID
   );

@@ -162,6 +162,7 @@
             <GraficoEstadoCardGen
               :serie="seriesAlarmas"
               title="Alarmas"
+              :colores="['#00c853', '#d50000']"
               :categories="[
                 'Falta Inicio Ciclo',
                 'Tope Palets Alcanzado',
@@ -196,7 +197,11 @@
                 'Nivel Garrafa P3',
                 'Nivel Garrafa P4',
                 'Nivel Garrafa P5',
-                'Flujo de producto',
+                'Flujo de producto P1',
+                'Flujo de producto P2',
+                'Flujo de producto P3',
+                'Flujo de producto P4',
+                'Flujo de producto P5',
               ]"
               :cargado="cargadoNiveles"
             />

@@ -67,6 +67,7 @@
             'Fallo Aire',
             'Agitador',
           ]"
+          :colores="['#00c853', '#d50000']"
         />
         <GraficaLineaCard
           title="Dosis de fungicida"
@@ -104,7 +105,11 @@
             'Nivel Garrafa P3',
             'Nivel Garrafa P4',
             'Nivel Garrafa P5',
-            'Flujo de producto',
+            'Flujo de producto P1',
+            'Flujo de producto P2',
+            'Flujo de producto P3',
+            'Flujo de producto P4',
+            'Flujo de producto P5',
           ]"
         />
         <TablaNivelesGarrafa />
@@ -119,13 +124,8 @@ export default {
 };
 </script>
 <script setup>
-import axios from "axios";
 import { routerStore } from "../../stores/index";
-import {
-  obtenerMaquina,
-  obtenerProductos,
-  obtenerTurnos,
-} from "../../helpers/bd";
+import { obtenerTurnos } from "../../helpers/bd";
 import Estado from "../../components/cards/comun/Estado.vue";
 import GraficaLineaCard from "../../components/cards/comun/GraficaLineaCard.vue";
 import TablaTotal from "../../components/tablas/comun/TablaTotal.vue";
