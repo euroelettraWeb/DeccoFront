@@ -56,106 +56,115 @@ const props = defineProps({
     },
   },
 });
-let deccowasher = ref([]);
-let deccodos = ref([]);
-let deccodaf = ref([]);
+const deccowasher = ref([]);
+const deccodos = ref([]);
+const deccodaf = ref([]);
 onMounted(async () => {
-  let deccowasherID = (await obtenerMaquina("lineaTipo", props.linea.id, 3))[0]
+  const deccowasherID = (
+    await obtenerMaquina("lineaTipo", props.linea.id, 3)
+  )[0].id;
+  const deccodosID = (await obtenerMaquina("lineaTipo", props.linea.id, 2))[0]
     .id;
-  let deccodosID = (await obtenerMaquina("lineaTipo", props.linea.id, 2))[0].id;
-  let deccodafID = (await obtenerMaquina("lineaTipo", props.linea.id, 1))[0].id;
-  let dosisDECCOWASHER = await obtenerDatosVariableGeneral(
-    "24H",
-    "ultimo",
-    "individual",
-    "sinfiltro",
-    [58, 59],
-    deccowasherID,
-    routerStore().clienteID
-  );
-  for (let index = 0; index < dosisDECCOWASHER.length; index++) {
-    const element = dosisDECCOWASHER[index];
-    deccowasher.value.push({
+  const deccodafID = (await obtenerMaquina("lineaTipo", props.linea.id, 1))[0]
+    .id;
+
+  const [dosisDECCOWASHER, totalesDECCOWASHER] = await Promise.all([
+    obtenerDatosVariableGeneral(
+      "24H",
+      "ultimo",
+      "individual",
+      "sinfiltro",
+      [58, 59],
+      deccowasherID,
+      routerStore().clienteID
+    ),
+    obtenerDatosVariableGeneral(
+      "24H",
+      "totales",
+      "individual",
+      "sinfiltro",
+      [70, 71, 72],
+      deccowasherID,
+      routerStore().clienteID
+    ),
+  ]);
+  deccowasher.value = dosisDECCOWASHER.map((element) => ({
+    label: element.descripcion,
+    value: element.registros[0]?.y || "",
+  }));
+
+  deccowasher.value.push(
+    ...totalesDECCOWASHER.map((element) => ({
       label: element.descripcion,
-      value: element.registros[0] ? element.registros[0].y : "",
-    });
-  }
-  let totalesDECCOWASHER = await obtenerDatosVariableGeneral(
-    "24H",
-    "totales",
-    "individual",
-    "sinfiltro",
-    [70, 71, 72],
-    deccowasherID,
-    routerStore().clienteID
+      value: Math.max(0, element.registros[0]?.total || 0),
+    }))
   );
-  for (let index = 0; index < totalesDECCOWASHER.length; index++) {
-    const element = totalesDECCOWASHER[index];
-    let n = Math.max(0, element.registros[0].total);
-    deccowasher.value.push({ label: element.descripcion, value: n });
-  }
-  let dosisDECCODOS = await obtenerDatosVariableGeneral(
-    "24H",
-    "ultimo",
-    "individual",
-    "sinfiltro",
-    [32, 33, 34, 35, 36, 37, 38, 39],
-    deccodosID,
-    routerStore().clienteID
-  );
-  for (let index = 0; index < dosisDECCODOS.length; index++) {
-    const element = dosisDECCODOS[index];
-    deccodos.value.push({
+
+  const [dosisDECCODOS, totalesDECCODOS] = await Promise.all([
+    obtenerDatosVariableGeneral(
+      "24H",
+      "ultimo",
+      "individual",
+      "sinfiltro",
+      [32, 33, 34, 35, 36, 37, 38, 39],
+      deccodosID,
+      routerStore().clienteID
+    ),
+    obtenerDatosVariableGeneral(
+      "24H",
+      "totales",
+      "individual",
+      "sinfiltro",
+      [48],
+      deccodosID,
+      routerStore().clienteID
+    ),
+  ]);
+
+  deccodos.value = [
+    ...dosisDECCODOS.map((element) => ({
       label: element.descripcion,
-      value: element.registros[0].y,
-    });
-  }
-  let totalesDECCODOS = await obtenerDatosVariableGeneral(
-    "24H",
-    "totales",
-    "individual",
-    "sinfiltro",
-    [48],
-    deccodosID,
-    routerStore().clienteID
-  );
-  for (let index = 0; index < totalesDECCODOS.length; index++) {
-    const element = totalesDECCODOS[index];
-    let n = Math.max(0, element.registros[0].total);
-    deccodos.value.push({ label: element.descripcion, value: n });
-  }
-  let dosisDECCODAF = await obtenerDatosVariableGeneral(
-    "24H",
-    "ultimo",
-    "individual",
-    "sinfiltro",
-    [7, 8, 9, 10, 11],
-    deccodafID,
-    routerStore().clienteID
-  );
-  for (let index = 0; index < dosisDECCODAF.length; index++) {
-    const element = dosisDECCODAF[index];
-    deccodaf.value.push({
+      value: element.registros[0]?.y,
+    })),
+    ...totalesDECCODOS.map((element) => ({
       label: element.descripcion,
-      value: element.registros[0].y,
-    });
-  }
-  let totalesDECCODAF = await obtenerDatosVariableGeneral(
-    "24H",
-    "totales",
-    "individual",
-    "sinfiltro",
-    [25, 26, 27, 28, 29, 30],
-    deccodafID,
-    routerStore().clienteID
-  );
-  for (let index = 0; index < totalesDECCODAF.length; index++) {
-    const element = totalesDECCODAF[index];
-    let n = Math.max(0, element.registros[0].total);
-    deccodaf.value.push({ label: element.descripcion, value: n });
-  }
+      value: Math.max(0, element.registros[0]?.total || 0),
+    })),
+  ];
+
+  const [dosisDECCODAF, totalesDECCODAF] = await Promise.all([
+    obtenerDatosVariableGeneral(
+      "24H",
+      "ultimo",
+      "individual",
+      "sinfiltro",
+      [7, 8, 9, 10, 11],
+      deccodafID,
+      routerStore().clienteID
+    ),
+    obtenerDatosVariableGeneral(
+      "24H",
+      "totales",
+      "individual",
+      "sinfiltro",
+      [25, 26, 27, 28, 29, 30],
+      deccodafID,
+      routerStore().clienteID
+    ),
+  ]);
+
+  deccodaf.value = [
+    ...dosisDECCODAF.map((element) => ({
+      label: element.descripcion,
+      value: element.registros[0]?.y,
+    })),
+    ...totalesDECCODAF.map((element) => ({
+      label: element.descripcion,
+      value: Math.max(0, element.registros[0]?.total || 0),
+    })),
+  ];
 });
-let items = computed(() => [
+const items = computed(() => [
   {
     action: "mdi-hand-water",
     estado: props.linea.deccowsID ? true : false,
