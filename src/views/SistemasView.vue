@@ -1,8 +1,8 @@
 <template>
   <v-container fluid class="fill-height">
-    <v-row justify="center">
-      <v-col v-for="item in nombres" :key="item.id">
-        <CardLineas :linea="item" />
+    <v-row v-for="item in nombres" :key="item.id" justify="center">
+      <v-col>
+        <CardLinea :linea="item" />
       </v-col>
     </v-row>
     <v-row>
