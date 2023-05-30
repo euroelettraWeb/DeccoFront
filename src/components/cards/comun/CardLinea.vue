@@ -2,7 +2,7 @@
   <v-card class="back">
     <v-row>
       <v-col align-self="center">
-        <v-card-title>{{ props.linea.nombre }}</v-card-title>
+        <div class="text-h1">{{ props.linea.nombre }}</div>
       </v-col>
       <v-col v-for="item in items" :key="item.title">
         <v-card class="ele" height="350">
@@ -68,39 +68,54 @@ onMounted(async () => {
   const deccodafID = (await obtenerMaquina("lineaTipo", props.linea.id, 1))[0]
     .id;
 
-  const [dosisDECCOWASHER, totalesDECCOWASHER] = await Promise.all([
-    obtenerDatosVariableGeneral(
-      "24H",
-      "ultimo",
-      "individual",
-      "sinfiltro",
-      [58, 59],
-      deccowasherID,
-      routerStore().clienteID
-    ),
-    obtenerDatosVariableGeneral(
-      "24H",
-      "totales",
-      "individual",
-      "sinfiltro",
-      [70, 71, 72],
-      deccowasherID,
-      routerStore().clienteID
-    ),
-  ]);
-  deccowasher.value = dosisDECCOWASHER.map((element) => ({
-    label: element.descripcion,
-    value: element.registros[0]?.y || "",
-  }));
-
-  deccowasher.value.push(
+  const [dosisDECCOWASHER, totalesDECCOWASHER, alarmaDECCOWS] =
+    await Promise.all([
+      obtenerDatosVariableGeneral(
+        "24H",
+        "ultimo",
+        "individual",
+        "sinfiltro",
+        [58, 59],
+        deccowasherID,
+        routerStore().clienteID
+      ),
+      obtenerDatosVariableGeneral(
+        "24H",
+        "totales",
+        "individual",
+        "sinfiltro",
+        [70, 71, 72],
+        deccowasherID,
+        routerStore().clienteID
+      ),
+      obtenerDatosVariableGeneral(
+        "24H",
+        "ultimo",
+        "individual",
+        "sinfiltro",
+        [60, 84, 85, 86, 87],
+        deccowasherID,
+        routerStore().clienteID
+      ),
+    ]);
+  deccowasher.value = [
+    ...dosisDECCOWASHER.map((element) => ({
+      label: element.descripcion + " ( " + element.unidadMedida + " )",
+      value: element.registros[0]?.y || "",
+    })),
     ...totalesDECCOWASHER.map((element) => ({
-      label: element.descripcion,
+      label: element.descripcion + " ( " + element.unidadMedida + " )",
       value: Math.max(0, element.registros[0]?.total || 0),
-    }))
-  );
+    })),
+    ...alarmaDECCOWS
+      .filter((element) => element.registros[0]?.y === 1)
+      .map((element) => ({
+        label: element.descripcion,
+        value: "Activa",
+      })),
+  ];
 
-  const [dosisDECCODOS, totalesDECCODOS] = await Promise.all([
+  const [dosisDECCODOS, totalesDECCODOS, alarmaDECCODOS] = await Promise.all([
     obtenerDatosVariableGeneral(
       "24H",
       "ultimo",
@@ -119,20 +134,35 @@ onMounted(async () => {
       deccodosID,
       routerStore().clienteID
     ),
+    obtenerDatosVariableGeneral(
+      "24H",
+      "ultimo",
+      "individual",
+      "sinfiltro",
+      [40],
+      deccodosID,
+      routerStore().clienteID
+    ),
   ]);
 
   deccodos.value = [
     ...dosisDECCODOS.map((element) => ({
-      label: element.descripcion,
+      label: `${element.descripcion} ( ${element.unidadMedida} )`,
       value: element.registros[0]?.y,
     })),
     ...totalesDECCODOS.map((element) => ({
-      label: element.descripcion,
+      label: `${element.descripcion} ( ${element.unidadMedida} )`,
       value: Math.max(0, element.registros[0]?.total || 0),
     })),
+    ...alarmaDECCODOS
+      .filter((element) => element.registros[0]?.y === 1)
+      .map((element) => ({
+        label: element.descripcion,
+        value: "Activa",
+      })),
   ];
 
-  const [dosisDECCODAF, totalesDECCODAF] = await Promise.all([
+  const [dosisDECCODAF, totalesDECCODAF, alarmaDECCODAF] = await Promise.all([
     obtenerDatosVariableGeneral(
       "24H",
       "ultimo",
@@ -151,17 +181,32 @@ onMounted(async () => {
       deccodafID,
       routerStore().clienteID
     ),
+    obtenerDatosVariableGeneral(
+      "24H",
+      "ultimo",
+      "individual",
+      "sinfiltro",
+      [12, 73, 74, 75],
+      deccodafID,
+      routerStore().clienteID
+    ),
   ]);
 
   deccodaf.value = [
     ...dosisDECCODAF.map((element) => ({
-      label: element.descripcion,
+      label: element.descripcion + " ( " + element.unidadMedida + " )",
       value: element.registros[0]?.y,
     })),
     ...totalesDECCODAF.map((element) => ({
-      label: element.descripcion,
+      label: element.descripcion + " ( " + element.unidadMedida + " )",
       value: Math.max(0, element.registros[0]?.total || 0),
     })),
+    ...alarmaDECCODAF
+      .filter((element) => element.registros[0]?.y === 1)
+      .map((element) => ({
+        label: element.descripcion,
+        value: "Activa",
+      })),
   ];
 });
 const items = computed(() => [
