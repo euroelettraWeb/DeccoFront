@@ -24,6 +24,8 @@
                 :date-input="dateInput"
                 :format="'DD MM YYYY HH:mm'"
                 :same-date-format="sameDateFormat"
+                switch-button-initial="true"
+                :calendar-time-input="{ readonly: true }"
                 @date-applied="historico"
                 @on-reset="onReset"
               />
