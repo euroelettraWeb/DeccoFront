@@ -67,14 +67,23 @@ const deccowasherAlarmas = ref([]);
 const deccodosAlarmas = ref([]);
 const deccodafAlarmas = ref([]);
 onMounted(async () => {
-  const deccowasherID = (
-    await obtenerMaquina("lineaTipo", props.linea.id, 3)
-  )[0].id;
-  const deccodosID = (await obtenerMaquina("lineaTipo", props.linea.id, 2))[0]
-    .id;
-  const deccodafID = (await obtenerMaquina("lineaTipo", props.linea.id, 1))[0]
-    .id;
-
+  values();
+});
+setInterval(async () => {
+  values();
+}, 1000);
+async function values() {
+  const [deccowasherID, deccodosID, deccodafID] = await Promise.all([
+    obtenerMaquina("lineaTipo", props.linea.id, 3).then(
+      (machines) => machines[0].id
+    ),
+    obtenerMaquina("lineaTipo", props.linea.id, 2).then(
+      (machines) => machines[0].id
+    ),
+    obtenerMaquina("lineaTipo", props.linea.id, 1).then(
+      (machines) => machines[0].id
+    ),
+  ]);
   const [dosisDECCOWASHER, totalesDECCOWASHER, alarmaDECCOWS] =
     await Promise.all([
       obtenerDatosVariableGeneral(
@@ -217,7 +226,7 @@ onMounted(async () => {
         label: element.descripcion,
       })),
   ];
-});
+}
 const items = computed(() => [
   {
     action: "mdi-hand-water",
