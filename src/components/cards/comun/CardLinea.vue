@@ -41,7 +41,7 @@ import {
   obtenerDatosVariableGeneral,
   obtenerMaquina,
 } from "../../../helpers/bd";
-import { computed, ref, onMounted } from "vue";
+import { computed, ref, onMounted, onUnmounted } from "vue";
 const router = routerStore();
 const props = defineProps({
   id: { type: Number, default: 1 },
@@ -69,7 +69,7 @@ const deccodafAlarmas = ref([]);
 onMounted(async () => {
   values();
 });
-setInterval(async () => {
+let interval = setInterval(async () => {
   values();
 }, 1000);
 async function values() {
@@ -253,6 +253,9 @@ const items = computed(() => [
     alarmas: deccodosAlarmas.value,
   },
 ]);
+onUnmounted(() => {
+  clearInterval(interval);
+});
 </script>
 <style scoped>
 * {
