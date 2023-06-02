@@ -26,6 +26,7 @@
                 :same-date-format="sameDateFormat"
                 :switch-button-initial="true"
                 :calendar-time-input="{ readonly: true }"
+                :disabled-dates="{ from: new Date() }"
                 @date-applied="historico"
                 @on-reset="onReset"
               />
