@@ -4,8 +4,9 @@
       ><v-simple-table dense>
         <template #default>
           <thead>
-            <tr v-for="head in headers" :key="head.id">
-              <th>{{ head.name }}</th>
+            <tr>
+              <th></th>
+              <th v-for="head in headers" :key="head.id">{{ head.name }}</th>
             </tr>
           </thead>
           <tbody>
@@ -17,13 +18,16 @@
                 <table>
                   <tr>
                     <td>{{ total.value }}</td>
+                  </tr>
+                  <tr>
                     <td>{{ total.value1 }}</td>
                   </tr>
                 </table>
               </td>
             </tr>
-            <tr v-for="kg in kilos" :key="kg.id">
-              <td>{{ kg.total }}</td>
+            <tr>
+              <td>Kilos</td>
+              <td v-for="kg in kilos" :key="kg.id">{{ kg.total }}</td>
             </tr>
           </tbody>
         </template>
@@ -37,53 +41,61 @@ import { ref, onMounted, onUnmounted } from "vue";
 import moment from "moment";
 
 const headers = ref([{ id: 0, name: "Total" }]);
-const consumos = ref([]);
+const consumos = ref([{ id: 0, name: "", totales: [] }]);
 const kilos = ref([]);
 const props = defineProps({
   maquina: { type: Number, default: 1 },
   inicio: { type: String, default: "" },
   fin: { type: String, default: "" },
   series: { type: Array, default: () => [] },
-  clienteID: { type: String, default: "" },
+  clienteID: { type: Number, default: 1 },
 });
 
 onMounted(async () => {
-  const [totales2, totales3] = await Promise.all([
+  const [totales, kilosA] = await Promise.all([
     obtenerDatosVariableGeneral(
       "historico",
-      "registrosY",
-      "multiple",
-      "sinfiltro",
-      [49, 82],
+      "registrosYZ",
+      "individual",
+      "totalZValor",
+      [82, 83],
       props.maquina,
       props.clienteID,
       props.inicio,
-      props.fin
+      props.fin,
+      [49, 50]
     ),
     obtenerDatosVariableGeneral(
       "historico",
-      "registrosY",
-      "multiple",
+      "totales",
+      "individual",
       "sinfiltro",
-      [50, 83],
+      [48],
       props.maquina,
       props.clienteID,
       props.inicio,
       props.fin
     ),
   ]);
-
-  const mapTotales2 = totales2.total.map((element) => ({
-    id: 0,
+  const mapTotales2 = totales[0].registros[0].total.map((element) => ({
+    id: 0 + "2",
     name: element.name,
-    totales: [{ id: 0, value: element.total, value1: 0 }],
+    totales: [
+      { id: 0, value: Math.floor(element.total * 100) / 100, value1: 0 },
+    ],
+  }));
+  const mapTotales3 = totales[1].registros[0].total.map((element) => ({
+    id: 0 + "3",
+    name: element.name,
+    totales: [
+      { id: 0, value: 0, value1: Math.floor(element.total * 100) / 100 },
+    ],
   }));
 
-  const mapTotales3 = totales3.total.map((element) => ({
-    id: 0,
-    name: element.name,
-    totales: [{ id: 0, value: 0, value1: element.total }],
-  }));
+  kilos.value.push({
+    id: kilosA[0].registros[0].total,
+    total: kilosA[0].registros[0].total / 1000,
+  });
 
   mapTotales3.forEach((element) => {
     const index = mapTotales2.findIndex((e) => e.name === element.name);
@@ -94,87 +106,66 @@ onMounted(async () => {
     }
   });
 
-  consumos.value = mapTotales2;
   if (!moment(props.inicio).isSame(props.fin, "day")) {
     let dates = getDatesBetween(props.inicio, props.fin);
     headers.value.push(...dates);
-    const promises = dates.map(async (element, i) => {
-      const [totales2D, totales3D, kilosD] = await Promise.all([
+    let acc = 1;
+    for (let index = 0; index < dates.length; index++) {
+      const element = dates[index].name;
+      const [totales2D, kilosD] = await Promise.all([
         obtenerDatosVariableGeneral(
           "historico",
           "registrosYZ",
-          "multiple",
-          "totalZValor",
-          [49, 82],
-          props.maquina,
-          props.clienteID,
-          moment(element).startOf("day"),
-          moment(element).endOf("day")
-        ),
-        obtenerDatosVariableGeneral(
-          "historico",
-          "registrosYZ",
-          "multiple",
-          "totalZValor",
-          [50, 83],
-          props.maquina,
-          props.clienteID,
-          moment(element).startOf("day"),
-          moment(element).endOf("day")
-        ),
-        obtenerDatosVariableGeneral(
-          "historico",
-          "registros",
           "individual",
-          "unidadTiempo",
+          "totalZValor",
+          [82, 83],
+          props.maquina,
+          props.clienteID,
+          moment(element).startOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+          moment(element).endOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+          [49, 50]
+        ),
+        obtenerDatosVariableGeneral(
+          "historico",
+          "totales",
+          "individual",
+          "sinfiltro",
           [48],
           props.maquina,
           props.clienteID,
-          moment(element).startOf("day"),
-          moment(element).endOf("day")
+          moment(element).startOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+          moment(element).endOf("day").format("YYYY-MM-DDTHH:mm:ss")
         ),
       ]);
-
-      totales2D.total.forEach((element) => {
-        const index = consumos.value.findIndex((e) => e.name === element.name);
-        consumos.value[index].totales.push({
-          id: i + 1,
-          value: element.total,
+      totales2D[0].registros[0].total.forEach((element) => {
+        const index = mapTotales2.findIndex((e) => e.name === element.name);
+        mapTotales2[index].totales.push({
+          id: "valor2" + element.name + acc,
+          value: Math.floor(element.total * 100) / 100,
           value1: 0,
         });
       });
-
-      totales3D.total.forEach((element) => {
-        const index = consumos.value.findIndex((e) => e.name === element.name);
-        if (!consumos.value[index].totales[i + 1]) {
-          consumos.value[index].totales.push({
-            id: i + 1,
+      totales2D[1].registros[0].total.forEach((element) => {
+        const index = mapTotales2.findIndex((e) => e.name === element.name);
+        if (!mapTotales2[index].totales[acc]) {
+          mapTotales2[index].totales.push({
+            id: "valor3" + element.name + acc,
             value: 0,
-            value1: element.total,
+            value1: Math.floor(element.total * 100) / 100,
           });
         } else {
-          consumos.value[index].totales[i + 1].value1 = element.total;
+          mapTotales2[index].totales[acc].value1 =
+            Math.floor(element.total * 100) / 100;
         }
+        acc++;
       });
-      kilosD.total.forEach((element) => {
-        kilos.value.push(element[0].registros[0].total);
+      kilos.value.push({
+        id: element + acc + kilosD[0].registros[0].total,
+        total: kilosD[0].registros[0].total / 1000,
       });
-    });
-
-    await Promise.all(promises);
-    const kilosA = await obtenerDatosVariableGeneral(
-      "historico",
-      "totales",
-      "individual",
-      "sinfiltro",
-      [48],
-      props.maquina,
-      props.clienteID,
-      props.inicio,
-      props.fin
-    );
-    kilos.value.push(kilosA[0].registros[0].total);
+    }
   }
+  consumos.value = mapTotales2;
 });
 onUnmounted(() => {
   consumos.value = null;
@@ -187,7 +178,7 @@ function getDatesBetween(startDate, endDate) {
     dates.push();
 
     dates.push({
-      id: currentDate,
+      id: currentDate.valueOf(),
       name: currentDate.format("YYYY-MM-DD"),
     });
     currentDate = currentDate.add(1, "day");
