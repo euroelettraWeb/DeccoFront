@@ -203,6 +203,7 @@ import DatePicker from "vue-time-date-range-picker/dist/vdprDatePicker";
 import GraficoEstadoCardGen from "../comun/GraficoEstadoCardGen.vue";
 import GraficoLineaCardGen from "../comun/GraficoLineaCardGen.vue";
 import FrutaProcesadaHistorico from "../comun/FrutaProcesadaHistorico.vue";
+import TablaTotalesHistorico from "../../tablas/deccodos/TablaTotalesHistorico.vue";
 
 const props = defineProps({
   linea: { type: Number, default: 1 },
@@ -494,7 +495,7 @@ async function toDaily() {
     "totales",
     "individual",
     "sinfiltro",
-    [51, 52, 53, 54, 55, 56],
+    [49, 50, 51, 52, 53, 54, 55, 56],
     props.maquina,
     routerStore().clienteID
   );
@@ -713,7 +714,7 @@ async function historico(date1, date2) {
   );
   seriesCajasMin.value = cajas;
   cargadoCajas.value = true;
-  cporu = await obtenerDatosVariableGeneral(
+  const cporu = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
     "individual",
@@ -726,12 +727,12 @@ async function historico(date1, date2) {
   );
   seriesCajas.value = cporu;
   cargadoCajasMin.value = true;
-  totales = await obtenerDatosVariableGeneral(
+  const totales = await obtenerDatosVariableGeneral(
     "historico",
     "totales",
     "individual",
     "sinfiltro",
-    [51, 52, 53, 54, 55, 56],
+    [49, 50, 51, 52, 53, 54, 55, 56],
     props.maquina,
     routerStore().clienteID,
     inicio.value,
@@ -998,7 +999,7 @@ async function historicoVarios(dates) {
       "totales",
       "individual",
       "sinfiltro",
-      [51, 52, 53, 54, 55, 56],
+      [49, 50, 51, 52, 53, 54, 55, 56],
       props.maquina,
       routerStore().clienteID,
       inicioE,
