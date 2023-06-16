@@ -5,7 +5,7 @@
         <div class="text-h1">{{ props.linea.nombre }}</div>
       </v-col>
       <v-col v-for="item in items" :key="item.title">
-        <v-card class="black" height="350">
+        <v-card class="black" height="375">
           <v-card-title
             @click="
               if (item.estado)
