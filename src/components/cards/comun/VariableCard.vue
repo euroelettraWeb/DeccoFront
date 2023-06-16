@@ -56,7 +56,6 @@
           <v-row>
             <v-col v-if="cargado">
               <ApexChart
-                v-if="lineas"
                 ref="chartRef"
                 type="line"
                 height="300"
@@ -64,7 +63,6 @@
                 :series="series"
               />
               <ApexChart
-                v-else
                 ref="chartRef2"
                 type="rangeBar"
                 height="300"
@@ -180,12 +178,12 @@ onMounted(async () => {
 });
 async function changeItem(value) {
   let IOs = value.map((x) => {
-    if (value.unidadMedida == "I/0") {
+    if (x.unidadMedida == "I/0") {
       return x.id;
     }
   });
   let line = value.map((x) => {
-    if (value.unidadMedida != "I/0") {
+    if (x.unidadMedida != "I/0") {
       return x.id;
     }
   });
