@@ -49,6 +49,7 @@
             'Falta de consenso',
             'Alarma',
             'Presencia Fruta',
+            'No hay presion aire',
           ]"
         />
         <GraficaLineaCard
@@ -64,13 +65,27 @@
           :tipo="2"
           :categories="['Limpieza Cepillos']"
         />
-        <!-- <GraficaEstadoCard
-          :variables="[100]"
+        <GraficaEstadoCard
+          :variables="[137, 138, 139]"
           :height="200"
           title="Modos de trabajo"
           :tipo="2"
-          :categories="['Modo 1']"
-        /> -->
+          :categories="[
+            'ModoTrabajo1Aplicador',
+            'ModoTrabajo2Aplicadores',
+            'ModoTrabajoCalibrador',
+          ]"
+        />
+        <GraficaLineaCard
+          :variables="[131, 132]"
+          :tipo="2"
+          title="Caudal cera actual"
+        />
+        <GraficaLineaCard
+          :variables="[133, 134]"
+          :tipo="2"
+          title="Paso fruta actual"
+        />
         <GraficaLineaCard
           :variables="[45, 46]"
           :tipo="2"
@@ -82,6 +97,12 @@
           title="Cajas/min"
           tipodatos="unidadTiempo"
           labelvar="Cajas/Min"
+        />
+        <GraficaEstadoCard
+          :variables="[107]"
+          :height="200"
+          title="Usuario"
+          :tipo="2"
         />
       </v-col>
     </v-row>

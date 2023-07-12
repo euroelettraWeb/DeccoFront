@@ -66,20 +66,31 @@
                     <thead>
                       <tr>
                         <th></th>
-                        <th>L</th>
-                        <th>Litros/Tonelada</th>
+                        <th v-for="head in headers" :key="head.id">
+                          {{ head.name }}
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr v-for="item in consumos" :key="item.id">
                         <td>
-                          {{ item.nombre }}
+                          {{ item.name }}
                         </td>
-                        <td>
-                          {{ item.total }}
+                        <td v-for="total in item.totales" :key="total.id">
+                          <table>
+                            <tr>
+                              <td>{{ total.value }}</td>
+                            </tr>
+                            <tr>
+                              <td>{{ total.value1 }}</td>
+                            </tr>
+                          </table>
                         </td>
-                        <td>
-                          {{ item.totalPorToneladaFruta }}
+                      </tr>
+                      <tr>
+                        <td>Kilos</td>
+                        <td v-for="kg in kilosH" :key="kg.id">
+                          {{ kg.total }}
                         </td>
                       </tr>
                     </tbody>
@@ -237,6 +248,7 @@ const lotes = ref([]);
 const aplicaciones = ref([]);
 
 const consumos = ref([]);
+const kilosH = ref([]);
 const alarmas = ref([]);
 const tiempos = ref([
   {
@@ -490,48 +502,58 @@ async function toDaily() {
   seriesCajas.value = cporu;
   cargadoCajasMin.value = true;
   cargadoConsumos.value = false;
-  const totales = await obtenerDatosVariableGeneral(
-    "24H",
-    "totales",
-    "individual",
-    "sinfiltro",
-    [49, 50, 51, 52, 53, 54, 55, 56],
-    props.maquina,
-    routerStore().clienteID
-  );
-  const totalFruta = await obtenerDatosVariableGeneral(
-    "24H",
-    "totales",
-    "individual",
-    "sinfiltro",
-    [48],
-    props.maquina,
-    routerStore().clienteID
-  );
-  const consumosValue = totales.map((element, index) => {
-    const { registros, descripcion } = element;
-    const n = Math.max(0, registros[0].total);
-    const totalFrutaRegistrosTotal = totalFruta[0].registros[0].total;
-
-    const d =
-      totalFrutaRegistrosTotal > 0
-        ? (n / (totalFrutaRegistrosTotal / 1000)).toFixed(2)
-        : "0";
-
-    return {
-      id: descripcion + index,
-      nombre: descripcion,
-      total: n.toLocaleString("es-ES"),
-      totalPorToneladaFruta: d,
-    };
+  const [totales, kilosA] = await Promise.all([
+    obtenerDatosVariableGeneral(
+      "24",
+      "registrosYZ",
+      "individual",
+      "totalZValor",
+      [82, 83],
+      props.maquina,
+      routerStore().clienteID,
+      null,
+      null,
+      [49, 50]
+    ),
+    obtenerDatosVariableGeneral(
+      "historico",
+      "totales",
+      "individual",
+      "sinfiltro",
+      [48],
+      props.maquina,
+      routerStore().clienteID
+    ),
+  ]);
+  const mapTotales2 = totales[0].registros[0].total.map((element) => ({
+    id: 0 + "2",
+    name: element.name,
+    totales: [
+      { id: 0, value: Math.floor(element.total * 100) / 100, value1: 0 },
+    ],
+  }));
+  const mapTotales3 = totales[1].registros[0].total.map((element) => ({
+    id: 0 + "3",
+    name: element.name,
+    totales: [
+      { id: 0, value: 0, value1: Math.floor(element.total * 100) / 100 },
+    ],
+  }));
+  mapTotales3.forEach((element) => {
+    const index = mapTotales2.findIndex((e) => e.name === element.name);
+    if (index === -1) {
+      mapTotales2.push(element);
+    } else {
+      mapTotales2[index].totales[0].value = element.totales[0].value1;
+    }
   });
   const totalFrutaConsumo = {
     id: totalFruta[0].nombreCorto + consumosValue.length,
     nombre: totalFruta[0].nombreCorto,
     total: (totalFruta[0].registros[0].total / 1000).toLocaleString("es-ES"),
   };
-
-  consumos.value = [...consumosValue, totalFrutaConsumo];
+  kilosH.value = [...totalFrutaConsumo];
+  consumos.value = mapTotales2;
   const horasMarcha = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -727,52 +749,7 @@ async function historico(date1, date2) {
   );
   seriesCajas.value = cporu;
   cargadoCajasMin.value = true;
-  const totales = await obtenerDatosVariableGeneral(
-    "historico",
-    "totales",
-    "individual",
-    "sinfiltro",
-    [49, 50, 51, 52, 53, 54, 55, 56],
-    props.maquina,
-    routerStore().clienteID,
-    inicio.value,
-    fin.value
-  );
-  const totalFruta = await obtenerDatosVariableGeneral(
-    "historico",
-    "totales",
-    "individual",
-    "sinfiltro",
-    [48],
-    props.maquina,
-    routerStore().clienteID,
-    inicio.value,
-    fin.value
-  );
-  const consumosValue = totales.map((element, index) => {
-    const { registros, descripcion } = element;
-    const n = Math.max(0, registros[0].total);
-    const totalFrutaRegistrosTotal = totalFruta[0].registros[0].total;
-
-    const d =
-      totalFrutaRegistrosTotal > 0
-        ? (n / (totalFrutaRegistrosTotal / 1000)).toFixed(2)
-        : "0";
-
-    return {
-      id: descripcion + index,
-      nombre: descripcion,
-      total: n.toLocaleString("es-ES"),
-      totalPorToneladaFruta: d,
-    };
-  });
-  const totalFrutaConsumo = {
-    id: totalFruta[0].nombreCorto + consumosValue.length,
-    nombre: totalFruta[0].nombreCorto,
-    total: (totalFruta[0].registros[0].total / 1000).toLocaleString("es-ES"),
-  };
-
-  consumos.value = [...consumosValue, totalFrutaConsumo];
+  consumos.value = dailyConsumos(inicio.value, fin.value);
   const marchat = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -1121,6 +1098,123 @@ function reset(value) {
   alarmas.value = value;
 }
 
+async function dailyConsumos(inicio, fin) {
+  const [totales, kilosA] = await Promise.all([
+    obtenerDatosVariableGeneral(
+      "historico",
+      "registrosYZ",
+      "individual",
+      "totalZValor",
+      [82, 83],
+      props.maquina,
+      routerStore().clienteID,
+      inicio,
+      fin,
+      [49, 50]
+    ),
+    obtenerDatosVariableGeneral(
+      "historico",
+      "totales",
+      "individual",
+      "sinfiltro",
+      [48],
+      props.maquina,
+      routerStore().clienteID,
+      inicio,
+      fin
+    ),
+  ]);
+  const mapTotales2 = totales[0].registros[0].total.map((element) => ({
+    id: 0 + "2",
+    name: element.name,
+    totales: [
+      { id: 0, value: Math.floor(element.total * 100) / 100, value1: 0 },
+    ],
+  }));
+  const mapTotales3 = totales[1].registros[0].total.map((element) => ({
+    id: 0 + "3",
+    name: element.name,
+    totales: [
+      { id: 0, value: 0, value1: Math.floor(element.total * 100) / 100 },
+    ],
+  }));
+
+  kilosH.value.push({
+    id: kilosA[0].registros[0].total,
+    total: kilosA[0].registros[0].total / 1000,
+  });
+
+  mapTotales3.forEach((element) => {
+    const index = mapTotales2.findIndex((e) => e.name === element.name);
+    if (index === -1) {
+      mapTotales2.push(element);
+    } else {
+      mapTotales2[index].totales[0].value = element.totales[0].value1;
+    }
+  });
+
+  if (!moment(inicio).isSame(fin, "day")) {
+    let dates = getDatesBetween(inicio, fin);
+    headers.value.push(...dates);
+    let acc = 1;
+    for (let index = 0; index < dates.length; index++) {
+      const element = dates[index].name;
+      const [totales2D, kilosD] = await Promise.all([
+        obtenerDatosVariableGeneral(
+          "historico",
+          "registrosYZ",
+          "individual",
+          "totalZValor",
+          [82, 83],
+          props.maquina,
+          routerStore().clienteID,
+          moment(element).startOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+          moment(element).endOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+          [49, 50]
+        ),
+        obtenerDatosVariableGeneral(
+          "historico",
+          "totales",
+          "individual",
+          "sinfiltro",
+          [48],
+          props.maquina,
+          routerStore().clienteID,
+          moment(element).startOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+          moment(element).endOf("day").format("YYYY-MM-DDTHH:mm:ss")
+        ),
+      ]);
+      totales2D[0].registros[0].total.forEach((element) => {
+        const index = mapTotales2.findIndex((e) => e.name === element.name);
+        mapTotales2[index].totales.push({
+          id: "valor2" + element.name + acc,
+          value: Math.floor(element.total * 100) / 100,
+          value1: 0,
+        });
+      });
+      totales2D[1].registros[0].total.forEach((element) => {
+        const index = mapTotales2.findIndex((e) => e.name === element.name);
+        if (!mapTotales2[index].totales[acc]) {
+          mapTotales2[index].totales.push({
+            id: "valor3" + element.name + acc,
+            value: 0,
+            value1: Math.floor(element.total * 100) / 100,
+          });
+        } else {
+          mapTotales2[index].totales[acc].value1 =
+            Math.floor(element.total * 100) / 100;
+        }
+        acc++;
+      });
+      kilosH.value.push({
+        id: element + acc + kilosD[0].registros[0].total,
+        total: kilosD[0].registros[0].total / 1000,
+      });
+    }
+  }
+  return mapTotales2;
+}
+
 function onReset() {
   inicio.value = "";
   fin.value = "";
@@ -1153,12 +1247,13 @@ async function toExcel() {
   });
   const ws = utils.json_to_sheet(kilosA);
   utils.book_append_sheet(wb, ws, "Kg-min");
-  const consumosA = consumos.value.map((e) => {
-    return {
-      nombre: e.nombre,
-      total: e.total,
-      totalPorToneladaFruta: e.totalPorToneladaFruta,
-    };
+  const consumosA = consumos.value.flatMap((element) => {
+    return element.totales.map((total) => {
+      return {
+        nombre: element.nombre,
+        total: total,
+      };
+    });
   });
   const ws3 = utils.json_to_sheet(consumosA);
   utils.book_append_sheet(wb, ws3, "Consumos");
@@ -1179,6 +1274,22 @@ async function toExcel() {
   const ws5 = utils.json_to_sheet(tiemposA);
   utils.book_append_sheet(wb, ws5, "Funcionamiento");
   writeFileXLSX(wb, "DECCODOS" + inicio.value + "-" + fin.value + ".xlsx");
+}
+function getDatesBetween(startDate, endDate) {
+  const dates = [];
+  let currentDate = moment(startDate);
+  const lastDate = moment(endDate);
+  while (currentDate <= lastDate) {
+    dates.push();
+
+    dates.push({
+      id: currentDate.valueOf(),
+      name: currentDate.format("YYYY-MM-DD"),
+    });
+    currentDate = currentDate.add(1, "day");
+  }
+
+  return dates;
 }
 </script>
 <style>

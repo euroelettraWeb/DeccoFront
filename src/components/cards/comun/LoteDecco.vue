@@ -127,44 +127,67 @@ onMounted(async () => {
     await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
   //TODO asignar valores de prueba
-  let serie = [
-    {
-      name: "Producto",
-      data: [
-        {
-          x: "Product 1",
-          y: [1694353200000, 1694373200000],
-          fillColor: "#ff8000",
-        },
+  // let serie = [
+  //   {
+  //     name: "Producto",
+  //     data: [
+  //       {
+  //         x: "Product 1",
+  //         y: [1694353200000, 1694373200000],
+  //         fillColor: "#ff8000",
+  //       },
 
-        {
-          x: "PRD1",
-          y: [1694364800000, 1694378000000],
-        },
+  //       {
+  //         x: "PRD1",
+  //         y: [1694364800000, 1694378000000],
+  //       },
 
-        {
-          x: "Product 2",
-          y: [1694356800000, 1694375000000],
-          fillColor: "#ff8000",
-        },
-        {
-          x: "PRD2",
-          y: [1694358000000, 1694376800000],
-        },
-        {
-          x: "Product 3",
-          y: [1694360400000, 1694375600000],
-          fillColor: "#ff8000",
-        },
-        {
-          x: "PRD3",
-          y: [1694360400000, 1694375600000],
-        },
-      ],
-    },
-  ];
+  //       {
+  //         x: "Product 2",
+  //         y: [1694356800000, 1694375000000],
+  //         fillColor: "#ff8000",
+  //       },
+  //       {
+  //         x: "PRD2",
+  //         y: [1694358000000, 1694376800000],
+  //       },
+  //       {
+  //         x: "Product 3",
+  //         y: [1694360400000, 1694375600000],
+  //         fillColor: "#ff8000",
+  //       },
+  //       {
+  //         x: "PRD3",
+  //         y: [1694360400000, 1694375600000],
+  //       },
+  //     ],
+  //   },
+  // ];
+  let serie = obtenerDatosVariableGeneral(
+    "24H",
+    "registrosYZ",
+    "individual",
+    "totalZValor",
+    [82, 83],
+    maquinaID,
+    routerStore().clienteID
+  );
   series.value = serie;
-  //TODO socket
+  socket.on(
+    `variable_${maquinaID}_${props.variable}_actualizada`,
+    async (data) => {
+      let loteFruta = await obtenerDatosVariableGeneral(
+        "24H",
+        "ultimo",
+        "individual",
+        "sinfiltro",
+        [props.variable],
+        maquinaID,
+        routerStore().clienteID
+      );
+      lote.value = loteFruta;
+    }
+  );
   cargado.value = true;
 });
 onUnmounted(() => {

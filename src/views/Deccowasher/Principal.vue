@@ -96,6 +96,12 @@
           tipodatos="unidadTiempo"
           labelvar="Cajas/Min"
         />
+        <GraficaEstadoCard
+          :variables="[108]"
+          :height="200"
+          title="Usuario"
+          :tipo="2"
+        />
       </v-col>
     </v-row>
     <!-- <v-btn

@@ -77,22 +77,45 @@
         <!-- <div>
            Tabla Reposiciones y consumo por modo
         </div> -->
-        <!-- <ModosReposiciones :tipo="1" title="Modo Reposiciones" />
-        <GraficaLineaCard title="Reposiciones" :variables="[7]" /> -->
+        <!-- <ModosReposiciones :tipo="1" title="Modo Reposiciones" /> -->
         <FrutaProcesadaComun :variables="48" :tipo="2" />
-        <!-- <GraficaEstadoCard
+        <GraficaEstadoCard
           :variables="[2, 3, 4, 5, 6]"
           :height="300"
           title="Estado de los agitadores"
           :tipo="1"
+          :categories="['Agitador']"
+        />
+        <GraficaEstadoCard
+          :variables="[2, 3, 4, 5, 6]"
+          :height="300"
+          title="Modos activos"
+          :tipo="1"
           :categories="[
-            'Agitador Producto 1',
-            'Agitador Producto 2',
-            'Agitador Producto 3',
-            'Agitador Producto 4',
+            'Auto',
+            'CajasPalets',
+            'SRC',
+            'TiempoMarcha',
             'Agitador Producto 5',
           ]"
-        /> -->
+        />
+        <GraficaEstadoCard
+          :variables="[2, 3, 4, 5, 6]"
+          :height="300"
+          title="Reposicion realizada"
+          :tipo="1"
+          :categories="[
+            'Auto',
+            'CajasPalets',
+            'SRC',
+            'TiempoMarcha',
+            'Parcial',
+          ]"
+        />
+        <GraficaLineaCard
+          title="Reposiciones"
+          :variables="[121, 122, 123, 124, 125]"
+        />
         <GraficaEstadoCard
           :variables="[20, 21, 22, 23, 24]"
           :height="300"
@@ -105,14 +128,22 @@
             'Nivel Garrafa P3',
             'Nivel Garrafa P4',
             'Nivel Garrafa P5',
-            'Flujo de producto P1',
-            'Flujo de producto P2',
-            'Flujo de producto P3',
-            'Flujo de producto P4',
-            'Flujo de producto P5',
+            // 'Aire en tuberia Prod 1',
+            // 'Aire en tuberia Prod 2',
+            // 'Aire en tuberia Prod 3',
+            // 'Aire en tuberia Prod 4',
+            // 'Aire en tuberia Prod 5',
           ]"
         />
         <TablaNivelesGarrafa />
+        <!-- <GraficaEstadoCard :variables="[110,111,112,113]" :tipo="1" title="Modo Activo" /> -->
+        <!-- <GraficaEstadoCard :variables="[114,115,116,117,118,119,120]" :tipo="1" title="Modo Activo" /> -->
+        <GraficaEstadoCard
+          :variables="[106]"
+          :height="200"
+          title="Usuario"
+          :tipo="2"
+        />
       </v-col>
     </v-row>
   </v-container>
