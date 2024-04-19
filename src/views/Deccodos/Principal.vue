@@ -37,7 +37,6 @@
             'Falta de consenso',
             'Alarma',
             'Presencia Fruta',
-            'No hay presion aire',
           ]"
         />
         <UsuarioMaquina v-if="usuario" :usuario="107" :tipo="2" />
@@ -60,48 +59,6 @@
           :tipo="2"
           :categories="['Limpieza Cepillos']"
         />
-<<<<<<< HEAD
-=======
-        <GraficaEstadoCard
-          :variables="[137, 138, 139]"
-          :height="200"
-          title="Modos de trabajo"
-          :tipo="2"
-          :categories="[
-            'ModoTrabajo1Aplicador',
-            'ModoTrabajo2Aplicadores',
-            'ModoTrabajoCalibrador',
-          ]"
-        />
-        <GraficaLineaCard
-          :variables="[131, 132]"
-          :tipo="2"
-          title="Caudal cera actual"
-        />
-        <GraficaLineaCard
-          :variables="[133, 134]"
-          :tipo="2"
-          title="Paso fruta actual"
-        />
-        <GraficaLineaCard
-          :variables="[45, 46]"
-          :tipo="2"
-          title="Cajas por Ciclo y Peso por Caja"
-        />
-        <GraficaLineaCard
-          :variables="[47]"
-          :tipo="2"
-          title="Cajas/min"
-          tipodatos="unidadTiempo"
-          labelvar="Cajas/Min"
-        />
-        <GraficaEstadoCard
-          :variables="[107]"
-          :height="200"
-          title="Usuario"
-          :tipo="2"
-        />
->>>>>>> f14b647fdd0c9a8e42412106635d5975d40d1b52
       </v-col>
     </v-row>
   </v-container>

@@ -82,27 +82,6 @@
           :estados="['Paro', 'Marcha']"
           :categories="['Bomba Desinfectante', 'Bomba Jabon']"
         />
-<<<<<<< HEAD
-=======
-        <GraficaLineaCard
-          :variables="[45, 46]"
-          :tipo="2"
-          title="Cajas por Ciclo y Peso por Caja"
-        />
-        <GraficaLineaCard
-          title="Cajas/Min"
-          :variables="[47]"
-          :tipo="2"
-          tipodatos="unidadTiempo"
-          labelvar="Cajas/Min"
-        />
-        <GraficaEstadoCard
-          :variables="[108]"
-          :height="200"
-          title="Usuario"
-          :tipo="2"
-        />
->>>>>>> f14b647fdd0c9a8e42412106635d5975d40d1b52
       </v-col>
     </v-row>
   </v-container>
