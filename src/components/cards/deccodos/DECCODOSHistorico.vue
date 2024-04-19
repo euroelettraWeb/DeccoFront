@@ -89,7 +89,7 @@
             :calendar-time-input="{ readonly: true, step: 1 }"
             :calendar-date-input="calendarDateInput"
             :disabled-dates="{ from: new Date() }"
-            @date-applied="periodoSeleccionado"
+            @date-applied="historico"
             @on-reset="onReset"
           />
         </v-col>
@@ -172,6 +172,12 @@
           </v-card>
         </v-col>
         <v-col cols="12">
+          <GraficoConsumoPorMeses
+            :serie="totalesConsumo"
+            title="Consumo"
+            :rangos-fechas="rangoFechas"
+            :cargado="cargadoConsumos"
+          />
           <GraficoEstadoCardGen
             :serie="seriesLotes"
             title="Lotes"
@@ -266,6 +272,7 @@ import moment from "moment";
 import DatePicker from "vue-time-date-range-picker/dist/vdprDatePicker";
 import GraficoEstadoCardGen from "../comun/GraficoEstadoCardGen.vue";
 import GraficoLineaCardGen from "../comun/GraficoLineaCardGen.vue";
+import GraficoConsumoPorMeses from "../comun/GraficaConsumoPorMeses.vue";
 // import FrutaProcesadaHistorico from "../comun/FrutaProcesadaHistorico.vue";
 import KilosCalibradorHistorico from "../comun/KilosCalibradorHistorico.vue";
 
@@ -304,6 +311,9 @@ const alarmasCalibrador = ref([]);
 const lotes = ref([]);
 const aplicaciones = ref([]);
 
+const totalesConsumo = ref([]);
+const rangoFechas = ref([]);
+
 const consumos = ref([]);
 const tiempos = ref([
   {
@@ -336,30 +346,6 @@ const calendarDateInput = {
   format: "DD/MM/YYYY",
 };
 
-const periodoSeleccionado = (date1, date2) => {
-  let inicio = new Date(
-    date1.setHours(date1.getHours() + date1.getTimezoneOffset() / 60)
-  )
-    .toISOString()
-    .slice(0, -1);
-  let fin = new Date(
-    date2.setHours(date2.getHours() + date2.getTimezoneOffset() / 60)
-  )
-    .toISOString()
-    .slice(0, -1);
-  date1 = new Date(
-    date1.setHours(date1.getHours() - date1.getTimezoneOffset() / 60)
-  )
-    .toISOString()
-    .slice(0, -1);
-  date2 = new Date(
-    date2.setHours(date2.getHours() - date2.getTimezoneOffset() / 60)
-  )
-    .toISOString()
-    .slice(0, -1);
-  historico(inicio, fin);
-};
-
 const dateInput = {
   placeholder: "Seleccionar fechas",
   inputClass: "selectdates",
@@ -379,6 +365,16 @@ const fechaDefault = (modo) => {
     case "fin":
       return `${año}-${mes}-${dia}T${horas}:${minutos}:${segundos}`;
   }
+};
+
+const fechaFormateada = (fecha) => {
+  const año = fecha.getFullYear();
+  const mes = (fecha.getMonth() + 1).toString().padStart(2, "0");
+  const dia = fecha.getDate().toString().padStart(2, "0");
+  const horas = fecha.getHours().toString().padStart(2, "0");
+  const minutos = fecha.getMinutes().toString().padStart(2, "0");
+  const segundos = fecha.getSeconds().toString().padStart(2, "0");
+  return `${año}-${mes}-${dia}T${horas}:${minutos}:${segundos}`;
 };
 
 const calcularAltura = computed(() => {
@@ -498,8 +494,8 @@ async function lotesAplicaciones(aplicacion) {
 
 async function historico(date1, date2) {
   reset([]);
-  inicio.value = date1 ? date1 : fechaDefault("inicio");
-  fin.value = date2 ? date2 : fechaDefault("fin");
+  inicio.value = date1 ? fechaFormateada(date1) : fechaDefault("inicio");
+  fin.value = date2 ? fechaFormateada(date2) : fechaDefault("fin");
 
   cargado.value = false;
   cargadoEstado.value = false;
@@ -602,12 +598,12 @@ async function historico(date1, date2) {
   );
   funcMaquina[1].data.forEach((element) => {
     element.fillColor =
-      element.x === "Falta de consenso" ? "#d50000" : "#fdd835";
+      element.x === "Falta de consenso" ? "#d50000" : "#00c853";
     estado[1].data.push(element);
   });
   funcMaquina[0].data.forEach((element) => {
     element.fillColor =
-      element.x === "Falta de consenso" ? "#00c853" : "#fdd835";
+      element.x === "Falta de consenso" ? "#00c853" : "#d50000";
     estado[0].data.push(element);
   });
   seriesEstado.value = estado;
@@ -751,6 +747,39 @@ async function historico(date1, date2) {
   );
   seriesCajas.value = cporu;
   cargadoCajasMin.value = true;
+  rangoFechas.value = obtenerRangosFecha(inicio.value, fin.value);
+  const totales2 = [];
+  for (let i = 0; i < rangoFechas.value.length; i++) {
+    totales2.push(
+      await obtenerDatosVariableGeneral(
+        "historico",
+        "totales",
+        "individual",
+        "sinfiltro",
+        [49, 50, 51, 52, 53, 54, 55, 56],
+        props.maquina,
+        routerStore().clienteID,
+        rangoFechas.value[i].inicio,
+        rangoFechas.value[i].fin
+      )
+    );
+  }
+  for (let i = 0; i < totales2.length; i++) {
+    for (let j = 0; j < totales2[i].length; j++) {
+      let valor = totales2[i][j].registros[0].total;
+      if (totalesConsumo.value[j] !== undefined) {
+        totalesConsumo.value[j].data.push(valor == null ? 0 : valor.toFixed(2));
+      } else {
+        let objectSerie = {
+          name: totales2[i][j].descripcion,
+          type: totales2[i][j].descripcion == "Total Agua" ? "line" : "column",
+          data: [valor == null ? 0 : valor.toFixed(2)],
+        };
+        totalesConsumo.value.push(objectSerie);
+      }
+    }
+  }
+
   const totales = await obtenerDatosVariableGeneral(
     "historico",
     "totales",
@@ -835,16 +864,18 @@ async function historico(date1, date2) {
   cargado.value = true;
 }
 
-function reset(value) {
-  seriesEstado.value = value;
-  seriesCepillos.value = value;
-  seriesDosis.value = value;
-  seriesUsuario.value = value;
-  seriesCajas.value = value;
-  seriesCajasMin.value = value;
-  seriesFruta.value = value;
-  consumos.value = value;
-  alarmas.value = value;
+function reset() {
+  seriesEstado.value = [];
+  seriesCepillos.value = [];
+  seriesDosis.value = [];
+  seriesUsuario.value = [];
+  seriesCajas.value = [];
+  seriesCajasMin.value = [];
+  seriesFruta.value = [];
+  consumos.value = [];
+  alarmas.value = [];
+  rangoFechas.value = [];
+  totalesConsumo.value = [];
 }
 
 function onReset() {
@@ -905,6 +936,26 @@ async function toExcel() {
   const ws5 = utils.json_to_sheet(tiemposA);
   utils.book_append_sheet(wb, ws5, "Funcionamiento");
   writeFileXLSX(wb, "DECCODOS" + inicio.value + "-" + fin.value + ".xlsx");
+}
+
+// Fúncion para obtener la array de fechas por cada mes.
+function obtenerRangosFecha(fechaInicio, fechaFin) {
+  let rangos = [];
+
+  while (fechaInicio < fechaFin) {
+    let año = parseInt(fechaInicio.slice(0, 4));
+    let mes = parseInt(fechaInicio.slice(5, 7));
+    let finMes = new Date(Date.UTC(año, mes, 0)).toISOString().slice(0, -1);
+    if (finMes > fechaFin) {
+      finMes = fechaFin;
+    }
+    rangos.push({
+      inicio: fechaInicio,
+      fin: finMes,
+    });
+    fechaInicio = new Date(Date.UTC(año, mes, 1)).toISOString().slice(0, -1);
+  }
+  return rangos;
 }
 
 onUnmounted(() => {

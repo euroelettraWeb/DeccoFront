@@ -991,32 +991,22 @@ async function toExcel() {
   writeFileXLSX(wb, "DECCODAF" + inicio.value + "-" + fin.value + ".xlsx");
 }
 
-// fúncion para obtener la array de fechas por cada mes.
+// Fúncion para obtener la array de fechas por cada mes.
 function obtenerRangosFecha(fechaInicio, fechaFin) {
-  let fechaInicioObj = new Date(fechaInicio + "Z");
-  let fechaFinObj = new Date(fechaFin + "Z");
-  console.log(fechaInicio + " - " + fechaInicioObj.toISOString());
-  console.log(fechaFin + " - " + fechaFinObj.toISOString());
   let rangos = [];
 
-  while (fechaInicioObj < fechaFinObj) {
-    let finMes = new Date(
-      fechaInicioObj.getFullYear(),
-      fechaInicioObj.getMonth() + 1,
-      0
-    );
-    if (finMes > fechaFinObj) {
-      finMes = fechaFinObj;
+  while (fechaInicio < fechaFin) {
+    let año = parseInt(fechaInicio.slice(0, 4));
+    let mes = parseInt(fechaInicio.slice(5, 7));
+    let finMes = new Date(Date.UTC(año, mes, 0)).toISOString().slice(0, -1);
+    if (finMes > fechaFin) {
+      finMes = fechaFin;
     }
     rangos.push({
-      inicio: fechaInicioObj.toISOString().slice(0, -1),
-      fin: finMes.toISOString().slice(0, -1),
+      inicio: fechaInicio,
+      fin: finMes,
     });
-    fechaInicioObj = new Date(
-      fechaInicioObj.getFullYear(),
-      fechaInicioObj.getMonth() + 1,
-      1
-    );
+    fechaInicio = new Date(Date.UTC(año, mes, 1)).toISOString().slice(0, -1);
   }
   return rangos;
 }
