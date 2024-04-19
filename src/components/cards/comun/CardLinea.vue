@@ -39,6 +39,7 @@
             </v-row>
           </v-card-text>
         </v-card>
+        <v-alert v-if="opcua">Servidor OPCUA no disponible</v-alert>
       </v-col>
     </v-row>
   </v-card>
@@ -57,6 +58,9 @@ import {
   obtenerMaquina,
 } from "../../../helpers/bd";
 import { computed, ref, onMounted, onUnmounted } from "vue";
+import io from "socket.io-client";
+const socket = io("http://localhost:3000");
+
 const router = routerStore();
 const props = defineProps({
   id: { type: Number, default: 1 },
@@ -81,13 +85,11 @@ const deccodaf = ref([]);
 const deccowasherAlarmas = ref([]);
 const deccodosAlarmas = ref([]);
 const deccodafAlarmas = ref([]);
-
-const dosDecimales = function (valor) {
-  if (valor === null || valor === undefined) return 0;
-  return Math.round(parseFloat(valor) * 100) / 100;
-};
-
 onMounted(async () => {
+  socket.on(`opcua_no_disponible`, async (data) => {
+    //TODO alert opcua no disponible
+    opcua.value = data;
+  });
   values();
 });
 let interval = setInterval(() => {

@@ -18,6 +18,7 @@
             :disabled="cargadoLotesChoose"
             @click="lotesMode"
           >
+<<<<<<< HEAD
             Lotes
           </v-btn>
         </v-col>
@@ -243,6 +244,151 @@
       </v-row>
     </v-card-text>
   </v-card>
+=======
+        </v-row>
+        <v-row>
+          <v-col v-if="datosLote">
+            <h2>{{ loteActual }}</h2>
+            <h3>{{ inicio }} {{ fin }}</h3>
+          </v-col>
+        </v-row>
+        <v-row v-if="cargado" no-gutters>
+          <v-col>
+            <v-row>
+              <v-col v-if="cargadoConsumos">
+                <v-card-title>Consumos</v-card-title>
+                <v-simple-table dense>
+                  <template #default>
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th v-for="head in headers" :key="head.id">
+                          {{ head.name }}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="item in consumos" :key="item.id">
+                        <td>
+                          {{ item.name }}
+                        </td>
+                        <td v-for="total in item.totales" :key="total.id">
+                          <table>
+                            <tr>
+                              <td>{{ total.value }}</td>
+                            </tr>
+                            <tr>
+                              <td>{{ total.value1 }}</td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Kilos</td>
+                        <td v-for="kg in kilosH" :key="kg.id">
+                          {{ kg.total }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-simple-table>
+              </v-col>
+              <v-col v-if="cargadoAlarmas">
+                <v-card-title>Alarmas (min)</v-card-title>
+                <v-simple-table dense>
+                  <template #default>
+                    <tbody>
+                      <tr v-for="alarmaItem in alarmas" :key="alarmaItem.id">
+                        <td>{{ alarmaItem.nombre }}</td>
+                        <td>
+                          {{ alarmaItem.name }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-simple-table>
+                <v-card-title>Tiempo de funcionamiento (min)</v-card-title>
+                <v-simple-table dense>
+                  <template #default>
+                    <tbody>
+                      <tr v-for="tiempoItem in tiempos" :key="tiempoItem.id">
+                        <td>{{ tiempoItem.nombre }}</td>
+                        <td>
+                          {{ tiempoItem.name }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-simple-table>
+              </v-col>
+              <v-col v-else class="d-flex justify-center align-center">
+                <v-progress-circular
+                  :size="100"
+                  :width="7"
+                  color="purple"
+                  indeterminate
+                ></v-progress-circular> </v-col
+            ></v-row>
+            <GraficoEstadoCardGen
+              v-if="cargado && cargadoFechas"
+              :serie="seriesLotes"
+              title="Lotes"
+              :colores="['#00c853', '#d50000']"
+              :tooltipy="true"
+              :legend="true"
+              :cargado="cargadoLotes"
+            />
+            <GraficoEstadoCardGen
+              :serie="seriesEstado"
+              title="Estado"
+              :categories="[
+                'Activo',
+                'MarchaParo',
+                'Remoto',
+                'Manual',
+                'Falta de consenso',
+                'Alarma',
+                'Presencia Fruta',
+              ]"
+              :tooltipy="false"
+              :legend="false"
+              :cargado="cargadoEstado"
+            />
+            <GraficoLineaCardGen
+              :serie="seriesDosis"
+              title="Dosis"
+              :cargado="cargadoDosis"
+            />
+            <FrutaProcesadaHistorico
+              :serie="seriesFruta"
+              title="Kilos"
+              :cargado="cargadoFruta"
+            />
+            <GraficoEstadoCardGen
+              :serie="seriesCepillos"
+              title="Limpieza de cepillos"
+              :height="200"
+              :tooltipy="true"
+              :legend="true"
+              :categories="['Limpieza Cepillos']"
+              :cargado="cargadoCepillos"
+            />
+            <GraficoLineaCardGen
+              :serie="seriesCajas"
+              title="Cajas por Ciclo y Peso por Caja"
+              :cargado="cargadoCajas"
+            />
+            <GraficoLineaCardGen
+              :serie="seriesCajasMin"
+              title="Cajas/Min"
+              :cargado="cargadoCajasMin"
+            />
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-col>
+  </v-row>
+>>>>>>> f14b647fdd0c9a8e42412106635d5975d40d1b52
 </template>
 <script>
 export default {
@@ -305,6 +451,11 @@ const lotes = ref([]);
 const aplicaciones = ref([]);
 
 const consumos = ref([]);
+<<<<<<< HEAD
+=======
+const kilosH = ref([]);
+const alarmas = ref([]);
+>>>>>>> f14b647fdd0c9a8e42412106635d5975d40d1b52
 const tiempos = ref([
   {
     id: 0,
@@ -494,6 +645,242 @@ async function lotesChoose(value) {
 async function lotesAplicaciones(aplicacion) {
   await historico(aplicacion.x, aplicacion.y);
   datosLote.value = true;
+<<<<<<< HEAD
+=======
+  cargado.value = true;
+}
+
+async function mostrarTodo() {
+  cargado.value = false;
+  historicoVarios(aplicaciones);
+  datosLote.value = true;
+  cargado.value = true;
+}
+
+async function toDaily() {
+  cargadoEstado.value = false;
+  // cargadoLotes.value = false;
+  // const lote = await obtenerDatosVariableGeneral(
+  //   "historico",
+  //   "registros",
+  //   "individual",
+  //   "formatoRangos",
+  //   [57],
+  //   props.maquina,
+  //   routerStore().clienteID,
+  //   inicio.value,
+  //   fin.value
+  // );
+  // seriesLotes.value = lote;
+  // cargadoLotes.value = true;
+  let estado = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "individual",
+    "formatoRangos",
+    [31],
+    props.maquina,
+    routerStore().clienteID
+  );
+  const autoManual = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "individual",
+    "formatoRangos",
+    [41, 43],
+    props.maquina,
+    routerStore().clienteID
+  );
+  estado[1].data.push(...autoManual[1].data);
+  seriesEstado.value = estado;
+  cargadoEstado.value = true;
+  cargadoCepillos.value = false;
+  const marcha = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "multiple",
+    "marchaFormatoRangos",
+    [31, 40, 42],
+    props.maquina,
+    routerStore().clienteID
+  );
+  estado[0].data.push(...marcha[0].data);
+  estado[1].data.push(...marcha[1].data);
+  const funcMaquina = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "individual",
+    "formatoRangos",
+    [40, 42, 81],
+    props.maquina,
+    routerStore().clienteID
+  );
+  funcMaquina[1].data.forEach((element) => {
+    element.fillColor =
+      element.x === "Falta de consenso" ? "#3949ab" : "#fdd835";
+    estado[1].data.push(element);
+  });
+  const cepillos = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "individual",
+    "formatoRangos",
+    [44],
+    props.maquina,
+    routerStore().clienteID
+  );
+  seriesCepillos.value = cepillos;
+  cargadoCepillos.value = true;
+  cargadoDosis.value = false;
+  const dosis = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "individual",
+    "formatoLinea",
+    [32, 33, 34, 35, 36, 37, 38, 39],
+    props.maquina,
+    routerStore().clienteID
+  );
+  seriesDosis.value = dosis;
+  cargadoDosis.value = true;
+  cargadoFruta.value = false;
+  let kilos = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "individual",
+    "formatoAcumuladores",
+    [48],
+    props.maquina,
+    routerStore().clienteID
+  );
+  const kilosM = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "individual",
+    "unidadTiempo",
+    [48],
+    props.maquina,
+    routerStore().clienteID,
+    null,
+    null,
+    "Kg/min"
+  );
+  kilos.push(...kilosM);
+  seriesFruta.value = kilos;
+  cargadoFruta.value = true;
+  cargadoCajas.value = false;
+  const cajas = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "individual",
+    "unidadTiempo",
+    [47],
+    props.maquina,
+    routerStore().clienteID,
+    null,
+    null,
+    "Cajas/Min"
+  );
+  seriesCajasMin.value = cajas;
+  cargadoCajas.value = true;
+  cargadoCajasMin.value = false;
+  const cporu = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "individual",
+    "formatoLinea",
+    [45, 46],
+    props.maquina,
+    routerStore().clienteID
+  );
+  seriesCajas.value = cporu;
+  cargadoCajasMin.value = true;
+  cargadoConsumos.value = false;
+  const [totales, kilosA] = await Promise.all([
+    obtenerDatosVariableGeneral(
+      "24",
+      "registrosYZ",
+      "individual",
+      "totalZValor",
+      [82, 83],
+      props.maquina,
+      routerStore().clienteID,
+      null,
+      null,
+      [49, 50]
+    ),
+    obtenerDatosVariableGeneral(
+      "historico",
+      "totales",
+      "individual",
+      "sinfiltro",
+      [48],
+      props.maquina,
+      routerStore().clienteID
+    ),
+  ]);
+  const mapTotales2 = totales[0].registros[0].total.map((element) => ({
+    id: 0 + "2",
+    name: element.name,
+    totales: [
+      { id: 0, value: Math.floor(element.total * 100) / 100, value1: 0 },
+    ],
+  }));
+  const mapTotales3 = totales[1].registros[0].total.map((element) => ({
+    id: 0 + "3",
+    name: element.name,
+    totales: [
+      { id: 0, value: 0, value1: Math.floor(element.total * 100) / 100 },
+    ],
+  }));
+  mapTotales3.forEach((element) => {
+    const index = mapTotales2.findIndex((e) => e.name === element.name);
+    if (index === -1) {
+      mapTotales2.push(element);
+    } else {
+      mapTotales2[index].totales[0].value = element.totales[0].value1;
+    }
+  });
+  const totalFrutaConsumo = {
+    id: totalFruta[0].nombreCorto + consumosValue.length,
+    nombre: totalFruta[0].nombreCorto,
+    total: (totalFruta[0].registros[0].total / 1000).toLocaleString("es-ES"),
+  };
+  kilosH.value = [...totalFrutaConsumo];
+  consumos.value = mapTotales2;
+  const horasMarcha = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "multiple",
+    "totalMarcha",
+    [31, 40, 42],
+    props.maquina,
+    routerStore().clienteID
+  );
+  cargadoConsumos.value = true;
+  cargadoAlarmas.value = false;
+  const alarma = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "individual",
+    "totalRangos",
+    [40, 42],
+    props.maquina,
+    routerStore().clienteID
+  );
+  const acc = alarma.reduce((total, element, index) => {
+    const val = Math.max(0, Math.round(element.registros.total1 / 60));
+    alarmas.value.push({
+      id: element.nombreCorto + index,
+      nombre: element.nombreCorto,
+      name: val,
+    });
+    return total + val;
+  }, 0);
+  tiempos.value[0].name = acc;
+  tiempos.value[1].name = Math.max(0, Math.round(horasMarcha.total / 60));
+  cargadoAlarmas.value = true;
+>>>>>>> f14b647fdd0c9a8e42412106635d5975d40d1b52
 }
 
 async function historico(date1, date2) {
@@ -751,52 +1138,7 @@ async function historico(date1, date2) {
   );
   seriesCajas.value = cporu;
   cargadoCajasMin.value = true;
-  const totales = await obtenerDatosVariableGeneral(
-    "historico",
-    "totales",
-    "individual",
-    "sinfiltro",
-    [49, 50, 51, 52, 53, 54, 55, 56],
-    props.maquina,
-    routerStore().clienteID,
-    inicio.value,
-    fin.value
-  );
-  const totalFruta = await obtenerDatosVariableGeneral(
-    "historico",
-    "totales",
-    "individual",
-    "sinfiltro",
-    [48],
-    props.maquina,
-    routerStore().clienteID,
-    inicio.value,
-    fin.value
-  );
-  const consumosValue = totales.map((element, index) => {
-    const { registros, descripcion } = element;
-    const n = Math.max(0, registros[0].total);
-    const totalFrutaRegistrosTotal = totalFruta[0].registros[0].total;
-
-    const d =
-      totalFrutaRegistrosTotal > 0
-        ? (n / (totalFrutaRegistrosTotal / 1000)).toFixed(2)
-        : "0";
-
-    return {
-      id: descripcion + index,
-      nombre: descripcion,
-      total: n.toLocaleString("es-ES"),
-      totalPorToneladaFruta: d,
-    };
-  });
-  const totalFrutaConsumo = {
-    id: totalFruta[0].nombreCorto + consumosValue.length,
-    nombre: totalFruta[0].nombreCorto,
-    total: (totalFruta[0].registros[0].total / 1000).toLocaleString("es-ES"),
-  };
-
-  consumos.value = [...consumosValue, totalFrutaConsumo];
+  consumos.value = dailyConsumos(inicio.value, fin.value);
   const marchat = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -847,6 +1189,123 @@ function reset(value) {
   alarmas.value = value;
 }
 
+async function dailyConsumos(inicio, fin) {
+  const [totales, kilosA] = await Promise.all([
+    obtenerDatosVariableGeneral(
+      "historico",
+      "registrosYZ",
+      "individual",
+      "totalZValor",
+      [82, 83],
+      props.maquina,
+      routerStore().clienteID,
+      inicio,
+      fin,
+      [49, 50]
+    ),
+    obtenerDatosVariableGeneral(
+      "historico",
+      "totales",
+      "individual",
+      "sinfiltro",
+      [48],
+      props.maquina,
+      routerStore().clienteID,
+      inicio,
+      fin
+    ),
+  ]);
+  const mapTotales2 = totales[0].registros[0].total.map((element) => ({
+    id: 0 + "2",
+    name: element.name,
+    totales: [
+      { id: 0, value: Math.floor(element.total * 100) / 100, value1: 0 },
+    ],
+  }));
+  const mapTotales3 = totales[1].registros[0].total.map((element) => ({
+    id: 0 + "3",
+    name: element.name,
+    totales: [
+      { id: 0, value: 0, value1: Math.floor(element.total * 100) / 100 },
+    ],
+  }));
+
+  kilosH.value.push({
+    id: kilosA[0].registros[0].total,
+    total: kilosA[0].registros[0].total / 1000,
+  });
+
+  mapTotales3.forEach((element) => {
+    const index = mapTotales2.findIndex((e) => e.name === element.name);
+    if (index === -1) {
+      mapTotales2.push(element);
+    } else {
+      mapTotales2[index].totales[0].value = element.totales[0].value1;
+    }
+  });
+
+  if (!moment(inicio).isSame(fin, "day")) {
+    let dates = getDatesBetween(inicio, fin);
+    headers.value.push(...dates);
+    let acc = 1;
+    for (let index = 0; index < dates.length; index++) {
+      const element = dates[index].name;
+      const [totales2D, kilosD] = await Promise.all([
+        obtenerDatosVariableGeneral(
+          "historico",
+          "registrosYZ",
+          "individual",
+          "totalZValor",
+          [82, 83],
+          props.maquina,
+          routerStore().clienteID,
+          moment(element).startOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+          moment(element).endOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+          [49, 50]
+        ),
+        obtenerDatosVariableGeneral(
+          "historico",
+          "totales",
+          "individual",
+          "sinfiltro",
+          [48],
+          props.maquina,
+          routerStore().clienteID,
+          moment(element).startOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+          moment(element).endOf("day").format("YYYY-MM-DDTHH:mm:ss")
+        ),
+      ]);
+      totales2D[0].registros[0].total.forEach((element) => {
+        const index = mapTotales2.findIndex((e) => e.name === element.name);
+        mapTotales2[index].totales.push({
+          id: "valor2" + element.name + acc,
+          value: Math.floor(element.total * 100) / 100,
+          value1: 0,
+        });
+      });
+      totales2D[1].registros[0].total.forEach((element) => {
+        const index = mapTotales2.findIndex((e) => e.name === element.name);
+        if (!mapTotales2[index].totales[acc]) {
+          mapTotales2[index].totales.push({
+            id: "valor3" + element.name + acc,
+            value: 0,
+            value1: Math.floor(element.total * 100) / 100,
+          });
+        } else {
+          mapTotales2[index].totales[acc].value1 =
+            Math.floor(element.total * 100) / 100;
+        }
+        acc++;
+      });
+      kilosH.value.push({
+        id: element + acc + kilosD[0].registros[0].total,
+        total: kilosD[0].registros[0].total / 1000,
+      });
+    }
+  }
+  return mapTotales2;
+}
+
 function onReset() {
   inicio.value = null;
   fin.value = null;
@@ -879,12 +1338,13 @@ async function toExcel() {
   });
   const ws = utils.json_to_sheet(kilosA);
   utils.book_append_sheet(wb, ws, "Kg-min");
-  const consumosA = consumos.value.map((e) => {
-    return {
-      nombre: e.nombre,
-      total: e.total,
-      totalPorToneladaFruta: e.totalPorToneladaFruta,
-    };
+  const consumosA = consumos.value.flatMap((element) => {
+    return element.totales.map((total) => {
+      return {
+        nombre: element.nombre,
+        total: total,
+      };
+    });
   });
   const ws3 = utils.json_to_sheet(consumosA);
   utils.book_append_sheet(wb, ws3, "Consumos");
@@ -906,11 +1366,30 @@ async function toExcel() {
   utils.book_append_sheet(wb, ws5, "Funcionamiento");
   writeFileXLSX(wb, "DECCODOS" + inicio.value + "-" + fin.value + ".xlsx");
 }
+<<<<<<< HEAD
 
 onUnmounted(() => {
   reset(null);
   lotes.value = null;
 });
+=======
+function getDatesBetween(startDate, endDate) {
+  const dates = [];
+  let currentDate = moment(startDate);
+  const lastDate = moment(endDate);
+  while (currentDate <= lastDate) {
+    dates.push();
+
+    dates.push({
+      id: currentDate.valueOf(),
+      name: currentDate.format("YYYY-MM-DD"),
+    });
+    currentDate = currentDate.add(1, "day");
+  }
+
+  return dates;
+}
+>>>>>>> f14b647fdd0c9a8e42412106635d5975d40d1b52
 </script>
 
 <style>

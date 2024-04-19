@@ -1,10 +1,8 @@
 <template>
   <v-row>
     <v-col>
-      <v-switch v-model="mostrar" color="info">
-        <template #label>
-          <span style="font-weight: bold">Usuario</span>
-        </template>
+      <v-switch v-model="mostrar" color="info" :label="props.title">
+        {{ props.title }}
       </v-switch>
       <v-card v-if="mostrar">
         <v-row>
@@ -12,7 +10,7 @@
             <ApexChart
               ref="chartRef"
               type="rangeBar"
-              :height="190"
+              :height="300"
               :options="chartOptions"
               :series="series"
             />
@@ -23,16 +21,13 @@
               :width="7"
               color="purple"
               indeterminate
-            />
-          </v-col>
-        </v-row>
-      </v-card>
-    </v-col>
-  </v-row>
+            ></v-progress-circular> </v-col></v-row
+      ></v-card> </v-col
+  ></v-row>
 </template>
 <script>
 export default {
-  name: "UsuarioMaquina",
+  name: "LoteDecco",
 };
 </script>
 <script setup>
@@ -40,21 +35,24 @@ import {
   obtenerMaquina,
   obtenerDatosVariableGeneral,
 } from "../../../helpers/bd";
-import { onMounted, ref, computed, onUnmounted, watch } from "vue";
+import { onMounted, ref, computed, onUnmounted } from "vue";
 import es from "apexcharts/dist/locales/es.json";
+import io from "socket.io-client";
 import moment from "moment";
 import { routerStore } from "../../../stores/index";
 
-let lastZoom = null;
-let interval = null;
+const socket = io("http://localhost:3000");
+
 const cargado = ref(false);
 const mostrar = ref(true);
+
 const series = ref([]);
 
 let chartOptions = computed(() => {
   return {
     chart: {
-      id: "Usuario",
+      id: "Product",
+      // group: "actual",
       type: "rangeBar",
       locales: [es],
       defaultLocale: "es",
@@ -75,7 +73,6 @@ let chartOptions = computed(() => {
         barHeight: "50%",
       },
     },
-
     colors: [
       function ({ value, seriesIndex, w }) {
         if (seriesIndex == 0) {
@@ -122,51 +119,55 @@ let chartOptions = computed(() => {
 
 const props = defineProps({
   tipo: { type: Number, default: 1 },
-  usuario: { type: Number, default: 1 },
+  title: { type: String, default: "" },
 });
-
-const cargarDatos = async () => {
+onMounted(async () => {
+  cargado.value = false;
   let maquinaID = (
     await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
-  let usuarios = await obtenerDatosVariableGeneral(
-    "24H",
-    "registros",
-    "individual",
-    "formatoUsuarios",
-    [props.usuario],
-    maquinaID,
-    routerStore().clienteID
-  );
-
-  series.value = [
+  //TODO asignar valores de prueba
+  let serie = [
     {
-      name: "Usuarios",
-      data: usuarios,
+      name: "Producto",
+      data: [
+        {
+          x: "Product 1",
+          y: [1694353200000, 1694373200000],
+          fillColor: "#ff8000",
+        },
+
+        {
+          x: "PRD1",
+          y: [1694364800000, 1694378000000],
+        },
+
+        {
+          x: "Product 2",
+          y: [1694356800000, 1694375000000],
+          fillColor: "#ff8000",
+        },
+        {
+          x: "PRD2",
+          y: [1694358000000, 1694376800000],
+        },
+        {
+          x: "Product 3",
+          y: [1694360400000, 1694375600000],
+          fillColor: "#ff8000",
+        },
+        {
+          x: "PRD3",
+          y: [1694360400000, 1694375600000],
+        },
+      ],
     },
   ];
-};
-
-watch(
-  () => routerStore().lineasID,
-  async () => {
-    cargado.value = false;
-    await cargarDatos();
-    cargado.value = true;
-  }
-);
-
-onMounted(async () => {
-  cargado.value = false;
-  await cargarDatos();
+  series.value = serie;
+  //TODO socket
   cargado.value = true;
-  interval = setInterval(() => {
-    cargarDatos();
-  }, 90000);
 });
-
 onUnmounted(() => {
-  clearInterval(interval);
-  series.value = [];
+  socket.removeAllListeners();
 });
 </script>
