@@ -1,11 +1,19 @@
 <template>
   <v-row no-gutters>
     <v-col>
-      <v-switch v-model="mostrar" color="info" label="Estado">Estado</v-switch>
+      <v-switch v-model="mostrar" color="info">
+        <template #label>
+          <span style="font-weight: bold">Estado</span>
+        </template>
+      </v-switch>
       <v-card v-if="mostrar">
         <v-row no-gutters>
           <v-col v-if="cargado">
+            <div v-if="noData" class="d-flex justify-center align-center">
+              <h1>Maquina desconectada</h1>
+            </div>
             <ApexChart
+              v-else
               ref="chartRef"
               type="rangeBar"
               height="300"
@@ -14,17 +22,12 @@
             />
           </v-col>
           <v-col v-else class="d-flex justify-center align-center">
-            <div v-if="noData">
-              <h1>Maquina desconectada</h1>
-            </div>
-            <div v-else>
-              <v-progress-circular
-                :size="100"
-                :width="7"
-                color="purple"
-                indeterminate
-              ></v-progress-circular>
-            </div>
+            <v-progress-circular
+              :size="100"
+              :width="7"
+              color="purple"
+              indeterminate
+            ></v-progress-circular>
           </v-col>
         </v-row>
       </v-card>
@@ -41,24 +44,23 @@ import {
   obtenerMaquina,
   obtenerDatosVariableGeneral,
 } from "../../../helpers/bd";
-import { onMounted, ref, computed, onUnmounted } from "vue";
+import { onMounted, ref, computed, onUnmounted, watch } from "vue";
 import es from "apexcharts/dist/locales/es.json";
-import io from "socket.io-client";
 import moment from "moment";
 import { routerStore } from "../../../stores/index";
 
-const socket = io(process.env.VUE_APP_RUTA_API);
 const chartRef = ref(null);
 
 const cargado = ref(false);
 const noData = ref(false);
 const mostrar = ref(true);
 const series = ref([]);
+let interval = null;
+let lastZoom = null;
 const chartOptions = computed(() => {
   return {
     chart: {
       id: "estado",
-      group: "actual",
       type: "rangeBar",
       locales: [es],
       defaultLocale: "es",
@@ -104,7 +106,13 @@ const chartOptions = computed(() => {
     },
     yaxis: {
       labels: {
-        minWidth: 60,
+        minWidth: 70,
+        formatter: (value) => {
+          if (value === "Falta de consenso") {
+            value = "Consenso";
+          }
+          return value;
+        },
       },
     },
     tooltip: {
@@ -131,7 +139,10 @@ const props = defineProps({
   categories: { type: Array, default: () => [] },
 });
 
-async function dataGrafica(maquinaID) {
+async function cargarDatos() {
+  let maquinaID = (
+    await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
+  )[0].id;
   let modoMaquina = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -144,6 +155,7 @@ async function dataGrafica(maquinaID) {
     null,
     ["Paro", "Marcha"]
   );
+
   let autoManual = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -187,35 +199,50 @@ async function dataGrafica(maquinaID) {
       let element = funcMaquina[1].data[index];
       if (element.x == "Alarma") {
         element.fillColor = "#fdd835";
+      } else if (element.x == "Falta de consenso") {
+        element.fillColor = "#d50000";
       } else {
-        element.fillColor = "#3949ab";
+        element.fillColor = "#00c853";
       }
       modoMaquina[1].data.push(element);
     }
   }
+  if (funcMaquina[0].data.length > 0) {
+    for (let index = 0; index < funcMaquina[0].data.length; index++) {
+      let element = funcMaquina[0].data[index];
+      if (element.x == "Falta de consenso") {
+        element.fillColor = "#00c853";
+      }
+      modoMaquina[0].data.push(element);
+    }
+  }
   if (modoMaquina[1].data.length == 0) {
-    cargado.value = false;
     noData.value = true;
   } else {
     series.value = modoMaquina;
-    cargado.value = true;
   }
 }
+
+watch(
+  () => routerStore().lineasID,
+  async () => {
+    cargado.value = false;
+    await cargarDatos();
+    cargado.value = true;
+  }
+);
+
 onMounted(async () => {
   cargado.value = false;
-  let maquinaID = (
-    await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
-  )[0].id;
-  await dataGrafica(maquinaID);
-
-  socket.on(
-    `variable_${maquinaID}_${props.activo}_actualizada`,
-    async (data) => {
-      dataGrafica(maquinaID);
-    }
-  );
+  await cargarDatos();
+  cargado.value = true;
+  interval = setInterval(() => {
+    cargarDatos();
+  }, 90000);
 });
+
 onUnmounted(() => {
-  socket.removeAllListeners();
+  clearInterval(interval);
+  series.value = [];
 });
 </script>

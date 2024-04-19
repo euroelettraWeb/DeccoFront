@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-row>
       <v-col>
-        <div><HistoricoCard /></div>
+        <HistoricoCard />
       </v-col>
     </v-row>
   </v-container>

@@ -13,14 +13,17 @@ export default new Vuetify({
     },
     themes: {
       light: {
-        primary: "#024638",
+        primary: "#034638",
         secondary: "#000000",
-        accent: "#024638",
+        accent: "#034638",
         error: "#FF5252",
         info: "#2196F3",
         success: "#4CAF50",
         warning: "#FFC107",
       },
+    },
+    fonts: {
+      body: "Gellix Light, sans-serif",
     },
   },
   lang: {

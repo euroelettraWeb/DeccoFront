@@ -2,15 +2,15 @@
   <v-container fluid fill-height>
     <v-row align="center" justify="center">
       <v-col
-        cols="2"
+        cols="4"
         style="
           background-image: url('logo_cliente.png');
           background-size: contain;
-          background-position: right;
-          height: 300px;
+          background-position: center;
+          height: 700px;
         "
       ></v-col>
-      <v-col
+      <!-- <v-col
         cols="2"
         style="
           background-image: url('logo_nunsys.jpg');
@@ -27,15 +27,15 @@
           background-position: left;
           height: 300px;
         "
-      ></v-col>
+      ></v-col> -->
     </v-row>
-    <v-row>
+    <!-- <v-row>
       <v-col cols="12" class="text-center">
         <v-btn x-large color="success" elevation="4" @click="log">
           Seleccionar Cliente
         </v-btn>
       </v-col>
-    </v-row>
+    </v-row> -->
   </v-container>
 </template>
 

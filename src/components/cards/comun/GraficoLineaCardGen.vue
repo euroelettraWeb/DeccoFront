@@ -7,7 +7,18 @@
       <div v-if="mostrar">
         <v-row no-gutters>
           <v-col v-if="props.cargado">
+            <v-chip
+              v-if="noData"
+              class="ma-2"
+              color="pink"
+              label
+              text-color="white"
+            >
+              <v-icon left> mdi-alert </v-icon>
+              Sin datos
+            </v-chip>
             <ApexChart
+              v-else
               type="line"
               :height="props.height"
               :options="chartOptions"
@@ -33,7 +44,7 @@ export default {
 };
 </script>
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import moment from "moment";
 
@@ -95,5 +106,11 @@ const props = defineProps({
   tooltipy: { type: Boolean, default: true },
   legend: { type: Boolean, default: true },
   cargado: { type: Boolean, default: true },
+});
+
+const noData = computed(() => {
+  return (
+    props.cargado && props.serie.every((objeto) => objeto.data.length === 0)
+  );
 });
 </script>

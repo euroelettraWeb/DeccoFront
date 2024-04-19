@@ -16,22 +16,13 @@ import DECCOCONTROLPrincipal from "../views/Deccocontrol/Principal.vue";
 import DECCODAFOtras from "../views/Deccodaf/Otras.vue";
 import DECCODOSOtras from "../views/Deccodos/Otras.vue";
 import DECCOWSOtras from "../views/Deccowasher/Otras.vue";
+import GestionUsuariosView from "../views/GestionUsuariosView.vue";
 import { routerStore, userStore } from "../stores/index";
 
 function checkLogin(to, from, next) {
   if (to.meta.rutaProtegida) {
-    // let socket = Vue.prototype.$socket;
-    // if (!socket) {
-    //   next("/");
-    //   return;
-    // }
     if (!userStore().usuarioValido) {
       next("/login");
-      return;
-    }
-    if (to.meta.administrador && !(userStore().rol == "ADMINISTRADOR")) {
-      routerStore().clienteID = userStore().clienteUsuario;
-      next("/cliente/" + userStore().clienteUsuario + "/sistemas");
       return;
     }
   }
@@ -51,6 +42,17 @@ const routes = [
     name: "Login",
     component: Login,
     meta: { title: "DECCO - Login" },
+  },
+  {
+    path: "/gestion/usuarios",
+    name: "GestionUsuarios",
+    component: GestionUsuariosView,
+    meta: {
+      title: "Gestión de usuarios",
+      rutaProtegida: true,
+      administrador: true,
+    },
+    beforeEnter: checkLogin,
   },
   {
     path: "/cliente",

@@ -2,11 +2,13 @@
   <v-card
     class="pa-2"
     height="250"
-    max-width="250"
+    width="250"
     max-height="350"
     color="primary"
   >
-    <v-card-title class="font-weight-bold"> {{ props.cliente }}</v-card-title>
+    <v-card-title class="font-weight-bold white--text titulo">
+      {{ props.cliente }}
+    </v-card-title>
     <v-img
       v-if="isValidUrl(props.src)"
       class="white--text align-end"
@@ -17,7 +19,15 @@
     <v-spacer v-else></v-spacer>
     <v-card-actions>
       <v-btn color="white" text link @click="updatePinia"> Acceder </v-btn>
-      <v-btn color="white" text link @click="editar"> Editar </v-btn>
+      <v-btn
+        v-if="usuarioRol === 'ADMINISTRADOR'"
+        color="white"
+        text
+        link
+        @click="editar"
+      >
+        Editar
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -34,6 +44,7 @@ const props = defineProps({
   cliente: { type: String, default: "" },
   id: { type: Number, default: 0 },
   src: { type: String, default: "" },
+  usuarioRol: { type: String, default: "" },
 });
 function isValidUrl(string) {
   try {

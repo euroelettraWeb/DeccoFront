@@ -27,6 +27,12 @@ const obtenerProductos = async (modo, maquinaID) =>
 const obtenerCliente = async (id) =>
   (await axios.get(`${process.env.VUE_APP_RUTA_API}/clientes/${id}`)).data;
 
+const obtenerUsuarios = async () =>
+  (await axios.get(`${process.env.VUE_APP_RUTA_API}/usuarios`)).data;
+
+const obtenerUsuario = async (id) =>
+  (await axios.get(`${process.env.VUE_APP_RUTA_API}/usuarios/${id}`)).data;
+
 const obtenerClientes = async (id) =>
   (await axios.get(`${process.env.VUE_APP_RUTA_API}/clientes/all`)).data;
 
@@ -59,13 +65,46 @@ const obtenerDatosVariableGeneral = async (
     )
   ).data;
 
-const obtenerIncioFin = async (variables, maquinaID, valor) =>
+const obtenerIncioFin = async (modeloID, maquinaID, valor) =>
+  (
+    await axios.post(`${process.env.VUE_APP_RUTA_API}/variable/filtroIF/`, {
+      modeloID,
+      maquinaID,
+      valor,
+    })
+  ).data;
+
+const guardarParametrosCalibrador = async (
+  clienteID,
+  lineaID,
+  kilos,
+  tolerancia
+) =>
   (
     await axios.post(
-      `${process.env.VUE_APP_RUTA_API}/variable/${modo}/${operacion}/${consulta}/${filtrado}/`,
-      { variables, maquinaID, valor }
+      `${process.env.VUE_APP_RUTA_API}/calibrador/parametros/guardar/${clienteID}/${lineaID}/`,
+      {
+        kilos,
+        tolerancia,
+      }
     )
   ).data;
+
+const leerParametrosCalibrador = async (clienteID, lineaID, inicio, fin) =>
+  (
+    await axios.post(
+      `${process.env.VUE_APP_RUTA_API}/calibrador/parametros/leer/${clienteID}/${lineaID}/`,
+      { inicio, fin }
+    )
+  ).data;
+
+// const leerAlarmasCalibrador = async (clienteID, lineaID, inicio, fin) =>
+//   (
+//     await axios.post(
+//       `${process.env.VUE_APP_RUTA_API}/calibrador/alarmas/leer/${clienteID}/${lineaID}/`,
+//       { inicio, fin }
+//     )
+//   ).data;
 
 export {
   obtenerDatosVariableGeneral,
@@ -79,4 +118,9 @@ export {
   obtenerClientePLC,
   obtenerClientes,
   obtenerIncioFin,
+  leerParametrosCalibrador,
+  guardarParametrosCalibrador,
+  obtenerUsuario,
+  obtenerUsuarios,
+  // leerAlarmasCalibrador,
 };

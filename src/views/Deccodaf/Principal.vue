@@ -1,45 +1,33 @@
 <template>
   <v-container fluid>
-    <v-row>
-      <v-col>
-        <LoteCliente :tipo="1" />
-        <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
-        <TablaTurnos v-if="turnos" />
-      </v-col>
-    </v-row>
+    <LoteCliente :tipo="1" />
     <v-row>
       <v-col>
         <v-row>
           <v-col>
-            <TablaTotalTurnos
-              v-if="turnos && turnosA.length > 1"
+            <TablaTotal
               :variables="[25, 26, 27, 28, 29, 30]"
               :marcha="[1, 12, 14]"
               :tipo="1"
-            />
-            <TablaTotal
-              v-else
-              :variables="[25, 26, 27, 28, 29, 30]"
-              :marcha="[1, 12, 14]"
             />
           </v-col>
           <v-col>
-            <TablaAlarmasTurnos
-              v-if="turnos && turnosA.length > 1"
-              :variables="[12, 14, 73, 74, 75]"
-              :marcha="[1, 12, 14, 73, 74, 75]"
-              :tipo="1"
-            />
             <TablaAlarmas
-              v-else
-              :variables="[12, 14, 73, 74, 75]"
-              :marcha="[1, 12, 14, 73, 74, 75]"
+              :variables="[12, 14, 74, 75]"
+              :marcha="[1, 12, 14, 74, 75]"
               :tipo="1"
             />
           </v-col>
         </v-row>
-        <LoteDecco :tipo="1" title="Lote Fungicida" />
+        <LoteDeccoMod
+          v-if="loteFungicida"
+          :tipo="1"
+          :lotecliente="89"
+          :lotesfungicidas="[90, 91, 92, 93, 94]"
+          :nombresproductos="[101, 102, 103, 104, 105]"
+        />
         <Estado
+          v-if="estado"
           :activo="1"
           :auto-manual="[13, 15]"
           :marcha="[1, 12, 14, 73, 74, 75]"
@@ -54,49 +42,25 @@
           ]"
         />
         <GraficaEstadoCard
-          :variables="[12, 73, 74, 75]"
+          v-if="alarmas"
+          :variables="[12, 74, 75, 109]"
           :height="300"
           title="Alarmas"
           :tipo="1"
           :estados="['', 'Aviso']"
           :categories="[
-            'Falta Inicio Ciclo',
-            'Tope Palets Alcanzado',
-            'Termico Agitador',
             'Fallo Agua',
-            'Fallo Aire',
-            'Agitador',
+            'Termico Agitador',
+            'Tope Palets Alcanzado',
+            'No hay presión aire',
           ]"
           :colores="['#00c853', '#d50000']"
         />
-        <GraficaLineaCard
-          title="Dosis de fungicida"
-          :variables="[7, 8, 9, 10, 11]"
-          :tipo="1"
-        />
-        <!-- <div>
-           Tabla Reposiciones y consumo por modo
-        </div> -->
-        <!-- <ModosReposiciones :tipo="1" title="Modo Reposiciones" />
-        <GraficaLineaCard title="Reposiciones" :variables="[7]" /> -->
-        <FrutaProcesadaComun :variables="48" :tipo="2" />
-        <!-- <GraficaEstadoCard
-          :variables="[2, 3, 4, 5, 6]"
-          :height="300"
-          title="Estado de los agitadores"
-          :tipo="1"
-          :categories="[
-            'Agitador Producto 1',
-            'Agitador Producto 2',
-            'Agitador Producto 3',
-            'Agitador Producto 4',
-            'Agitador Producto 5',
-          ]"
-        /> -->
         <GraficaEstadoCard
+          v-if="estadoNivelGarrafas"
           :variables="[20, 21, 22, 23, 24]"
-          :height="300"
-          title="Estado de los niveles de las garrafas"
+          :height="320"
+          title="Estado de los niveles de las garrafas (Falta de producto)"
           :tipo="1"
           :estados="['Aviso', '']"
           :categories="[
@@ -105,14 +69,27 @@
             'Nivel Garrafa P3',
             'Nivel Garrafa P4',
             'Nivel Garrafa P5',
-            'Flujo de producto P1',
-            'Flujo de producto P2',
-            'Flujo de producto P3',
-            'Flujo de producto P4',
-            'Flujo de producto P5',
           ]"
         />
-        <TablaNivelesGarrafa />
+        <UsuarioMaquina v-if="usuario" :usuario="106" :tipo="1" />
+        <GraficaEstadoCard
+          v-if="reposiciones"
+          :variables="[114, 115, 116, 117, 118, 119, 120]"
+          :tipo="1"
+          :height="400"
+          title="Reposiciones"
+        />
+        <GraficaLineaCard
+          v-if="dosis"
+          title="Dosis de fungicida"
+          :variables="[7, 8, 9, 10, 11]"
+          :tipo="1"
+        />
+        <KilosCalibradorComun
+          v-if="kilosCalibrador"
+          :variables="48"
+          :tipo="1"
+        />
       </v-col>
     </v-row>
   </v-container>
@@ -124,30 +101,47 @@ export default {
 };
 </script>
 <script setup>
-import { routerStore } from "../../stores/index";
-import { obtenerTurnos } from "../../helpers/bd";
 import Estado from "../../components/cards/comun/Estado.vue";
 import GraficaLineaCard from "../../components/cards/comun/GraficaLineaCard.vue";
 import TablaTotal from "../../components/tablas/comun/TablaTotal.vue";
-import { onMounted, ref } from "vue";
-import TablaTurnos from "../../components/tablas/comun/TablaTurnos.vue";
-import TablaTotalTurnos from "../../components/tablas/comun/TablaTotalTurnos.vue";
-import FrutaProcesadaComun from "../../components/cards/comun/FrutaProcesadaComun.vue";
+import KilosCalibradorComun from "../../components/cards/comun/KilosCalibradorComun.vue";
 import TablaAlarmas from "../../components/tablas/comun/TablaAlarmas.vue";
-import TablaAlarmasTurnos from "../../components/tablas/comun/TablaAlarmasTurnos.vue";
-import TablaNivelesGarrafa from "../../components/tablas/deccodaf/TablaNivelesGarrafa.vue";
 import GraficaEstadoCard from "../../components/cards/comun/GraficaEstadoCard.vue";
 import LoteCliente from "../../components/cards/comun/LoteCliente.vue";
-import LoteDecco from "../../components/cards/comun/LoteDecco.vue";
-import ModosReposiciones from "../../components/cards/deccodaf/ModosReposiciones.vue";
+import LoteDeccoMod from "../../components/cards/deccodaf/LoteDeccoMod.vue";
+import UsuarioMaquina from "../../components/cards/comun/Usuario.vue";
+import { userStore } from "../../stores/index";
+import { onMounted, ref } from "vue";
+import axios from "axios";
 
-const turnos = ref(true);
-const cargado = ref(false);
-const turnosA = ref([]);
+// Variables booleanos para visualizar las graficas
+const loteFungicida = ref(true);
+const estado = ref(true);
+const alarmas = ref(true);
+const estadoNivelGarrafas = ref(true);
+const usuario = ref(true);
+const reposiciones = ref(true);
+const dosis = ref(true);
+const kilosCalibrador = ref(true);
+
+// Consultar los permisos del usuario si es un usuario "Cliente"
 onMounted(async () => {
-  cargado.value = false;
-  turnosA.value = await obtenerTurnos(routerStore().clienteID);
-  turnos.value = turnosA.value.length > 0 ? true : false;
-  cargado.value = true;
+  if (userStore().rol == "Cliente") {
+    let permisos = await axios.post(
+      `${process.env.VUE_APP_RUTA_API}/usuarios/permisos/Deccodaf`,
+      {
+        usuarioID: userStore().usuario.id,
+      }
+    );
+    // Asignar los valores según las propiedades del objeto
+    loteFungicida.value = permisos.data[0].loteFungicida;
+    estado.value = permisos.data[0].estado;
+    alarmas.value = permisos.data[0].alarmas;
+    estadoNivelGarrafas.value = permisos.data[0].estadoNivelGarrafas;
+    usuario.value = permisos.data[0].usuario;
+    reposiciones.value = permisos.data[0].reposiciones;
+    dosis.value = permisos.data[0].dosis;
+    kilosCalibrador.value = permisos.data[0].kilosCalibrador;
+  }
 });
 </script>

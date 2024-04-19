@@ -1,7 +1,14 @@
 <template>
   <v-container fluid fill-height>
     <v-row align="center" justify="center">
-      <v-col cols="3" class="login-form text-center text-xs-center fill-height">
+      <v-col
+        xs="12"
+        sm="8"
+        md="6"
+        lg="4"
+        xl="3"
+        class="login-form text-center text-xs-center fill-height"
+      >
         <h2 class="pa-5">Login</h2>
         <v-card color="deep-purple lighten-5" class="mb-1">
           <v-card-text>

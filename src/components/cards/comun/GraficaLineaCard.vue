@@ -1,8 +1,10 @@
 <template>
   <v-row no-gutters>
     <v-col>
-      <v-switch v-model="mostrar" color="info" :label="props.title">
-        {{ props.title }}
+      <v-switch v-model="mostrar" color="info">
+        <template #label>
+          <span style="font-weight: bold">{{ props.title }}</span>
+        </template>
       </v-switch>
       <v-card v-if="mostrar">
         <v-row no-gutters>
@@ -38,63 +40,17 @@ import {
   obtenerMaquina,
   obtenerDatosVariableGeneral,
 } from "../../../helpers/bd";
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, computed, watch } from "vue";
 import es from "apexcharts/dist/locales/es.json";
-import io from "socket.io-client";
 import moment from "moment";
 import { routerStore } from "../../../stores/index";
 
-const socket = io(process.env.VUE_APP_RUTA_API);
 const chartRef = ref(null);
-var lastZoom = null;
+let interval = null;
+let lastZoom = null;
 const cargado = ref(false);
 const mostrar = ref(true);
 const series = ref([]);
-const chartOptions = {
-  chart: {
-    id: "grafica linea " + props.title,
-    group: "actual",
-    locales: [es],
-    defaultLocale: "es",
-    animations: { enabled: false },
-    zoom: {
-      type: "xy",
-      autoScaleYaxis: true,
-    },
-  },
-  xaxis: {
-    type: "datetime",
-    datetimeUTC: false,
-    tickAmount: 25,
-    labels: {
-      minHeight: 125,
-      rotate: -45,
-      rotateAlways: true,
-      formatter: function (value, timestamp) {
-        return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
-      },
-    },
-  },
-  yaxis: {
-    labels: {
-      minWidth: 60,
-    },
-  },
-  stroke: {
-    width: 1.9,
-    height: 60,
-    showForSingleSeries: true,
-  },
-  tooltip: {
-    x: {
-      format: "dd/MM/yyyy HH:mm:ss",
-    },
-  },
-  legend: {
-    height: 20,
-    showForSingleSeries: true,
-  },
-};
 
 const props = defineProps({
   variables: { type: Array, default: () => [] },
@@ -105,13 +61,60 @@ const props = defineProps({
   labelvar: { type: String, default: "" },
 });
 
-onMounted(async () => {
-  cargado.value = false;
+const chartOptions = computed(() => {
+  return {
+    chart: {
+      id: props.title,
+      locales: [es],
+      defaultLocale: "es",
+      animations: { enabled: false },
+      zoom: {
+        type: "xy",
+        autoScaleYaxis: true,
+      },
+    },
+    xaxis: {
+      type: "datetime",
+      datetimeUTC: false,
+      tickAmount: 25,
+      labels: {
+        minHeight: 125,
+        rotate: -45,
+        rotateAlways: true,
+        formatter: function (value) {
+          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
+        },
+      },
+    },
+    yaxis: {
+      min: 0,
+      axisTicks: {
+        show: true,
+      },
+      axisBorder: {
+        show: true,
+      },
+      labels: {
+        minWidth: 60,
+        formatter: function (val) {
+          return val.toFixed(2);
+          // return val;
+        },
+      },
+    },
+    stroke: {
+      width: 1.9,
+    },
+    legend: {
+      showForSingleSeries: true,
+    },
+  };
+});
 
+const cargarDatos = async () => {
   let maquinaID = (
     await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
-
   let formatoVariables = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -125,32 +128,32 @@ onMounted(async () => {
     props.labelvar
   );
   series.value = formatoVariables;
-  for (let index = 0; index < props.variables.length; index++) {
-    socket.on(
-      `variable_${maquinaID}_${props.variables[index]}_actualizada`,
-      async (data) => {
-        let formatoVariable = await obtenerDatosVariableGeneral(
-          "24H",
-          "registros",
-          "individual",
-          props.tipodatos,
-          props.variables,
-          maquinaID,
-          routerStore().clienteID,
-          null,
-          null,
-          props.labelvar
-        );
-        if (chartRef.value) {
-          chartRef.value.updateSeries(formatoVariable);
-          if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-        }
-      }
-    );
+};
+
+watch(
+  () => routerStore().lineasID,
+  async () => {
+    cargado.value = false;
+    await cargarDatos();
+    cargado.value = true;
   }
+);
+
+onMounted(async () => {
+  cargado.value = false;
+  await cargarDatos();
   cargado.value = true;
+
+  interval = setInterval(async () => {
+    cargarDatos();
+    // if (chartRef.value) {
+    //   chartRef.value.updateSeries(formatoVariable);
+    //   if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
+    // }
+  }, 90000);
 });
+
 onUnmounted(() => {
-  socket.removeAllListeners();
+  clearInterval(interval);
 });
 </script>

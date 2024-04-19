@@ -1,41 +1,29 @@
 <template>
   <v-container fluid>
+    <LoteCliente :tipo="2" />
     <v-row>
       <v-col>
-        <LoteCliente :tipo="2" />
-        <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
-        <TablaTurnos v-if="turnos" />
+        <TablaTotal
+          :variables="[49, 50, 51, 52, 53, 54, 55]"
+          :marcha="[31, 40, 42]"
+          :tipo="2"
+        />
+      </v-col>
+      <v-col>
+        <TablaAlarmas :variables="[40, 42]" :marcha="[31, 40, 42]" :tipo="2" />
       </v-col>
     </v-row>
     <v-row no-gutters>
       <v-col>
-        <v-row
-          ><v-col>
-            <TablaTotalTurnos
-              v-if="turnos && turnosA.length > 1"
-              :variables="[49, 50, 51, 52, 53, 54, 55]"
-              :modo="[13, 15]"
-              :tipo="2" />
-            <TablaTotal
-              v-else
-              :variables="[49, 50, 51, 52, 53, 54, 55]"
-              :marcha="[31, 40, 42]"
-              :tipo="2" /></v-col
-          ><v-col>
-            <TablaAlarmasTurnos
-              v-if="turnos && turnosA.length > 1"
-              :variables="[40, 42]"
-              :marcha="[31, 40, 42]"
-              :tipo="2" />
-            <TablaAlarmas
-              v-else
-              :variables="[40, 42]"
-              :marcha="[31, 40, 42]"
-              :tipo="2"
-          /></v-col>
-        </v-row>
-        <LoteDecco :tipo="2" title="Lote Cera" />
+        <LoteDeccoMod
+          v-if="lotesFungicida"
+          :tipo="2"
+          :lotecliente="95"
+          :lotesceras="[96, 97]"
+          :nombresproductos="[82, 83]"
+        />
         <Estado
+          v-if="estado"
           :activo="31"
           :auto-manual="[41, 43]"
           :marcha="[31, 40, 42]"
@@ -51,37 +39,25 @@
             'Presencia Fruta',
           ]"
         />
-        <GraficaLineaCard
+        <UsuarioMaquina v-if="usuario" :usuario="107" :tipo="2" />
+        <Dosis
+          v-if="dosis"
           :variables="[32, 33, 34, 35, 36, 37, 38, 39]"
           title="Dosis"
           :tipo="2"
         />
-        <FrutaProcesadaComun :variables="48" :tipo="2" />
+        <KilosCalibradorComun
+          v-if="kilosCalibrador"
+          :variables="48"
+          :tipo="2"
+        />
         <GraficaEstadoCard
+          v-if="activacionCepillos"
           :variables="[44]"
           :height="200"
           title="Activacion limpieza cepillos"
           :tipo="2"
           :categories="['Limpieza Cepillos']"
-        />
-        <!-- <GraficaEstadoCard
-          :variables="[100]"
-          :height="200"
-          title="Modos de trabajo"
-          :tipo="2"
-          :categories="['Modo 1']"
-        /> -->
-        <GraficaLineaCard
-          :variables="[45, 46]"
-          :tipo="2"
-          title="Cajas por Ciclo y Peso por Caja"
-        />
-        <GraficaLineaCard
-          :variables="[47]"
-          :tipo="2"
-          title="Cajas/min"
-          tipodatos="unidadTiempo"
-          labelvar="Cajas/Min"
         />
       </v-col>
     </v-row>
@@ -95,30 +71,43 @@ export default {
 </script>
 <script setup>
 import Estado from "../../components/cards/comun/Estado.vue";
-import TablaTurnos from "../../components/tablas/comun/TablaTurnos.vue";
 import TablaTotal from "../../components/tablas/comun/TablaTotal.vue";
-import { routerStore } from "../../stores/index";
-import { obtenerTurnos } from "../../helpers/bd";
-import { onMounted, ref } from "vue";
-import TablaTotalTurnos from "../../components/tablas/deccodos/TablaTotalTurnos.vue";
-// import TablaTotalTurnos from "../../components/tablas/comun/TablaTotalTurnos.vue";
 import GraficaLineaCard from "../../components/cards/comun/GraficaLineaCard.vue";
 import GraficaEstadoCard from "../../components/cards/comun/GraficaEstadoCard.vue";
-import FrutaProcesadaComun from "../../components/cards/comun/FrutaProcesadaComun.vue";
+import KilosCalibradorComun from "../../components/cards/comun/KilosCalibradorComun.vue";
 import TablaAlarmas from "../../components/tablas/comun/TablaAlarmas.vue";
-import TablaAlarmasTurnos from "../../components/tablas/comun/TablaAlarmasTurnos.vue";
 import LoteCliente from "../../components/cards/comun/LoteCliente.vue";
-import LoteDecco from "../../components/cards/comun/LoteDecco.vue";
+import LoteDeccoMod from "../../components/cards/deccodos/LoteDeccoMod.vue";
+import UsuarioMaquina from "../../components/cards/comun/Usuario.vue";
+import Dosis from "../../components/cards/deccodos/dosis.vue";
+import { userStore } from "../../stores/index";
+import { onMounted, ref } from "vue";
+import axios from "axios";
 
-let turnos = ref(true);
+// Variables booleanos para visualizar las graficas
+const lotesFungicida = ref(true);
+const estado = ref(true);
+const usuario = ref(true);
+const dosis = ref(true);
+const kilosCalibrador = ref(true);
+const activacionCepillos = ref(true);
 
-let cargado = ref(false);
-
-let turnosA = ref([]);
+// Consultar los permisos del usuario si es un usuario "Cliente"
 onMounted(async () => {
-  cargado.value = false;
-  turnosA.value = await obtenerTurnos(routerStore().clienteID);
-  turnos.value = turnosA.value.length > 0 ? true : false;
-  cargado.value = true;
+  if (userStore().rol == "Cliente") {
+    let permisos = await axios.post(
+      `${process.env.VUE_APP_RUTA_API}/usuarios/permisos/Deccodos`,
+      {
+        usuarioID: userStore().usuario.id,
+      }
+    );
+    // Asignar los valores según las propiedades del objeto
+    lotesFungicida.value = permisos.data[0].lotesFungicida;
+    estado.value = permisos.data[0].estado;
+    usuario.value = permisos.data[0].usuario;
+    dosis.value = permisos.data[0].dosis;
+    kilosCalibrador.value = permisos.data[0].kilosCalibrador;
+    activacionCepillos.value = permisos.data[0].activacionCepillos;
+  }
 });
 </script>

@@ -3,8 +3,10 @@
     <v-row>
       <v-col v-if="cargado">
         <v-row>
-          <v-col
-            ><v-card-title>Motivos de paro (min)</v-card-title>
+          <v-col>
+            <v-card-title>
+              <strong>Motivos de paro (min)</strong>
+            </v-card-title>
             <v-simple-table dense>
               <template #default>
                 <thead></thead>
@@ -13,7 +15,7 @@
                     <td>
                       {{ item.nombre }}
                     </td>
-                    <td>
+                    <td class="text-right">
                       {{ item.name }}
                     </td>
                   </tr>
@@ -29,7 +31,7 @@
                     <td>
                       {{ item.nombre }}
                     </td>
-                    <td>
+                    <td class="text-right">
                       {{ item.name }}
                     </td>
                   </tr>
@@ -52,7 +54,7 @@
 </template>
 <script>
 export default {
-  name: "TablaTotal",
+  name: "TablaAlarmas",
 };
 </script>
 <script setup>
@@ -60,7 +62,7 @@ import {
   obtenerDatosVariableGeneral,
   obtenerMaquina,
 } from "../../../helpers/bd";
-import { onMounted, ref, onUnmounted, reactive } from "vue";
+import { onMounted, ref, onUnmounted, watch } from "vue";
 import { routerStore } from "../../../stores/index";
 
 const consumos = ref([]);
@@ -85,8 +87,7 @@ const props = defineProps({
   tipo: { type: Number, default: 1 },
 });
 
-onMounted(async () => {
-  cargado.value = false;
+const cargarDatos = async () => {
   const maquinaID = (
     await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
@@ -100,6 +101,7 @@ onMounted(async () => {
     maquinaID,
     routerStore().clienteID
   );
+  consumos.value = [];
   for (let index = 0; index < totalesBD.length; index++) {
     const element = totalesBD[index];
     consumos.value.push({
@@ -122,44 +124,40 @@ onMounted(async () => {
     routerStore().clienteID
   );
   totales.value[1].name = Math.max(0, Math.round(horasMarcha.total / 60));
+};
+
+watch(
+  () => routerStore().lineasID,
+  async () => {
+    cargado.value = false;
+    await cargarDatos();
+    cargado.value = true;
+  }
+);
+
+onMounted(async () => {
+  cargado.value = false;
+  await cargarDatos();
   cargado.value = true;
-  interval = setInterval(async () => {
-    const totalesBD = await obtenerDatosVariableGeneral(
-      "24H",
-      "registros",
-      "individual",
-      "totalRangos",
-      props.variables,
-      maquinaID,
-      routerStore().clienteID
-    );
-    consumos.value.pop();
-    totales.value[0].name = 0;
-    for (let index = 0; index < totalesBD.length; index++) {
-      const element = totalesBD[index];
-      consumos.value[index] = {
-        id: element.nombreCorto + index,
-        nombre: element.nombreCorto,
-        name: Math.max(0, Math.round(element.registros.total1 / 60)),
-      };
-      totales.value[0].name += Math.max(
-        0,
-        Math.round(element.registros.total1 / 60)
-      );
-    }
-    const horasMarcha = await obtenerDatosVariableGeneral(
-      "24H",
-      "registros",
-      "multiple",
-      "totalMarcha",
-      props.marcha,
-      maquinaID,
-      routerStore().clienteID
-    );
-    totales.value[1].name = Math.max(0, Math.round(horasMarcha.total / 60));
-  }, 3000);
+  interval = setInterval(() => {
+    cargarDatos();
+  }, 90000);
 });
+
 onUnmounted(() => {
   clearInterval(interval);
+  consumos.value = [];
+  totales.value = [
+    {
+      id: 0,
+      nombre: "Paro",
+      name: 0,
+    },
+    {
+      id: 1,
+      nombre: "Marcha",
+      name: 0,
+    },
+  ];
 });
 </script>

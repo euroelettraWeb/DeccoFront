@@ -1,29 +1,18 @@
 <template>
-  <v-row no-gutters>
+  <v-row>
     <v-col>
       <v-switch v-model="mostrar" color="info">
         <template #label>
-          <span style="font-weight: bold">{{ props.title }}</span>
+          <span style="font-weight: bold">Lotes Fungicida</span>
         </template>
       </v-switch>
       <v-card v-if="mostrar">
-        <v-row no-gutters>
+        <v-row>
           <v-col v-if="cargado">
-            <v-chip
-              v-if="noData"
-              class="ma-2"
-              color="pink"
-              label
-              text-color="white"
-            >
-              <v-icon left> mdi-alert </v-icon>
-              Sin datos
-            </v-chip>
             <ApexChart
-              v-else
               ref="chartRef"
               type="rangeBar"
-              :height="props.height"
+              :height="320"
               :options="chartOptions"
               :series="series"
             />
@@ -34,7 +23,7 @@
               :width="7"
               color="purple"
               indeterminate
-            ></v-progress-circular>
+            />
           </v-col>
         </v-row>
       </v-card>
@@ -43,7 +32,7 @@
 </template>
 <script>
 export default {
-  name: "GraficasEstado",
+  name: "LotesFungicidas",
 };
 </script>
 <script setup>
@@ -56,16 +45,17 @@ import es from "apexcharts/dist/locales/es.json";
 import moment from "moment";
 import { routerStore } from "../../../stores/index";
 
-const chartRef = ref(null);
 let lastZoom = null;
 let interval = null;
 const cargado = ref(false);
 const mostrar = ref(true);
 const series = ref([]);
-const chartOptions = computed(() => {
+
+let chartOptions = computed(() => {
   return {
     chart: {
-      id: "grafica estado " + props.title,
+      id: "fungicidas",
+      // group: "actual",
       type: "rangeBar",
       locales: [es],
       defaultLocale: "es",
@@ -89,9 +79,9 @@ const chartOptions = computed(() => {
     colors: [
       function ({ value, seriesIndex, w }) {
         if (seriesIndex == 0) {
-          return props.colores[0];
+          return "#f0ec07";
         } else {
-          return props.colores[1];
+          return "#00c853";
         }
       },
     ],
@@ -99,65 +89,81 @@ const chartOptions = computed(() => {
       type: "datetime",
       datetimeUTC: false,
       tickAmount: 20,
-      categories: props.categories,
+      // categories: props.categories,
       labels: {
         minHeight: 125,
         rotate: -45,
         rotateAlways: true,
         formatter: function (value, timestamp) {
-          return moment.utc(value).format("DD/MM/YYYY HH:mm:ss");
+          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
         },
       },
     },
     yaxis: {
       labels: {
-        minWidth: 60,
+        minWidth: 150,
+        maxWidth: 300,
       },
     },
     tooltip: {
       x: {
         format: "dd/MM/yyyy HH:mm:ss",
       },
+      y: {
+        title: {
+          formatter: (seriesName) => "",
+        },
+      },
     },
     legend: {
-      height: 20,
+      show: false,
     },
   };
 });
 
 const props = defineProps({
-  variables: { type: Array, default: () => [] },
-  title: { type: String, default: "" },
-  height: { type: Number, default: 300 },
   tipo: { type: Number, default: 1 },
-  colores: { type: Array, default: () => ["#d50000", "#00c853"] },
-  estados: { type: Array, default: () => ["Paro", "Marcha"] },
-  categories: { type: Array, default: () => [] },
-});
-
-const noData = computed(() => {
-  return (
-    cargado.value && series.value.every((objeto) => objeto.data.length === 0)
-  );
+  lotecliente: { type: Number, default: 0 },
+  lotesfungicidas: { type: Array, default: () => [] },
+  nombresproductos: { type: Array, default: () => [] },
 });
 
 const cargarDatos = async () => {
   let maquinaID = (
     await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
-  let formatoVariables = await obtenerDatosVariableGeneral(
+  const lotesCliente = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
     "individual",
-    "formatoRangos",
-    props.variables,
+    "formatoLotesCliente",
+    [props.lotecliente],
     maquinaID,
-    routerStore().clienteID,
-    null,
-    null,
-    props.estados
+    routerStore().clienteID
   );
-  series.value = formatoVariables;
+
+  let lotesFungicidas = [];
+  let valores = [
+    {
+      name: "Lotes Fungicidas",
+      data: [...lotesCliente],
+    },
+  ];
+  let index = 0;
+  for (let lotefungicida of props.lotesfungicidas) {
+    lotesFungicidas[index] = await obtenerDatosVariableGeneral(
+      "24H",
+      "registros",
+      "multiple",
+      "formatoLotesFungicida",
+      [lotefungicida, props.nombresproductos[index]],
+      maquinaID,
+      routerStore().clienteID
+    );
+    valores[0].data = [...valores[0].data, ...lotesFungicidas[index]];
+    index++;
+  }
+  series.value = valores;
 };
 
 watch(
@@ -173,16 +179,13 @@ onMounted(async () => {
   cargado.value = false;
   await cargarDatos();
   cargado.value = true;
-  interval = setInterval(async () => {
+  interval = setInterval(() => {
     cargarDatos();
-    // if (chartRef.value) {
-    //   chartRef.value.updateSeries(formatoVariable);
-    //   if (lastZoom) chartRef.value.zoomX(lastZoom[0], lastZoom[1]);
-    // }
   }, 90000);
 });
 
 onUnmounted(() => {
   clearInterval(interval);
+  series.value = [];
 });
 </script>

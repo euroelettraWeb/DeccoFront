@@ -9,23 +9,14 @@
       <v-card v-if="mostrar">
         <v-row no-gutters>
           <v-col v-if="cargado">
-            <v-chip
-              v-if="noData"
-              class="ma-2"
-              color="pink"
-              label
-              text-color="white"
-            >
-              <v-icon left> mdi-alert </v-icon>
-              Sin datos
-            </v-chip>
             <ApexChart
-              v-else
               ref="chartRef"
-              type="rangeBar"
+              class="custom-legend"
+              type="line"
               :height="props.height"
               :options="chartOptions"
               :series="series"
+              @mounted="graficoMontado"
             />
           </v-col>
           <v-col v-else class="d-flex justify-center align-center">
@@ -43,7 +34,7 @@
 </template>
 <script>
 export default {
-  name: "GraficasEstado",
+  name: "GraficasLinea",
 };
 </script>
 <script setup>
@@ -51,94 +42,75 @@ import {
   obtenerMaquina,
   obtenerDatosVariableGeneral,
 } from "../../../helpers/bd";
-import { onMounted, ref, computed, onUnmounted, watch } from "vue";
+import { onMounted, onUnmounted, ref, computed, watch } from "vue";
 import es from "apexcharts/dist/locales/es.json";
 import moment from "moment";
 import { routerStore } from "../../../stores/index";
 
 const chartRef = ref(null);
-let lastZoom = null;
 let interval = null;
+let lastZoom = null;
 const cargado = ref(false);
 const mostrar = ref(true);
 const series = ref([]);
-const chartOptions = computed(() => {
-  return {
-    chart: {
-      id: "grafica estado " + props.title,
-      type: "rangeBar",
-      locales: [es],
-      defaultLocale: "es",
-      animations: { enabled: false },
-      events: {
-        beforeResetZoom: function () {
-          lastZoom = null;
-        },
-        zoomed: function (_, value) {
-          lastZoom = [value.xaxis.min, value.xaxis.max];
-        },
-      },
-    },
-    plotOptions: {
-      bar: {
-        horizontal: true,
-        rangeBarGroupRows: true,
-        barHeight: "50%",
-      },
-    },
-    colors: [
-      function ({ value, seriesIndex, w }) {
-        if (seriesIndex == 0) {
-          return props.colores[0];
-        } else {
-          return props.colores[1];
-        }
-      },
-    ],
-    xaxis: {
-      type: "datetime",
-      datetimeUTC: false,
-      tickAmount: 20,
-      categories: props.categories,
-      labels: {
-        minHeight: 125,
-        rotate: -45,
-        rotateAlways: true,
-        formatter: function (value, timestamp) {
-          return moment.utc(value).format("DD/MM/YYYY HH:mm:ss");
-        },
-      },
-    },
-    yaxis: {
-      labels: {
-        minWidth: 60,
-      },
-    },
-    tooltip: {
-      x: {
-        format: "dd/MM/yyyy HH:mm:ss",
-      },
-    },
-    legend: {
-      height: 20,
-    },
-  };
-});
 
 const props = defineProps({
   variables: { type: Array, default: () => [] },
   title: { type: String, default: "" },
   height: { type: Number, default: 300 },
   tipo: { type: Number, default: 1 },
-  colores: { type: Array, default: () => ["#d50000", "#00c853"] },
-  estados: { type: Array, default: () => ["Paro", "Marcha"] },
-  categories: { type: Array, default: () => [] },
+  tipodatos: { type: String, default: "formatoLinea" },
+  labelvar: { type: String, default: "" },
 });
 
-const noData = computed(() => {
-  return (
-    cargado.value && series.value.every((objeto) => objeto.data.length === 0)
-  );
+const chartOptions = computed(() => {
+  return {
+    chart: {
+      id: props.title,
+      locales: [es],
+      defaultLocale: "es",
+      animations: { enabled: false },
+      zoom: {
+        type: "xy",
+        autoScaleYaxis: true,
+      },
+    },
+    xaxis: {
+      type: "datetime",
+      datetimeUTC: false,
+      tickAmount: 25,
+      labels: {
+        minHeight: 125,
+        rotate: -45,
+        rotateAlways: true,
+        formatter: function (value) {
+          return moment.utc(value).format("DD/MM/yyyy HH:mm:ss");
+        },
+      },
+    },
+    yaxis: {
+      min: 0,
+      axisTicks: {
+        show: true,
+      },
+      axisBorder: {
+        show: true,
+      },
+      labels: {
+        minWidth: 60,
+        formatter: function (val) {
+          return val.toFixed(2);
+          // return val;
+        },
+      },
+    },
+    stroke: {
+      width: 1.9,
+    },
+    legend: {
+      showForSingleSeries: true,
+    },
+  };
 });
 
 const cargarDatos = async () => {
@@ -149,15 +121,41 @@ const cargarDatos = async () => {
     "24H",
     "registros",
     "individual",
-    "formatoRangos",
+    props.tipodatos,
     props.variables,
     maquinaID,
     routerStore().clienteID,
     null,
     null,
-    props.estados
+    props.labelvar
   );
   series.value = formatoVariables;
+};
+
+// const determinarModoTrabajo = (posicion) => {
+
+// };
+
+const actualizarModosTrabajo = () => {
+  if (chartRef.value) {
+    const chart = chartRef.value.chart;
+    // let modoActual = determinarModoTrabajo(0);
+    let modosTrabajo = [];
+    // console.log("Series", series.value);
+    // for () {
+
+    // }
+
+    chart.updateOptions({
+      annotations: {
+        xaxis: modosTrabajo,
+      },
+    });
+  }
+};
+
+const graficoMontado = () => {
+  actualizarModosTrabajo();
 };
 
 watch(
@@ -173,6 +171,7 @@ onMounted(async () => {
   cargado.value = false;
   await cargarDatos();
   cargado.value = true;
+
   interval = setInterval(async () => {
     cargarDatos();
     // if (chartRef.value) {
@@ -186,3 +185,41 @@ onUnmounted(() => {
   clearInterval(interval);
 });
 </script>
+
+<style>
+.custom-legend .apexcharts-legend-series {
+  padding: 7px;
+}
+
+.custom-legend .apexcharts-legend-series[rel="1"] {
+  background-color: #ff6955aa;
+}
+
+.custom-legend .apexcharts-legend-series[rel="2"] {
+  background-color: #ff6955aa;
+}
+
+.custom-legend .apexcharts-legend-series[rel="3"] {
+  background-color: #55ff96aa;
+}
+
+.custom-legend .apexcharts-legend-series[rel="4"] {
+  background-color: #55ff96aa;
+}
+
+.custom-legend .apexcharts-legend-series[rel="5"] {
+  background-color: #55ff96aa;
+}
+
+.custom-legend .apexcharts-legend-series[rel="6"] {
+  background-color: #55ff96aa;
+}
+
+.custom-legend .apexcharts-legend-series[rel="7"] {
+  background-color: #55ff96aa;
+}
+
+.custom-legend .apexcharts-legend-series[rel="8"] {
+  background-color: #fff955aa;
+}
+</style>

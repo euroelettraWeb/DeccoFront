@@ -4,7 +4,9 @@
       <v-col cols="10">
         <v-card>
           <v-row
-            ><v-col><v-card-title>Editar Cliente</v-card-title></v-col></v-row
+            ><v-col>
+              <v-card-title class="display-1">Editar Cliente</v-card-title>
+            </v-col></v-row
           >
           <v-row
             ><v-col><EditClienteForm /></v-col

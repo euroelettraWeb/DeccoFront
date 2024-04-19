@@ -2,12 +2,14 @@
   <v-app app>
     <BarraAplicacion />
     <MenuNavegacion />
-    <span class="bg"></span>
+    <!-- <span class="bg"></span> -->
     <v-main>
       <!-- If using vue-router -->
       <router-view></router-view>
     </v-main>
-    <v-footer app> &copy; Euroelettra Ingeniería {{ yyyy }} </v-footer>
+    <v-footer app>
+      &copy; {{ yyyy }} Gest-Prod<sup>&reg;</sup> by Euroelettra Ingeniería
+    </v-footer>
   </v-app>
 </template>
 

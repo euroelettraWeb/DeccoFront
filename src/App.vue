@@ -21,6 +21,37 @@ import MainView from "./views/MainView.vue";
   -ms-overflow-style: none;
 } */
 
+@font-face {
+  font-family: "Gellix Light";
+  src: url("./assets/fonts/gellix-7.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gellix Medium";
+  src: url("./assets/fonts/Gellix-Medium.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.v-application {
+  font-family: "Gellix Light", sans-serif !important;
+}
+
+.v-application b,
+strong,
+span[style*="font-weight: bold"] {
+  font-family: "Gellix Medium", sans-serif !important;
+}
+
+.titulo {
+  font-size: 2.125rem !important;
+  line-height: 2.5rem;
+  font-weight: 400;
+  font-family: "Gellix Medium", sans-serif !important;
+}
+
 html::-webkit-scrollbar {
   width: 0;
   height: 0;
@@ -39,7 +70,7 @@ html::-webkit-scrollbar {
 
 /* width */
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 10px;
 }
 
 /* Track */

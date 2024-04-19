@@ -2,7 +2,12 @@
   <v-app-bar app color="primary" dark>
     <v-app-bar-nav-icon @click="nav.displayMensaje"></v-app-bar-nav-icon>
 
-    <v-toolbar-title>GestProd</v-toolbar-title>
+    <v-toolbar-title
+      ><v-img
+        max-width="40"
+        src="../../assets/Decco_Horizontal_Logo_Mono_White_RGB.png"
+      ></v-img
+    ></v-toolbar-title>
 
     <v-spacer></v-spacer>
 
@@ -42,22 +47,26 @@ export default {
 import { ref, onMounted, computed, watchEffect } from "vue";
 import { obtenerCliente, obtenerLinea } from "../../helpers/bd";
 import { userStore, navStore, routerStore } from "../../stores/index";
-import io from "socket.io-client";
+// import io from "socket.io-client";
 
 const user = userStore();
 const nav = navStore();
-const socket = io(process.env.VUE_APP_RUTA_API);
+// const socket = io(process.env.VUE_APP_RUTA_API);
 const nombreLinea = ref("");
 const nombreCliente = ref("");
 const maquina = computed(() => {
   switch (routerStore().maquina) {
     case "Historico":
       return routerStore().maquina;
+    case "Clientes":
+      return "";
     case "Variables":
       return routerStore().maquina;
     case "Lineas":
       return routerStore().maquina;
     case "Home":
+      return "";
+    case "GestionUsuarios":
       return "";
     default:
       return (
@@ -71,7 +80,7 @@ const maquina = computed(() => {
 });
 
 const logout = () => {
-  socket.emit("logoutCliente");
+  // socket.emit("logoutCliente");
   user.logout();
 };
 onMounted(async () => {
@@ -79,11 +88,15 @@ onMounted(async () => {
     switch (routerStore().maquina) {
       case "Historico":
         return routerStore().maquina;
+      case "Clientes":
+        return "";
       case "Variables":
         return routerStore().maquina;
       case "Lineas":
         return routerStore().maquina;
       case "Home":
+        return "";
+      case "GestionUsuarios":
         return "";
       default:
         if (routerStore().lineasID != null) {

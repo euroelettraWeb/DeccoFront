@@ -7,7 +7,7 @@
     class="accent-4"
   >
     <v-list>
-      <v-list-item>
+      <!-- <v-list-item>
         <v-list-item-avatar>
           <v-img src="../../assets/logo_cliente.png"></v-img>
         </v-list-item-avatar>
@@ -18,6 +18,9 @@
             ><i>More. Beautiful. Fresh.</i></v-list-item-subtitle
           >
         </v-list-item-content>
+      </v-list-item> -->
+      <v-list-item class="pl-2">
+        <v-img src="../../assets/DECCO2023.png"></v-img>
       </v-list-item>
     </v-list>
 
@@ -39,6 +42,20 @@
     <v-divider></v-divider>
 
     <v-list-item
+      v-if="
+        userStore().rol === 'ADMINISTRADOR' || userStore().rol === 'Comercial'
+      "
+      link
+      @click="routerStore().menu('clientes', routerStore().clienteID, 0)"
+    >
+      <v-list-item-icon>
+        <v-icon>mdi-home</v-icon>
+      </v-list-item-icon>
+      <v-list-item-title>Clientes</v-list-item-title>
+    </v-list-item>
+
+    <v-list-item
+      v-else
       link
       @click="routerStore().menu('home', routerStore().clienteID, 0)"
     >
@@ -47,6 +64,7 @@
       </v-list-item-icon>
       <v-list-item-title>Home</v-list-item-title>
     </v-list-item>
+
     <v-list nav>
       <v-list-item-group active-class="red--text text--accent-4">
         <v-list-group v-if="userStore().usuarioValido && stateLineas">
@@ -128,6 +146,16 @@
             <v-icon>mdi-account</v-icon>
           </v-list-item-icon>
           <v-list-item-title>Variables</v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          v-if="userStore().rol === 'ADMINISTRADOR'"
+          link
+          @click="routerStore().menu('gestionUsuarios', 0, 0)"
+        >
+          <v-list-item-icon>
+            <v-icon>mdi-shield-account-variant</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>Gestión de usuarios</v-list-item-title>
         </v-list-item>
         <v-list-item
           v-if="!userStore().usuarioValido"

@@ -3,15 +3,17 @@
     <v-row justify="center">
       <v-col>
         <v-card>
-          <v-card-title>Nuevo Cliente</v-card-title>
+          <v-card-title class="display-1">Nuevo Cliente</v-card-title>
           <v-form ref="form">
             <v-container>
+              <v-card-title class="headline">Datos Cliente</v-card-title>
               <v-row>
                 <v-col>
                   <v-text-field
                     v-model="nombre"
                     label="Nombre"
                     required
+                    outlined
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -21,12 +23,39 @@
                     v-model="src"
                     label="src"
                     :rules="rules"
+                    outlined
                   ></v-text-field>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col>
-                  <v-text-field v-model="ip" label="IP" required></v-text-field>
+                  <v-text-field
+                    v-model="usuario"
+                    label="Usuario (App)"
+                    required
+                    outlined
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    v-model="contraseña"
+                    label="Contraseña (App)"
+                    required
+                    outlined
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-card-title class="headline">Datos PLC</v-card-title>
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    v-model="ip"
+                    label="IP"
+                    required
+                    outlined
+                  ></v-text-field>
                 </v-col>
               </v-row>
               <v-row>
@@ -35,24 +64,27 @@
                     v-model="puerto"
                     label="Puerto"
                     required
+                    outlined
                   ></v-text-field>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col>
                   <v-text-field
-                    v-model="usuario"
-                    label="Usuario"
+                    v-model="usuarioPLC"
+                    label="UsuarioPLC (PLC)"
                     required
+                    outlined
                   ></v-text-field>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col>
                   <v-text-field
-                    v-model="contraseña"
-                    label="Contraseña"
+                    v-model="contraseñaPLC"
+                    label="ContraseñaPLC (PLC)"
                     required
+                    outlined
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -60,20 +92,21 @@
                 <v-col>
                   <v-text-field
                     v-model="descripcion"
-                    label="Descripcion PLC"
+                    label="Descripcion (PLC)"
                     :rules="rules"
+                    outlined
                   ></v-text-field>
                 </v-col>
               </v-row>
-              <v-row
-                ><v-col>
-                  <v-btn color="info" class="mr-4" @click="validate">
-                    <v-icon light> mdi-content-save </v-icon> Guardar
+              <v-row justify="space-between">
+                <v-col cols="5">
+                  <v-btn color="error" class="mr-4" block @click="reset">
+                    Limpiar
                   </v-btn>
                 </v-col>
-                <v-col>
-                  <v-btn color="error" class="mr-4" @click="reset">
-                    Limpiar
+                <v-col cols="5">
+                  <v-btn color="info" class="mr-4" block @click="validate">
+                    <v-icon light> mdi-content-save </v-icon> Guardar
                   </v-btn>
                 </v-col>
               </v-row>
@@ -84,6 +117,7 @@
     </v-row>
   </v-container>
 </template>
+
 <script>
 export default {
   name: "NuevoClienteForm",
@@ -93,13 +127,16 @@ export default {
 import axios from "axios";
 import { routerStore } from "../../stores/index";
 import { ref } from "vue";
+import CryptoJS from "crypto-js";
 const nombre = ref("");
 const src = ref("");
 const form = ref(null);
-const ip = ref("");
-const puerto = ref("");
 const usuario = ref("");
 const contraseña = ref("");
+const ip = ref("");
+const puerto = ref("");
+const usuarioPLC = ref("");
+const contraseñaPLC = ref("");
 const descripcion = ref("");
 let rules = [
   (v) => {
@@ -118,9 +155,16 @@ async function validate() {
     await axios.post(`${process.env.VUE_APP_RUTA_API}/plcs/nuevo`, {
       ip: ip.value,
       puerto: puerto.value,
-      usuario: usuario.value != "" ? usuario.value : "NULL",
-      password: contraseña.value != "" ? contraseña.value : "NULL",
+      usuario: usuarioPLC.value != "" ? usuarioPLC.value : "NULL",
+      password: contraseñaPLC.value != "" ? contraseñaPLC.value : "NULL",
       descripcion: descripcion.value,
+      clienteID: dataCliente[0].id,
+    });
+    await axios.post(`${process.env.VUE_APP_RUTA_API}/usuarios/nuevo`, {
+      usuario: usuario.value,
+      nombre: nombre.value,
+      password: CryptoJS.MD5(contraseña.value).toString(),
+      rol: "Cliente",
       clienteID: dataCliente[0].id,
     });
     routerStore().clienteID = dataCliente[0].id;

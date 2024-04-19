@@ -2,24 +2,31 @@
   <v-card>
     <v-row>
       <v-col v-if="cargado">
-        <v-card-title>Consumo Hoy</v-card-title>
+        <v-card-title>
+          <strong>Consumo Hoy</strong>
+        </v-card-title>
+        <v-card-subtitle>{{ hoy }} (00:00:00 - Actual)</v-card-subtitle>
         <v-simple-table dense>
           <template #default>
             <thead>
               <tr>
                 <th class="text-left"></th>
-                <th>L</th>
-                <th>Litros/Tonelada</th>
+                <th class="text-right">Litros</th>
+                <th class="text-right">Litros/Tonelada</th>
+                <th class="text-right">Última hora</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="item in consumos" :key="item.id">
                 <td>{{ item.nombre }}</td>
-                <td>
+                <td class="text-right">
                   {{ item.total }}
                 </td>
-                <td v-if="deccodos">
+                <td v-if="deccodos" class="text-right">
                   {{ item.totalFruta }}
+                </td>
+                <td class="text-right">
+                  {{ item.ultimaHora }}
                 </td>
               </tr>
             </tbody>
@@ -47,7 +54,7 @@ import {
   obtenerDatosVariableGeneral,
   obtenerMaquina,
 } from "../../../helpers/bd";
-import { onMounted, ref, onUnmounted } from "vue";
+import { onMounted, ref, onUnmounted, computed, watch } from "vue";
 import { routerStore } from "../../../stores/index";
 
 const consumos = ref([]);
@@ -60,9 +67,7 @@ const props = defineProps({
   tipo: { type: Number, default: 1 },
 });
 
-onMounted(async () => {
-  cargado.value = false;
-
+const cargarDatos = async () => {
   let maquinaID = (
     await obtenerMaquina("lineaTipo", routerStore().lineasID, props.tipo)
   )[0].id;
@@ -71,6 +76,15 @@ onMounted(async () => {
   )[0].id;
   let totalesBD = await obtenerDatosVariableGeneral(
     "24H",
+    "totales",
+    "individual",
+    "sinfiltro",
+    props.variables,
+    maquinaID,
+    routerStore().clienteID
+  );
+  let ultimaHora = await obtenerDatosVariableGeneral(
+    "ultimaHora",
     "totales",
     "individual",
     "sinfiltro",
@@ -89,8 +103,10 @@ onMounted(async () => {
       deccodos.value,
       routerStore().clienteID
     );
+    consumos.value = [];
     for (let index = 0; index < totalesBD.length; index++) {
       const element = totalesBD[index];
+      const elementUltimaHora = ultimaHora[index];
       let n = Math.max(0, element.registros[0].total);
       let d =
         totalesFruta[0].registros[0].total > 0
@@ -103,6 +119,10 @@ onMounted(async () => {
         nombre: element.descripcion,
         total: Math.max(0, element.registros[0].total).toLocaleString("es-ES"),
         totalFruta: d.toLocaleString("es-ES"),
+        ultimaHora: Math.max(
+          0,
+          elementUltimaHora.registros[0].total
+        ).toLocaleString("es-ES"),
       });
     }
     consumos.value.push({
@@ -114,96 +134,52 @@ onMounted(async () => {
       ).toLocaleString("es-ES"),
     });
   } else {
+    consumos.value = [];
     for (let index = 0; index < totalesBD.length; index++) {
       const element = totalesBD[index];
+      const elementUltimaHora = ultimaHora[index];
       consumos.value.push({
         id: index,
         nombre: element.descripcion,
         total: Math.max(0, element.registros[0].total)
           .toFixed(3)
           .toLocaleString("es-ES"),
+        ultimaHora: Math.max(0, elementUltimaHora.registros[0].total)
+          .toFixed(3)
+          .toLocaleString("es-ES"),
       });
     }
   }
+};
 
-  cargado.value = true;
-  interval = setInterval(async () => {
-    let totalesBD = await obtenerDatosVariableGeneral(
-      "24H",
-      "totales",
-      "individual",
-      "sinfiltro",
-      props.variables,
-      maquinaID,
-      routerStore().clienteID
-    );
-
-    if (deccodos.value) {
-      let totalesFruta = await obtenerDatosVariableGeneral(
-        "24H",
-        "totales",
-        "individual",
-        "sinfiltro",
-        [48],
-        deccodos.value,
-        routerStore().clienteID
-      );
-      for (let index = 0; index < totalesBD.length; index++) {
-        const element = totalesBD[index];
-        let n = Math.max(0, element.registros[0].total);
-        let d =
-          totalesFruta[0].registros[0].total > 0
-            ? (n / (totalesFruta[0].registros[0].total / 1000)).toLocaleString(
-                "es-ES"
-              )
-            : 0;
-        consumos.value[index] = {
-          id: index,
-          nombre: element.descripcion,
-          totalFruta: d,
-          total: Math.max(0, element.registros[0].total).toLocaleString(
-            "es-ES"
-          ),
-        };
-      }
-      totalesFruta[0].registros[0].total =
-        totalesFruta[0].registros[0].total / 1000;
-      consumos.value.pop();
-      consumos.value.push({
-        id: totalesBD.length,
-        nombre: "T Fruta",
-        total: totalesFruta[0].registros[0].total.toLocaleString("es-ES"),
-      });
-    } else {
-      for (let index = 0; index < totalesBD.length; index++) {
-        const element = totalesBD[index];
-        consumos.value[index] = {
-          id: index,
-          nombre: element.descripcion,
-          total: Math.max(0, element.registros[0].total).toLocaleString(
-            "es-ES"
-          ),
-        };
-      }
-    }
-
-    // let horasMarcha = await obtenerDatosVariableGeneral(
-    //   "24H",
-    //   "registros",
-    //   "multiple",
-    //   "totalMarcha",
-    //   props.marcha,
-    //   maquinaID,
-    //   routerStore().clienteID
-    // );
-    // consumos.value.pop();
-    // consumos.value.push({
-    //   id: unidades.value.length,
-    //   name: Math.max(0, Math.round(horasMarcha.total / 60)),
-    // });
-  }, 3000);
+const hoy = computed(() => {
+  const fechaActual = new Date();
+  const dia = fechaActual.getDate().toString().padStart(2, "0");
+  const mes = (fechaActual.getMonth() + 1).toString().padStart(2, "0");
+  const año = fechaActual.getFullYear();
+  return `${dia}/${mes}/${año}`;
 });
+
+watch(
+  () => routerStore().lineasID,
+  async () => {
+    cargado.value = false;
+    await cargarDatos();
+    cargado.value = true;
+  }
+);
+
+onMounted(async () => {
+  cargado.value = false;
+  await cargarDatos();
+  cargado.value = true;
+  interval = setInterval(() => {
+    cargarDatos();
+  }, 9000);
+});
+
 onUnmounted(() => {
   clearInterval(interval);
+  consumos.value = [];
 });
 </script>

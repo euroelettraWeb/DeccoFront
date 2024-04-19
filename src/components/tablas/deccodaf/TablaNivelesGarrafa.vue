@@ -66,18 +66,15 @@ import {
   obtenerDatosVariableGeneral,
   obtenerMaquina,
 } from "../../../helpers/bd";
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { routerStore } from "../../../stores/index";
 
+let interval = null;
 let niveles = ref([]);
 let cargado = ref(false);
 let mostrar = ref(true);
 
-onMounted(async () => {
-  cargado.value = false;
-  let maquinaID = (
-    await obtenerMaquina("lineaTipo", routerStore().lineasID, 1)
-  )[0].id;
+const cargarDatos = async (maquinaID) => {
   let nivel = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -88,6 +85,7 @@ onMounted(async () => {
     routerStore().clienteID
   );
 
+  niveles.value = [];
   for (let index = 0; index < nivel.length; index++) {
     let e = nivel[index].registros;
     niveles.value.push({
@@ -96,6 +94,22 @@ onMounted(async () => {
       n1: Math.max(0, Math.round(e.total1 / 60)),
     });
   }
+};
+
+onMounted(async () => {
+  cargado.value = false;
+  let maquinaID = (
+    await obtenerMaquina("lineaTipo", routerStore().lineasID, 1)
+  )[0].id;
+  await cargarDatos(maquinaID);
   cargado.value = true;
+  interval = setInterval(() => {
+    cargarDatos(maquinaID);
+  }, 90000);
+});
+
+onUnmounted(() => {
+  clearInterval(interval);
+  niveles.value = [];
 });
 </script>

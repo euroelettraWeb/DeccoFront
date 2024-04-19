@@ -1,215 +1,296 @@
 <template>
-  <v-row no-gutters>
-    <v-col>
-      <v-card>
-        <v-row no-gutters>
-          <v-col>
-            <v-card-title> DECCODAF </v-card-title>
-          </v-col>
-        </v-row>
-        <v-row class="mb-2">
-          <v-col><v-btn @click="fechas">Fechas</v-btn></v-col>
-          <v-col><v-btn @click="lotesMode">Lotes</v-btn></v-col>
-        </v-row>
-        <v-row v-if="cargadoLotesChoose" class="mb-2">
-          <v-col><v-btn @click="select('cliente')">Cliente</v-btn></v-col>
-          <v-col><v-btn @click="select('Decco')">Decco</v-btn></v-col>
-        </v-row>
-        <v-row class="pl-8" no-gutters>
-          <v-col cols="8"
-            ><div v-if="cargadoFechas">
-              <date-picker
-                class="selectdates"
-                apply-button-label="Use"
-                :date-input="dateInput"
-                :format="'DD MM YYYY HH:mm'"
-                :same-date-format="sameDateFormat"
-                :switch-button-initial="true"
-                :calendar-time-input="{ readonly: true }"
-                :disabled-dates="{ from: new Date() }"
-                @date-applied="historico"
-                @on-reset="onReset"
-              />
-              <div v-if="cargadoLotesSelect">
-                <v-select :items="lotes" @click="lotesChoose"></v-select>
-                <v-select
-                  v-if="mostrarAplicaciones"
-                  :items="aplicaciones"
-                  @click="lotesAplicaciones"
-                ></v-select>
-                <v-btn v-if="mostrarAplicaciones" @click="mostrarTodo"
-                  >Todo</v-btn
-                >
-              </div>
-            </div></v-col
+  <v-card>
+    <v-card-title>DECCODAF</v-card-title>
+    <v-card-text>
+      <v-row>
+        <v-col cols="6">
+          <v-btn
+            :color="cargadoFechas ? 'blue' : 'gainsboro'"
+            class="mr-2"
+            :disabled="cargadoFechas"
+            @click="fechas"
           >
-          <v-col
-            ><v-btn @click="print()"><v-icon>mdi-file-pdf-box</v-icon></v-btn
-            ><v-btn @click="toExcel()"
-              ><v-icon>mdi-microsoft-excel</v-icon></v-btn
-            ></v-col
+            Fechas
+          </v-btn>
+          <v-btn
+            :color="cargadoLotesChoose ? 'blue' : 'gainsboro'"
+            class="ml-2"
+            :disabled="cargadoLotesChoose"
+            @click="lotesMode"
           >
-        </v-row>
-        <v-row>
-          <v-col v-if="datosLote">
-            <h2>{{ loteActual }}</h2>
-            <h3>{{ inicio }} {{ fin }}</h3>
-          </v-col>
-        </v-row>
-        <v-row v-if="cargado" no-gutters>
-          <v-col>
-            <v-row>
-              <v-col v-if="cargadoConsumos">
-                <v-card-title>Consumos</v-card-title>
-                <v-simple-table dense>
-                  <template #default>
-                    <thead>
-                      <tr>
-                        <th></th>
-                        <th>L</th>
-                        <th v-if="deccodos">Litros/Tonelada</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="item in consumos" :key="item.id">
-                        <td>
-                          {{ item.nombre }}
-                        </td>
-                        <td>
-                          {{ item.total }}
-                        </td>
-                        <td v-if="deccodos">
-                          {{ item.totalPorToneladaFruta }}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </template>
-                </v-simple-table>
-              </v-col>
-              <v-col v-else class="d-flex justify-center align-center">
-                <v-progress-circular
-                  :size="100"
-                  :width="7"
-                  color="purple"
-                  indeterminate
-                ></v-progress-circular>
-              </v-col>
-              <v-col v-if="cargadoAlarmas">
-                <v-card-title>Alarmas (min)</v-card-title>
-                <v-simple-table dense>
-                  <template #default>
-                    <tbody>
-                      <tr v-for="alarmaItem in alarmas" :key="alarmaItem.id">
-                        <td>{{ alarmaItem.nombre }}</td>
-                        <td>
-                          {{ alarmaItem.name }}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </template>
-                </v-simple-table>
-                <v-card-title>Tiempo de funcionamiento (min)</v-card-title>
-                <v-simple-table dense>
-                  <template #default>
-                    <thead>
-                      <tr>
-                        <th class="text-left"></th>
-                        <th>Min</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="tiempoItem in tiempos" :key="tiempoItem.id">
-                        <td>{{ tiempoItem.nombre }}</td>
-                        <td>
-                          {{ tiempoItem.name }}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </template>
-                </v-simple-table>
-              </v-col>
-              <v-col v-else class="d-flex justify-center align-center">
-                <v-progress-circular
-                  :size="100"
-                  :width="7"
-                  color="purple"
-                  indeterminate
-                ></v-progress-circular> </v-col
-            ></v-row>
-            <GraficoEstadoCardGen
-              v-if="cargado && cargadoFechas"
-              :serie="seriesLotes"
-              title="Lotes"
-              :colores="['#00c853', '#d50000']"
-              :tooltipy="true"
-              :legend="true"
-              :cargado="cargadoLotes"
-            />
-            <GraficoEstadoCardGen
-              :serie="seriesEstado"
-              title="Estado"
-              :categories="[
-                'Activo',
-                'MarchaParo',
-                'Remoto',
-                'Manual',
-                'Falta de consenso',
-              ]"
-              :tooltipy="false"
-              :legend="false"
-              :cargado="cargadoEstado"
-            />
-            <GraficoEstadoCardGen
-              :serie="seriesAlarmas"
-              title="Alarmas"
-              :colores="['#00c853', '#d50000']"
-              :categories="[
-                'Falta Inicio Ciclo',
-                'Tope Palets Alcanzado',
-                'Termico Agitador',
-                'Fallo Agua',
-                'Fallo Aire',
-                'Agitador',
-              ]"
-              :tooltipy="false"
-              :legend="false"
-              :cargado="cargadoAlarmasG"
-            />
-            <GraficoLineaCardGen
-              :serie="seriesDosis"
-              title="Dosis"
-              :cargado="cargadoDosis"
-            />
-            <FrutaProcesadaHistorico
-              v-if="deccodos"
-              :serie="seriesFruta"
-              title="Kilos"
-              :cargado="cargadoFruta"
-            />
-            <GraficoEstadoCardGen
-              :serie="seriesNiveles"
-              title="Estado de los niveles y bidon"
-              :tooltipy="true"
-              :legend="true"
-              :categories="[
-                'Nivel Garrafa P1',
-                'Nivel Garrafa P2',
-                'Nivel Garrafa P3',
-                'Nivel Garrafa P4',
-                'Nivel Garrafa P5',
-                'Flujo de producto P1',
-                'Flujo de producto P2',
-                'Flujo de producto P3',
-                'Flujo de producto P4',
-                'Flujo de producto P5',
-              ]"
-              :cargado="cargadoNiveles"
-            />
-          </v-col>
-        </v-row>
-      </v-card>
-    </v-col>
-  </v-row>
+            Lotes
+          </v-btn>
+        </v-col>
+        <v-col v-if="cargadoLotesChoose" cols="6">
+          <v-btn
+            :color="modoConsultaLotes === 'cliente' ? 'blue' : 'gainsboro'"
+            class="mr-2"
+            @click="select('cliente')"
+          >
+            Cliente
+          </v-btn>
+          <v-btn
+            :color="modoConsultaLotes === 'decco' ? 'blue' : 'gainsboro'"
+            class="ml-2"
+            @click="select('decco')"
+          >
+            Decco
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-row v-if="modoConsultaLotes">
+        <v-col>
+          <div class="text-subtitle">Lote seleccionado</div>
+          <v-select
+            v-if="cargadoLotesSelect"
+            v-model="loteActual"
+            label="Seleccionar lote"
+            :items="lotes"
+            hide-details
+            hide-selected
+            item-text="lote"
+            item-value="id"
+            dense
+            solo
+            @change="lotesChoose"
+          />
+        </v-col>
+        <v-col>
+          <div class="text-subtitle">Tramo de aplicación</div>
+          <v-select
+            v-if="mostrarAplicaciones"
+            v-model="aplicacionActual"
+            label="Elegir tramo de aplicación del lote seleccionado"
+            :items="aplicaciones"
+            hide-details
+            hide-selected
+            item-text="name"
+            item-value="id"
+            dense
+            solo
+            return-object
+            @change="lotesAplicaciones"
+          />
+        </v-col>
+      </v-row>
+      <v-row v-if="cargadoFechas">
+        <v-col cols="6">
+          <date-picker
+            class="selectdates"
+            language="es"
+            apply-button-label="Consultar"
+            switch-button-label="Dia y hora"
+            :date-input="dateInput"
+            :format="'DD/MM/YYYY HH:mm'"
+            :same-date-format="sameDateFormat"
+            :is-monday-first="true"
+            :switch-button-initial="true"
+            :calendar-time-input="{ readonly: true, step: 1 }"
+            :calendar-date-input="calendarDateInput"
+            :disabled-dates="{ from: new Date() }"
+            @date-applied="historico"
+            @on-reset="onReset"
+          />
+        </v-col>
+        <v-col v-if="cargado" cols="6" class="text-right">
+          <v-btn color="red" class="mr-2" @click="print()">
+            <v-icon>mdi-file-pdf-box</v-icon>
+            PDF
+          </v-btn>
+          <v-btn color="green" @click="toExcel()">
+            <v-icon>mdi-microsoft-excel</v-icon>
+            EXCEL
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-row v-if="cargado">
+        <v-col v-if="cargadoConsumos" cols="6">
+          <v-card>
+            <v-card-title>Consumos</v-card-title>
+            <v-card-text>
+              <v-simple-table dense>
+                <template #default>
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th class="text-right">Litros</th>
+                      <th class="text-right">Litros/Tonelada</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="item of consumos" :key="item.id">
+                      <td>
+                        {{ item.nombre }}
+                      </td>
+                      <td class="text-right">
+                        {{ item.total }}
+                      </td>
+                      <td v-if="deccodos" class="text-right">
+                        {{ item.totalPorToneladaFruta }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-card-text>
+          </v-card>
+        </v-col>
+
+        <v-col v-if="cargadoAlarmas" cols="6">
+          <v-card>
+            <v-card-title>Alarmas (min)</v-card-title>
+            <v-card-text>
+              <v-simple-table dense>
+                <template #default>
+                  <tbody>
+                    <tr v-for="alarmaItem of alarmas" :key="alarmaItem.id">
+                      <td>{{ alarmaItem.nombre }}</td>
+                      <td class="text-right">
+                        {{ alarmaItem.name }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-card-text>
+            <v-card-title>Tiempo de funcionamiento (min)</v-card-title>
+            <v-card-text>
+              <v-simple-table dense>
+                <template #default>
+                  <tbody>
+                    <tr v-for="tiempoItem in tiempos" :key="tiempoItem.id">
+                      <td>{{ tiempoItem.nombre }}</td>
+                      <td class="text-right">
+                        {{ tiempoItem.name }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col cols="12">
+          <GraficoConsumoPorMeses
+            :serie="totalesConsumo"
+            title="Consumo"
+            :rangos-fechas="rangoFechas"
+            :cargado="cargadoConsumos"
+          />
+          <GraficoEstadoCardGen
+            :serie="seriesLotes"
+            :height="calcularAltura"
+            title="Lotes"
+            :colores="[]"
+            :tooltipy="true"
+            :legend="false"
+            :cargado="cargadoLotes"
+          />
+          <GraficoEstadoCardGen
+            :serie="seriesEstado"
+            title="Estado"
+            :categories="[
+              'Activo',
+              'MarchaParo',
+              'Remoto',
+              'Manual',
+              'Falta de consenso',
+            ]"
+            :tooltipy="false"
+            :legend="false"
+            :cargado="cargadoEstado"
+          />
+          <GraficoEstadoCardGen
+            :serie="seriesAlarmas"
+            title="Alarmas"
+            :colores="['#00c853', '#d50000']"
+            :categories="[
+              'Fallo Agua',
+              'Termico Agitador',
+              'Tope Palets Alcanzado',
+              'No hay presión aire',
+            ]"
+            :tooltipy="false"
+            :legend="false"
+            :cargado="cargadoAlarmasG"
+          />
+
+          <GraficoEstadoCardGen
+            :serie="seriesUsuario"
+            :height="190"
+            title="Usuarios"
+            :colores="[]"
+            :tooltipy="true"
+            :legend="false"
+            :cargado="cargadoUsuario"
+          />
+
+          <GraficoEstadoCardGen
+            :colores="['#d50000', '#00c853']"
+            :tooltipy="false"
+            :legend="false"
+            :serie="seriesReposiciones"
+            :height="350"
+            title="Reposiciones"
+            :categories="[
+              'Marcha Auto',
+              'Marcha Cajas/Palets',
+              'Marcha Llenado',
+              'Marcha Manual',
+              'Marcha Parcial',
+              'Marcha SRC',
+              'Marcha Tiempo Marcha',
+            ]"
+            :cargado="cargadoReposiciones"
+          />
+
+          <GraficoLineaCardGen
+            :serie="seriesDosis"
+            title="Dosis"
+            :cargado="cargadoDosis"
+          />
+          <KilosCalibradorHistorico
+            v-if="deccodos"
+            :serie="seriesFruta"
+            :alarmas="alarmasCalibrador"
+            title="Fruta procesada"
+            :cargado="cargadoFruta"
+          />
+          <GraficoEstadoCardGen
+            :serie="seriesNiveles"
+            title="Estado de los niveles de las garrafas"
+            :tooltipy="true"
+            :legend="true"
+            :categories="[
+              'Nivel Garrafa P1',
+              'Nivel Garrafa P2',
+              'Nivel Garrafa P3',
+              'Nivel Garrafa P4',
+              'Nivel Garrafa P5',
+              // 'Flujo de producto P1',
+              // 'Flujo de producto P2',
+              // 'Flujo de producto P3',
+              // 'Flujo de producto P4',
+              // 'Flujo de producto P5',
+            ]"
+            :cargado="cargadoNiveles"
+          />
+        </v-col>
+      </v-row>
+    </v-card-text>
+    <v-card-text v-if="cargado === false">
+      <v-row>
+        <v-col class="d-flex justify-center align-center py-5">
+          <v-progress-circular
+            :size="100"
+            :width="7"
+            color="purple"
+            indeterminate
+          />
+        </v-col>
+      </v-row>
+    </v-card-text>
+  </v-card>
 </template>
 <script>
 export default {
@@ -225,21 +306,25 @@ import {
   obtenerDatosVariableGeneral,
   obtenerMaquina,
   obtenerIncioFin,
+  leerParametrosCalibrador,
+  // leerAlarmasCalibrador,
 } from "../../../helpers/bd";
-import { onMounted, ref, onUnmounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { routerStore } from "../../../stores/index";
 import moment from "moment";
 import DatePicker from "vue-time-date-range-picker/dist/vdprDatePicker";
 import GraficoEstadoCardGen from "../comun/GraficoEstadoCardGen.vue";
 import GraficoLineaCardGen from "../comun/GraficoLineaCardGen.vue";
-import FrutaProcesadaHistorico from "../comun/FrutaProcesadaHistorico.vue";
+import GraficoConsumoPorMeses from "../comun/GraficaConsumoPorMeses.vue";
+// import FrutaProcesadaHistorico from "../comun/FrutaProcesadaHistorico.vue";
+import KilosCalibradorHistorico from "../comun/KilosCalibradorHistorico.vue";
 
 const props = defineProps({
   linea: { type: Number, default: 1 },
   maquina: { type: Number, default: 1 },
 });
 
-const cargado = ref(false);
+const cargado = ref(null);
 const cargadoEstado = ref(false);
 const cargadoAlarmasG = ref(false);
 const cargadoDosis = ref(false);
@@ -248,8 +333,11 @@ const cargadoConsumos = ref(false);
 const cargadoAlarmas = ref(false);
 const cargadoNiveles = ref(false);
 const cargadoLotes = ref(false);
+const cargadoUsuario = ref(false);
+const cargadoReposiciones = ref(false);
 const cargadoFechas = ref(false);
 const cargadoLotesChoose = ref(false);
+const modoConsultaLotes = ref(null);
 const cargadoLotesSelect = ref(false);
 const mostrarAplicaciones = ref(false);
 const datosLote = ref(false);
@@ -258,10 +346,16 @@ const seriesEstado = ref([]);
 const seriesAlarmas = ref([]);
 const seriesNiveles = ref([]);
 const seriesLotes = ref([]);
+const seriesUsuario = ref([]);
+const seriesReposiciones = ref([]);
 const seriesDosis = ref([]);
 const seriesFruta = ref([]);
+const alarmasCalibrador = ref([]);
 const lotes = ref([]);
 const aplicaciones = ref([]);
+
+const totalesConsumo = ref([]);
+const rangoFechas = ref([]);
 
 const consumos = ref([]);
 const tiempos = ref([
@@ -278,347 +372,227 @@ const tiempos = ref([
 ]);
 const alarmas = ref([]);
 const deccodos = ref(null);
-const loteActual = ref("");
+
+const inicio = ref(null);
+const fin = ref(null);
+
+const loteActual = ref(null);
+const aplicacionActual = ref(null);
 
 const sameDateFormat = {
-  from: "DD MM YYYY, HH:mm",
+  from: "DD/MM/YYYY, HH:mm",
   to: "HH:mm",
 };
-const inicio = ref("");
-const fin = ref("");
 
 const dateInput = {
-  placeholder: "Seleccionar fechas",
   inputClass: "selectdates",
+  placeholder: "Seleccionar fecha",
 };
-onMounted(async () => {
-  const maquina = await obtenerMaquina("lineaTipo", props.linea, 2);
-  deccodos.value = maquina[0].id;
+
+const calendarDateInput = {
+  labelStarts: "Inicio",
+  labelEnds: "Fin",
+  format: "DD/MM/YYYY",
+};
+
+const fechaDefault = (modo) => {
+  const fechaActual = new Date();
+  const año = fechaActual.getFullYear();
+  const mes = (fechaActual.getMonth() + 1).toString().padStart(2, "0");
+  const dia = fechaActual.getDate().toString().padStart(2, "0");
+  const horas = fechaActual.getHours().toString().padStart(2, "0");
+  const minutos = fechaActual.getMinutes().toString().padStart(2, "0");
+  const segundos = fechaActual.getSeconds().toString().padStart(2, "0");
+  switch (modo) {
+    case "inicio":
+      return `${año}-${mes}-${dia}T00:00:00`;
+      break;
+    case "fin":
+      return `${año}-${mes}-${dia}T${horas}:${minutos}:${segundos}`;
+      break;
+  }
+};
+
+const fechaFormateada = (fecha) => {
+  const año = fecha.getFullYear();
+  const mes = (fecha.getMonth() + 1).toString().padStart(2, "0");
+  const dia = fecha.getDate().toString().padStart(2, "0");
+  const horas = fecha.getHours().toString().padStart(2, "0");
+  const minutos = fecha.getMinutes().toString().padStart(2, "0");
+  const segundos = fecha.getSeconds().toString().padStart(2, "0");
+  return `${año}-${mes}-${dia}T${horas}:${minutos}:${segundos}`;
+};
+
+const calcularAltura = computed(() => {
+  return (
+    150 +
+    seriesLotes.value[0].data
+      .map((item) => item.x)
+      .filter((valor, index, self) => self.indexOf(valor) === index).length *
+      30
+  );
 });
-onUnmounted(() => {
-  reset(null);
-});
+
 async function fechas() {
-  //Quitamos lotes
-  cargado.value = false;
   cargadoLotesChoose.value = false;
   cargadoLotesSelect.value = false;
-  lotes.value = [];
-  onReset();
-  await toDaily();
+  modoConsultaLotes.value = null;
+  lotes.value = null;
+  datosLote.value = false;
   cargadoFechas.value = true;
-  cargado.value = true;
+  onReset();
+  await historico();
 }
 
 function lotesMode() {
-  //quitamos fechas y datos
+  cargado.value = null;
   cargadoFechas.value = false;
-  cargado.value = false;
+  modoConsultaLotes.value = null;
   cargadoLotesChoose.value = true;
   onReset();
 }
 
 async function select(columna) {
+  cargado.value = null;
+  mostrarAplicaciones.value = false;
+  aplicacionActual.value = null;
+  aplicaciones.value = null;
+  cargadoLotesSelect.value = true;
+  loteActual.value = false;
+  modoConsultaLotes.value = columna;
   if (columna == "cliente") {
     const lot = await obtenerDatosVariableGeneral(
       "todo",
       "valores",
       "individual",
       "sinfiltro",
-      null,
+      [89],
       props.maquina,
       routerStore().clienteID
     );
-    //TODO obtener lista de lotes dependiendo del parametro
-    lotes.value = lot;
+    lotes.value = lot[0].registros.map((r) => {
+      return {
+        id: `LC_${r.loteCliente}`,
+        lote: `Lote Fruta: ${r.loteCliente}`,
+      };
+    });
   }
-  if (columna == "Decco") {
-    const lot = await obtenerDatosVariableGeneral(
+  if (columna == "decco") {
+    const lotFung = await obtenerDatosVariableGeneral(
       "todo",
       "valores",
       "individual",
       "sinfiltro",
-      null,
+      [90, 91, 92, 93, 94],
       props.maquina,
       routerStore().clienteID
     );
-    //TODO obtener lista de lotes dependiendo del parametro
-    lotes.value = lot;
+    lotes.value = [
+      ...lotFung.map((loteFungicida, index) => {
+        return loteFungicida.registros.map((r) => {
+          let propiedad = `loteDecco${index + 1}`;
+          return {
+            id: `LF${index + 1}_${r[propiedad]}`,
+            lote: `Lote Fungicida (Bomba ${index + 1}): ${r[propiedad]}`,
+          };
+        })[0];
+      }),
+    ];
   }
   cargadoLotesSelect.value = true;
 }
+
 async function lotesChoose(value) {
-  loteActual.value = value;
-  let ap = await obtenerIncioFin(null, props.maquina, value);
-  //TODO Cargar fechas
-  //if 1 aplicacion
-  if (ap.length != 2) {
-    historico(ap[0], ap[1]);
-    datosLote.value = true;
-  } else {
-    //if 2+ aplicacion
-    // cargar listaAplicaciones
-    aplicaciones.value = ap.map((r) => {
-      return {
-        id: r.x + r.z,
-        name: r.x + " - " + r.y,
-        range: { inicio: r.x, fin: r.y },
-      };
-    });
-    mostrarAplicaciones.value = true;
+  aplicacionActual.value = null;
+  let modeloID = null;
+  switch (value.split("_")[0]) {
+    case "LC":
+      modeloID = 89;
+      break;
+    case "LF1":
+      modeloID = 90;
+      break;
+    case "LF2":
+      modeloID = 91;
+      break;
+    case "LF3":
+      modeloID = 92;
+      break;
+    case "LF4":
+      modeloID = 93;
+      break;
+    case "LF5":
+      modeloID = 94;
+      break;
   }
+
+  let valor = value.split("_")[1] ? value.split("_")[1] : "";
+  let ap = await obtenerIncioFin(modeloID, props.maquina, valor);
+  aplicaciones.value = ap;
+  mostrarAplicaciones.value = true;
 }
-function lotesAplicaciones(aplicacion) {
-  cargado.value = false;
-  historico(aplicacion.range.incio, aplicacion.range.fin);
+
+async function lotesAplicaciones(aplicacion) {
+  await historico(aplicacion.x, aplicacion.y);
   datosLote.value = true;
-  cargado.value = true;
-}
-
-async function mostrarTodo() {
-  cargado.value = false;
-  historicoVarios(aplicaciones);
-  datosLote.value = true;
-  cargado.value = true;
-}
-
-async function toDaily() {
-  cargadoEstado.value = false;
-  // cargadoLotes.value = false;
-  // const lote = await obtenerDatosVariableGeneral(
-  //   "24H",
-  //   "registros",
-  //   "individual",
-  //   "formatoRangos",
-  //   [57],
-  //   props.maquina,
-  //   routerStore().clienteID
-  // );
-  // seriesLotes.value = lote;
-  // cargadoLotes.value = true;
-  let estado = await obtenerDatosVariableGeneral(
-    "24H",
-    "registros",
-    "individual",
-    "formatoRangos",
-    [1],
-    props.maquina,
-    routerStore().clienteID
-  );
-  const autoManual = await obtenerDatosVariableGeneral(
-    "24H",
-    "registros",
-    "individual",
-    "formatoRangos",
-    [13, 15],
-    props.maquina,
-    routerStore().clienteID
-  );
-  estado[1].data.push(...autoManual[1].data);
-  const marcha = await obtenerDatosVariableGeneral(
-    "24H",
-    "registros",
-    "multiple",
-    "marchaFormatoRangos",
-    [1, 12, 14, 73, 74, 75],
-    props.maquina,
-    routerStore().clienteID
-  );
-  estado[0].data.push(...marcha[0].data);
-  estado[1].data.push(...marcha[1].data);
-  const funcMaquina = await obtenerDatosVariableGeneral(
-    "24H",
-    "registros",
-    "individual",
-    "formatoRangos",
-    [12, 14, 73, 74, 75],
-    props.maquina,
-    routerStore().clienteID
-  );
-  funcMaquina[1].data.forEach((element) => {
-    element.fillColor =
-      element.x === "Falta de consenso" ? "#3949ab" : "#fdd835";
-    estado[1].data.push(element);
-  });
-  seriesEstado.value = estado;
-  cargadoEstado.value = true;
-  cargadoAlarmasG.value = false;
-  const alarmasR = await obtenerDatosVariableGeneral(
-    "24H",
-    "registros",
-    "individual",
-    "formatoRangos",
-    [12, 73, 74, 75],
-    props.maquina,
-    routerStore().clienteID
-  );
-  seriesAlarmas.value = alarmasR;
-  cargadoAlarmasG.value = true;
-  cargadoNiveles.value = false;
-  const otros = await obtenerDatosVariableGeneral(
-    "24H",
-    "registros",
-    "individual",
-    "formatoRangos",
-    [20, 21, 22, 23, 24],
-    props.maquina,
-    routerStore().clienteID,
-    null,
-    null,
-    ["Aviso", ""]
-  );
-  seriesNiveles.value = otros;
-  cargadoNiveles.value = true;
-  cargadoDosis.value = false;
-  const dosis = await obtenerDatosVariableGeneral(
-    "24H",
-    "registros",
-    "individual",
-    "formatoLinea",
-    [7, 8, 9, 10, 11],
-    props.maquina,
-    routerStore().clienteID
-  );
-  seriesDosis.value = dosis;
-  cargadoDosis.value = true;
-  cargadoConsumos.value = false;
-  const totales = await obtenerDatosVariableGeneral(
-    "24H",
-    "totales",
-    "individual",
-    "sinfiltro",
-    [25, 26, 27, 28, 29, 30],
-    props.maquina,
-    routerStore().clienteID
-  );
-  if (deccodos.value) {
-    cargadoFruta.value = false;
-    const totalFruta = await obtenerDatosVariableGeneral(
-      "24H",
-      "totales",
-      "individual",
-      "sinfiltro",
-      [48],
-      deccodos.value,
-      routerStore().clienteID
-    );
-    let kilos = await obtenerDatosVariableGeneral(
-      "24H",
-      "registros",
-      "individual",
-      "formatoAcumuladores",
-      [48],
-      deccodos.value,
-      routerStore().clienteID
-    );
-    const kilosM = await obtenerDatosVariableGeneral(
-      "24H",
-      "registros",
-      "individual",
-      "unidadTiempo",
-      [48],
-      deccodos.value,
-      routerStore().clienteID,
-      null,
-      null,
-      "Kg/min"
-    );
-    kilos.push(...kilosM);
-    seriesFruta.value = kilos;
-    cargadoFruta.value = true;
-    const consumosValue = totales.map((element, index) => {
-      const { registros, descripcion } = element;
-      const n = Math.max(0, registros[0].total);
-      const totalFrutaRegistrosTotal = totalFruta[0].registros[0].total;
-
-      const d =
-        totalFrutaRegistrosTotal > 0
-          ? (n / (totalFrutaRegistrosTotal / 1000)).toFixed(2)
-          : "0";
-
-      return {
-        id: descripcion + index,
-        nombre: descripcion,
-        total: n.toLocaleString("es-ES"),
-        totalPorToneladaFruta: d,
-      };
-    });
-    const totalFrutaConsumo = {
-      id: totalFruta[0].nombreCorto + consumosValue.length,
-      nombre: totalFruta[0].nombreCorto,
-      total: (totalFruta[0].registros[0].total / 1000).toLocaleString("es-ES"),
-    };
-
-    consumos.value = [...consumosValue, totalFrutaConsumo];
-  } else {
-    const consumosValue = totales.map((element, index) => ({
-      id: element.descripcion + index,
-      nombre: element.descripcion,
-      total: Math.max(0, element.registros[0].total).toLocaleString("es-ES"),
-    }));
-    consumos.value = [...consumosValue];
-  }
-  cargadoConsumos.value = true;
-  cargadoAlarmas.value = false;
-  const horasMarcha = await obtenerDatosVariableGeneral(
-    "24H",
-    "registros",
-    "multiple",
-    "totalMarcha",
-    [1, 12, 14, 73, 74, 75],
-    props.maquina,
-    routerStore().clienteID
-  );
-  const alarma = await obtenerDatosVariableGeneral(
-    "24H",
-    "registros",
-    "individual",
-    "totalRangos",
-    [12, 14, 73, 74, 75],
-    props.maquina,
-    routerStore().clienteID
-  );
-  const acc = alarma.reduce((total, element, index) => {
-    const val = Math.max(0, Math.round(element.registros.total1 / 60));
-    alarmas.value.push({
-      id: element.nombreCorto + index,
-      nombre: element.nombreCorto,
-      name: val,
-    });
-    return total + val;
-  }, 0);
-  tiempos.value[0].name = acc;
-  tiempos.value[1].name = Math.max(0, Math.round(horasMarcha.total / 60));
-  cargadoAlarmas.value = true;
 }
 
 async function historico(date1, date2) {
-  inicio.value = moment(date1).format("YYYY-MM-DDTHH:mm:ss");
-  fin.value = moment(date2).format("YYYY-MM-DDTHH:mm:ss");
-  reset([]);
+  reset();
+  inicio.value = date1 ? fechaFormateada(date1) : fechaDefault("inicio");
+  fin.value = date2 ? fechaFormateada(date2) : fechaDefault("fin");
 
   cargado.value = false;
   cargadoEstado.value = false;
   cargadoAlarmasG.value = false;
   cargadoDosis.value = false;
+  cargadoUsuario.value = false;
+  cargadoReposiciones.value = false;
   cargadoFruta.value = false;
   cargadoConsumos.value = false;
   cargadoAlarmas.value = false;
   cargadoNiveles.value = false;
+
   // cargadoLotes.value = false;
-  // const lote = await obtenerDatosVariableGeneral(
-  //   "historico",
-  //   "registros",
-  //   "individual",
-  //   "formatoRangos",
-  //   [57],
-  //   props.maquina,
-  //   routerStore().clienteID,
-  //   inicio.value,
-  //   fin.value
-  // );
-  // seriesLotes.value = lote;
-  // cargadoLotes.value = true;
+  const lotesCliente = await obtenerDatosVariableGeneral(
+    "historico",
+    "registros",
+    "individual",
+    "formatoLotesCliente",
+    [89],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
+  );
+  const lotesfungicidasID = [90, 91, 92, 93, 94];
+  const nombresproductosID = [101, 102, 103, 104, 105];
+  let lotesFungicidas = [];
+  let valores = [
+    {
+      name: "Lotes Fungicidas",
+      data: [...lotesCliente],
+    },
+  ];
+  let index = 0;
+  for (let lotefungicidaID of lotesfungicidasID) {
+    lotesFungicidas[index] = await obtenerDatosVariableGeneral(
+      "historico",
+      "registros",
+      "multiple",
+      "formatoLotesFungicida",
+      [lotefungicidaID, nombresproductosID[index]],
+      props.maquina,
+      routerStore().clienteID,
+      inicio.value,
+      fin.value
+    );
+    valores[0].data = [...valores[0].data, ...lotesFungicidas[index]];
+    index++;
+  }
+  seriesLotes.value = valores;
+  cargadoLotes.value = true;
+
   let estado = await obtenerDatosVariableGeneral(
     "historico",
     "registros",
@@ -661,7 +635,7 @@ async function historico(date1, date2) {
     "registros",
     "individual",
     "formatoRangos",
-    [12],
+    [12, 14],
     props.maquina,
     routerStore().clienteID,
     inicio.value,
@@ -669,8 +643,13 @@ async function historico(date1, date2) {
   );
   funcMaquina[1].data.forEach((element) => {
     element.fillColor =
-      element.x === "Falta de consenso" ? "#3949ab" : "#fdd835";
+      element.x === "Falta de consenso" ? "#d50000" : "#00c853";
     estado[1].data.push(element);
+  });
+  funcMaquina[0].data.forEach((element) => {
+    element.fillColor =
+      element.x === "Falta de consenso" ? "#00c853" : "#00c853";
+    estado[0].data.push(element);
   });
   seriesEstado.value = estado;
   cargadoEstado.value = true;
@@ -679,7 +658,7 @@ async function historico(date1, date2) {
     "registros",
     "individual",
     "formatoRangos",
-    [12, 73, 74, 75],
+    [12, 74, 75, 109],
     props.maquina,
     routerStore().clienteID,
     inicio.value,
@@ -687,16 +666,50 @@ async function historico(date1, date2) {
   );
   seriesAlarmas.value = alarmasR;
   cargadoAlarmasG.value = true;
+
+  const usuario = await obtenerDatosVariableGeneral(
+    "historico",
+    "registros",
+    "individual",
+    "formatoUsuarios",
+    [106],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
+  );
+  seriesUsuario.value = [
+    {
+      name: "Usuarios",
+      data: usuario,
+    },
+  ];
+  cargadoUsuario.value = true;
+
+  const reposiciones = await obtenerDatosVariableGeneral(
+    "historico",
+    "registros",
+    "individual",
+    "formatoRangos",
+    [114, 115, 116, 117, 118, 119, 120],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
+  );
+  seriesReposiciones.value = reposiciones;
+  cargadoReposiciones.value = true;
+
   const otros = await obtenerDatosVariableGeneral(
-    "24H",
+    "historico",
     "registros",
     "individual",
     "formatoRangos",
     [20, 21, 22, 23, 24],
     props.maquina,
     routerStore().clienteID,
-    null,
-    null,
+    inicio.value,
+    fin.value,
     ["Aviso", ""]
   );
   seriesNiveles.value = otros;
@@ -714,6 +727,39 @@ async function historico(date1, date2) {
   );
   seriesDosis.value = dosis;
   cargadoDosis.value = true;
+  rangoFechas.value = obtenerRangosFecha(inicio.value, fin.value);
+  const totales2 = [];
+  for (let i = 0; i < rangoFechas.value.length; i++) {
+    totales2.push(
+      await obtenerDatosVariableGeneral(
+        "historico",
+        "totales",
+        "individual",
+        "sinfiltro",
+        [25, 26, 27, 28, 29, 30],
+        props.maquina,
+        routerStore().clienteID,
+        rangoFechas.value[i].inicio,
+        rangoFechas.value[i].fin
+      )
+    );
+  }
+  for (let i = 0; i < totales2.length; i++) {
+    for (let j = 0; j < totales2[i].length; j++) {
+      let valor = totales2[i][j].registros[0].total;
+      if (totalesConsumo.value[j] !== undefined) {
+        totalesConsumo.value[j].data.push(valor == null ? 0 : valor.toFixed(2));
+      } else {
+        let objectSerie = {
+          name: totales2[i][j].descripcion,
+          type: totales2[i][j].descripcion == "Total Agua" ? "line" : "column",
+          data: [valor == null ? 0 : valor.toFixed(2)],
+        };
+        totalesConsumo.value.push(objectSerie);
+      }
+    }
+  }
+
   const totales = await obtenerDatosVariableGeneral(
     "historico",
     "totales",
@@ -737,17 +783,26 @@ async function historico(date1, date2) {
       inicio.value,
       fin.value
     );
-    let kilos = await obtenerDatosVariableGeneral(
-      "historico",
-      "registros",
-      "individual",
-      "formatoAcumuladores",
-      [48],
-      deccodos.value,
-      routerStore().clienteID,
-      inicio.value,
-      fin.value
-    );
+    // let kilos = await obtenerDatosVariableGeneral(
+    //   "historico",
+    //   "registros",
+    //   "individual",
+    //   "formatoAcumuladores",
+    //   [48],
+    //   deccodos.value,
+    //   routerStore().clienteID,
+    //   inicio.value,
+    //   fin.value
+    // );
+    let parametrosCalibrador = (
+      await leerParametrosCalibrador(
+        routerStore().clienteID,
+        props.linea,
+        inicio.value,
+        fin.value
+      )
+    ).datos;
+
     const kilosM = await obtenerDatosVariableGeneral(
       "historico",
       "registros",
@@ -760,8 +815,39 @@ async function historico(date1, date2) {
       fin.value,
       "Kg/min"
     );
-    kilos.push(...kilosM);
-    seriesFruta.value = kilos;
+
+    let variable2 = [
+      {
+        data: [],
+        name: "Variable2",
+      },
+    ];
+
+    let indiceParametro = 0;
+    let kilosVisualizar = [{ data: [], name: null }];
+    for (let punto = 0; punto < kilosM[0].data.length; punto += 3) {
+      kilosVisualizar[0].data.push(kilosM[0].data[punto]);
+      if (
+        parametrosCalibrador[indiceParametro + 1] &&
+        parametrosCalibrador[indiceParametro + 1].fecha <
+          kilosM[0].data[punto].x
+      ) {
+        indiceParametro++;
+      }
+      variable2[0].data.push({
+        x: kilosM[0].data[punto].x,
+        y: 0,
+      });
+    }
+    kilosVisualizar[0].name = kilosM[0].name;
+    // kilos.push(...kilosM);
+    seriesFruta.value = [...kilosVisualizar, ...variable2];
+    // alarmasCalibrador.value = await leerAlarmasCalibrador(
+    //   routerStore().clienteID,
+    //   props.linea,
+    //   inicio.value,
+    //   fin.value
+    // );
     const consumosValue = totales.map((element, index) => {
       const { registros, descripcion } = element;
       const n = Math.max(0, registros[0].total);
@@ -833,299 +919,16 @@ async function historico(date1, date2) {
   cargado.value = true;
 }
 
-async function historicoVarios(dates) {
-  inicio.value = moment(dates[0].range.inicio).format("YYYY-MM-DDTHH:mm:ss");
-  fin.value = moment(dates[dates.length - 1].range.fin).format(
-    "YYYY-MM-DDTHH:mm:ss"
-  );
-  reset([]);
-  tiempos.value[0].name = 0;
-  tiempos.value[1].name = 0;
-  cargado.value = false;
-  cargadoEstado.value = false;
-  cargadoAlarmasG.value = false;
-  cargadoDosis.value = false;
-  cargadoFruta.value = false;
-  cargadoConsumos.value = false;
-  cargadoAlarmas.value = false;
-  cargadoNiveles.value = false;
-  cargadoLotes.value = false;
-  for (let index = 0; index < dates.length; index++) {
-    const inicioE = dates[index].range.inicio;
-    const finE = dates[index].range.fin;
-    // const lote = await obtenerDatosVariableGeneral(
-    //   "historico",
-    //   "registros",
-    //   "individual",
-    //   "formatoRangos",
-    //   [57],
-    //   props.maquina,
-    //   routerStore().clienteID,
-    //   inicioE,
-    //   finE
-    // );
-    // seriesLotes.value = lote;
-    let estado = await obtenerDatosVariableGeneral(
-      "historico",
-      "registros",
-      "individual",
-      "formatoRangos",
-      [1],
-      props.maquina,
-      routerStore().clienteID,
-      inicioE,
-      finE
-    );
-
-    const autoManual = await obtenerDatosVariableGeneral(
-      "historico",
-      "registros",
-      "individual",
-      "formatoRangos",
-      [13, 15],
-      props.maquina,
-      routerStore().clienteID,
-      inicioE,
-      finE
-    );
-    estado[1].data.push(...autoManual[1].data);
-    const marcha = await obtenerDatosVariableGeneral(
-      "historico",
-      "registros",
-      "multiple",
-      "marchaFormatoRangos",
-      [1, 12, 14, 73, 74, 75],
-      props.maquina,
-      routerStore().clienteID,
-      inicioE,
-      finE
-    );
-    estado[0].data.push(...marcha[0].data);
-    estado[1].data.push(...marcha[1].data);
-    const funcMaquina = await obtenerDatosVariableGeneral(
-      "historico",
-      "registros",
-      "individual",
-      "formatoRangos",
-      [12],
-      props.maquina,
-      routerStore().clienteID,
-      inicioE,
-      finE
-    );
-    funcMaquina[1].data.forEach((element) => {
-      element.fillColor =
-        element.x === "Falta de consenso" ? "#3949ab" : "#fdd835";
-      estado[1].data.push(element);
-    });
-    seriesEstado.value = estado;
-    const alarmasR = await obtenerDatosVariableGeneral(
-      "historico",
-      "registros",
-      "individual",
-      "formatoRangos",
-      [12, 73, 74, 75],
-      props.maquina,
-      routerStore().clienteID,
-      inicioE,
-      finE
-    );
-    seriesAlarmas.value = alarmasR;
-    const otros = await obtenerDatosVariableGeneral(
-      "24H",
-      "registros",
-      "individual",
-      "formatoRangos",
-      [20, 21, 22, 23, 24],
-      props.maquina,
-      routerStore().clienteID,
-      null,
-      null,
-      ["Aviso", ""]
-    );
-    seriesNiveles.value = otros;
-    const dosis = await obtenerDatosVariableGeneral(
-      "historico",
-      "registros",
-      "individual",
-      "formatoLinea",
-      [7, 8, 9, 10, 11],
-      props.maquina,
-      routerStore().clienteID,
-      inicioE,
-      finE
-    );
-    seriesDosis.value = dosis;
-    const totales = await obtenerDatosVariableGeneral(
-      "historico",
-      "totales",
-      "individual",
-      "sinfiltro",
-      [25, 26, 27, 28, 29, 30],
-      props.maquina,
-      routerStore().clienteID,
-      inicioE,
-      finE
-    );
-    if (deccodos.value) {
-      const totalFruta = await obtenerDatosVariableGeneral(
-        "historico",
-        "totales",
-        "individual",
-        "sinfiltro",
-        [48],
-        deccodos.value,
-        routerStore().clienteID,
-        inicioE,
-        finE
-      );
-      let kilos = await obtenerDatosVariableGeneral(
-        "historico",
-        "registros",
-        "individual",
-        "formatoAcumuladores",
-        [48],
-        deccodos.value,
-        routerStore().clienteID,
-        inicioE,
-        finE
-      );
-      const kilosM = await obtenerDatosVariableGeneral(
-        "historico",
-        "registros",
-        "individual",
-        "unidadTiempo",
-        [48],
-        deccodos.value,
-        routerStore().clienteID,
-        inicioE,
-        finE,
-        "Kg/min"
-      );
-      if (seriesFruta.value !== 0) {
-        seriesFruta.value[1].data.push(null, ...kilosM[0].data);
-        seriesFruta.value[0].data.push(null, ...kilos[0].data);
-      } else {
-        kilos.push(...kilosM);
-        seriesFruta.value = kilos;
-      }
-      const consumosValue = totales.map((element, index) => {
-        const { registros, descripcion } = element;
-        const n = Math.max(0, registros[0].total);
-        const totalFrutaRegistrosTotal = totalFruta[0].registros[0].total;
-
-        const d =
-          totalFrutaRegistrosTotal > 0
-            ? (n / (totalFrutaRegistrosTotal / 1000)).toFixed(2)
-            : "0";
-
-        return {
-          id: descripcion + index,
-          nombre: descripcion,
-          total: n.toLocaleString("es-ES"),
-          totalPorToneladaFruta: d,
-        };
-      });
-      const totalFrutaConsumo = {
-        id: totalFruta[0].nombreCorto + consumosValue.length,
-        nombre: totalFruta[0].nombreCorto,
-        total: (totalFruta[0].registros[0].total / 1000).toLocaleString(
-          "es-ES"
-        ),
-      };
-
-      if (consumos.value !== 0) {
-        let cons = [...consumosValue, totalFrutaConsumo];
-        for (let j = 0; j < consumos.value.length; j++) {
-          const object = consumos.value[index];
-          const update = cons.find((obj) => obj.id === object.id);
-          if (update) {
-            object.total += update.total;
-            if (object.totalPorToneladaFruta)
-              object.totalPorToneladaFruta += update;
-          }
-        }
-      } else consumos.value = [...consumosValue, totalFrutaConsumo];
-    } else {
-      const consumosValue = totales.map((element, index) => ({
-        id: element.descripcion + index,
-        nombre: element.descripcion,
-        total: Math.max(0, element.registros[0].total).toLocaleString("es-ES"),
-      }));
-      if (consumos.value !== 0) {
-        for (let j = 0; j < consumos.value.length; j++) {
-          const object = consumos.value[j];
-          const update = cons.find((obj) => obj.id === object.id);
-          if (update) {
-            object.total += update.total;
-          }
-        }
-      } else consumos.value = consumosValue;
-    }
-    const marchat = await obtenerDatosVariableGeneral(
-      "historico",
-      "registros",
-      "multiple",
-      "totalMarcha",
-      [1, 12, 14, 73, 74, 75],
-      props.maquina,
-      routerStore().clienteID,
-      inicioE,
-      finE
-    );
-    const alarma = await obtenerDatosVariableGeneral(
-      "historico",
-      "registros",
-      "individual",
-      "totalRangos",
-      [12, 14, 73, 74, 75],
-      props.maquina,
-      routerStore().clienteID,
-      inicioE,
-      finE
-    );
-    const alarmaValue = alarma.map((element, index) => {
-      const val = Math.max(0, Math.round(element.registros.total1 / 60));
-      return {
-        id: element.nombreCorto + index,
-        nombre: element.nombreCorto,
-        name: val,
-      };
-    });
-    if (alarmas.value.length !== 0) {
-      for (let j = 0; j < alarmas.value.length; j++) {
-        const object = alarmas.value[j];
-        const update = alarmaValue.find((obj) => obj.id === object.id);
-        if (update) {
-          object.name += update.name;
-        }
-      }
-    } else {
-      alarmas.value = alarmaValue;
-    }
-    tiempos.value[0].name += alarmaValue.reduce(
-      (total, element) => total + element.name,
-      0
-    );
-    tiempos.value[1].name = Math.max(0, Math.round(marchat.total / 60));
-  }
-  cargado.value = true;
-  cargadoEstado.value = true;
-  cargadoAlarmasG.value = true;
-  cargadoDosis.value = true;
-  cargadoFruta.value = true;
-  cargadoConsumos.value = true;
-  cargadoAlarmas.value = true;
-  cargadoNiveles.value = true;
-  cargadoLotes.value = true;
-}
-
-function reset(value) {
-  seriesEstado.value = value;
-  seriesDosis.value = value;
-  seriesFruta.value = value;
-  consumos.value = value;
-  alarmas.value = value;
+function reset() {
+  seriesEstado.value = [];
+  seriesDosis.value = [];
+  seriesUsuario.value = [];
+  seriesReposiciones.value = [];
+  seriesFruta.value = [];
+  consumos.value = [];
+  alarmas.value = [];
+  rangoFechas.value = [];
+  totalesConsumo.value = [];
 }
 
 function onReset() {
@@ -1144,7 +947,7 @@ async function toExcel() {
     const name = element.name.replace("/", "-");
     utils.book_append_sheet(wb, ws, name);
   });
-  const kilosA = seriesFruta.value[0].data.map((e) => {
+  let kilosA = seriesFruta.value[0].data.map((e) => {
     return {
       fecha: moment(e.x).format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"),
       valor: e.y,
@@ -1187,11 +990,56 @@ async function toExcel() {
   utils.book_append_sheet(wb, ws5, "Funcionamiento");
   writeFileXLSX(wb, "DECCODAF" + inicio.value + "-" + fin.value + ".xlsx");
 }
+
+// fúncion para obtener la array de fechas por cada mes.
+function obtenerRangosFecha(fechaInicio, fechaFin) {
+  let fechaInicioObj = new Date(fechaInicio + "Z");
+  let fechaFinObj = new Date(fechaFin + "Z");
+  console.log(fechaInicio + " - " + fechaInicioObj.toISOString());
+  console.log(fechaFin + " - " + fechaFinObj.toISOString());
+  let rangos = [];
+
+  while (fechaInicioObj < fechaFinObj) {
+    let finMes = new Date(
+      fechaInicioObj.getFullYear(),
+      fechaInicioObj.getMonth() + 1,
+      0
+    );
+    if (finMes > fechaFinObj) {
+      finMes = fechaFinObj;
+    }
+    rangos.push({
+      inicio: fechaInicioObj.toISOString().slice(0, -1),
+      fin: finMes.toISOString().slice(0, -1),
+    });
+    fechaInicioObj = new Date(
+      fechaInicioObj.getFullYear(),
+      fechaInicioObj.getMonth() + 1,
+      1
+    );
+  }
+  return rangos;
+}
+
+onMounted(async () => {
+  const maquina = await obtenerMaquina("lineaTipo", props.linea, 2);
+  deccodos.value = maquina[0].id;
+});
 </script>
 <style>
 .vdpr-datepicker .selectdates {
   border: 1px solid #000;
   padding: 12px;
   width: 300px;
+}
+
+@media only screen and (max-width: 900px) {
+  .vdpr-datepicker__calendar {
+    width: 200px;
+  }
+
+  .vdpr-datepicker__calendar-actions {
+    width: 120px;
+  }
 }
 </style>

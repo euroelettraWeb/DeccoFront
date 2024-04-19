@@ -1,36 +1,16 @@
 <template>
   <v-container fluid>
-    <LoteCliente />
+    <LoteCliente :tipo="1" />
     <v-row>
       <v-col>
-        <v-switch v-model="turnos" color="info" label="Turnos">Turnos</v-switch>
-        <TablaTurnos v-if="turnos" />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <TablaTotalTurnos
-          v-if="turnos && turnosA.length > 1"
-          :variables="[70, 71, 72]"
-          :marcha="[57, 60, 62]"
-          :tipo="3"
-        />
         <TablaTotal
-          v-else
           :variables="[70, 71, 72]"
           :marcha="[57, 60, 62]"
           :tipo="3"
         />
       </v-col>
       <v-col>
-        <TablaAlarmasTurnos
-          v-if="turnos && turnosA.length > 1"
-          :variables="[60, 62, 84, 85, 86, 87]"
-          :marcha="[57, 60, 62]"
-          :tipo="3"
-        />
         <TablaAlarmas
-          v-else
           :variables="[60, 62, 84, 85, 86, 87]"
           :marcha="[57, 60, 62]"
           :tipo="3"
@@ -39,8 +19,18 @@
     </v-row>
     <v-row no-gutters>
       <v-col>
-        <LoteDecco :tipo="3" />
+        <LoteDeccoMod
+          :tipo="3"
+          :lotecliente="98"
+          :lotedeccodesinf="99"
+          :lotedeccojabon="100"
+          :nombredesinf="135"
+          :nombrejabon="136"
+          :lotejabonvisualizar="loteJabon"
+          :lotedesinfvisualizar="loteDesinfectante"
+        />
         <Estado
+          v-if="estado"
           :activo="57"
           :auto-manual="[61, 63]"
           :marcha="[57, 60, 62]"
@@ -56,6 +46,7 @@
           ]"
         />
         <GraficaEstadoCard
+          v-if="alarmas"
           :variables="[60, 84, 85, 86, 87]"
           :height="300"
           title="Alarmas"
@@ -63,20 +54,27 @@
           :colores="['#00c853', '#d50000']"
           :estados="['', 'Aviso']"
           :categories="[
-            'Alarma',
+            'Falta de agua',
             'Minimo Nivel Desinfectante',
             'Bidon Desinfectante Vacio',
             'Minimo Nivel Jabon',
             'Bidon Jabon Vacio',
           ]"
         />
+        <UsuarioMaquina v-if="usuario" :usuario="108" :tipo="3" />
         <GraficaLineaCard
+          v-if="dosis"
           title="Dosis de Desinfectante y Jabon"
           :variables="[58, 59]"
           :tipo="3"
         />
-        <FrutaProcesadaComun :variables="48" :tipo="2" />
+        <KilosCalibradorComun
+          v-if="kilosCalibrador"
+          :variables="48"
+          :tipo="3"
+        />
         <GraficaEstadoCard
+          v-if="estadoBombas"
           :variables="[64, 65]"
           :height="250"
           title="Estado de las bombas"
@@ -84,32 +82,8 @@
           :estados="['Paro', 'Marcha']"
           :categories="['Bomba Desinfectante', 'Bomba Jabon']"
         />
-        <GraficaLineaCard
-          :variables="[45, 46]"
-          :tipo="2"
-          title="Cajas por Ciclo y Peso por Caja"
-        />
-        <GraficaLineaCard
-          title="Cajas/Min"
-          :variables="[47]"
-          :tipo="2"
-          tipodatos="unidadTiempo"
-          labelvar="Cajas/Min"
-        />
       </v-col>
     </v-row>
-    <!-- <v-btn
-      class="mt-2"
-      color="info"
-      @click="
-        routerStore().menu(
-          'deccowasher:Otras',
-          routerStore().clienteID,
-          routerStore().lineasID
-        )
-      "
-      >Otras Variables</v-btn
-    > -->
   </v-container>
 </template>
 
@@ -122,22 +96,44 @@ export default {
 import Estado from "../../components/cards/comun/Estado.vue";
 import GraficaLineaCard from "../../components/cards/comun/GraficaLineaCard.vue";
 import GraficaEstadoCard from "../../components/cards/comun/GraficaEstadoCard.vue";
-import TablaTurnos from "../../components/tablas/comun/TablaTurnos.vue";
 import TablaTotal from "../../components/tablas/comun/TablaTotal.vue";
-import FrutaProcesadaComun from "../../components/cards/comun/FrutaProcesadaComun.vue";
-import { routerStore } from "../../stores/index";
-import { obtenerTurnos } from "../../helpers/bd";
-import { onMounted, ref } from "vue";
-import TablaTotalTurnos from "../../components/tablas/comun/TablaTotalTurnos.vue";
+import KilosCalibradorComun from "../../components/cards/comun/KilosCalibradorComun.vue";
 import TablaAlarmas from "../../components/tablas/comun/TablaAlarmas.vue";
-import TablaAlarmasTurnos from "../../components/tablas/comun/TablaAlarmasTurnos.vue";
 import LoteCliente from "../../components/cards/comun/LoteCliente.vue";
-import LoteDecco from "../../components/cards/deccowasher/LoteDecco.vue";
+import LoteDeccoMod from "../../components/cards/deccowasher/LoteDeccoMod.vue";
+import UsuarioMaquina from "../../components/cards/comun/Usuario.vue";
+import { userStore } from "../../stores/index";
+import { onMounted, ref } from "vue";
+import axios from "axios";
 
-let turnos = ref(true);
-let turnosA = ref([]);
+// Variables booleanos para visualizar las graficas
+const loteJabon = ref(true);
+const loteDesinfectante = ref(true);
+const estado = ref(true);
+const alarmas = ref(true);
+const usuario = ref(true);
+const dosis = ref(true);
+const kilosCalibrador = ref(true);
+const estadoBombas = ref(true);
+
+// Consultar los permisos del usuario si es un usuario "Cliente"
 onMounted(async () => {
-  turnosA.value = await obtenerTurnos(routerStore().clienteID);
-  turnos.value = turnosA.value.length > 0 ? true : false;
+  if (userStore().rol == "Cliente") {
+    let permisos = await axios.post(
+      `${process.env.VUE_APP_RUTA_API}/usuarios/permisos/Deccowasher`,
+      {
+        usuarioID: userStore().usuario.id,
+      }
+    );
+    // Asignar los valores según las propiedades del objeto
+    loteJabon.value = permisos.data[0].loteJabon;
+    loteDesinfectante.value = permisos.data[0].loteDesinfectante;
+    estado.value = permisos.data[0].estado;
+    alarmas.value = permisos.data[0].alarmas;
+    usuario.value = permisos.data[0].usuario;
+    dosis.value = permisos.data[0].dosis;
+    kilosCalibrador.value = permisos.data[0].kilosCalibrador;
+    estadoBombas.value = permisos.data[0].estadoBombas;
+  }
 });
 </script>

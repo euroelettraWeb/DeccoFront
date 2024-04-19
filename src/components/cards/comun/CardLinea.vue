@@ -1,26 +1,41 @@
 <template>
   <v-card class="grey">
     <v-row>
-      <v-col align-self="center">
-        <div class="text-h1">{{ props.linea.nombre }}</div>
+      <v-col
+        xs="12"
+        sm="6"
+        lg="3"
+        class="text-center text-h1 align-self-center"
+      >
+        {{ props.linea.nombre }}
       </v-col>
-      <v-col v-for="item in items" :key="item.title">
-        <v-card class="black" height="375">
-          <v-card-title
-            @click="
-              if (item.estado)
-                router.menu(item.route, props.linea.clienteID, props.linea.id);
-            "
-            >{{ item.title }}</v-card-title
-          >
+      <v-col v-for="item in items" :key="item.title" xs="12" sm="6" lg="3">
+        <v-card class="primary" height="425">
+          <v-card-title>
+            <v-btn
+              @click="
+                if (item.estado)
+                  router.menu(
+                    item.route,
+                    props.linea.clienteID,
+                    props.linea.id
+                  );
+              "
+              >{{ item.title }}</v-btn
+            >
+          </v-card-title>
           <v-card-text>
             <v-row v-for="val in item.values" :key="val.id" no-gutters>
-              <v-col>{{ val.label }}</v-col>
-              <v-col>{{ val.value }}</v-col>
+              <v-col cols="9">{{ val.label }}</v-col>
+              <v-col cols="3">{{ val.value }}</v-col>
             </v-row>
-            <v-card-subtitle class="red--text">Alarmas Activas</v-card-subtitle>
-            <v-row v-for="val in item.alarmas" :key="val.id" no-gutters>
-              <v-col>{{ val.label }}</v-col>
+            <v-row no-gutters>
+              <v-col cols="12" class="pt-2 orange--text text-subtitle">
+                Alarmas Activas
+              </v-col>
+              <v-col v-for="val in item.alarmas" :key="val.id" cols="12">{{
+                val.label
+              }}</v-col>
             </v-row>
           </v-card-text>
         </v-card>
@@ -66,12 +81,18 @@ const deccodaf = ref([]);
 const deccowasherAlarmas = ref([]);
 const deccodosAlarmas = ref([]);
 const deccodafAlarmas = ref([]);
+
+const dosDecimales = function (valor) {
+  if (valor === null || valor === undefined) return 0;
+  return Math.round(parseFloat(valor) * 100) / 100;
+};
+
 onMounted(async () => {
   values();
 });
-let interval = setInterval(async () => {
+let interval = setInterval(() => {
   values();
-}, 1000);
+}, 45000);
 async function values() {
   const [deccowasherID, deccodosID, deccodafID] = await Promise.all([
     obtenerMaquina("lineaTipo", props.linea.id, 3).then(
@@ -84,6 +105,26 @@ async function values() {
       (machines) => machines[0].id
     ),
   ]);
+
+  const nombreProductosDECCOWASHER = await obtenerDatosVariableGeneral(
+    "24H",
+    "ultimo",
+    "individual",
+    "sinfiltro",
+    [135, 136],
+    deccowasherID,
+    routerStore().clienteID
+  );
+  const numeroLotesDECCOWASHER = await obtenerDatosVariableGeneral(
+    "24H",
+    "ultimo",
+    "individual",
+    "sinfiltro",
+    [99, 100],
+    deccowasherID,
+    routerStore().clienteID
+  );
+
   const [dosisDECCOWASHER, totalesDECCOWASHER, alarmaDECCOWS] =
     await Promise.all([
       obtenerDatosVariableGeneral(
@@ -115,13 +156,30 @@ async function values() {
       ),
     ]);
   deccowasher.value = [
-    ...dosisDECCOWASHER.map((element) => ({
-      label: element.descripcion + " ( " + element.unidadMedida + " )",
-      value: element.registros[0]?.y || "",
+    ...dosisDECCOWASHER.map((element, index) => ({
+      label:
+        element.descripcion +
+        " " +
+        (nombreProductosDECCOWASHER[index].registros[0]?.y || 0) +
+        " (Lote " +
+        (numeroLotesDECCOWASHER[index].registros[0]?.y || 0) +
+        ")",
+      value: dosDecimales(element.registros[0].y) + " " + element.unidadMedida,
     })),
-    ...totalesDECCOWASHER.map((element) => ({
-      label: element.descripcion + " ( " + element.unidadMedida + " )",
-      value: Math.max(0, element.registros[0]?.total || 0),
+    ...totalesDECCOWASHER.map((element, index) => ({
+      label:
+        index < 1
+          ? element.descripcion
+          : element.descripcion +
+            " " +
+            (nombreProductosDECCOWASHER[index - 1].registros[0]?.y || 0) +
+            " (Lote " +
+            (numeroLotesDECCOWASHER[index - 1].registros[0]?.y || 0) +
+            ")",
+      value:
+        dosDecimales(Math.max(0, element.registros[0]?.total || 0)) +
+        " " +
+        element.unidadMedida,
     })),
   ];
   deccowasherAlarmas.value = [
@@ -131,6 +189,26 @@ async function values() {
         label: element.descripcion,
       })),
   ];
+
+  const nombreProductosDECCODOS = await obtenerDatosVariableGeneral(
+    "24H",
+    "ultimo",
+    "individual",
+    "sinfiltro",
+    [82, 83],
+    deccodosID,
+    routerStore().clienteID
+  );
+  const numeroLotesDECCODOS = await obtenerDatosVariableGeneral(
+    "24H",
+    "ultimo",
+    "individual",
+    "sinfiltro",
+    [96, 97],
+    deccodosID,
+    routerStore().clienteID
+  );
+
   const [dosisDECCODOS, totalesDECCODOS, alarmaDECCODOS] = await Promise.all([
     obtenerDatosVariableGeneral(
       "24H",
@@ -162,13 +240,22 @@ async function values() {
   ]);
 
   deccodos.value = [
-    ...dosisDECCODOS.map((element) => ({
-      label: `${element.descripcion} ( ${element.unidadMedida} )`,
-      value: element.registros[0]?.y,
+    ...dosisDECCODOS.map((element, index) => ({
+      label:
+        index < 2
+          ? `${element.descripcion}: ${
+              nombreProductosDECCODOS[index].registros[0]?.y || 0
+            } (Lote ${numeroLotesDECCODOS[index].registros[0]?.y || 0})`
+          : `${element.descripcion}`,
+      value: `${dosDecimales(element.registros[0]?.y || 0)} ${
+        element.unidadMedida
+      }`,
     })),
     ...totalesDECCODOS.map((element) => ({
-      label: `${element.descripcion} ( ${element.unidadMedida} )`,
-      value: Math.max(0, element.registros[0]?.total || 0),
+      label: `${element.descripcion}`,
+      value: `${dosDecimales(Math.max(0, element.registros[0]?.total || 0))} ${
+        element.unidadMedida
+      }`,
     })),
   ];
   deccodosAlarmas.value = [
@@ -178,6 +265,25 @@ async function values() {
         label: element.descripcion,
       })),
   ];
+
+  const nombreProductosDECCODAF = await obtenerDatosVariableGeneral(
+    "24H",
+    "ultimo",
+    "individual",
+    "sinfiltro",
+    [101, 102, 103, 104, 105],
+    deccodafID,
+    routerStore().clienteID
+  );
+  const numeroLotesDECCODAF = await obtenerDatosVariableGeneral(
+    "24H",
+    "ultimo",
+    "individual",
+    "sinfiltro",
+    [90, 91, 92, 93, 94],
+    deccodafID,
+    routerStore().clienteID
+  );
 
   const [dosisDECCODAF, totalesDECCODAF, alarmaDECCODAF] = await Promise.all([
     obtenerDatosVariableGeneral(
@@ -210,13 +316,30 @@ async function values() {
   ]);
 
   deccodaf.value = [
-    ...dosisDECCODAF.map((element) => ({
-      label: element.descripcion + " ( " + element.unidadMedida + " )",
-      value: element.registros[0]?.y,
+    ...dosisDECCODAF.map((element, index) => ({
+      label:
+        element.descripcion +
+        ": " +
+        (nombreProductosDECCODAF[index].registros[0]?.y || 0) +
+        " (Lote " +
+        (numeroLotesDECCODAF[index].registros[0]?.y || 0) +
+        ")",
+      value: dosDecimales(element.registros[0].y) + " " + element.unidadMedida,
     })),
-    ...totalesDECCODAF.map((element) => ({
-      label: element.descripcion + " ( " + element.unidadMedida + " )",
-      value: Math.max(0, element.registros[0]?.total || 0),
+    ...totalesDECCODAF.map((element, index) => ({
+      label:
+        index === 0
+          ? element.descripcion
+          : element.descripcion +
+            ": " +
+            (nombreProductosDECCODAF[index - 1].registros[0]?.y || 0) +
+            " (Lote " +
+            (numeroLotesDECCODAF[index - 1].registros[0]?.y || 0) +
+            ")",
+      value:
+        dosDecimales(Math.max(0, element.registros[0]?.total || 0)) +
+        " " +
+        element.unidadMedida,
     })),
   ];
   deccodafAlarmas.value = [

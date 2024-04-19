@@ -31,7 +31,18 @@ export const userStore = defineStore("user", {
         axios.post(`${process.env.VUE_APP_RUTA_API}/eventos/crear/`, evento);
         this.usuario = resultadoConsulta;
         this.usuarioValido = true;
-        router.push({ name: "Home" });
+        switch (this.usuario.rol) {
+          case "ADMINISTRADOR":
+            router.push("/cliente");
+            break;
+          case "Cliente":
+            routerStore().clienteID = this.usuario.clienteID;
+            router.push("/cliente/" + this.usuario.clienteID + "/sistemas");
+            break;
+          case "Comercial":
+            router.push("/cliente");
+            break;
+        }
       } else {
         this.usuarioValido = false;
         this.mensajeError = resultadoConsulta.mensaje;
@@ -63,6 +74,7 @@ export const routerStore = defineStore("router", {
       clienteNuevo: "NuevoCliente",
       clienteNuevoLinea: "AsignadorNuevoCliente",
       clienteEditar: "EditarCliente",
+      gestionUsuarios: "GestionUsuarios",
       variables: "Variables",
       historico: "Historico",
       informe: "Informe",
@@ -103,6 +115,9 @@ export const routerStore = defineStore("router", {
     },
     clienteNuevo: async function ({}) {
       router.push({ name: this.routes.clienteNuevo });
+    },
+    gestionUsuarios: async function ({}) {
+      router.push({ name: this.routes.gestionUsuarios });
     },
     clienteNuevoLinea: async function (id) {
       this.clienteID = id;
@@ -185,6 +200,26 @@ export const routerStore = defineStore("router", {
             ) {
             }
           });
+          break;
+        case "clientes":
+          this.maquina = "Clientes";
+          router.push({ name: this.routes.cliente }).catch((failure) => {
+            if (
+              isNavigationFailure(failure, NavigationFailureType.duplicated)
+            ) {
+            }
+          });
+          break;
+        case "gestionUsuarios":
+          this.maquina = "GestionUsuarios";
+          router
+            .push({ name: this.routes.gestionUsuarios })
+            .catch((failure) => {
+              if (
+                isNavigationFailure(failure, NavigationFailureType.duplicated)
+              ) {
+              }
+            });
           break;
         case "login":
           router.push({ name: this.routes.login }).catch((failure) => {
