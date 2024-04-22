@@ -170,6 +170,12 @@
           </v-card>
         </v-col>
         <v-col cols="12">
+          <GraficoConsumoPorMeses
+            :serie="totalesConsumo"
+            title="Consumo"
+            :rangos-fechas="rangoFechas"
+            :cargado="cargadoConsumos"
+          />
           <GraficoEstadoCardGen
             :serie="seriesLotes"
             :height="calcularAltura"
@@ -281,6 +287,7 @@ import moment from "moment";
 import DatePicker from "vue-time-date-range-picker/dist/vdprDatePicker";
 import GraficoEstadoCardGen from "../comun/GraficoEstadoCardGen.vue";
 import GraficoLineaCardGen from "../comun/GraficoLineaCardGen.vue";
+import GraficoConsumoPorMeses from "../comun/GraficaConsumoPorMeses.vue";
 // import FrutaProcesadaHistorico from "../comun/FrutaProcesadaHistorico.vue";
 import KilosCalibradorHistorico from "../comun/KilosCalibradorHistorico.vue";
 
@@ -320,6 +327,9 @@ const seriesFruta = ref([]);
 const alarmasCalibrador = ref([]);
 const lotes = ref([]);
 const aplicaciones = ref([]);
+
+const totalesConsumo = ref([]);
+const rangoFechas = ref([]);
 
 const consumos = ref([]);
 const tiempos = ref([
@@ -720,6 +730,40 @@ async function historico(date1, date2) {
   );
   seriesCajas.value = cporu;
   cargadoCajas.value = true;
+
+  rangoFechas.value = obtenerRangosFecha(inicio.value, fin.value);
+  const totales2 = [];
+  for (let i = 0; i < rangoFechas.value.length; i++) {
+    totales2.push(
+      await obtenerDatosVariableGeneral(
+        "historico",
+        "totales",
+        "individual",
+        "sinfiltro",
+        [70, 71, 72],
+        props.maquina,
+        routerStore().clienteID,
+        rangoFechas.value[i].inicio,
+        rangoFechas.value[i].fin
+      )
+    );
+  }
+  for (let i = 0; i < totales2.length; i++) {
+    for (let j = 0; j < totales2[i].length; j++) {
+      let valor = totales2[i][j].registros[0].total;
+      if (totalesConsumo.value[j] !== undefined) {
+        totalesConsumo.value[j].data.push(valor == null ? 0 : valor.toFixed(2));
+      } else {
+        let objectSerie = {
+          name: totales2[i][j].descripcion,
+          type: totales2[i][j].descripcion == "Total Agua" ? "line" : "column",
+          data: [valor == null ? 0 : valor.toFixed(2)],
+        };
+        totalesConsumo.value.push(objectSerie);
+      }
+    }
+  }
+
   const totales = await obtenerDatosVariableGeneral(
     "historico",
     "totales",
@@ -880,17 +924,19 @@ async function historico(date1, date2) {
   cargado.value = true;
 }
 
-function reset(value) {
-  seriesEstado.value = value;
-  seriesBombas.value = value;
-  seriesAlarmas.value = value;
-  seriesDosis.value = value;
-  seriesUsuario.value = value;
-  seriesCajas.value = value;
-  seriesCajasMin.value = value;
-  seriesFruta.value = value;
-  consumos.value = value;
-  alarmas.value = value;
+function reset() {
+  seriesEstado.value = [];
+  seriesBombas.value = [];
+  seriesAlarmas.value = [];
+  seriesDosis.value = [];
+  seriesUsuario.value = [];
+  seriesCajas.value = [];
+  seriesCajasMin.value = [];
+  seriesFruta.value = [];
+  consumos.value = [];
+  alarmas.value = [];
+  rangoFechas.value = [];
+  totalesConsumo.value = [];
 }
 
 function onReset() {
@@ -952,6 +998,26 @@ async function toExcel() {
   const ws5 = utils.json_to_sheet(tiemposA);
   utils.book_append_sheet(wb, ws5, "Funcionamiento");
   writeFileXLSX(wb, "DECCOWASHER" + inicio.value + "-" + fin.value + ".xlsx");
+}
+
+// Fúncion para obtener la array de fechas por cada mes.
+function obtenerRangosFecha(fechaInicio, fechaFin) {
+  let rangos = [];
+
+  while (fechaInicio < fechaFin) {
+    let año = parseInt(fechaInicio.slice(0, 4));
+    let mes = parseInt(fechaInicio.slice(5, 7));
+    let finMes = new Date(Date.UTC(año, mes, 0)).toISOString().slice(0, -1);
+    if (finMes > fechaFin) {
+      finMes = fechaFin;
+    }
+    rangos.push({
+      inicio: fechaInicio,
+      fin: finMes,
+    });
+    fechaInicio = new Date(Date.UTC(año, mes, 1)).toISOString().slice(0, -1);
+  }
+  return rangos;
 }
 
 onMounted(async () => {
