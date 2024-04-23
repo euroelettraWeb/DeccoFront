@@ -764,21 +764,6 @@ async function historico(date1, date2) {
       )
     );
   }
-  for (let i = 0; i < totales2.length; i++) {
-    for (let j = 0; j < totales2[i].length; j++) {
-      let valor = totales2[i][j].registros[0].total;
-      if (totalesConsumo.value[j] !== undefined) {
-        totalesConsumo.value[j].data.push(valor == null ? 0 : valor.toFixed(2));
-      } else {
-        let objectSerie = {
-          name: totales2[i][j].descripcion,
-          type: totales2[i][j].descripcion == "Total Agua" ? "line" : "column",
-          data: [valor == null ? 0 : valor.toFixed(2)],
-        };
-        totalesConsumo.value.push(objectSerie);
-      }
-    }
-  }
 
   const totales = await obtenerDatosVariableGeneral(
     "historico",
@@ -802,6 +787,61 @@ async function historico(date1, date2) {
     inicio.value,
     fin.value
   );
+
+  const totalFrutaPorMes = [];
+  for (let i = 0; i < rangoFechas.value.length; i++) {
+    totalFrutaPorMes.push(
+      await obtenerDatosVariableGeneral(
+        "historico",
+        "totales",
+        "individual",
+        "sinfiltro",
+        [48],
+        props.maquina,
+        routerStore().clienteID,
+        rangoFechas.value[i].inicio,
+        rangoFechas.value[i].fin
+      )
+    );
+  }
+  for (let i = 0; i < totales2.length; i++) {
+    for (let j = 0; j < totales2[i].length; j++) {
+      let valor = totales2[i][j].registros[0].total;
+      if (totalesConsumo.value[j] !== undefined) {
+        totalesConsumo.value[j].data.push(
+          Math.max(valor == null ? 0 : valor.toFixed(2), 0)
+        );
+        totalesConsumo.value[j + totales2[i].length].data.push(
+          Math.max(valor == null ? 0 : valor.toFixed(2), 0)
+        );
+      } else {
+        let objectSerieLitros = {
+          name: totales2[i][j].descripcion,
+          type: "column",
+          data: [Math.max(valor == null ? 0 : valor.toFixed(2), 0)],
+        };
+        let objectSerieLitrosTonelada = {
+          name: totales2[i][j].descripcion + "/Tonelada",
+          type: "line",
+          data: [
+            Math.max(
+              valor == null
+                ? 0
+                : (
+                    valor /
+                    (totalFrutaPorMes[i][0].registros[0].total / 1000)
+                  ).toFixed(2),
+              0
+            ),
+          ],
+        };
+        totalesConsumo.value[j] = objectSerieLitros;
+        totalesConsumo.value[j + totales2[i].length] =
+          objectSerieLitrosTonelada;
+      }
+    }
+  }
+  console.log(totalesConsumo.value);
   const consumosValue = totales.map((element, index) => {
     const { registros, descripcion } = element;
     const n = Math.max(0, registros[0].total);

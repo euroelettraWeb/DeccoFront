@@ -87,7 +87,7 @@
             :calendar-time-input="{ readonly: true, step: 1 }"
             :calendar-date-input="calendarDateInput"
             :disabled-dates="{ from: new Date() }"
-            @date-applied="periodoSeleccionado"
+            @date-applied="historico"
             @on-reset="onReset"
           />
         </v-col>
@@ -364,30 +364,6 @@ const calendarDateInput = {
   format: "DD/MM/YYYY",
 };
 
-const periodoSeleccionado = (date1, date2) => {
-  let inicio = new Date(
-    date1.setHours(date1.getHours() + date1.getTimezoneOffset() / 60)
-  )
-    .toISOString()
-    .slice(0, -1);
-  let fin = new Date(
-    date2.setHours(date2.getHours() + date2.getTimezoneOffset() / 60)
-  )
-    .toISOString()
-    .slice(0, -1);
-  date1 = new Date(
-    date1.setHours(date1.getHours() - date1.getTimezoneOffset() / 60)
-  )
-    .toISOString()
-    .slice(0, -1);
-  date2 = new Date(
-    date2.setHours(date2.getHours() - date2.getTimezoneOffset() / 60)
-  )
-    .toISOString()
-    .slice(0, -1);
-  historico(inicio, fin);
-};
-
 const dateInput = {
   placeholder: "Seleccionar fechas",
   inputClass: "selectdates",
@@ -407,6 +383,16 @@ const fechaDefault = (modo) => {
     case "fin":
       return `${año}-${mes}-${dia}T${horas}:${minutos}:${segundos}`;
   }
+};
+
+const fechaFormateada = (fecha) => {
+  const año = fecha.getFullYear();
+  const mes = (fecha.getMonth() + 1).toString().padStart(2, "0");
+  const dia = fecha.getDate().toString().padStart(2, "0");
+  const horas = fecha.getHours().toString().padStart(2, "0");
+  const minutos = fecha.getMinutes().toString().padStart(2, "0");
+  const segundos = fecha.getSeconds().toString().padStart(2, "0");
+  return `${año}-${mes}-${dia}T${horas}:${minutos}:${segundos}`;
 };
 
 const calcularAltura = computed(() => {
@@ -526,8 +512,8 @@ async function lotesAplicaciones(aplicacion) {
 
 async function historico(date1, date2) {
   reset([]);
-  inicio.value = date1 ? date1 : fechaDefault("inicio");
-  fin.value = date2 ? date2 : fechaDefault("fin");
+  inicio.value = date1 ? fechaFormateada(date1) : fechaDefault("inicio");
+  fin.value = date2 ? fechaFormateada(date2) : fechaDefault("fin");
 
   cargado.value = false;
   cargadoEstado.value = false;
@@ -748,21 +734,6 @@ async function historico(date1, date2) {
       )
     );
   }
-  for (let i = 0; i < totales2.length; i++) {
-    for (let j = 0; j < totales2[i].length; j++) {
-      let valor = totales2[i][j].registros[0].total;
-      if (totalesConsumo.value[j] !== undefined) {
-        totalesConsumo.value[j].data.push(valor == null ? 0 : valor.toFixed(2));
-      } else {
-        let objectSerie = {
-          name: totales2[i][j].descripcion,
-          type: totales2[i][j].descripcion == "Total Agua" ? "line" : "column",
-          data: [valor == null ? 0 : valor.toFixed(2)],
-        };
-        totalesConsumo.value.push(objectSerie);
-      }
-    }
-  }
 
   const totales = await obtenerDatosVariableGeneral(
     "historico",
@@ -786,6 +757,65 @@ async function historico(date1, date2) {
       routerStore().clienteID,
       inicio.value,
       fin.value
+    );
+
+    const totalFrutaPorMes = [];
+    for (let i = 0; i < rangoFechas.value.length; i++) {
+      totalFrutaPorMes.push(
+        await obtenerDatosVariableGeneral(
+          "historico",
+          "totales",
+          "individual",
+          "sinfiltro",
+          [48],
+          deccodos.value,
+          routerStore().clienteID,
+          rangoFechas.value[i].inicio,
+          rangoFechas.value[i].fin
+        )
+      );
+    }
+
+    for (let i = 0; i < totales2.length; i++) {
+      for (let j = 0; j < totales2[i].length; j++) {
+        let valor = totales2[i][j].registros[0].total;
+        if (totalesConsumo.value[j] !== undefined) {
+          totalesConsumo.value[j].data.push(
+            Math.max(valor == null ? 0 : valor.toFixed(2), 0)
+          );
+          totalesConsumo.value[j + totales2[i].length].data.push(
+            Math.max(valor == null ? 0 : valor.toFixed(2), 0)
+          );
+        } else {
+          let objectSerieLitros = {
+            name: totales2[i][j].descripcion,
+            type: "column",
+            data: [Math.max(valor == null ? 0 : valor.toFixed(2), 0)],
+          };
+          let objectSerieLitrosTonelada = {
+            name: totales2[i][j].descripcion + "/Tonelada",
+            type: "line",
+            data: [
+              Math.max(
+                valor == null
+                  ? 0
+                  : (
+                      valor /
+                      (totalFrutaPorMes[i][0].registros[0].total / 1000)
+                    ).toFixed(2),
+                0
+              ),
+            ],
+          };
+          totalesConsumo.value[j] = objectSerieLitros;
+          totalesConsumo.value[j + totales2[i].length] =
+            objectSerieLitrosTonelada;
+        }
+      }
+    }
+    totalesConsumo.value = totalesConsumo.value.filter(
+      (item) =>
+        item.name !== "Litros Agua" && item.name !== "Litros Agua/Tonelada"
     );
     // let kilos = await obtenerDatosVariableGeneral(
     //   "historico",

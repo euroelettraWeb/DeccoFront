@@ -69,6 +69,17 @@ const mesRango = computed(() => {
   });
 });
 
+// Función para mostrar el numero de Litros/Tonelada en el grafico para aquellos que su tipo sea line
+const dataLabelsLine = computed(() => {
+  let indexSerie = [];
+  for (let i = 0; i < props.serie.length; i++) {
+    if (props.serie[i].type == "line") {
+      indexSerie.push(i);
+    }
+  }
+  return indexSerie;
+});
+
 // Función para manejar el maximo de la escala del eje Y
 const escalaMax = computed(() => {
   let maximo = 0;
@@ -146,7 +157,7 @@ const chartOptions = {
   },
   dataLabels: {
     enabled: true,
-    enabledOnSeries: [0],
+    enabledOnSeries: dataLabelsLine.value,
   },
   yaxis: ejeY.value,
   tooltip: {
