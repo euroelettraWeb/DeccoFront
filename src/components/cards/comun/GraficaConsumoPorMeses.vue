@@ -82,43 +82,58 @@ const dataLabelsLine = computed(() => {
 
 // Función para manejar el maximo de la escala del eje Y
 const escalaMax = computed(() => {
-  let maximo = 0;
+  let maximoColumn = 0;
+  let maximoLine = 0;
 
   props.serie.forEach((serie) => {
     if (serie.type === "column") {
       let maximoLocal = Math.max(...serie.data);
-      if (maximoLocal > maximo) {
-        maximo = maximoLocal;
+      if (maximoLocal > maximoColumn) {
+        maximoColumn = maximoLocal;
+      }
+    } else if (serie.type === "line") {
+      let maximoLocal = Math.max(...serie.data);
+      if (maximoLocal > maximoLine) {
+        maximoLine = maximoLocal;
       }
     }
   });
-  if (maximo == 0) {
+
+  if (maximoColumn == 0 && maximoLine == 0) {
     return 1;
   } else {
-    return Math.floor(maximo * 1.2);
+    return {
+      maximoColumn: Math.max(maximoColumn * 1.2),
+      maximoLine: Math.max(maximoLine * 1.2),
+    };
   }
 });
 
 // Función para definir el yaxis en chartOptions
 const ejeY = computed(() => {
   let objectEjeY = [];
+  let firstLine = true;
   let firstColumn = true;
 
   props.serie.forEach((serie) => {
     if (serie.type === "line") {
       let object = {
+        min: 0,
+        max: escalaMax.value.maximoLine,
+        showForNullSeries: false,
         labels: {
-          show: true,
+          show: firstLine,
           style: {
             colors: "#008FFB",
           },
         },
       };
+      firstLine = false;
       objectEjeY.push(object);
     } else if (serie.type === "column") {
       let object = {
         min: 0,
-        max: escalaMax.value,
+        max: escalaMax.value.maximoColumn,
         showForNullSeries: false,
         opposite: firstColumn,
         labels: {

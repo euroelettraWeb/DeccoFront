@@ -784,7 +784,15 @@ async function historico(date1, date2) {
             Math.max(valor == null ? 0 : valor.toFixed(2), 0)
           );
           totalesConsumo.value[j + totales2[i].length].data.push(
-            Math.max(valor == null ? 0 : valor.toFixed(2), 0)
+            Math.max(
+              valor == null
+                ? 0
+                : (
+                    valor /
+                    (totalFrutaPorMes[i][0].registros[0].total / 1000)
+                  ).toFixed(2),
+              0
+            )
           );
         } else {
           let objectSerieLitros = {
@@ -793,7 +801,7 @@ async function historico(date1, date2) {
             data: [Math.max(valor == null ? 0 : valor.toFixed(2), 0)],
           };
           let objectSerieLitrosTonelada = {
-            name: totales2[i][j].descripcion + "/Tonelada",
+            name: totales2[i][j].descripcion + "(L/T)",
             type: "line",
             data: [
               Math.max(
@@ -814,8 +822,7 @@ async function historico(date1, date2) {
       }
     }
     totalesConsumo.value = totalesConsumo.value.filter(
-      (item) =>
-        item.name !== "Litros Agua" && item.name !== "Litros Agua/Tonelada"
+      (item) => item.name !== "Litros Agua" && item.name !== "Litros Agua(L/T)"
     );
     // let kilos = await obtenerDatosVariableGeneral(
     //   "historico",
