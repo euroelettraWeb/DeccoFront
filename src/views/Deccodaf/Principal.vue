@@ -72,11 +72,11 @@
           ]"
         />
         <UsuarioMaquina v-if="usuario" :usuario="106" :tipo="1" />
-        <GraficaEstadoCard
+        <GraficaReposiciones
           v-if="reposiciones"
-          :variables="[114, 115, 116, 117, 118, 119, 120]"
-          :tipo="1"
+          :series="seriesReposiciones"
           :height="400"
+          :cargado="cargado"
           title="Reposiciones"
         />
         <GraficaLineaCard
@@ -107,11 +107,14 @@ import TablaTotal from "../../components/tablas/comun/TablaTotal.vue";
 import KilosCalibradorComun from "../../components/cards/comun/KilosCalibradorComun.vue";
 import TablaAlarmas from "../../components/tablas/comun/TablaAlarmas.vue";
 import GraficaEstadoCard from "../../components/cards/comun/GraficaEstadoCard.vue";
+import GraficaReposiciones from "../../components/cards/comun/GraficaReposiciones.vue";
 import LoteCliente from "../../components/cards/comun/LoteCliente.vue";
 import LoteDeccoMod from "../../components/cards/deccodaf/LoteDeccoMod.vue";
 import UsuarioMaquina from "../../components/cards/comun/Usuario.vue";
 import { userStore } from "../../stores/index";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch, onUnmounted } from "vue";
+import { routerStore } from "../../stores/index";
+import { obtenerMaquina, obtenerDatosVariableGeneral } from "../../helpers/bd";
 import axios from "axios";
 
 // Variables booleanos para visualizar las graficas
@@ -123,9 +126,99 @@ const usuario = ref(true);
 const reposiciones = ref(true);
 const dosis = ref(true);
 const kilosCalibrador = ref(true);
+const seriesReposiciones = ref([]);
+const cargado = ref(false);
+const interval = ref(null);
+const maquinaID = ref(null);
+const cantidadesReposiciones = ref([]);
+const variablesReposiciones = [121, 122, 123, 124, 125];
+
+const cargarDatos = async () => {
+  maquinaID.value = (
+    await obtenerMaquina("lineaTipo", routerStore().lineasID, 1)
+  )[0].id;
+  let formatoVariables = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "individual",
+    "formatoRangos",
+    [114, 115, 116, 117, 118, 119, 120],
+    maquinaID.value,
+    routerStore().clienteID,
+    null,
+    null,
+    ["Paro", "Marcha"]
+  );
+  seriesReposiciones.value = formatoVariables;
+};
+
+// Obtener la cantidad ultilizada en cada reposición en formato de una array {x: tiempo de la reposicion, y: cantidad}
+const cargarDatosCantidadReposiciones = async () => {
+  cantidadesReposiciones.value = [];
+  if (variablesReposiciones.length > 0) {
+    let marcha = seriesReposiciones.value.find((v) => v.name == "Marcha");
+    let cantidades = [];
+    for (let dato of marcha.data) {
+      let rangoReposicion = dato.y;
+      cantidades.push(
+        await obtenerDatosVariableGeneral(
+          "historico",
+          "ultimo",
+          "individual",
+          "sinfiltro",
+          [121, 122, 123, 124, 125],
+          maquinaID.value,
+          routerStore().clienteID,
+          fechaFormateada(new Date(rangoReposicion[0])),
+          fechaFormateada(new Date(rangoReposicion[1]))
+        )
+      );
+    }
+    // Quitar este bucle y hacer una otra consulta para buscar el nombre del propio producto y a continuación añadir dato.nombreProducto y dato.cantidadproducto a series marcha.
+    // Y ademas ir añadiendo a totalizadores por tipo de reposicion.
+    for (let productos of cantidades) {
+      for (let cantidad of productos) {
+        cantidadesReposiciones.value.push({
+          nombreCorto: cantidad.nombreCorto,
+          registro: cantidad.registros[0],
+        });
+      }
+    }
+    // console.log(cantidadesReposiciones.value);
+  }
+};
+
+const fechaFormateada = (fecha) => {
+  const año = fecha.getFullYear();
+  const mes = (fecha.getMonth() + 1).toString().padStart(2, "0");
+  const dia = fecha.getDate().toString().padStart(2, "0");
+  const horas = (fecha.getHours() + fecha.getTimezoneOffset() / 60)
+    .toString()
+    .padStart(2, "0");
+  const minutos = fecha.getMinutes().toString().padStart(2, "0");
+  const segundos = fecha.getSeconds().toString().padStart(2, "0");
+  return `${año}-${mes}-${dia}T${horas}:${minutos}:${segundos}`;
+};
+
+watch(
+  () => routerStore().lineasID,
+  async () => {
+    cargado.value = false;
+    await cargarDatos();
+    cargado.value = true;
+  }
+);
 
 // Consultar los permisos del usuario si es un usuario "Cliente"
 onMounted(async () => {
+  cargado.value = false;
+  await cargarDatos();
+  cargarDatosCantidadReposiciones();
+  cargado.value = true;
+  interval.value = setInterval(async () => {
+    cargarDatos();
+  }, 90000);
+
   if (userStore().rol == "Cliente") {
     let permisos = await axios.post(
       `${process.env.VUE_APP_RUTA_API}/usuarios/permisos/Deccodaf`,
@@ -143,5 +236,9 @@ onMounted(async () => {
     dosis.value = permisos.data[0].dosis;
     kilosCalibrador.value = permisos.data[0].kilosCalibrador;
   }
+});
+
+onUnmounted(() => {
+  clearInterval(interval.value);
 });
 </script>
