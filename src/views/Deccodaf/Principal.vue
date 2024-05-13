@@ -159,6 +159,7 @@ const cargarDatosCantidadReposiciones = async () => {
     let marcha = seriesReposiciones.value.find((v) => v.name == "Marcha");
     let cantidades = [];
     for (let dato of marcha.data) {
+      console.log(dato);
       let rangoReposicion = dato.y;
       cantidades.push(
         await obtenerDatosVariableGeneral(

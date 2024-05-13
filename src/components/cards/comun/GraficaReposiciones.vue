@@ -108,7 +108,30 @@ const chartOptions = computed(() => {
     },
     tooltip: {
       x: {
+        show: true,
         format: "dd/MM/yyyy HH:mm:ss",
+      },
+      y: {
+        formatter: function (value, ctx) {
+          // Comprueba si 'ctx' existe
+          if (ctx) {
+            // Desestructura 'ctx'
+            let { series, seriesIndex, dataPointIndex, w } = ctx;
+            // Accede a los datos de la serie actual
+            let data = w.config.series[seriesIndex].data[dataPointIndex];
+            // Comprueba si 'reposicion' existe
+            let tooltip = "";
+            if (data && data.reposicion) {
+              // Itera sobre 'reposicion'
+              for (let i = 0; i < data.reposicion.length; i++) {
+                // Añade cada 'nombreCorto' y 'y' al tooltip
+                tooltip += `${data.reposicion[i].nombreCorto}: ${data.reposicion[i].y}<br>`;
+              }
+            }
+            return tooltip;
+          }
+          return value;
+        },
       },
     },
     legend: {

@@ -225,23 +225,11 @@
             :cargado="cargadoUsuario"
           />
 
-          <GraficoEstadoCardGen
-            :colores="['#d50000', '#00c853']"
-            :tooltipy="false"
-            :legend="false"
-            :serie="seriesReposiciones"
-            :height="350"
-            title="Reposiciones"
-            :categories="[
-              'Marcha Auto',
-              'Marcha Cajas/Palets',
-              'Marcha Llenado',
-              'Marcha Manual',
-              'Marcha Parcial',
-              'Marcha SRC',
-              'Marcha Tiempo Marcha',
-            ]"
+          <GraficaReposiciones
+            :series="seriesReposiciones"
+            :height="400"
             :cargado="cargadoReposiciones"
+            title="Reposiciones"
           />
 
           <GraficoLineaCardGen
@@ -314,6 +302,7 @@ import { routerStore } from "../../../stores/index";
 import moment from "moment";
 import DatePicker from "vue-time-date-range-picker/dist/vdprDatePicker";
 import GraficoEstadoCardGen from "../comun/GraficoEstadoCardGen.vue";
+import GraficaReposiciones from "../comun/GraficaReposiciones.vue";
 import GraficoLineaCardGen from "../comun/GraficoLineaCardGen.vue";
 import GraficoConsumoPorMeses from "../comun/GraficaConsumoPorMeses.vue";
 // import FrutaProcesadaHistorico from "../comun/FrutaProcesadaHistorico.vue";
@@ -341,6 +330,8 @@ const modoConsultaLotes = ref(null);
 const cargadoLotesSelect = ref(false);
 const mostrarAplicaciones = ref(false);
 const datosLote = ref(false);
+const cantidadesReposiciones = ref([]);
+const rangoReposicion = ref([]);
 
 const seriesEstado = ref([]);
 const seriesAlarmas = ref([]);
@@ -421,6 +412,37 @@ const fechaFormateada = (fecha) => {
   const minutos = fecha.getMinutes().toString().padStart(2, "0");
   const segundos = fecha.getSeconds().toString().padStart(2, "0");
   return `${año}-${mes}-${dia}T${horas}:${minutos}:${segundos}`;
+};
+
+const fechaFormateadaSQL = (fecha) => {
+  const año = fecha.getFullYear();
+  const mes = (fecha.getMonth() + 1).toString().padStart(2, "0");
+  const dia = fecha.getDate().toString().padStart(2, "0");
+  let horas = fecha.getHours() + fecha.getTimezoneOffset() / 60;
+  horas = ((horas + 24) % 24).toString().padStart(2, "0"); // Asegura que las horas estén en el rango de 0-23
+  const minutos = fecha.getMinutes().toString().padStart(2, "0");
+  const segundos = fecha.getSeconds().toString().padStart(2, "0");
+  return `${año}-${mes}-${dia}T${horas}:${minutos}:${segundos}`;
+};
+
+const nombreProducto = async (nombre) => {
+  let nombreProductosDECCODAFReposiciones = await obtenerDatosVariableGeneral(
+    "24H",
+    "ultimo",
+    "individual",
+    "sinfiltro",
+    [101, 102, 103, 104, 105],
+    props.maquina,
+    routerStore().clienteID
+  );
+
+  let nombreSplit = nombre.split(" ");
+  let producto = nombreSplit[0] + " " + nombreSplit[1];
+  for (let nombreProducto of nombreProductosDECCODAFReposiciones) {
+    if (nombreProducto.nombreCorto.includes(producto)) {
+      return nombreProducto.registros[0].y;
+    }
+  }
 };
 
 const calcularAltura = computed(() => {
@@ -698,6 +720,35 @@ async function historico(date1, date2) {
     fin.value
   );
   seriesReposiciones.value = reposiciones;
+
+  // Obtener la cantidad ultilizada en cada reposición en formato de una array {x: tiempo de la reposicion, y: cantidad}
+  cantidadesReposiciones.value = [];
+  let marchaReposiciones = seriesReposiciones.value.find(
+    (v) => v.name == "Marcha"
+  );
+  let cantidades = [];
+  for (let dato of marchaReposiciones.data) {
+    rangoReposicion.value = dato.y;
+    let cantidadesReposiciones = await obtenerDatosVariableGeneral(
+      "historico",
+      "ultimo",
+      "individual",
+      "sinfiltro",
+      [121, 122, 123, 124, 125],
+      props.maquina,
+      routerStore().clienteID,
+      fechaFormateadaSQL(new Date(rangoReposicion.value[0])),
+      fechaFormateadaSQL(new Date(rangoReposicion.value[1]))
+    );
+    dato.reposicion = await Promise.all(
+      cantidadesReposiciones
+        .filter((cantidad) => cantidad.registros[0].y != 0)
+        .map(async (cantidad) => ({
+          y: cantidad.registros[0].y,
+          nombreCorto: await nombreProducto(cantidad.nombreCorto),
+        }))
+    );
+  }
   cargadoReposiciones.value = true;
 
   const otros = await obtenerDatosVariableGeneral(
