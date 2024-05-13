@@ -425,15 +425,17 @@ const fechaFormateadaSQL = (fecha) => {
   return `${año}-${mes}-${dia}T${horas}:${minutos}:${segundos}`;
 };
 
-const nombreProducto = async (nombre) => {
+const nombreProducto = async (nombre, fechaInicio, fechaFin) => {
   let nombreProductosDECCODAFReposiciones = await obtenerDatosVariableGeneral(
-    "24H",
+    "historico",
     "ultimo",
     "individual",
     "sinfiltro",
     [101, 102, 103, 104, 105],
     props.maquina,
-    routerStore().clienteID
+    routerStore().clienteID,
+    fechaInicio,
+    fechaFin
   );
 
   let nombreSplit = nombre.split(" ");
@@ -745,7 +747,11 @@ async function historico(date1, date2) {
         .filter((cantidad) => cantidad.registros[0].y != 0)
         .map(async (cantidad) => ({
           y: cantidad.registros[0].y,
-          nombreCorto: await nombreProducto(cantidad.nombreCorto),
+          nombreProducto: await nombreProducto(
+            cantidad.nombreCorto,
+            fechaFormateadaSQL(new Date(rangoReposicion.value[0])),
+            fechaFormateadaSQL(new Date(rangoReposicion.value[1]))
+          ),
         }))
     );
   }

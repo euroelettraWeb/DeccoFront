@@ -159,33 +159,54 @@ const cargarDatosCantidadReposiciones = async () => {
     let marcha = seriesReposiciones.value.find((v) => v.name == "Marcha");
     let cantidades = [];
     for (let dato of marcha.data) {
-      console.log(dato);
       let rangoReposicion = dato.y;
-      cantidades.push(
-        await obtenerDatosVariableGeneral(
-          "historico",
-          "ultimo",
-          "individual",
-          "sinfiltro",
-          [121, 122, 123, 124, 125],
-          maquinaID.value,
-          routerStore().clienteID,
-          fechaFormateada(new Date(rangoReposicion[0])),
-          fechaFormateada(new Date(rangoReposicion[1]))
-        )
+      let cantidadesReposiciones = await obtenerDatosVariableGeneral(
+        "historico",
+        "ultimo",
+        "individual",
+        "sinfiltro",
+        [121, 122, 123, 124, 125],
+        maquinaID.value,
+        routerStore().clienteID,
+        fechaFormateada(new Date(rangoReposicion[0])),
+        fechaFormateada(new Date(rangoReposicion[1]))
+      );
+      dato.reposicion = await Promise.all(
+        cantidadesReposiciones
+          .filter((cantidad) => cantidad.registros[0].y != 0)
+          .map(async (cantidad) => ({
+            y: cantidad.registros[0].y,
+            nombreProducto: await nombreProducto(
+              cantidad.nombreCorto,
+              fechaFormateada(new Date(rangoReposicion[0])),
+              fechaFormateada(new Date(rangoReposicion[1]))
+            ),
+          }))
       );
     }
-    // Quitar este bucle y hacer una otra consulta para buscar el nombre del propio producto y a continuación añadir dato.nombreProducto y dato.cantidadproducto a series marcha.
-    // Y ademas ir añadiendo a totalizadores por tipo de reposicion.
-    for (let productos of cantidades) {
-      for (let cantidad of productos) {
-        cantidadesReposiciones.value.push({
-          nombreCorto: cantidad.nombreCorto,
-          registro: cantidad.registros[0],
-        });
-      }
+  }
+};
+
+// función para obtener el nombre del producto
+const nombreProducto = async (nombre, fechaInicio, fechaFin) => {
+  let nombreProductosDECCODAFReposiciones = await obtenerDatosVariableGeneral(
+    "historico",
+    "ultimo",
+    "individual",
+    "sinfiltro",
+    [101, 102, 103, 104, 105],
+    maquinaID.value,
+    routerStore().clienteID,
+    fechaInicio,
+    fechaFin
+  );
+
+  let nombreSplit = nombre.split(" ");
+  let producto = nombreSplit[0] + " " + nombreSplit[1];
+  for (let nombreProducto of nombreProductosDECCODAFReposiciones) {
+    if (nombreProducto.nombreCorto.includes(producto)) {
+      return nombreProducto.registros[0].y;
     }
-    // console.log(cantidadesReposiciones.value);
   }
 };
 

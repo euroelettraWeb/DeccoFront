@@ -125,7 +125,7 @@ const chartOptions = computed(() => {
               // Itera sobre 'reposicion'
               for (let i = 0; i < data.reposicion.length; i++) {
                 // Añade cada 'nombreCorto' y 'y' al tooltip
-                tooltip += `${data.reposicion[i].nombreCorto}: ${data.reposicion[i].y}<br>`;
+                tooltip += `${data.reposicion[i].nombreProducto}: ${data.reposicion[i].y} ml<br>`;
               }
             }
             return tooltip;
