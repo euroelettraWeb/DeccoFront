@@ -171,18 +171,22 @@ const cargarDatosCantidadReposiciones = async () => {
         fechaFormateada(new Date(rangoReposicion[0])),
         fechaFormateada(new Date(rangoReposicion[1]))
       );
-      dato.reposicion = await Promise.all(
-        cantidadesReposiciones
-          .filter((cantidad) => cantidad.registros[0].y != 0)
-          .map(async (cantidad) => ({
+      let reposicion = [];
+      for (let cantidad of cantidadesReposiciones) {
+        if (cantidad.registros[0].y != 0) {
+          let nombreProductoResult = await nombreProducto(
+            cantidad.nombreCorto,
+            fechaFormateada(new Date(rangoReposicion[0])),
+            fechaFormateada(new Date(rangoReposicion[1]))
+          );
+          reposicion.push({
             y: cantidad.registros[0].y,
-            nombreProducto: await nombreProducto(
-              cantidad.nombreCorto,
-              fechaFormateada(new Date(rangoReposicion[0])),
-              fechaFormateada(new Date(rangoReposicion[1]))
-            ),
-          }))
-      );
+            nombreProducto: nombreProductoResult,
+          });
+        }
+      }
+
+      dato.reposicion = reposicion;
     }
   }
 };

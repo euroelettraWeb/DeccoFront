@@ -742,18 +742,23 @@ async function historico(date1, date2) {
       fechaFormateadaSQL(new Date(rangoReposicion.value[0])),
       fechaFormateadaSQL(new Date(rangoReposicion.value[1]))
     );
-    dato.reposicion = await Promise.all(
-      cantidadesReposiciones
-        .filter((cantidad) => cantidad.registros[0].y != 0)
-        .map(async (cantidad) => ({
+    // Calcula 'reposicion'
+    let reposicion = [];
+    for (let cantidad of cantidadesReposiciones) {
+      if (cantidad.registros[0].y != 0) {
+        let nombreProductoResult = await nombreProducto(
+          cantidad.nombreCorto,
+          fechaFormateadaSQL(new Date(rangoReposicion.value[0])),
+          fechaFormateadaSQL(new Date(rangoReposicion.value[1]))
+        );
+        reposicion.push({
           y: cantidad.registros[0].y,
-          nombreProducto: await nombreProducto(
-            cantidad.nombreCorto,
-            fechaFormateadaSQL(new Date(rangoReposicion.value[0])),
-            fechaFormateadaSQL(new Date(rangoReposicion.value[1]))
-          ),
-        }))
-    );
+          nombreProducto: nombreProductoResult,
+        });
+      }
+    }
+
+    dato.reposicion = reposicion;
   }
   cargadoReposiciones.value = true;
 
