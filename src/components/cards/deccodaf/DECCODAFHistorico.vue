@@ -104,39 +104,16 @@
         </v-col>
       </v-row>
       <v-row v-if="cargado">
-        <v-col v-if="cargadoConsumos" cols="6">
-          <v-card>
-            <v-card-title>Consumos</v-card-title>
-            <v-card-text>
-              <v-simple-table dense>
-                <template #default>
-                  <thead>
-                    <tr>
-                      <th></th>
-                      <th class="text-right">Litros</th>
-                      <th class="text-right">Litros/Tonelada</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="item of consumos" :key="item.id">
-                      <td>
-                        {{ item.nombre }}
-                      </td>
-                      <td class="text-right">
-                        {{ item.total }}
-                      </td>
-                      <td v-if="deccodos" class="text-right">
-                        {{ item.totalPorToneladaFruta }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-simple-table>
-            </v-card-text>
-          </v-card>
+        <v-col cols="12" sm="9">
+          <TablaTotalReposiciones
+            :consumos="consumos"
+            :totalizador-reposicion="consumoTotalizadorReposiciones"
+            :deccodos="deccodos"
+            :cargado="cargadoConsumos"
+          />
         </v-col>
 
-        <v-col v-if="cargadoAlarmas" cols="6">
+        <v-col v-if="cargadoAlarmas" cols="12" sm="3">
           <v-card>
             <v-card-title>Alarmas (min)</v-card-title>
             <v-card-text>
@@ -307,6 +284,7 @@ import GraficoLineaCardGen from "../comun/GraficoLineaCardGen.vue";
 import GraficoConsumoPorMeses from "../comun/GraficaConsumoPorMeses.vue";
 // import FrutaProcesadaHistorico from "../comun/FrutaProcesadaHistorico.vue";
 import KilosCalibradorHistorico from "../comun/KilosCalibradorHistorico.vue";
+import TablaTotalReposiciones from "../../tablas/comun/TablaTotalReposiciones.vue";
 
 const props = defineProps({
   linea: { type: Number, default: 1 },
@@ -349,6 +327,8 @@ const totalesConsumo = ref([]);
 const rangoFechas = ref([]);
 
 const consumos = ref([]);
+const consumoTotalizadorReposiciones = ref([]);
+
 const tiempos = ref([
   {
     id: 0,
@@ -439,11 +419,20 @@ const nombreProducto = async (nombre, fechaInicio, fechaFin) => {
   );
 
   let nombreSplit = nombre.split(" ");
-  let producto = nombreSplit[0] + " " + nombreSplit[1];
+  let producto1 = nombreSplit[0] + " " + nombreSplit[1];
+  let producto2 = nombreSplit[1] + " " + nombreSplit[2];
+  let response = null;
   for (let nombreProducto of nombreProductosDECCODAFReposiciones) {
-    if (nombreProducto.nombreCorto.includes(producto)) {
-      return nombreProducto.registros[0].y;
+    if (nombreProducto.nombreCorto.includes(producto1)) {
+      response = nombreProducto.registros[0].y;
+    } else if (nombreProducto.nombreCorto.includes(producto2)) {
+      response = nombreProducto.registros[0].y;
     }
+  }
+  if (response != null) {
+    return response;
+  } else {
+    return nombre;
   }
 };
 
@@ -728,7 +717,6 @@ async function historico(date1, date2) {
   let marchaReposiciones = seriesReposiciones.value.find(
     (v) => v.name == "Marcha"
   );
-  let cantidades = [];
   for (let dato of marchaReposiciones.data) {
     rangoReposicion.value = dato.y;
     let cantidadesReposiciones = await obtenerDatosVariableGeneral(
@@ -760,6 +748,42 @@ async function historico(date1, date2) {
 
     dato.reposicion = reposicion;
   }
+
+  // cantidadesReposiciones.value = [];
+  // let reposicionesMarcha = seriesReposiciones.value.find(
+  //   (v) => v.name == "Marcha"
+  // );
+  // for (let dato of reposicionesMarcha.data) {
+  //   let rangoReposicion = dato.y;
+  //   let cantidadesReposiciones = await obtenerDatosVariableGeneral(
+  //     "historico",
+  //     "ultimo",
+  //     "individual",
+  //     "sinfiltro",
+  //     [121, 122, 123, 124, 125],
+  //     props.maquina,
+  //     routerStore().clienteID,
+  //     fechaFormateada(new Date(rangoReposicion[0])),
+  //     fechaFormateada(new Date(rangoReposicion[1]))
+  //   );
+  //   let reposicion = [];
+  //   for (let cantidad of cantidadesReposiciones) {
+  //     if (cantidad.registros[0].y != 0) {
+  //       let nombreProductoResult = await nombreProducto(
+  //         cantidad.nombreCorto,
+  //         fechaFormateada(new Date(rangoReposicion[0])),
+  //         fechaFormateada(new Date(rangoReposicion[1]))
+  //       );
+  //       reposicion.push({
+  //         y: cantidad.registros[0].y,
+  //         nombreProducto: nombreProductoResult,
+  //       });
+  //     }
+  //   }
+  //   dato.reposicion = reposicion;
+  // }
+  // console.log(seriesReposiciones.value);
+
   cargadoReposiciones.value = true;
 
   const otros = await obtenerDatosVariableGeneral(
@@ -962,7 +986,9 @@ async function historico(date1, date2) {
     //   inicio.value,
     //   fin.value
     // );
-    const consumosValue = totales.map((element, index) => {
+    const consumosValue = [];
+    for (let index = 0; index < totales.length; index++) {
+      const element = totales[index];
       const { registros, descripcion } = element;
       const n = Math.max(0, registros[0].total);
       const totalFrutaRegistrosTotal = totalFruta[0].registros[0].total;
@@ -972,13 +998,16 @@ async function historico(date1, date2) {
           ? (n / (totalFrutaRegistrosTotal / 1000)).toFixed(2)
           : "0";
 
-      return {
+      const nombre = await nombreProducto(descripcion, inicio.value, fin.value);
+
+      consumosValue.push({
         id: descripcion + index,
-        nombre: descripcion,
+        nombre: nombre,
         total: n.toLocaleString("es-ES"),
         totalPorToneladaFruta: d,
-      };
-    });
+      });
+    }
+
     const totalFrutaConsumo = {
       id: totalFruta[0].nombreCorto + consumosValue.length,
       nombre: totalFruta[0].nombreCorto,
