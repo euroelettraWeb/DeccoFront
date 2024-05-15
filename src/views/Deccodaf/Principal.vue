@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <LoteCliente :tipo="1" />
+    <LoteCliente :lotecliente="89" :tipo="1" />
     <v-row>
       <v-col>
         <v-row>
