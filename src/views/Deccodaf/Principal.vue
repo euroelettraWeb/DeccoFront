@@ -4,14 +4,15 @@
     <v-row>
       <v-col>
         <v-row>
-          <v-col>
-            <TablaTotal
-              :variables="[25, 26, 27, 28, 29, 30]"
-              :marcha="[1, 12, 14]"
-              :tipo="1"
+          <v-col cols="12" sm="9">
+            <TablaTotalReposiciones
+              :consumos="consumosTotal"
+              :totalizador-reposicion="consumoTotalizadorReposiciones"
+              :deccodos="deccodos"
+              :cargado="cargado"
             />
           </v-col>
-          <v-col>
+          <v-col cols="12" sm="3">
             <TablaAlarmas
               :variables="[12, 14, 74, 75]"
               :marcha="[1, 12, 14, 74, 75]"
@@ -103,7 +104,7 @@ export default {
 <script setup>
 import Estado from "../../components/cards/comun/Estado.vue";
 import GraficaLineaCard from "../../components/cards/comun/GraficaLineaCard.vue";
-import TablaTotal from "../../components/tablas/comun/TablaTotal.vue";
+import TablaTotalReposiciones from "../../components/tablas/comun/TablaTotalReposiciones.vue";
 import KilosCalibradorComun from "../../components/cards/comun/KilosCalibradorComun.vue";
 import TablaAlarmas from "../../components/tablas/comun/TablaAlarmas.vue";
 import GraficaEstadoCard from "../../components/cards/comun/GraficaEstadoCard.vue";
@@ -126,17 +127,106 @@ const usuario = ref(true);
 const reposiciones = ref(true);
 const dosis = ref(true);
 const kilosCalibrador = ref(true);
-const seriesReposiciones = ref([]);
 const cargado = ref(false);
+
+// Variables relacionadas con las reposiciones
+const seriesReposiciones = ref([]);
 const interval = ref(null);
 const maquinaID = ref(null);
 const cantidadesReposiciones = ref([]);
 const variablesReposiciones = [121, 122, 123, 124, 125];
+const consumoTotalizadorReposiciones = ref([]);
 
-const cargarDatos = async () => {
-  maquinaID.value = (
-    await obtenerMaquina("lineaTipo", routerStore().lineasID, 1)
+const consumosTotal = ref([]);
+const deccodos = ref(2);
+
+// Cargar datos tabla total
+const cargarDatosTotal = async () => {
+  deccodos.value = (
+    await obtenerMaquina("lineaTipo", routerStore().lineasID, 2)
   )[0].id;
+  let totalesBD = await obtenerDatosVariableGeneral(
+    "24H",
+    "totales",
+    "individual",
+    "sinfiltro",
+    [25, 26, 27, 28, 29, 30],
+    maquinaID.value,
+    routerStore().clienteID
+  );
+  let ultimaHora = await obtenerDatosVariableGeneral(
+    "ultimaHora",
+    "totales",
+    "individual",
+    "sinfiltro",
+    [25, 26, 27, 28, 29, 30],
+    maquinaID.value,
+    routerStore().clienteID
+  );
+
+  if (deccodos.value) {
+    let totalesFruta = await obtenerDatosVariableGeneral(
+      "24H",
+      "totales",
+      "individual",
+      "sinfiltro",
+      [48],
+      deccodos.value,
+      routerStore().clienteID
+    );
+    consumosTotal.value = [];
+    for (let index = 0; index < totalesBD.length; index++) {
+      const element = totalesBD[index];
+      const elementUltimaHora = ultimaHora[index];
+      let producto = await nombreProducto(element.descripcion, null, null);
+      let n = Math.max(0, element.registros[0].total);
+      let d =
+        totalesFruta[0].registros[0].total > 0
+          ? (n / (totalesFruta[0].registros[0].total / 1000)).toLocaleString(
+              "es-ES"
+            )
+          : 0;
+      consumosTotal.value.push({
+        id: index,
+        nombre: producto,
+        total: Math.max(0, element.registros[0].total).toLocaleString("es-ES"),
+        totalFruta: d.toLocaleString("es-ES"),
+        ultimaHora: Math.max(
+          0,
+          elementUltimaHora.registros[0].total
+        ).toLocaleString("es-ES"),
+      });
+    }
+    consumosTotal.value.push({
+      id: totalesBD.length,
+      nombre: "T Fruta",
+      total: Math.max(
+        0,
+        totalesFruta[0].registros[0].total / 1000
+      ).toLocaleString("es-ES"),
+    });
+  } else {
+    consumosTotal.value = [];
+    for (let index = 0; index < totalesBD.length; index++) {
+      const element = totalesBD[index];
+      const elementUltimaHora = ultimaHora[index];
+      let producto = await nombreProducto(element.descripcion, null, null);
+      consumosTotal.value.push({
+        id: index,
+        nombre: producto,
+        total: Math.max(0, element.registros[0].total)
+          .toFixed(3)
+          .toLocaleString("es-ES"),
+        ultimaHora: Math.max(0, elementUltimaHora.registros[0].total)
+          .toFixed(3)
+          .toLocaleString("es-ES"),
+      });
+    }
+  }
+};
+
+// Cargar datos reposiciones
+const cargarDatosReposiciones = async () => {
   let formatoVariables = await obtenerDatosVariableGeneral(
     "24H",
     "registros",
@@ -157,7 +247,6 @@ const cargarDatosCantidadReposiciones = async () => {
   cantidadesReposiciones.value = [];
   if (variablesReposiciones.length > 0) {
     let marcha = seriesReposiciones.value.find((v) => v.name == "Marcha");
-    let cantidades = [];
     for (let dato of marcha.data) {
       let rangoReposicion = dato.y;
       let cantidadesReposiciones = await obtenerDatosVariableGeneral(
@@ -185,33 +274,113 @@ const cargarDatosCantidadReposiciones = async () => {
           });
         }
       }
-
       dato.reposicion = reposicion;
     }
   }
 };
 
-// función para obtener el nombre del producto
+// Función para obtener el nombre del producto
 const nombreProducto = async (nombre, fechaInicio, fechaFin) => {
-  let nombreProductosDECCODAFReposiciones = await obtenerDatosVariableGeneral(
-    "historico",
-    "ultimo",
-    "individual",
-    "sinfiltro",
-    [101, 102, 103, 104, 105],
-    maquinaID.value,
-    routerStore().clienteID,
-    fechaInicio,
-    fechaFin
-  );
+  let nombreProductosDECCODAFReposiciones = [];
+  if (fechaInicio != null && fechaFin != null) {
+    nombreProductosDECCODAFReposiciones = await obtenerDatosVariableGeneral(
+      "historico",
+      "ultimo",
+      "individual",
+      "sinfiltro",
+      [101, 102, 103, 104, 105],
+      maquinaID.value,
+      routerStore().clienteID,
+      fechaInicio,
+      fechaFin
+    );
+  } else {
+    nombreProductosDECCODAFReposiciones = await obtenerDatosVariableGeneral(
+      "24H",
+      "ultimo",
+      "individual",
+      "sinfiltro",
+      [101, 102, 103, 104, 105],
+      maquinaID.value,
+      routerStore().clienteID
+    );
+  }
 
   let nombreSplit = nombre.split(" ");
-  let producto = nombreSplit[0] + " " + nombreSplit[1];
+  let producto1 = nombreSplit[0] + " " + nombreSplit[1];
+  let producto2 = nombreSplit[1] + " " + nombreSplit[2];
+  let response = null;
   for (let nombreProducto of nombreProductosDECCODAFReposiciones) {
-    if (nombreProducto.nombreCorto.includes(producto)) {
-      return nombreProducto.registros[0].y;
+    if (nombreProducto.nombreCorto.includes(producto1)) {
+      response = nombreProducto.registros[0].y;
+    } else if (nombreProducto.nombreCorto.includes(producto2)) {
+      response = nombreProducto.registros[0].y;
     }
   }
+  if (response != null) {
+    return response;
+  } else {
+    return nombre;
+  }
+};
+
+// Función para obtener el totalizador de productos gastados en cada modo de reposicion
+const totalizadorReposicion = (reposiciones) => {
+  for (let modoReposicion of reposiciones[1].data) {
+    // Buscar el objeto en el array
+    let objetoEncontrado = consumoTotalizadorReposiciones.value.find(
+      (obj) => obj.nombreModo === modoReposicion.x
+    );
+
+    if (objetoEncontrado) {
+      // Si el objeto existe, sumar los valores
+      modoReposicion.reposicion.forEach((producto) => {
+        let productoEncontrado = objetoEncontrado.consumos.find(
+          (obj) => obj.nombreProducto === producto.nombreProducto
+        );
+
+        if (productoEncontrado) {
+          productoEncontrado.y += producto.y;
+        } else {
+          objetoEncontrado.consumos.push({
+            nombreProducto: producto.nombreProducto,
+            y: producto.y,
+          });
+        }
+      });
+    } else {
+      // Si el objeto no existe, puedes decidir qué hacer, por ejemplo, agregarlo al array
+      let consumos = {};
+
+      modoReposicion.reposicion.forEach((producto) => {
+        if (!consumos[producto.nombreProducto]) {
+          consumos[producto.nombreProducto] = 0;
+        }
+        consumos[producto.nombreProducto] += producto.y;
+      });
+
+      let resultado = {
+        nombreModo: modoReposicion.x,
+        consumos: [],
+      };
+
+      for (let nombreProducto in consumos) {
+        resultado.consumos.push({
+          nombreProducto: nombreProducto,
+          y: consumos[nombreProducto],
+        });
+      }
+
+      consumoTotalizadorReposiciones.value.push(resultado);
+    }
+  }
+};
+
+// Función de todas las llamadas a las funciones necesarias de reposiciones.
+const funcionReposiciones = async () => {
+  await cargarDatosReposiciones();
+  await cargarDatosCantidadReposiciones();
+  await totalizadorReposicion(seriesReposiciones.value);
 };
 
 const fechaFormateada = (fecha) => {
@@ -230,7 +399,11 @@ watch(
   () => routerStore().lineasID,
   async () => {
     cargado.value = false;
-    await cargarDatos();
+    maquinaID.value = (
+      await obtenerMaquina("lineaTipo", routerStore().lineasID, 1)
+    )[0].id;
+    await funcionReposiciones();
+    await cargarDatosTotal();
     cargado.value = true;
   }
 );
@@ -238,11 +411,15 @@ watch(
 // Consultar los permisos del usuario si es un usuario "Cliente"
 onMounted(async () => {
   cargado.value = false;
-  await cargarDatos();
-  cargarDatosCantidadReposiciones();
+  maquinaID.value = (
+    await obtenerMaquina("lineaTipo", routerStore().lineasID, 1)
+  )[0].id;
+  await funcionReposiciones();
+  await cargarDatosTotal();
   cargado.value = true;
   interval.value = setInterval(async () => {
-    cargarDatos();
+    await funcionReposiciones();
+    await cargarDatosTotal();
   }, 90000);
 
   if (userStore().rol == "Cliente") {
