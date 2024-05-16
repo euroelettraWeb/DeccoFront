@@ -211,6 +211,12 @@
           />
 
           <GraficoLineaCardGen
+            :serie="serieTotalAgua"
+            title="Total Agua consumida"
+            :cargado="cargarTotalAgua"
+          />
+
+          <GraficoLineaCardGen
             :serie="seriesDosis"
             title="Dosis"
             :cargado="cargadoDosis"
@@ -305,6 +311,7 @@ const cargadoUsuario = ref(false);
 const cargadoReposiciones = ref(false);
 const cargadoFechas = ref(false);
 const cargadoLotesChoose = ref(false);
+const cargarTotalAgua = ref(false);
 const modoConsultaLotes = ref(null);
 const cargadoLotesSelect = ref(false);
 const mostrarAplicaciones = ref(false);
@@ -312,6 +319,7 @@ const datosLote = ref(false);
 const cantidadesReposiciones = ref([]);
 const rangoReposicion = ref([]);
 
+const serieTotalAgua = ref([]);
 const seriesEstado = ref([]);
 const seriesAlarmas = ref([]);
 const seriesNiveles = ref([]);
@@ -788,6 +796,20 @@ async function historico(date1, date2) {
   // console.log(seriesReposiciones.value);
 
   cargadoReposiciones.value = true;
+
+  let totalAgua = await obtenerDatosVariableGeneral(
+    "historico",
+    "registros",
+    "individual",
+    "formatoAcumuladores",
+    [25],
+    props.maquina,
+    routerStore().clienteID,
+    inicio.value,
+    fin.value
+  );
+  serieTotalAgua.value = totalAgua;
+  cargarTotalAgua.value = true;
 
   const otros = await obtenerDatosVariableGeneral(
     "historico",

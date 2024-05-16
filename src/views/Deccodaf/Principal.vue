@@ -79,7 +79,15 @@
           :series="seriesReposiciones"
           :height="400"
           :cargado="cargado"
+          :tiempo-real="true"
           title="Reposiciones"
+        />
+        <GraficoLineaCardGen
+          v-if="totalAguaConsumida"
+          :serie="serieTotalAgua"
+          title="Total Agua consumida"
+          :cargado="cargarTotalAgua"
+          :tiempo-real="true"
         />
         <GraficaLineaCard
           v-if="dosis"
@@ -105,6 +113,7 @@ export default {
 <script setup>
 import Estado from "../../components/cards/comun/Estado.vue";
 import GraficaLineaCard from "../../components/cards/comun/GraficaLineaCard.vue";
+import GraficoLineaCardGen from "../../components/cards/comun/GraficoLineaCardGen.vue";
 import TablaTotalReposiciones from "../../components/tablas/comun/TablaTotalReposiciones.vue";
 import KilosCalibradorComun from "../../components/cards/comun/KilosCalibradorComun.vue";
 import TablaAlarmas from "../../components/tablas/comun/TablaAlarmas.vue";
@@ -126,6 +135,7 @@ const alarmas = ref(true);
 const estadoNivelGarrafas = ref(true);
 const usuario = ref(true);
 const reposiciones = ref(true);
+const totalAguaConsumida = ref(true);
 const dosis = ref(true);
 const kilosCalibrador = ref(true);
 const cargado = ref(false);
@@ -140,6 +150,26 @@ const consumoTotalizadorReposiciones = ref([]);
 
 const consumosTotal = ref([]);
 const deccodos = ref(2);
+
+const serieTotalAgua = ref([]);
+const cargarTotalAgua = ref(false);
+
+// Cargar datos total agua
+const cargarDatosTotalAgua = async () => {
+  let totalAgua = await obtenerDatosVariableGeneral(
+    "24H",
+    "registros",
+    "individual",
+    "formatoAcumuladores",
+    [25],
+    maquinaID.value,
+    routerStore().clienteID,
+    null,
+    null
+  );
+  serieTotalAgua.value = totalAgua;
+  cargarTotalAgua.value = true;
+};
 
 // Cargar datos tabla total
 const cargarDatosTotal = async () => {
@@ -407,6 +437,7 @@ watch(
     )[0].id;
     await funcionReposiciones();
     await cargarDatosTotal();
+    await cargarDatosTotalAgua();
     cargado.value = true;
   }
 );
@@ -419,10 +450,12 @@ onMounted(async () => {
   )[0].id;
   await funcionReposiciones();
   await cargarDatosTotal();
+  await cargarDatosTotalAgua();
   cargado.value = true;
   interval.value = setInterval(async () => {
     await funcionReposiciones();
     await cargarDatosTotal();
+    await cargarDatosTotalAgua();
   }, 90000);
 
   if (userStore().rol == "Cliente") {
@@ -439,6 +472,7 @@ onMounted(async () => {
     estadoNivelGarrafas.value = permisos.data[0].estadoNivelGarrafas;
     usuario.value = permisos.data[0].usuario;
     reposiciones.value = permisos.data[0].reposiciones;
+    totalAguaConsumida.value = permisos.data[0].totalAguaConsumida;
     dosis.value = permisos.data[0].dosis;
     kilosCalibrador.value = permisos.data[0].kilosCalibrador;
   }

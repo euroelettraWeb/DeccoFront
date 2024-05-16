@@ -3,7 +3,10 @@
     <v-col>
       <v-switch v-model="mostrar" color="info">
         <template #label>
-          <span style="font-weight: bold">{{ props.title }}</span>
+          <span v-if="tiempoReal" style="font-weight: bold">{{
+            props.title
+          }}</span>
+          <div v-else>{{ props.title }}</div>
         </template>
       </v-switch>
       <v-card v-if="mostrar">
@@ -148,6 +151,7 @@ const props = defineProps({
   colores: { type: Array, default: () => ["#d50000", "#00c853"] },
   estados: { type: Array, default: () => ["Paro", "Marcha"] },
   categories: { type: Array, default: () => [] },
+  tiempoReal: { type: Boolean, default: false },
 });
 
 const noData = computed(() => {

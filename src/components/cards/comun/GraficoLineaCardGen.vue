@@ -1,10 +1,40 @@
 <template>
   <v-row no-gutters>
     <v-col>
-      <v-switch v-model="mostrar" color="info" :label="props.title">
-        {{ props.title }}
+      <v-switch v-model="mostrar" color="info">
+        <template #label>
+          <span v-if="tiempoReal" style="font-weight: bold">{{
+            props.title
+          }}</span>
+          <div v-else>{{ props.title }}</div>
+        </template>
       </v-switch>
-      <div v-if="mostrar">
+      <v-card v-if="mostrar && props.tiempoReal">
+        <v-row no-gutters>
+          <v-col v-if="props.cargado">
+            <v-chip v-if="noData" class="ma-2" color="pink" text-color="white">
+              <v-icon left> mdi-alert </v-icon>
+              Sin datos
+            </v-chip>
+            <ApexChart
+              v-else
+              type="line"
+              :height="props.height"
+              :options="chartOptions"
+              :series="props.serie"
+            />
+          </v-col>
+          <v-col v-else class="d-flex justify-center align-center">
+            <v-progress-circular
+              :size="100"
+              :width="7"
+              color="purple"
+              indeterminate
+            ></v-progress-circular>
+          </v-col>
+        </v-row>
+      </v-card>
+      <div v-else-if="mostrar && !tiempoReal">
         <v-row no-gutters>
           <v-col v-if="props.cargado">
             <v-chip
@@ -106,6 +136,7 @@ const props = defineProps({
   tooltipy: { type: Boolean, default: true },
   legend: { type: Boolean, default: true },
   cargado: { type: Boolean, default: true },
+  tiempoReal: { type: Boolean, default: false },
 });
 
 const noData = computed(() => {
