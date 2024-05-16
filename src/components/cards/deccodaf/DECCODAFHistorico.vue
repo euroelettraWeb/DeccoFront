@@ -734,16 +734,18 @@ async function historico(date1, date2) {
     // Calcula 'reposicion'
     let reposicion = [];
     for (let cantidad of cantidadesReposiciones) {
-      if (cantidad.registros[0].y != 0) {
-        let nombreProductoResult = await nombreProducto(
-          cantidad.nombreCorto,
-          fechaFormateadaSQL(new Date(rangoReposicion.value[0])),
-          fechaFormateadaSQL(new Date(rangoReposicion.value[1]))
-        );
-        reposicion.push({
-          y: cantidad.registros[0].y,
-          nombreProducto: nombreProductoResult,
-        });
+      if (cantidad.registros[0]) {
+        if (cantidad.registros[0].y != 0) {
+          let nombreProductoResult = await nombreProducto(
+            cantidad.nombreCorto,
+            fechaFormateadaSQL(new Date(rangoReposicion.value[0])),
+            fechaFormateadaSQL(new Date(rangoReposicion.value[1]))
+          );
+          reposicion.push({
+            y: cantidad.registros[0].y,
+            nombreProducto: nombreProductoResult,
+          });
+        }
       }
     }
 
