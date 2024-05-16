@@ -83,6 +83,7 @@
           title="Reposiciones"
         />
         <GraficoLineaCardGen
+          v-if="totalAguaConsumida"
           :serie="serieTotalAgua"
           title="Total Agua consumida"
           :cargado="cargarTotalAgua"
@@ -134,6 +135,7 @@ const alarmas = ref(true);
 const estadoNivelGarrafas = ref(true);
 const usuario = ref(true);
 const reposiciones = ref(true);
+const totalAguaConsumida = ref(true);
 const dosis = ref(true);
 const kilosCalibrador = ref(true);
 const cargado = ref(false);
@@ -470,6 +472,7 @@ onMounted(async () => {
     estadoNivelGarrafas.value = permisos.data[0].estadoNivelGarrafas;
     usuario.value = permisos.data[0].usuario;
     reposiciones.value = permisos.data[0].reposiciones;
+    totalAguaConsumida.value = permisos.data[0].totalAguaConsumida;
     dosis.value = permisos.data[0].dosis;
     kilosCalibrador.value = permisos.data[0].kilosCalibrador;
   }
