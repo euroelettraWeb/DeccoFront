@@ -7,7 +7,7 @@
         </v-card-title>
         <v-card-subtitle>{{ hoy }} (00:00:00 - Actual)</v-card-subtitle>
         <v-simple-table dense>
-          <template #default>
+          <template v-if="props.tiempoReal">
             <thead>
               <tr>
                 <th class="text-left"></th>
@@ -58,6 +58,56 @@
               </tr>
             </tbody>
           </template>
+          <template v-else>
+            <thead>
+              <tr>
+                <th></th>
+                <th class="text-right">Litros</th>
+                <th class="text-right">Litros/Tonelada</th>
+                <th
+                  v-for="modoReposicion in props.totalizadorReposicion"
+                  :key="modoReposicion.id"
+                  class="text-right"
+                >
+                  {{ modoReposicion.nombreModo }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item of props.consumos" :key="item.id">
+                <td>
+                  {{ item.nombre }}
+                </td>
+                <td class="text-right">
+                  {{ item.total }}
+                </td>
+                <td v-if="deccodos" class="text-right">
+                  {{ item.totalPorToneladaFruta }}
+                </td>
+                <td
+                  v-for="modoReposicion in props.totalizadorReposicion"
+                  :key="modoReposicion.id"
+                  class="text-right"
+                >
+                  <div
+                    v-if="
+                      item.nombre != 'Total Agua' &&
+                      item.nombre != 'Total T Fruta'
+                    "
+                  >
+                    {{
+                      (
+                        modoReposicion.consumos.find(
+                          (producto) => producto.nombreProducto == item.nombre
+                        ) || { y: 0 }
+                      ).y / 1000
+                    }}
+                  </div>
+                  <div v-else></div>
+                </td>
+              </tr>
+            </tbody>
+          </template>
         </v-simple-table>
       </v-col>
       <v-col v-else class="d-flex justify-center align-center">
@@ -84,6 +134,7 @@ const props = defineProps({
   consumos: { type: Array, default: () => [] },
   deccodos: { type: Number, default: null },
   cargado: { type: Boolean, default: false },
+  tiempoReal: { type: Boolean, default: false },
 });
 
 const hoy = computed(() => {

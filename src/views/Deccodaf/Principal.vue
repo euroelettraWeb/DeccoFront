@@ -10,6 +10,7 @@
               :totalizador-reposicion="consumoTotalizadorReposiciones"
               :deccodos="deccodos"
               :cargado="cargado"
+              :tiempo-real="true"
             />
           </v-col>
           <v-col cols="12" sm="3">

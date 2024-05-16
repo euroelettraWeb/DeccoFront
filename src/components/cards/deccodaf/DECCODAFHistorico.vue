@@ -110,6 +110,7 @@
             :totalizador-reposicion="consumoTotalizadorReposiciones"
             :deccodos="deccodos"
             :cargado="cargadoConsumos"
+            :tiempo-real="false"
           />
         </v-col>
 
@@ -1035,6 +1036,56 @@ async function historico(date1, date2) {
     inicio.value,
     fin.value
   );
+
+  for (let modoReposicion of seriesReposiciones.value[1].data) {
+    // Buscar el objeto en el array
+    let objetoEncontrado = consumoTotalizadorReposiciones.value.find(
+      (obj) => obj.nombreModo === modoReposicion.x
+    );
+
+    if (objetoEncontrado) {
+      // Si el objeto existe, sumar los valores
+      modoReposicion.reposicion.forEach((producto) => {
+        let productoEncontrado = objetoEncontrado.consumos.find(
+          (obj) => obj.nombreProducto === producto.nombreProducto
+        );
+
+        if (productoEncontrado) {
+          productoEncontrado.y += producto.y;
+        } else {
+          objetoEncontrado.consumos.push({
+            nombreProducto: producto.nombreProducto,
+            y: producto.y,
+          });
+        }
+      });
+    } else {
+      // Si el objeto no existe, puedes decidir qué hacer, por ejemplo, agregarlo al array
+      let consumos = {};
+
+      modoReposicion.reposicion.forEach((producto) => {
+        if (!consumos[producto.nombreProducto]) {
+          consumos[producto.nombreProducto] = 0;
+        }
+        consumos[producto.nombreProducto] += producto.y;
+      });
+
+      let resultado = {
+        nombreModo: modoReposicion.x,
+        consumos: [],
+      };
+
+      for (let nombreProducto in consumos) {
+        resultado.consumos.push({
+          nombreProducto: nombreProducto,
+          y: consumos[nombreProducto],
+        });
+      }
+
+      consumoTotalizadorReposiciones.value.push(resultado);
+    }
+  }
+
   cargadoConsumos.value = true;
   const alarma = await obtenerDatosVariableGeneral(
     "historico",
