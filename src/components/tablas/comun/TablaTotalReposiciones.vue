@@ -3,7 +3,7 @@
     <v-row>
       <v-col v-if="props.cargado">
         <v-card-title>
-          <strong>Consumo Hoy</strong>
+          <strong>Consumo hoy por reposiciones</strong>
         </v-card-title>
         <v-card-subtitle>{{ hoy }} (00:00:00 - Actual)</v-card-subtitle>
         <v-simple-table dense>

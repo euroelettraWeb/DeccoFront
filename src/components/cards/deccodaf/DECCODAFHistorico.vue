@@ -760,6 +760,39 @@ async function historico(date1, date2) {
     dato.reposicion = reposicion;
   }
 
+  let paroReposiciones = seriesReposiciones.value.find((v) => v.name == "Paro");
+  for (let dato of paroReposiciones.data) {
+    rangoReposicion.value = dato.y;
+    let cantidadesReposiciones = await obtenerDatosVariableGeneral(
+      "historico",
+      "ultimo",
+      "individual",
+      "sinfiltro",
+      [121, 122, 123, 124, 125],
+      props.maquina,
+      routerStore().clienteID,
+      fechaFormateadaSQL(new Date(rangoReposicion.value[0])),
+      fechaFormateadaSQL(new Date(rangoReposicion.value[1]))
+    );
+    // Calcula 'reposicion'
+    let reposicion = [];
+    for (let cantidad of cantidadesReposiciones) {
+      if (cantidad.registros[0]) {
+        let nombreProductoResult = await nombreProducto(
+          cantidad.nombreCorto,
+          fechaFormateadaSQL(new Date(rangoReposicion.value[0])),
+          fechaFormateadaSQL(new Date(rangoReposicion.value[1]))
+        );
+        reposicion.push({
+          y: cantidad.registros[0].y,
+          nombreProducto: nombreProductoResult,
+        });
+      }
+    }
+
+    dato.reposicion = reposicion;
+  }
+
   // cantidadesReposiciones.value = [];
   // let reposicionesMarcha = seriesReposiciones.value.find(
   //   (v) => v.name == "Marcha"
@@ -1061,52 +1094,57 @@ async function historico(date1, date2) {
     fin.value
   );
 
-  for (let modoReposicion of seriesReposiciones.value[1].data) {
-    // Buscar el objeto en el array
-    let objetoEncontrado = consumoTotalizadorReposiciones.value.find(
-      (obj) => obj.nombreModo === modoReposicion.x
-    );
+  for (let i = 0; i < seriesReposiciones.value.length; i++) {
+    for (let modoReposicion of seriesReposiciones.value[i].data) {
+      // Buscar el objeto en el array
+      let objetoEncontrado = consumoTotalizadorReposiciones.value.find(
+        (obj) => obj.nombreModo === modoReposicion.x
+      );
 
-    if (objetoEncontrado) {
-      // Si el objeto existe, sumar los valores
-      modoReposicion.reposicion.forEach((producto) => {
-        let productoEncontrado = objetoEncontrado.consumos.find(
-          (obj) => obj.nombreProducto === producto.nombreProducto
-        );
+      if (objetoEncontrado) {
+        // Si el objeto existe, sumar los valores
+        modoReposicion.reposicion.forEach((producto) => {
+          let productoEncontrado = objetoEncontrado.consumos.find(
+            (obj) => obj.nombreProducto === producto.nombreProducto
+          );
 
-        if (productoEncontrado) {
-          productoEncontrado.y += producto.y;
-        } else {
-          objetoEncontrado.consumos.push({
-            nombreProducto: producto.nombreProducto,
-            y: producto.y,
+          if (productoEncontrado) {
+            productoEncontrado.y += producto.y;
+          } else {
+            objetoEncontrado.consumos.push({
+              nombreProducto: producto.nombreProducto,
+              y: producto.y,
+            });
+          }
+        });
+      } else {
+        // Si el objeto no existe, puedes decidir qué hacer, por ejemplo, agregarlo al array
+        let consumos = {};
+
+        modoReposicion.reposicion.forEach((producto) => {
+          if (!consumos[producto.nombreProducto]) {
+            consumos[producto.nombreProducto] = 0;
+          }
+          consumos[producto.nombreProducto] += producto.y;
+        });
+
+        // Cambiar Marcha por Reposición en el nombre las reposiciones
+        modoReposicion.x = modoReposicion.x.replace("Marcha", "Reposición");
+
+        let resultado = {
+          nombreModo: modoReposicion.x,
+          consumos: [],
+        };
+
+        for (let nombreProducto in consumos) {
+          resultado.consumos.push({
+            nombreProducto: nombreProducto,
+            y: consumos[nombreProducto],
           });
         }
-      });
-    } else {
-      // Si el objeto no existe, puedes decidir qué hacer, por ejemplo, agregarlo al array
-      let consumos = {};
 
-      modoReposicion.reposicion.forEach((producto) => {
-        if (!consumos[producto.nombreProducto]) {
-          consumos[producto.nombreProducto] = 0;
-        }
-        consumos[producto.nombreProducto] += producto.y;
-      });
-
-      let resultado = {
-        nombreModo: modoReposicion.x,
-        consumos: [],
-      };
-
-      for (let nombreProducto in consumos) {
-        resultado.consumos.push({
-          nombreProducto: nombreProducto,
-          y: consumos[nombreProducto],
-        });
+        consumoTotalizadorReposiciones.value.push(resultado);
       }
-
-      consumoTotalizadorReposiciones.value.push(resultado);
     }
   }
 
