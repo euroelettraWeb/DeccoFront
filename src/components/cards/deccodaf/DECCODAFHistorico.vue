@@ -1096,6 +1096,9 @@ async function historico(date1, date2) {
 
   for (let i = 0; i < seriesReposiciones.value.length; i++) {
     for (let modoReposicion of seriesReposiciones.value[i].data) {
+      // Cambiar Marcha por Reposición en el nombre las reposiciones
+      modoReposicion.x = modoReposicion.x.replace("Marcha", "Reposición");
+
       // Buscar el objeto en el array
       let objetoEncontrado = consumoTotalizadorReposiciones.value.find(
         (obj) => obj.nombreModo === modoReposicion.x
@@ -1127,9 +1130,6 @@ async function historico(date1, date2) {
           }
           consumos[producto.nombreProducto] += producto.y;
         });
-
-        // Cambiar Marcha por Reposición en el nombre las reposiciones
-        modoReposicion.x = modoReposicion.x.replace("Marcha", "Reposición");
 
         let resultado = {
           nombreModo: modoReposicion.x,
