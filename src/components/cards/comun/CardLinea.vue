@@ -164,7 +164,8 @@ async function values() {
         " (Lote " +
         (numeroLotesDECCOWASHER[index].registros[0]?.y || 0) +
         ")",
-      value: dosDecimales(element.registros[0].y) + " " + element.unidadMedida,
+      value:
+        dosDecimales(element.registros[0]?.y || 0) + " " + element.unidadMedida,
     })),
     ...totalesDECCOWASHER.map((element, index) => ({
       label:
@@ -324,7 +325,8 @@ async function values() {
         " (Lote " +
         (numeroLotesDECCODAF[index].registros[0]?.y || 0) +
         ")",
-      value: dosDecimales(element.registros[0].y) + " " + element.unidadMedida,
+      value:
+        dosDecimales(element.registros[0]?.y || 0) + " " + element.unidadMedida,
     })),
     ...totalesDECCODAF.map((element, index) => ({
       label:

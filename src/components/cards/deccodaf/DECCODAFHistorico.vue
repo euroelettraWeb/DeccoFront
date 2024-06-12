@@ -425,9 +425,9 @@ const nombreProducto = async (nombre, fechaInicio, fechaFin) => {
   let response = null;
   for (let nombreProducto of nombreProductosDECCODAFReposiciones) {
     if (nombreProducto.nombreCorto.includes(producto1)) {
-      response = nombreProducto.registros[0].y;
+      response = nombreProducto.registros[0]?.y || null;
     } else if (nombreProducto.nombreCorto.includes(producto2)) {
-      response = nombreProducto.registros[0].y;
+      response = nombreProducto.registros[0]?.y || null;
     }
   }
   if (response != null) {
