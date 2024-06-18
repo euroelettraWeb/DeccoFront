@@ -77,6 +77,7 @@ export const routerStore = defineStore("router", {
       gestionUsuarios: "GestionUsuarios",
       variables: "Variables",
       historico: "Historico",
+      historicoRapido: "Historico - Rapido",
       informe: "Informe",
       deccodaf: "DECCODAF",
       deccodafOtras: "DECCODAF - Otras",
@@ -149,6 +150,13 @@ export const routerStore = defineStore("router", {
       this.maquina = "Historico";
       router.push({
         name: this.routes.historico,
+        params: { id },
+      });
+    },
+    historicoRapido: async function (id) {
+      this.maquina = "Historico - Rapido";
+      router.push({
+        name: this.routes.historicoRapido,
         params: { id },
       });
     },
@@ -258,6 +266,17 @@ export const routerStore = defineStore("router", {
           this.maquina = "Historico";
           router
             .push({ name: this.routes.historico, params: { id, linea } })
+            .catch((failure) => {
+              if (
+                isNavigationFailure(failure, NavigationFailureType.duplicated)
+              ) {
+              }
+            });
+          break;
+        case "historicoRapido":
+          this.maquina = "Historico - Rapido";
+          router
+            .push({ name: this.routes.historicoRapido, params: { id, linea } })
             .catch((failure) => {
               if (
                 isNavigationFailure(failure, NavigationFailureType.duplicated)

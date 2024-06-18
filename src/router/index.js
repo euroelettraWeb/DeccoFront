@@ -8,6 +8,7 @@ import EditarClienteView from "../views/Clientes/EditarClienteView.vue";
 import SistemasView from "../views/SistemasView.vue";
 import VariablesView from "../views/VariablesView.vue";
 import HistoricoView from "../views/HistoricoView.vue";
+import HistoricoRapidoView from "../views/HistoricoRapidoView.vue";
 import InformeView from "../views/InformeView.vue";
 import DECCODAFPrincipal from "../views/Deccodaf/Principal.vue";
 import DECCODOSPrincipal from "../views/Deccodos/Principal.vue";
@@ -117,6 +118,13 @@ const routes = [
     name: "Historico",
     component: HistoricoView,
     meta: { title: "DECCO - Historico", rutaProtegida: true },
+    beforeEnter: checkLogin,
+  },
+  {
+    path: "/cliente/:id/historico-rapido",
+    name: "Historico - Rapido",
+    component: HistoricoRapidoView,
+    meta: { title: "DECCO - Historico - Rapido", rutaProtegida: true },
     beforeEnter: checkLogin,
   },
   {

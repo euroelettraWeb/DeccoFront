@@ -140,6 +140,18 @@
         <v-list-item
           v-if="userStore().usuarioValido && clienteActivo"
           link
+          @click="
+            routerStore().menu('historicoRapido', routerStore().clienteID)
+          "
+        >
+          <v-list-item-icon>
+            <v-icon>mdi-archive</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>Historico Rapido</v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          v-if="userStore().usuarioValido && clienteActivo"
+          link
           @click="routerStore().menu('variables', routerStore().clienteID)"
         >
           <v-list-item-icon>
