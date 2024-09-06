@@ -20,7 +20,7 @@
     <v-card-actions>
       <v-btn color="white" text link @click="updatePinia"> Acceder </v-btn>
       <v-btn
-        v-if="usuarioRol === 'ADMINISTRADOR'"
+        v-if="usuarioRol === 'SUPERADMINISTRADOR'"
         color="white"
         text
         link

@@ -43,7 +43,9 @@
 
     <v-list-item
       v-if="
-        userStore().rol === 'ADMINISTRADOR' || userStore().rol === 'Comercial'
+        userStore().rol === 'SUPERADMINISTRADOR' ||
+        userStore().rol === 'ADMINISTRADOR' ||
+        userStore().rol === 'Comercial'
       "
       link
       @click="routerStore().menu('clientes', routerStore().clienteID, 0)"
@@ -148,7 +150,10 @@
           <v-list-item-title>Variables</v-list-item-title>
         </v-list-item>
         <v-list-item
-          v-if="userStore().rol === 'ADMINISTRADOR'"
+          v-if="
+            userStore().rol === 'SUPERADMINISTRADOR' ||
+            userStore().rol === 'ADMINISTRADOR'
+          "
           link
           @click="routerStore().menu('gestionUsuarios', 0, 0)"
         >
@@ -233,7 +238,9 @@ const select = ref(0);
 const stateLineas = ref(false);
 const refLineas = ref([]);
 const administrador = computed(() =>
-  userStore().rol == "ADMINISTRADOR" ? true : false
+  userStore().rol == "SUPERADMINISTRADOR" || userStore().rol == "ADMINISTRADOR"
+    ? true
+    : false
 );
 const clienteActivo = computed(() => (clienteID.value ? true : false));
 onMounted(async () => {

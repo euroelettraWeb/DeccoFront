@@ -32,6 +32,9 @@ export const userStore = defineStore("user", {
         this.usuario = resultadoConsulta;
         this.usuarioValido = true;
         switch (this.usuario.rol) {
+          case "SUPERADMINISTRADOR":
+            router.push("/cliente");
+            break;
           case "ADMINISTRADOR":
             router.push("/cliente");
             break;

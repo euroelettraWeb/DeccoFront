@@ -14,7 +14,7 @@
         <v-col cols="12" class="d-flex flex-column align-center justify-start">
           <v-img src="logo_cliente.png" alt="Logo Decco" />
           <v-btn
-            v-if="userStore().rol === 'ADMINISTRADOR'"
+            v-if="userStore().rol === 'SUPERADMINISTRADOR'"
             class="mt-2 titulo"
             color="green"
             to="/cliente/nuevo"
